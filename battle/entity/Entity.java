@@ -1649,8 +1649,7 @@ public abstract class Entity extends AbEntity {
 
 		damage += dmg;
 		zx.damaged(atk);
-		if (this instanceof EEnemy)
-			status[P_BOUNTY][0] = atk.getProc().BOUNTY.mult;
+		status[P_BOUNTY][0] = atk.getProc().BOUNTY.mult;
 
 		if (atk.atk < 0)
 			anim.getEff(HEAL);
@@ -2046,6 +2045,8 @@ public abstract class Entity extends AbEntity {
 			onLastBreathe();
 			killCounted = true;
 		}
+		if (health > 0)
+			status[P_BOUNTY][0] = 0;
 	}
 
 	/**

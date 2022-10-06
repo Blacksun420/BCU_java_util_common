@@ -91,6 +91,14 @@ public class EUnit extends Entity {
 	}
 
 	@Override
+	public void kill(boolean atk) {
+		super.kill(atk);
+		if (index != null && status[P_BOUNTY][0] != 0) {
+			basis.money -= (status[P_BOUNTY][0] / 100.0) * basis.elu.price[index[0]][index[1]];
+		}
+ 	}
+
+	@Override
 	public void update() {
 		super.update();
 		traits = status[P_CURSE][0] == 0 && status[P_SEAL][0] == 0 ? data.getTraits() : new ArrayList<>();
@@ -130,7 +138,7 @@ public class EUnit extends Entity {
 		if (atk instanceof AttackWave && atk.waveType == WT_MINI) {
 			ans = (int) ((double) ans * atk.getProc().MINIWAVE.multi / 100.0);
 		}
-		if (atk.model instanceof AtkModelEnemy && status[P_CURSE][0] == 0) {
+		if (atk.model instanceof AtkModelEnemy) {
 			ArrayList<Trait> sharedTraits = new ArrayList<>(atk.trait);
 			sharedTraits.retainAll(traits);
 			boolean isAntiTraited = targetTraited(atk.trait);
@@ -140,23 +148,33 @@ public class EUnit extends Entity {
 				if ((t.targetType && isAntiTraited) || t.others.contains(((MaskUnit)data).getPack()))
 					sharedTraits.add(t);
 			}
-			if ((getAbi() & AB_GOOD) != 0)
-				ans *= basis.b.t().getGOODDEF(atk.trait, sharedTraits, ((MaskUnit)data).getOrb(), level);
-			if ((getAbi() & AB_RESIST) != 0)
-				ans *= basis.b.t().getRESISTDEF(atk.trait, sharedTraits, ((MaskUnit)data).getOrb(), level);
-			if (!sharedTraits.isEmpty() && (getAbi() & AB_RESISTS) != 0)
-				ans *= basis.b.t().getRESISTSDEF(sharedTraits);
+			if (!sharedTraits.isEmpty()) {
+				if (status[P_CURSE][0] == 0) {
+					if ((getAbi() & AB_GOOD) != 0)
+						ans *= basis.b.t().getGOODDEF(atk.trait, sharedTraits, ((MaskUnit) data).getOrb(), level);
+					if ((getAbi() & AB_RESIST) != 0)
+						ans *= basis.b.t().getRESISTDEF(atk.trait, sharedTraits, ((MaskUnit) data).getOrb(), level);
+					if ((getAbi() & AB_RESISTS) != 0)
+						ans *= basis.b.t().getRESISTSDEF(sharedTraits);
+				}
+				if (atk.attacker.status[P_CURSE][0] == 0) {
+					if ((atk.abi & AB_GOOD) != 0)
+						ans *= 1.5;
+					if ((atk.abi & AB_MASSIVE) != 0)
+						ans *= 3;
+					if ((atk.abi & AB_MASSIVES) != 0)
+						ans *= 5;
+				}
+			}
+			if (atk.trait.contains(UserProfile.getBCData().traits.get(TRAIT_WITCH)) && (getAbi() & AB_WKILL) > 0)
+				ans *= basis.b.t().getWKDef();
+			if (atk.trait.contains(UserProfile.getBCData().traits.get(TRAIT_EVA)) && (getAbi() & AB_EKILL) > 0)
+				ans *= basis.b.t().getEKDef();
+			if (atk.trait.contains(UserProfile.getBCData().traits.get(TRAIT_BARON)) && (getAbi() & AB_BAKILL) > 0)
+				ans *= 0.7;
+			if (atk.trait.contains(UserProfile.getBCData().traits.get(Data.TRAIT_BEAST)) && getProc().BSTHUNT.type.active)
+				ans *= 0.6; //Not sure
 		}
-		if (atk.trait.contains(UserProfile.getBCData().traits.get(TRAIT_WITCH)) && (getAbi() & AB_WKILL) > 0)
-			ans *= basis.b.t().getWKDef();
-		if (atk.trait.contains(UserProfile.getBCData().traits.get(TRAIT_EVA)) && (getAbi() & AB_EKILL) > 0)
-			ans *= basis.b.t().getEKDef();
-		if (isBase)
-			ans *= 1 + atk.getProc().ATKBASE.mult / 100.0;
-		if (atk.trait.contains(UserProfile.getBCData().traits.get(TRAIT_BARON)) && (getAbi() & AB_BAKILL) > 0)
-			ans *= 0.7;
-		if (atk.trait.contains(UserProfile.getBCData().traits.get(Data.TRAIT_BEAST)) && getProc().BSTHUNT.type.active)
-			ans *= 0.6; //Not sure
 		ans = critCalc((getAbi() & AB_METALIC) != 0, ans, atk);
 
 		// Perform orb

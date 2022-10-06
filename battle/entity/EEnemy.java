@@ -55,7 +55,7 @@ public class EEnemy extends Entity {
 		if (atk instanceof AttackWave && atk.waveType == WT_MINI) {
 			ans = (int) ((double) ans * atk.getProc().MINIWAVE.multi / 100.0);
 		}
-		if (atk.model instanceof AtkModelUnit && status[P_CURSE][0] == 0) {
+		if (atk.model instanceof AtkModelUnit) {
 			ArrayList<Trait> sharedTraits = new ArrayList<>(atk.trait);
 			sharedTraits.retainAll(traits);
 			boolean isAntiTraited = targetTraited(atk.trait);
@@ -65,23 +65,36 @@ public class EEnemy extends Entity {
 				if ((t.targetType && isAntiTraited) || t.others.contains(((MaskUnit)atk.attacker.data).getPack()))
 					sharedTraits.add(t);
 			}
-			if (!sharedTraits.isEmpty() && (atk.abi & AB_GOOD) != 0)
-				ans *= EUnit.OrbHandler.getOrbGood(atk, sharedTraits, basis.b.t());
-			if (!sharedTraits.isEmpty() && (atk.abi & AB_MASSIVE) != 0)
-				ans *= EUnit.OrbHandler.getOrbMassive(atk, sharedTraits, basis.b.t());
-			if (!sharedTraits.isEmpty() && (atk.abi & AB_MASSIVES) != 0)
-				ans *= basis.b.t().getMASSIVESATK(sharedTraits);
+
+			if (!sharedTraits.isEmpty()) {
+				if (atk.attacker.status[P_CURSE][0] == 0) {
+					if ((atk.abi & AB_GOOD) != 0)
+						ans *= EUnit.OrbHandler.getOrbGood(atk, sharedTraits, basis.b.t());
+					if ((atk.abi & AB_MASSIVE) != 0)
+						ans *= EUnit.OrbHandler.getOrbMassive(atk, sharedTraits, basis.b.t());
+					if ((atk.abi & AB_MASSIVES) != 0)
+						ans *= basis.b.t().getMASSIVESATK(sharedTraits);
+				}
+				if (status[P_CURSE][0] == 0) {
+					if ((getAbi() & AB_GOOD) > 0)
+						ans /= 2;
+					if ((getAbi() & AB_RESIST) > 0)
+						ans /= 4;
+					if ((getAbi() & AB_RESISTS) > 0)
+						ans /= 6;
+				}
+			}
+			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_WITCH)) && (atk.abi & AB_WKILL) > 0)
+				ans *= basis.b.t().getWKAtk();
+			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_EVA)) && (atk.abi & AB_EKILL) > 0)
+				ans *= basis.b.t().getEKAtk();
+			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_BARON)) && (atk.abi & AB_BAKILL) > 0)
+				ans *= 1.6;
+			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_BEAST)) && atk.getProc().BSTHUNT.type.active)
+				ans *= 2.5;
 		}
 		if (isBase)
 			ans *= 1 + atk.getProc().ATKBASE.mult / 100.0;
-		if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_WITCH)) && (atk.abi & AB_WKILL) > 0)
-			ans *= basis.b.t().getWKAtk();
-		if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_EVA)) && (atk.abi & AB_EKILL) > 0)
-			ans *= basis.b.t().getEKAtk();
-		if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_BARON)) && (atk.abi & AB_BAKILL) > 0)
-			ans *= 1.6;
-		if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_BEAST)) && atk.getProc().BSTHUNT.type.active)
-			ans *= 2.5;
 		if (atk.canon == 16)
 			if ((touchable() & TCH_UG) > 0)
 				ans = (int) (maxH * basis.b.t().getCannonMagnification(5, BASE_HOLY_ATK_UNDERGROUND));
@@ -130,9 +143,6 @@ public class EEnemy extends Entity {
 	@Override
 	public void postUpdate() {
 		super.postUpdate();
-
-		if (health > 0)
-			status[P_BOUNTY][0] = 0;
 	}
 
 	@Override
