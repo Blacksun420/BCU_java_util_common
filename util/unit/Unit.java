@@ -127,8 +127,8 @@ public class Unit extends Data implements Comparable<Unit>, Indexable<PackData, 
 		forms = new Form[u.forms.length];
 		for (int i = 0; i < forms.length; i++) {
 			String str = id + "-" + i;
-			ResourceLocation rl = new ResourceLocation(ResourceLocation.LOCAL, str);
-			Workspace.validate(Source.ANIM, rl);
+			ResourceLocation rl = new ResourceLocation(ResourceLocation.LOCAL, str, Source.BasePath.ANIM);
+			Workspace.validate(rl);
 			AnimCE ac = new AnimCE(rl, u.forms[i].anim);
 			CustomUnit cu = new CustomUnit();
 			cu.importData(u.forms[i].du);

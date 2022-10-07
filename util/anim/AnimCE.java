@@ -43,9 +43,9 @@ public class AnimCE extends AnimCI {
 
 	private static final String REG_LOCAL_ANIM = "local_animation";
 
-	public static String getAvailable(String string) {
-		ResourceLocation rl = new ResourceLocation(ResourceLocation.LOCAL, string);
-		Workspace.validate(Source.ANIM, rl);
+	public static String getAvailable(String string, Source.BasePath base) {
+		ResourceLocation rl = new ResourceLocation(ResourceLocation.LOCAL, string, base);
+		Workspace.validate(rl);
 		return rl.id;
 	}
 
@@ -73,7 +73,7 @@ public class AnimCE extends AnimCI {
 		id = rl;
 		copyFrom(ori);
 
-		if(id.pack.equals(ResourceLocation.LOCAL)) {
+		if (id.pack.equals(ResourceLocation.LOCAL)) {
 			map().put(id.id, this);
 			AnimGroup.workspaceGroup.renewGroup();
 		}
@@ -92,8 +92,11 @@ public class AnimCE extends AnimCI {
 		partial = true;
 		imgcut = new ImgCut();
 		mamodel = new MaModel();
-		anims = new MaAnim[7];
-		for (int i = 0; i < 7; i++)
+		if (loader.getName().base.equals(Source.BasePath.ANIM))
+			anims = new MaAnim[7];
+		else
+			anims = new MaAnim[1];
+		for (int i = 0; i < anims.length; i++)
 			anims[i] = new MaAnim();
 		parts = imgcut.cut(getNum());
 		saved = false;
@@ -165,8 +168,8 @@ public class AnimCE extends AnimCI {
 							list.add(f);
 				if (list.size() == 0)
 					continue;
-				ResourceLocation rl = new ResourceLocation(pack.getSID(), id.id);
-				Workspace.validate(Source.ANIM, rl);
+				ResourceLocation rl = new ResourceLocation(pack.getSID(), id.id, id.base);
+				Workspace.validate(rl);
 				AnimCE tar = new AnimCE(rl, this);
 				for (Animable<AnimU<?>, UType> a : list)
 					a.anim = tar;
@@ -245,7 +248,7 @@ public class AnimCE extends AnimCI {
 		SourceAnimSaver saver = new SourceAnimSaver(id, this);
 		saver.delete(false);
 		id.id = str;
-		Workspace.validate(Source.ANIM, id);
+		Workspace.validate(id);
 		if (id.pack.equals(ResourceLocation.LOCAL))
 			map().put(id.id, this);
 		AnimGroup.workspaceGroup.renewGroup();
@@ -373,18 +376,24 @@ public class AnimCE extends AnimCI {
 	private void copyFrom(AnimD<?, ?> ori) {
 		loaded = true;
 		partial = true;
+
+		boolean isAnim = id.base.equals(Source.BasePath.ANIM);
 		imgcut = ori.imgcut.clone();
 		mamodel = ori.mamodel.clone();
 		if (mamodel.confs.length < 1)
 			mamodel.confs = new int[2][6];
-		anims = new MaAnim[7];
-		for (int i = 0; i < 7; i++)
-			if (i < ori.anims.length)
-				anims[i] = ori.anims[i].clone();
-			else
-				anims[i] = new MaAnim();
+		if (isAnim) {
+			anims = new MaAnim[7];
+			for (int i = 0; i < 7; i++)
+				if (i < ori.anims.length)
+					anims[i] = ori.anims[i].clone();
+				else
+					anims[i] = new MaAnim();
+		} else {
+			anims = new MaAnim[] { ori.anims.length > 0 ? ori.anims[0].clone() : new MaAnim() };
+		}
 		loader.setNum(ori.getNum().cloneImage());
-		types = AnimU.TYPE7;
+		types = isAnim ? AnimU.TYPE7 : AnimU.SOUL;
 		parts = imgcut.cut(ori.getNum());
 		if (ori instanceof AnimU<?>) {
 			AnimU<?> au = (AnimU<?>) ori;
@@ -446,7 +455,7 @@ public class AnimCE extends AnimCI {
 
 	@Override
 	public boolean equals(Object that) {
-		if(that instanceof AnimCE) {
+		if (that instanceof AnimCE) {
 			return this.id.id.equals(((AnimCE) that).id.id);
 		} else {
 			return false;

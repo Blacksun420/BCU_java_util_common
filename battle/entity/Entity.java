@@ -17,16 +17,18 @@ import common.util.BattleObj;
 import common.util.Data;
 import common.util.Data.Proc.POISON;
 import common.util.Data.Proc.REVIVE;
+import common.util.anim.*;
 import common.util.anim.AnimU.UType;
 import common.util.anim.EAnimD;
 import common.util.anim.EAnimU;
+import common.util.pack.AbSoul;
 import common.util.pack.DemonSoul;
 import common.util.pack.EffAnim;
 import common.util.pack.EffAnim.*;
 import common.util.pack.Soul;
-import common.util.pack.Soul.SoulType;
 import common.util.unit.Trait;
 import common.util.unit.Level;
+import io.BCMusic;
 
 import java.util.*;
 
@@ -71,7 +73,7 @@ public abstract class Entity extends AbEntity {
 		/**
 		 * soul anim, null means not dead yet
 		 */
-		private EAnimD<?> soul;
+		private EAnimI soul;
 
 		/**
 		 * smoke animation for each entity
@@ -591,12 +593,12 @@ public abstract class Entity extends AbEntity {
 				e.weaks.list.clear();
 				status[P_WEAK] = new int[PROC_WIDTH];
 
-				soul = UserProfile.getBCData().demonSouls.get((1 - e.dire) / 2).getEAnim(DemonSoul.DemonSoulType.DEF);
+				soul = UserProfile.getBCData().demonSouls.get((1 - e.dire) / 2).getEAnim(UType.SOUL);
 				dead = soul.len();
 				CommonStatic.setSE(SE_DEATH_SURGE);
 			} else {
 				Soul s = Identifier.get(e.data.getDeathAnim());
-				dead = s == null ? 0 : (soul = s.getEAnim(SoulType.DEF)).len();
+				dead = s == null ? 0 : (soul = s.getEAnim(UType.SOUL)).len();
 			}
 		}
 
@@ -2408,7 +2410,11 @@ public abstract class Entity extends AbEntity {
 	 * called when last KB reached
 	 */
 	private void preKill() {
-		CommonStatic.setSE(basis.r.irDouble() < 0.5 ? SE_DEATH_0 : SE_DEATH_1);
+		Soul s = Identifier.get(data.getDeathAnim());
+		if (s != null && s.audio != null)
+			CommonStatic.setSE(s.audio);
+		else
+			CommonStatic.setSE(basis.r.irDouble() < 0.5 ? SE_DEATH_0 : SE_DEATH_1);
 
 		if (zx.prekill())
 			return;

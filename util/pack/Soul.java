@@ -1,27 +1,44 @@
 package common.util.pack;
 
+import common.io.json.JsonClass;
+import common.io.json.JsonDecoder;
+import common.io.json.JsonField;
 import common.pack.Identifier;
 import common.pack.IndexContainer.IndexCont;
 import common.pack.IndexContainer.Indexable;
 import common.pack.PackData;
-import common.system.VImg;
-import common.system.fake.FakeImage;
+import common.util.Animable;
 import common.util.anim.*;
+import common.util.stage.Music;
 
+@JsonClass
 @IndexCont(PackData.class)
-public class Soul extends AnimD<Soul, Soul.SoulType> implements Indexable<PackData, Soul> {
+@JsonClass.JCGeneric(Identifier.class)
+public class Soul extends Animable<AnimU<?>, AnimU.UType> implements Indexable<PackData, Soul> {
 
-	public enum SoulType implements AnimI.AnimType<Soul, SoulType> {
-		DEF
+	@JsonClass.JCIdentifier
+	@JsonField
+	private final Identifier<Soul> id;
+
+	@JsonField
+	public Identifier<Music> audio;
+
+	@JsonField
+	public String name;
+
+	@JsonClass.JCConstructor
+	public Soul() {
+		id = null;
 	}
 
-	private final Identifier<Soul> id;
-	private final VImg img;
+	public Soul(Identifier<Soul> id, AnimU<?> animS) {
+		anim = animS;
+		this.id = id;
 
-	public Soul(String st, int i) {
-		super(st);
-		img = new VImg(str + ".png");
-		id = Identifier.parseInt(i, Soul.class);
+		if (id.pack.equals(Identifier.DEF))
+			name = "soul " + id.id;
+		else
+			name = "custom soul " + id.id;
 	}
 
 	@Override
@@ -30,23 +47,12 @@ public class Soul extends AnimD<Soul, Soul.SoulType> implements Indexable<PackDa
 	}
 
 	@Override
-	public FakeImage getNum() {
-		return img.getImg();
-	}
-
-	@Override
-	public void load() {
-		loaded = true;
-		imgcut = ImgCut.newIns(str + ".imgcut");
-		mamodel = MaModel.newIns(str + ".mamodel");
-		anims = new MaAnim[] { MaAnim.newIns(str + ".maanim") };
-		types = SoulType.values();
-		parts = imgcut.cut(img.getImg());
-	}
-
-	@Override
 	public String toString() {
-		return "soul_" + id.id;
+		return name;
 	}
 
+	@Override
+	public EAnimI getEAnim(AnimU.UType uType) {
+		return anim.getEAnim(uType);
+	}
 }

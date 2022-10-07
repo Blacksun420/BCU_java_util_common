@@ -92,7 +92,7 @@ public class CastleImg implements Indexable<CastleList, CastleImg> {
 	@OnInjected
 	public void onInjected() {
 		PackData.UserPack pack = UserProfile.getUserPack(id.pack);
-		img = pack.source.readImage(Source.CASTLE, id.id);
+		img = pack.source.readImage(Source.BasePath.CASTLE.toString(), id.id);
 
 		if (UserProfile.isOlderPack(pack, "0.5.6.0")) {
 			boss_spawn = 828.5;

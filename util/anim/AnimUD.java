@@ -9,6 +9,8 @@ import common.system.files.VFile;
 
 public class AnimUD extends AnimU<AnimUD.DefImgLoader> {
 
+	private final String name;
+
 	static class DefImgLoader implements AnimU.ImageKeeper {
 
 		private final String spath;
@@ -39,22 +41,24 @@ public class AnimUD extends AnimU<AnimUD.DefImgLoader> {
 		@Override
 		public MaAnim[] getMA() {
 			MaAnim[] ma;
-			if (VFile.get(spath + "_zombie00.maanim") != null)
-				ma = new MaAnim[7];
-			else if (VFile.get(spath + "_entry.maanim") != null)
-				ma = new MaAnim[5];
-			else
-				ma = new MaAnim[4];
-			for (int i = 0; i < 4; i++)
-				ma[i] = MaAnim.newIns(spath + "0" + i + ".maanim");
-			if (ma.length == 5)
-				ma[4] = MaAnim.newIns(spath + "_entry.maanim");
-			if (ma.length == 7)
-				for (int i = 0; i < 3; i++)
-					ma[i + 4] = MaAnim.newIns(spath + "_zombie0" + i + ".maanim");
-
+			if (VFile.get(spath + ".maanim") != null) {
+				ma = new MaAnim[] { MaAnim.newIns(spath + ".maanim") };
+			} else {
+				if (VFile.get(spath + "_zombie00.maanim") != null)
+					ma = new MaAnim[7];
+				else if (VFile.get(spath + "_entry.maanim") != null)
+					ma = new MaAnim[5];
+				else
+					ma = new MaAnim[4];
+				for (int i = 0; i < 4; i++)
+					ma[i] = MaAnim.newIns(spath + "0" + i + ".maanim");
+				if (ma.length == 5)
+					ma[4] = MaAnim.newIns(spath + "_entry.maanim");
+				if (ma.length == 7)
+					for (int i = 0; i < 3; i++)
+						ma[i + 4] = MaAnim.newIns(spath + "_zombie0" + i + ".maanim");
+			}
 			ma = filterValidAnims(ma);
-
 			return ma;
 		}
 
@@ -92,12 +96,12 @@ public class AnimUD extends AnimU<AnimUD.DefImgLoader> {
 		private MaAnim[] filterValidAnims(MaAnim[] original) {
 			int end = 0;
 
-			for(int i = 0; i < original.length; i ++ ) {
-				if(original[i] != null && original[i].n != 0)
+			for (int i = 0; i < original.length; i++) {
+				if (original[i] != null && original[i].n != 0)
 					end = i;
 			}
 
-			MaAnim[] fixed = new MaAnim[end+1];
+			MaAnim[] fixed = new MaAnim[end + 1];
 
 			System.arraycopy(original, 0, fixed, 0, end + 1);
 
@@ -107,6 +111,11 @@ public class AnimUD extends AnimU<AnimUD.DefImgLoader> {
 
 	public AnimUD(String path, String name, String edi, String uni) {
 		super(path + name, new DefImgLoader(path, name, edi, uni));
+		this.name = name;
 	}
 
+	@Override
+	public String toString() {
+		return name;
+	}
 }

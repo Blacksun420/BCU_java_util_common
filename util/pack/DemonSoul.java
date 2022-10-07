@@ -5,25 +5,24 @@ import common.pack.IndexContainer;
 import common.pack.PackData;
 import common.system.VImg;
 import common.system.fake.FakeImage;
+import common.util.Data;
 import common.util.anim.*;
 
 @IndexContainer.IndexCont(PackData.class)
-public class DemonSoul extends AnimD<DemonSoul, DemonSoul.DemonSoulType> implements IndexContainer.Indexable<PackData, DemonSoul> {
-    public enum DemonSoulType implements AnimI.AnimType<DemonSoul, DemonSoulType> {
-        DEF
-    }
+public class DemonSoul extends AbSoul implements IndexContainer.Indexable<PackData, DemonSoul> {
 
     private final Identifier<DemonSoul> id;
-    private final VImg img;
-    private final boolean rev;
-    private final String name;
+    boolean e;
 
-    public DemonSoul(String st, int i, boolean rev, String name) {
-        super(st);
-        img = new VImg(str + ".png");
-        id = Identifier.parseInt(i, DemonSoul.class);
-        this.rev = rev;
-        this.name = name;
+    public DemonSoul(int id, AnimU<?> animS, boolean enemy) {
+        super(animS);
+        this.id = new Identifier<>(Identifier.DEF, DemonSoul.class, id);
+        e = enemy;
+
+        if (!enemy) {
+            anim.partial();
+            anim.revert();
+        }
     }
 
     @Override
@@ -32,24 +31,7 @@ public class DemonSoul extends AnimD<DemonSoul, DemonSoul.DemonSoulType> impleme
     }
 
     @Override
-    public FakeImage getNum() {
-        return img.getImg();
-    }
-
-    @Override
-    public void load() {
-        loaded = true;
-        imgcut = ImgCut.newIns(str + ".imgcut");
-        mamodel = MaModel.newIns(str + ".mamodel");
-        anims = new MaAnim[] { MaAnim.newIns(str + ".maanim") };
-        types = DemonSoulType.values();
-        parts = imgcut.cut(img.getImg());
-        if(rev)
-            revert();
-    }
-
-    @Override
     public String toString() {
-        return name;
+        return (e ? "enemy " : "") + "demonsoul " + id;
     }
 }

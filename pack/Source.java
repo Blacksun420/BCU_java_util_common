@@ -31,6 +31,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 public abstract class Source {
 
@@ -52,6 +53,12 @@ public abstract class Source {
 		VImg getUni();
 	}
 
+	public interface SourceLoader {
+
+		FileData loadFile(BasePath base, ResourceLocation id, String str);
+
+	}
+
 	@JsonClass
 	public static class ResourceLocation {
 
@@ -59,6 +66,8 @@ public abstract class Source {
 
 		@JsonField
 		public String pack, id;
+
+		public BasePath base;
 
 		@JsonClass.JCConstructor
 		public ResourceLocation() {
@@ -70,16 +79,26 @@ public abstract class Source {
 			this.id = id;
 		}
 
+		public ResourceLocation(String pack, String id, BasePath base) {
+			this.pack = pack;
+			this.id = id;
+			this.base = base;
+		}
+
+		public void setBase(BasePath b) {
+			base = b;
+		}
+
 		@JsonClass.JCGetter
 		public AnimCI getAnim() {
 			if (pack.equals(LOCAL))
 				return AnimCE.map().get(id);
 
-			return UserProfile.getUserPack(pack).source.loadAnimation(id);
+			return UserProfile.getUserPack(pack).source.loadAnimation(id, base);
 		}
 
-		public String getPath(String type) {
-			return "./" + pack + "/" + type + "/" + id;
+		public String getPath() {
+			return "./" + pack + "/" + base + "/" + id;
 		}
 
 		@JsonClass.JCGetter
@@ -87,7 +106,7 @@ public abstract class Source {
 			if (pack.equals(LOCAL))
 				return Replay.getMap().get(id);
 			Source s = UserProfile.getUserPack(pack).source;
-			String path = "./" + REPLAY + "/" + id + ".replay";
+			String path = "./" + BasePath.REPLAY.toString() + "/" + id + ".replay";
 			return Data.err(() -> Replay.read(s.getFileData(path).getStream()));
 		}
 
@@ -100,7 +119,7 @@ public abstract class Source {
 		public void onInjectSource() {
 			Object zip = UserProfile.getStatic(UserProfile.CURRENT_PACK, () -> null);
 
-			if(this.pack.equals(LOCAL) && zip instanceof ZipSource) {
+			if (this.pack.equals(LOCAL) && zip instanceof ZipSource) {
 				this.pack = ((ZipSource) zip).id;
 				this.id = "_mapped_" + this.id;
 			}
@@ -111,31 +130,33 @@ public abstract class Source {
 	@StaticPermitted
 	public static class SourceAnimLoader implements Source.AnimLoader {
 
-		public interface SourceLoader {
-
-			FileData loadFile(ResourceLocation id, String str);
-
-		}
-
 		public static final String IC = "imgcut.txt";
 		public static final String MM = "mamodel.txt";
-		public static final String[] MA = { "maanim_walk.txt", "maanim_idle.txt", "maanim_attack.txt", "maanim_kb.txt",
+		public static final String[] MA_ENTITY = { "maanim_walk.txt", "maanim_idle.txt", "maanim_attack.txt", "maanim_kb.txt",
 				"maanim_burrow_down.txt", "maanim_burrow_move.txt", "maanim_burrow_up.txt" };
+		public static final String[] MA_SOUL = { "maanim_soul.txt" };
 		public static final String SP = "sprite.png";
 		public static final String EDI = "icon_display.png";
 		public static final String UNI = "icon_deploy.png";
 
 		private final ResourceLocation id;
-		private final SourceLoader loader;
+		private final Source.SourceLoader loader;
 
-		public SourceAnimLoader(ResourceLocation id, SourceLoader loader) {
+		public SourceAnimLoader(ResourceLocation id, Source.SourceLoader loader) {
 			this.id = id;
 			this.loader = loader == null ? Workspace::loadAnimFile : loader;
 		}
 
+		private String[] getBaseMA() {
+			if (id.base.equals(BasePath.ANIM))
+				return MA_ENTITY;
+			else
+				return MA_SOUL;
+		}
+
 		@Override
 		public VImg getEdi() {
-			FileData edi = loader.loadFile(id, EDI);
+			FileData edi = loader.loadFile(id.base, id, EDI);
 			if (edi == null)
 				return null;
 			return new VImg(FakeImage.read(edi));
@@ -143,20 +164,20 @@ public abstract class Source {
 
 		@Override
 		public ImgCut getIC() {
-			return ImgCut.newIns(loader.loadFile(id, IC));
+			return ImgCut.newIns(loader.loadFile(id.base, id, IC));
 		}
 
 		@Override
 		public MaAnim[] getMA() {
-			MaAnim[] ans = new MaAnim[MA.length];
-			for (int i = 0; i < MA.length; i++)
-				ans[i] = MaAnim.newIns(loader.loadFile(id, MA[i]));
+			MaAnim[] ans = new MaAnim[getBaseMA().length];
+			for (int i = 0; i < getBaseMA().length; i++)
+				ans[i] = MaAnim.newIns(loader.loadFile(id.base, id, getBaseMA()[i]));
 			return ans;
 		}
 
 		@Override
 		public MaModel getMM() {
-			return MaModel.newIns(loader.loadFile(id, MM));
+			return MaModel.newIns(loader.loadFile(id.base, id, MM));
 		}
 
 		@Override
@@ -166,7 +187,7 @@ public abstract class Source {
 
 		@Override
 		public FakeImage getNum() {
-			return FakeImage.read(loader.loadFile(id, SP));
+			return FakeImage.read(loader.loadFile(id.base, id, SP));
 		}
 
 		@Override
@@ -176,7 +197,7 @@ public abstract class Source {
 
 		@Override
 		public VImg getUni() {
-			FileData uni = loader.loadFile(id, UNI);
+			FileData uni = loader.loadFile(id.base, id, UNI);
 			if (uni == null)
 				return null;
 			return new VImg(FakeImage.read(uni));
@@ -203,7 +224,7 @@ public abstract class Source {
 				anim.unload();
 
 			CommonStatic.ctx.noticeErr(
-					() -> Context.delete(CommonStatic.ctx.getWorkspaceFile("./" + id.pack + "/animations/" + id.id)),
+					() -> Context.delete(CommonStatic.ctx.getWorkspaceFile("./" + id.pack + "/" + id.base + "/" + id.id)),
 					ErrType.ERROR, "failed to delete animation: " + id);
 		}
 
@@ -216,20 +237,20 @@ public abstract class Source {
 			try {
 				write("imgcut.txt", anim.imgcut::write);
 				write("mamodel.txt", anim.mamodel::write);
-				write("maanim_walk.txt", anim.anims[0]::write);
-				write("maanim_idle.txt", anim.anims[1]::write);
-				write("maanim_attack.txt", anim.anims[2]::write);
-				write("maanim_kb.txt", anim.anims[3]::write);
-				write("maanim_burrow_down.txt", anim.anims[4]::write);
-				write("maanim_burrow_move.txt", anim.anims[5]::write);
-				write("maanim_burrow_up.txt", anim.anims[6]::write);
+				if (id.base.equals(BasePath.ANIM)) {
+					for (int i = 0; i < SourceAnimLoader.MA_ENTITY.length; i++) {
+						write(SourceAnimLoader.MA_ENTITY[i], anim.anims[i]::write);
+					}
+				} else {
+					write(SourceAnimLoader.MA_SOUL[0], anim.anims[0]::write);
+				}
 			} catch (IOException e) {
 				CommonStatic.ctx.noticeErr(e, ErrType.ERROR, "Error during saving animation data: " + anim);
 			}
 		}
 
 		public void saveIconDeploy() {
-			if (anim.getUni() != null)
+			if (anim.getUni() != null && !id.base.equals(BasePath.SOUL))
 				CommonStatic.ctx.noticeErr(() -> write("icon_deploy.png", anim.getUni().getImg()), ErrType.ERROR,
 						"Error during saving deploy icon: " + id);
 		}
@@ -252,7 +273,7 @@ public abstract class Source {
 		}
 
 		private void write(String type, Consumer<PrintStream> con) throws IOException {
-			File f = CommonStatic.ctx.getWorkspaceFile("./" + id.pack + "/animations/" + id.id + "/" + type);
+			File f = CommonStatic.ctx.getWorkspaceFile("./" + id.pack + "/" + id.base + "/" + id.id + "/" + type);
 			Context.check(f);
 			PrintStream ps = new PrintStream(f, StandardCharsets.UTF_8.toString());
 			con.accept(ps);
@@ -260,7 +281,7 @@ public abstract class Source {
 		}
 
 		private void write(String type, FakeImage img) throws IOException {
-			File f = CommonStatic.ctx.getWorkspaceFile("./" + id.pack + "/animations/" + id.id + "/" + type);
+			File f = CommonStatic.ctx.getWorkspaceFile("./" + id.pack + "/" + id.base + "/" + id.id + "/" + type);
 			Context.check(f);
 			Context.check(FakeImage.write(img, "PNG", f), "save", f);
 		}
@@ -269,30 +290,39 @@ public abstract class Source {
 
 	public static class Workspace extends Source {
 
-		public static List<AnimCE> loadAnimations(String id) {
+		public static void loadAnimations(String id) {
 			if (id == null)
 				id = ResourceLocation.LOCAL;
-			File folder = CommonStatic.ctx.getWorkspaceFile("./" + id + "/" + ANIM + "/");
-			List<AnimCE> list = new ArrayList<>();
-			if (!folder.exists() || !folder.isDirectory())
-				return list;
-			File[] files = folder.listFiles();
-			Arrays.sort(files);
-			for (File f : files) {
-				String path = "./" + id + "/" + ANIM + "/" + f.getName() + "/sprite.png";
+			File animFolder = CommonStatic.ctx.getWorkspaceFile("./" + id + "/" + BasePath.ANIM + "/");
+			File soulFolder = CommonStatic.ctx.getWorkspaceFile("./" + id + "/" + BasePath.SOUL + "/");
+			if (animFolder.exists() && animFolder.isDirectory()) {
+				File[] animFiles = animFolder.listFiles();
+				Arrays.sort(animFiles);
+				for (File f : animFiles) {
+					String path = "./" + id + "/" + BasePath.ANIM + "/" + f.getName() + "/sprite.png";
 
-				if (AnimCE.map().containsKey(f.getName()))
-					list.add(AnimCE.map().get(f.getName()));
-				else
 					if (f.isDirectory() && CommonStatic.ctx.getWorkspaceFile(path).exists()) {
-						AnimCE anim = new AnimCE(new ResourceLocation(id, f.getName()));
-
-						list.add(anim);
+						ResourceLocation rl = new ResourceLocation(id, f.getName(), Source.BasePath.ANIM);
+						AnimCE anim = new AnimCE(rl);
 
 						AnimCE.map().put(f.getName(), anim);
 					}
+				}
 			}
-			return list;
+			if (soulFolder.exists() && soulFolder.isDirectory()) {
+				File[] soulFiles = soulFolder.listFiles();
+				Arrays.sort(soulFiles);
+				for (File f : soulFiles) {
+					String path = "./" + id + "/" + BasePath.SOUL + "/" + f.getName() + "/sprite.png";
+
+					if (f.isDirectory() && CommonStatic.ctx.getWorkspaceFile(path).exists()) {
+						ResourceLocation rl = new ResourceLocation(id, f.getName(), BasePath.SOUL);
+						AnimCE anim = new AnimCE(rl);
+
+						AnimCE.map().put(f.getName(), anim);
+					}
+				}
+			}
 		}
 
 		public static void autoSave() {
@@ -314,10 +344,10 @@ public abstract class Source {
 							"failed to save pack " + up.desc.names.toString());
 		}
 
-		public static void validate(String folder, ResourceLocation rl) {
+		public static void validate(ResourceLocation rl) {
 			String id = rl.id;
 			int num = 0;
-			while (CommonStatic.ctx.getWorkspaceFile("./" + rl.pack + "/" + folder + "/" + rl.id).exists())
+			while (CommonStatic.ctx.getWorkspaceFile("./" + rl.pack + "/" + rl.base + "/" + rl.id).exists())
 				rl.id = id + "_" + (num++);
 		}
 
@@ -344,7 +374,7 @@ public abstract class Source {
 
 			StringBuilder result = new StringBuilder();
 
-			while(result.length() < 8) {
+			while (result.length() < 8) {
 				char ch = format.charAt((int) (random.nextFloat() * format.length()));
 
 				result.append(ch);
@@ -353,8 +383,8 @@ public abstract class Source {
 			return result.toString();
 		}
 
-		private static FileData loadAnimFile(ResourceLocation id, String str) {
-			String path = "./" + id.pack + "/" + ANIM + "/" + id.id + "/" + str;
+		private static FileData loadAnimFile(BasePath base, ResourceLocation id, String str) {
+			String path = "./" + id.pack + "/" + base.toString() + "/" + id.id + "/" + str;
 			File f = CommonStatic.ctx.getWorkspaceFile(path);
 			if (!f.exists())
 				return null;
@@ -387,7 +417,7 @@ public abstract class Source {
 						anim.id.id = anim.id.id.replaceAll("^_mapped_", "");
 					}
 
-					new SourceAnimSaver(new ResourceLocation(pack.getSID(), "_mapped_"+anim.id.id), anim).saveAll();
+					new SourceAnimSaver(new ResourceLocation(pack.getSID(), "_mapped_"+anim.id.id, anim.id.base), anim).saveAll();
 
 					anim.id.pack = pack.getSID();
 					anim.id.id = "_mapped_"+anim.id.id;
@@ -406,7 +436,7 @@ public abstract class Source {
 							anim.id.id = anim.id.id.replaceAll("^_mapped_", "");
 						}
 
-						new SourceAnimSaver(new ResourceLocation(pack.getSID(), "_mapped_"+anim.id.id), anim).saveAll();
+						new SourceAnimSaver(new ResourceLocation(pack.getSID(), "_mapped_"+anim.id.id, anim.id.base), anim).saveAll();
 
 						anim.id.pack = pack.getSID();
 						anim.id.id = "_mapped_"+anim.id.id;
@@ -431,7 +461,7 @@ public abstract class Source {
 
 			PackData.PackDesc desc = pack.desc.clone();
 
-			if(parentPassword != null) {
+			if (parentPassword != null) {
 				desc.parentPassword = PackLoader.getMD5(parentPassword.getBytes(StandardCharsets.UTF_8), 16);
 			} else {
 				desc.parentPassword = null;
@@ -447,15 +477,15 @@ public abstract class Source {
 		}
 
 		public File getBGFile(Identifier<Background> id) {
-			return getFile("./" + BG + "/" + Data.trio(id.id) + ".png");
+			return getFile("./" + BasePath.BG.toString() + "/" + Data.trio(id.id) + ".png");
 		}
 
 		public File getCasFile(Identifier<CastleImg> id) {
-			return getFile("./" + CASTLE + "/" + Data.trio(id.id) + ".png");
+			return getFile("./" + BasePath.CASTLE + "/" + Data.trio(id.id) + ".png");
 		}
 
 		public File getTraitIconFile(Identifier<Trait> id) {
-			return getFile("./" + TRAITICON + "/" + Data.trio(id.id) + ".png");
+			return getFile("./" + BasePath.TRAIT + "/" + Data.trio(id.id) + ".png");
 		}
 
 		@Override
@@ -469,8 +499,8 @@ public abstract class Source {
 		}
 
 		@Override
-		public AnimCE loadAnimation(String name) {
-			return new AnimCE(new ResourceLocation(id, name));
+		public AnimCE loadAnimation(String name, BasePath base) {
+			return new AnimCE(new ResourceLocation(id, name, base));
 		}
 
 		@Override
@@ -549,8 +579,8 @@ public abstract class Source {
 		}
 
 		@Override
-		public AnimCI loadAnimation(String name) {
-			return new AnimCI(new SourceAnimLoader(new ResourceLocation(id, name), this::loadAnimationFile));
+		public AnimCI loadAnimation(String name, BasePath base) {
+			return new AnimCI(new SourceAnimLoader(new ResourceLocation(id, name, base), this::loadAnimationFile));
 		}
 
 		@Override
@@ -578,9 +608,9 @@ public abstract class Source {
 					return null;
 				Context.delete(f);
 			}
-			if(!folder.exists())
+			if (!folder.exists())
 				Context.check(folder.mkdirs(), "create", folder);
-			if(!f.exists())
+			if (!f.exists())
 				Context.check(f.createNewFile(), "create", f);
 			Workspace ans = new Workspace(id);
 			zip.unzip(id -> {
@@ -591,19 +621,33 @@ public abstract class Source {
 			return ans;
 		}
 
-		private FileData loadAnimationFile(ResourceLocation id, String path) {
-			VFile vf = zip.tree.find("./" + ANIM + "/" + id.id + "/" + path);
+		private FileData loadAnimationFile(BasePath base, ResourceLocation id, String path) {
+			VFile vf = zip.tree.find("./" + base.toString() + "/" + id.id + "/" + path);
 			return vf == null ? null : vf.getData();
 		}
 
 	}
 
-	public static final String ANIM = "animations";
-	public static final String BG = "backgrounds";
-	public static final String CASTLE = "castles";
-	public static final String MUSIC = "musics";
-	public static final String REPLAY = "replays";
-	public static final String TRAITICON = "traitIcons";
+	public static enum BasePath {
+		ANIM("animations"),
+		BG("backgrounds"),
+		CASTLE("castles"),
+		MUSIC("musics"),
+		REPLAY("replays"),
+		SOUL("souls"),
+		TRAIT("traitIcons");
+
+		private final String path;
+
+		BasePath(String str) {
+			path = str;
+		}
+
+		public String toString() {
+			return path;
+		}
+
+	}
 
 	public final String id;
 
@@ -617,11 +661,12 @@ public abstract class Source {
 
 	public abstract String[] listFile(String path);
 
-	public abstract AnimCI loadAnimation(String name);
+	public abstract AnimCI loadAnimation(String name, BasePath base);
 
 	/**
 	 * read images from file. Use it
 	 */
+	//TODO: might be able to use BasePath for path
 	public abstract VImg readImage(String path, int ind);
 
 	/**
