@@ -1624,9 +1624,8 @@ public abstract class Entity extends AbEntity {
 			}
 		}
 
-		if (!barrierContinue) {
+		if (!barrierContinue)
 			return;
-		}
 
 		//75.0 is guessed value compared from BC
 		if (atk.getProc().CRIT.mult > 0) {
