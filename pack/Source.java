@@ -29,9 +29,11 @@ import common.util.unit.Unit;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Random;
 import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 public abstract class Source {
 
@@ -82,7 +84,7 @@ public abstract class Source {
 		public ResourceLocation(String pack, String id, BasePath base) {
 			this.pack = pack;
 			this.id = id;
-			this.base = base;
+			this.base = base == null ? BasePath.ANIM : base;
 		}
 
 		public void setBase(BasePath b) {
@@ -106,7 +108,7 @@ public abstract class Source {
 			if (pack.equals(LOCAL))
 				return Replay.getMap().get(id);
 			Source s = UserProfile.getUserPack(pack).source;
-			String path = "./" + BasePath.REPLAY.toString() + "/" + id + ".replay";
+			String path = "./" + BasePath.REPLAY + "/" + id + ".replay";
 			return Data.err(() -> Replay.read(s.getFileData(path).getStream()));
 		}
 
@@ -384,7 +386,7 @@ public abstract class Source {
 		}
 
 		private static FileData loadAnimFile(BasePath base, ResourceLocation id, String str) {
-			String path = "./" + id.pack + "/" + base.toString() + "/" + id.id + "/" + str;
+			String path = "./" + id.pack + "/" + (base == null ? BasePath.ANIM : base.toString()) + "/" + id.id + "/" + str;
 			File f = CommonStatic.ctx.getWorkspaceFile(path);
 			if (!f.exists())
 				return null;
@@ -477,7 +479,7 @@ public abstract class Source {
 		}
 
 		public File getBGFile(Identifier<Background> id) {
-			return getFile("./" + BasePath.BG.toString() + "/" + Data.trio(id.id) + ".png");
+			return getFile("./" + BasePath.BG + "/" + Data.trio(id.id) + ".png");
 		}
 
 		public File getCasFile(Identifier<CastleImg> id) {
@@ -594,7 +596,7 @@ public abstract class Source {
 		}
 
 		@Override
-		public InputStream streamFile(String path) throws Exception {
+		public InputStream streamFile(String path) {
 			return zip.readFile(path);
 		}
 

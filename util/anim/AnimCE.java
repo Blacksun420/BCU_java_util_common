@@ -393,7 +393,7 @@ public class AnimCE extends AnimCI {
 			anims = new MaAnim[] { ori.anims.length > 0 ? ori.anims[0].clone() : new MaAnim() };
 		}
 		loader.setNum(ori.getNum().cloneImage());
-		types = isAnim ? AnimU.TYPE7 : AnimU.SOUL;
+		types = isAnim ? AnimU.TYPE8 : AnimU.SOUL;
 		parts = imgcut.cut(ori.getNum());
 		if (ori instanceof AnimU<?>) {
 			AnimU<?> au = (AnimU<?>) ori;
