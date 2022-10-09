@@ -49,10 +49,10 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		e = ent;
 		data = e.data;
 		int[][] raw = data.rawAtkData();
-		atks = new int[raw.length + 5];
-		abis = new int[raw.length + 5];
-		act = new int[raw.length + 5];
-		acs = new BattleObj[raw.length + 5];
+		atks = new int[raw.length + data.getSpAtks().length];
+		abis = new int[atks.length];
+		act = new int[atks.length];
+		acs = new BattleObj[atks.length];
 		for (int i = 0; i < raw.length; i++) {
 			atks[i] = (int) (Math.round(raw[i][0] * d0) * d1);
 			atks[i] = atks[i];
@@ -61,12 +61,8 @@ public abstract class AtkModelEntity extends AtkModelAb {
 			acs[i] = new BattleObj();
 		}
 		setExtraAtks(raw, d0);
-		sealed = new Proc[data.getAtkCount()];
-		for (int i = 0; i < sealed.length; i++) {
-			sealed[i] = Proc.blank();
-			if (data.getAtkModel(i).getProc() != null)
-				sealed[i].MOVEWAVE.set(data.getAtkModel(i).getProc().MOVEWAVE);
-		}
+		sealed = new Proc[atks.length];
+		setSealed();
 	}
 
 	protected AtkModelEntity(Entity ent, double d0, double d1, PCoin pc, Level lv) {
@@ -74,10 +70,10 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		e = ent;
 		data = e.data;
 		int[][] raw = data.rawAtkData();
-		atks = new int[raw.length + 5];
-		abis = new int[raw.length + 5];
-		act = new int[raw.length + 5];
-		acs = new BattleObj[raw.length + 5];
+		atks = new int[raw.length + data.getSpAtks().length];
+		abis = new int[atks.length];
+		act = new int[atks.length];
+		acs = new BattleObj[atks.length];
 		for (int i = 0; i < raw.length; i++) {
 			atks[i] = (int) (Math.round(raw[i][0] * d1) * d0);
 
@@ -90,41 +86,25 @@ public abstract class AtkModelEntity extends AtkModelAb {
 			acs[i] = new BattleObj();
 		}
 		setExtraAtks(raw, d0);
-		sealed = new Proc[data.getAtkCount()];
-		for (int i = 0; i < sealed.length; i++) {
-			sealed[i] = Proc.blank();
-			if(data.getAtkModel(i).getProc() != null)
-				sealed[i].MOVEWAVE.set(data.getAtkModel(i).getProc().MOVEWAVE);
-		}
+		sealed = new Proc[atks.length];
+		setSealed();
 	}
 
 	public void setExtraAtks(int[][] raw, double d0) {
-		for(int i = 0; i <= 4; i++) {
-			AtkDataModel model;
-
-			switch (i) {
-				case 0:
-					model = data.getRevenge();
-					break;
-				case 1:
-					model = data.getResurrection();
-					break;
-				case 2:
-					model = data.getGouge();
-					break;
-				case 3:
-					model = data.getResurface();
-					break;
-				default:
-					model = data.getRevive();
-			}
-
-			if(model != null) {
-				atks[raw.length + i] = (int) (model.atk * d0);
+		for(int i = 0; i < data.getSpAtks().length; i++)
+			if(data.getSpAtks()[i] != null) {
+				atks[raw.length + i] = (int) (data.getSpAtks()[i].atk * d0);
 				abis[raw.length + i] = 1;
 				acs[raw.length + i] = new BattleObj();
-				act[raw.length + i] = model.loopCount();
+				act[raw.length + i] = data.getSpAtks()[i].loopCount();
 			}
+	}
+
+	public void setSealed() {
+		for (int i = 0; i < sealed.length; i++) {
+			sealed[i] = Proc.blank();
+			if (data.getAtkModel(i) != null && data.getAtkModel(i).getProc() != null)
+				sealed[i].MOVEWAVE.set(data.getAtkModel(i).getProc().MOVEWAVE);
 		}
 	}
 

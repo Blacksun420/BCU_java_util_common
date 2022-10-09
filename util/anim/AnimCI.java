@@ -49,6 +49,11 @@ public class AnimCI extends AnimU<AnimCI.AnimCIKeeper> {
 			return loader.getMM();
 		}
 
+		@Override
+		public Source.BasePath getBasePath() {
+			return loader.getName().base;
+		}
+
 		public ResourceLocation getName() {
 			return loader.getName();
 		}

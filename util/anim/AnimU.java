@@ -1,6 +1,7 @@
 package common.util.anim;
 
 import common.io.assets.Admin.StaticPermitted;
+import common.pack.Source.BasePath;
 import common.system.VImg;
 import common.system.fake.FakeImage;
 
@@ -19,6 +20,8 @@ public abstract class AnimU<T extends AnimU.ImageKeeper> extends AnimD<AnimU<?>,
 		MaAnim[] getMA();
 
 		MaModel getMM();
+
+		BasePath getBasePath();
 
 		FakeImage getNum();
 
@@ -122,7 +125,7 @@ public abstract class AnimU<T extends AnimU.ImageKeeper> extends AnimD<AnimU<?>,
 			imgcut = loader.getIC();
 			mamodel = loader.getMM();
 			anims = loader.getMA();
-			types = anims.length == 1 ? SOUL : anims.length == 4 ? TYPE4 : anims.length == 5 ? TYPE5 : TYPE7;
+			types = loader.getBasePath() == BasePath.SOUL ? SOUL : anims.length == 4 ? TYPE4 : anims.length == 5 ? TYPE5 : anims.length == 7 ? TYPE7 : TYPE8;
 		}
 	}
 

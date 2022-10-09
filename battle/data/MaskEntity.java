@@ -36,7 +36,7 @@ public interface MaskEntity extends BattleStatic {
 	MaskAtk[] getAtks();
 
 	default AtkDataModel[] getSpAtks() {
-		return null;
+		return new AtkDataModel[0];
 	}
 
 	Identifier<Soul> getDeathAnim();
@@ -86,6 +86,10 @@ public interface MaskEntity extends BattleStatic {
 	}
 
 	default AtkDataModel getRevive() {
+		return null;
+	}
+
+	default AtkDataModel getEntry() {
 		return null;
 	}
 

@@ -1,6 +1,7 @@
 package common.util.anim;
 
 import common.CommonStatic;
+import common.pack.Source.BasePath;
 import common.system.VImg;
 import common.system.fake.FakeImage;
 import common.system.fake.FakeImage.Marker;
@@ -65,6 +66,13 @@ public class AnimUD extends AnimU<AnimUD.DefImgLoader> {
 		@Override
 		public MaModel getMM() {
 			return MaModel.newIns(spath + ".mamodel");
+		}
+
+		@Override
+		public BasePath getBasePath() {
+			if (getMA().length == 1)
+				return BasePath.SOUL;
+			return BasePath.ANIM;
 		}
 
 		@Override

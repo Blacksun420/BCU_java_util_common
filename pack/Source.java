@@ -135,7 +135,7 @@ public abstract class Source {
 		public static final String IC = "imgcut.txt";
 		public static final String MM = "mamodel.txt";
 		public static final String[] MA_ENTITY = { "maanim_walk.txt", "maanim_idle.txt", "maanim_attack.txt", "maanim_kb.txt",
-				"maanim_burrow_down.txt", "maanim_burrow_move.txt", "maanim_burrow_up.txt" };
+				"maanim_burrow_down.txt", "maanim_burrow_move.txt", "maanim_burrow_up.txt", "maanim_entry.txt" };
 		public static final String[] MA_SOUL = { "maanim_soul.txt" };
 		public static final String SP = "sprite.png";
 		public static final String EDI = "icon_display.png";

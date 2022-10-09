@@ -88,7 +88,6 @@ public abstract class BackgroundEffect {
 
             for (Integer id : jsonList) {
                 asset.bgEffects.add(new JsonBGEffect(id));
-
                 UserProfile.getBCData().bgs.getRaw(id).effect = currentSize;
 
                 currentSize++;

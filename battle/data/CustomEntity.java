@@ -15,7 +15,7 @@ import java.util.List;
 public abstract class CustomEntity extends DataEntity {
 
 	@JsonField(gen = GenType.GEN)
-	public AtkDataModel rep, rev, res, cntr, bur, resu, revi;
+	public AtkDataModel rep, rev, res, cntr, bur, resu, revi, entr;
 
 	@JsonField(gen = GenType.GEN, usePool = true)
 	public AtkDataModel[] atks;
@@ -80,20 +80,11 @@ public abstract class CustomEntity extends DataEntity {
 
 	@Override
 	public MaskAtk getAtkModel(int ind) {
-		if (ind < atks.length)
-			return atks[ind];
-		if (ind == atks.length)
-			return rev;
-		if (ind == atks.length + 1)
-			return res;
-		if (ind == atks.length + 2)
-			return bur;
-		if (ind == atks.length + 3)
-			return resu;
-		if (ind == atks.length + 4)
-			return revi;
-
-		return null;
+		if (ind >= atks.length)
+			for (int i = 0; i < getSpAtks().length; i++)
+				if (i + atks.length == ind)
+					return getSpAtks()[i];
+		return atks[ind];
 	}
 
 	@Override
@@ -103,7 +94,7 @@ public abstract class CustomEntity extends DataEntity {
 
 	@Override
 	public AtkDataModel[] getSpAtks() {
-		return new AtkDataModel[]{rev, res, bur, resu, revi};
+		return new AtkDataModel[]{rev, res, bur, resu, revi, entr};
 	}
 
 	public String getAvailable(String str) {
@@ -168,6 +159,11 @@ public abstract class CustomEntity extends DataEntity {
 	}
 
 	@Override
+	public AtkDataModel getEntry() {
+		return entr;
+	}
+
+	@Override
 	public int getTBA() {
 		return tba;
 	}
@@ -219,16 +215,10 @@ public abstract class CustomEntity extends DataEntity {
 		boolean ans = false;
 		for (AtkDataModel adm : atks)
 			ans |= adm.isLD();
-		if(getRevenge() != null)
-			ans |= getRevenge().isLD();
-		if(getResurrection() != null)
-			ans |= getResurrection().isLD();
-		if(getGouge() != null)
-			ans |= getGouge().isLD();
-		if(getResurface() != null)
-			ans |= getResurface().isLD();
-		if(getRevive() != null)
-			ans |= getRevive().isLD();
+		for (AtkDataModel adm : getSpAtks())
+			if (adm != null)
+				ans |= adm.isLD();
+
 		return ans;
 	}
 
@@ -239,16 +229,11 @@ public abstract class CustomEntity extends DataEntity {
 	 */
 	@Override
 	public boolean isLD(int ind) {
-		if (ind == atks.length)
-			return rev.isLD();
-		if (ind == atks.length + 1)
-			return res.isLD();
-		if (ind == atks.length + 2)
-			return bur.isLD();
-		if (ind == atks.length + 3)
-			return resu.isLD();
-		if (ind == atks.length + 4)
-			return revi.isLD();
+		if (ind >= atks.length)
+			for (int i = 0; i < getSpAtks().length; i++)
+				if (i + atks.length == ind)
+					return getSpAtks()[i].isLD();
+
 		return atks[ind].isLD();
 	}
 
@@ -257,16 +242,10 @@ public abstract class CustomEntity extends DataEntity {
 		boolean ans = false;
 		for (AtkDataModel adm : atks)
 			ans |= adm.isOmni();
-		if(getRevenge() != null)
-			ans |= getRevenge().isOmni();
-		if(getResurrection() != null)
-			ans |= getResurrection().isOmni();
-		if(getGouge() != null)
-			ans |= getGouge().isOmni();
-		if(getResurface() != null)
-			ans |= getResurface().isOmni();
-		if(getRevive() != null)
-			ans |= getRevive().isOmni();
+		for (AtkDataModel adm : getSpAtks())
+			if (adm != null)
+				ans |= adm.isOmni();
+
 		return ans;
 	}
 
@@ -277,16 +256,10 @@ public abstract class CustomEntity extends DataEntity {
 	 */
 	@Override
 	public boolean isOmni(int ind) {
-		if (ind == atks.length)
-			return rev.isOmni();
-		if (ind == atks.length + 1)
-			return res.isOmni();
-		if (ind == atks.length + 2)
-			return bur.isOmni();
-		if (ind == atks.length + 3)
-			return resu.isOmni();
-		if (ind == atks.length + 4)
-			return revi.isOmni();
+		if (ind >= atks.length)
+			for (int i = 0; i < getSpAtks().length; i++)
+				if (i + atks.length == ind)
+					return getSpAtks()[i].isOmni();
 
 		return atks[ind].isOmni();
 	}

@@ -17,18 +17,15 @@ import common.util.BattleObj;
 import common.util.Data;
 import common.util.Data.Proc.POISON;
 import common.util.Data.Proc.REVIVE;
-import common.util.anim.*;
 import common.util.anim.AnimU.UType;
 import common.util.anim.EAnimD;
+import common.util.anim.EAnimI;
 import common.util.anim.EAnimU;
-import common.util.pack.AbSoul;
-import common.util.pack.DemonSoul;
 import common.util.pack.EffAnim;
 import common.util.pack.EffAnim.*;
 import common.util.pack.Soul;
-import common.util.unit.Trait;
 import common.util.unit.Level;
-import io.BCMusic;
+import common.util.unit.Trait;
 
 import java.util.*;
 
@@ -2221,7 +2218,8 @@ public abstract class Entity extends AbEntity {
 					anim.setAnim(UType.WALK, true);
 				updateMove(-1, 0);
 			}
-		}
+		} else if (anim.anim.type == UType.ENTER && data.getEntry() != null && anim.anim.f == data.getEntry().pre)
+			basis.getAttack(aam.getAttack(data.getAtkCount() + 5));
 
 		// update revive status, mark acted
 		zx.updateRevive();

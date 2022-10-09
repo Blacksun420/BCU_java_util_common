@@ -93,7 +93,7 @@ public class AnimCE extends AnimCI {
 		imgcut = new ImgCut();
 		mamodel = new MaModel();
 		if (loader.getName().base.equals(Source.BasePath.ANIM))
-			anims = new MaAnim[7];
+			anims = new MaAnim[8];
 		else
 			anims = new MaAnim[1];
 		for (int i = 0; i < anims.length; i++)
@@ -383,8 +383,8 @@ public class AnimCE extends AnimCI {
 		if (mamodel.confs.length < 1)
 			mamodel.confs = new int[2][6];
 		if (isAnim) {
-			anims = new MaAnim[7];
-			for (int i = 0; i < 7; i++)
+			anims = new MaAnim[8];
+			for (int i = 0; i < 8; i++)
 				if (i < ori.anims.length)
 					anims[i] = ori.anims[i].clone();
 				else
