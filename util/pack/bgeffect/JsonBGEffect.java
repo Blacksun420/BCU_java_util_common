@@ -70,16 +70,19 @@ public class JsonBGEffect extends BackgroundEffect {
 
     @Override
     public void preDraw(FakeGraphics g, P rect, double siz, double midH) {
-        for(int i = 0; i < handlers.size(); i++) {
-            handlers.get(i).preDraw(g, rect, siz);
-        }
+        for(int i = 0; i < handlers.size(); i++)
+            handlers.get(i).draw(g, rect, siz, false);
     }
 
     @Override
     public void postDraw(FakeGraphics g, P rect, double siz, double midH) {
-        for(int i = 0; i < handlers.size(); i++) {
-            handlers.get(i).postDraw(g, rect, siz);
-        }
+        for(int i = 0; i < handlers.size(); i++)
+            handlers.get(i).draw(g, rect, siz, true);
+    }
+
+    @Override
+    public void draw(FakeGraphics g, double x, double y, double siz, int groundH, int skyH) {
+        //TODO
     }
 
     @Override

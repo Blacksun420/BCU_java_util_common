@@ -88,6 +88,41 @@ public class RockBGEffect extends BackgroundEffect {
     }
 
     @Override
+    public void draw(FakeGraphics g, double x, double y, double siz, int groundH, int skyH) {
+        FakeTransform at = g.getTransform();
+        for(int i = 0; i < rockPosition.size(); i++) {
+            if(layer.get(i) == 0) {
+                g.setComposite(FakeGraphics.TRANS, opacity.get(i), 0);
+
+                FakeImage img = isRock.get(i) ? rock : segment;
+                double s = size.get(i);
+
+                g.translate(convertP(rockPosition.get(i).x, siz) + (int) x, (int) (rockPosition.get(i).y * siz - y));
+                g.rotate(angle.get(i));
+                g.drawImage(img, 0, 0, img.getWidth() * s * siz, img.getHeight() * s * siz);
+
+                g.setTransform(at);
+            }
+        }
+        g.setComposite(FakeGraphics.DEF, 255, 0);
+        for(int i = 0; i < rockPosition.size(); i++) {
+            if(layer.get(i) == 1) {
+                FakeImage img = isRock.get(i) ? rock : segment;
+                double s = size.get(i);
+
+                g.translate(convertP(rockPosition.get(i).x + (vibrate ? 2 : -2), siz) + (int) x, (int) (rockPosition.get(i).y * siz - y + skyH * siz));
+                g.rotate(angle.get(i));
+                g.drawImage(img, 0, 0, img.getWidth() * s * siz, img.getHeight() * s * siz);
+
+                g.setTransform(at);
+            }
+        }
+
+        g.setTransform(at);
+        g.delete(at);
+    }
+
+    @Override
     public void update(int w, double h, double midH) {
         capture.clear();
 

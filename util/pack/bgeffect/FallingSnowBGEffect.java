@@ -49,6 +49,12 @@ public class FallingSnowBGEffect extends BackgroundEffect {
     }
 
     @Override
+    public void draw(FakeGraphics g, double x, double y, double siz, int groundH, int skyH) {
+        for(int i = 0; i < snowPosition.size(); i++)
+            g.drawImage(snow, convertP(snowPosition.get(i).x, siz) + (int) x, (int) (snowPosition.get(i).y * siz - y + skyH * siz), sw * size.get(i) * siz, this.sh * size.get(i) * siz);
+    }
+
+    @Override
     public void update(int w, double h, double midH) {
         capture.clear();
 

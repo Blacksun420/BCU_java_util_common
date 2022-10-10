@@ -22,6 +22,7 @@ import common.util.anim.AnimI;
 import common.util.anim.EAnimD;
 import common.util.anim.ImgCut;
 
+import java.awt.image.BufferedImage;
 import java.util.Queue;
 
 @IndexCont(PackData.class)
@@ -297,6 +298,37 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 		bg.overlay = overlay;
 		bg.overlayAlpha = overlayAlpha;
 		return bg;
+	}
+
+	public void draw(FakeGraphics g, int w, int h) {
+		check();
+
+		int groundHeight = ((BufferedImage) parts[Background.BG].bimg()).getHeight();
+		int skyHeight = top ? ((BufferedImage) parts[Background.TOP].bimg()).getHeight() : 1020 - groundHeight;
+
+		if(skyHeight < 0)
+			skyHeight = 0;
+
+		double r = h / (double) (groundHeight + skyHeight + 408);
+
+		int fw = (int) (768 * r);
+		int sh = (int) (skyHeight * r);
+		int gh = (int) (groundHeight * r);
+		int skyGround = (int) (204 * r);
+
+		if (top && parts.length > Background.TOP) {
+			for (int i = 0; i * fw < w; i++)
+				g.drawImage(parts[Background.TOP], fw * i, skyGround, fw, sh);
+
+			g.gradRect(0, 0, w, skyGround, 0, 0, cs[0], 0, skyGround, cs[1]);
+		} else {
+			g.gradRect(0, 0, w, sh + skyGround, 0, 0, cs[0], 0, sh + skyGround, cs[1]);
+		}
+
+		for (int i = 0; i * fw < w; i++)
+			g.drawImage(parts[Background.BG], fw * i, sh + skyGround, fw, gh);
+
+		g.gradRect(0, sh + gh + skyGround, w, skyGround, 0, sh + gh + skyGround, cs[2], 0, h, cs[3]);
 	}
 
 	public void draw(FakeGraphics g, P rect, final int pos, final int h, final double siz, final int groundHeight) {

@@ -62,6 +62,22 @@ public class BlizzardBGEffect extends BackgroundEffect {
     }
 
     @Override
+    public void draw(FakeGraphics g, double x, double y, double siz, int groundH, int skyH) {
+        FakeTransform at = g.getTransform();
+
+        for(int i = 0; i < blizzardPosition.size(); i++) {
+            g.translate(convertP(blizzardPosition.get(i).x, siz) + x, blizzardPosition.get(i).y * siz - y + skyH * siz);
+            g.rotate(-angle.get(i));
+
+            g.drawImage(blizzard, 0, 0, (int) (bw * 0.5 * Data.BG_EFFECT_BLIZZARD_SIZE[size.get(i)] * siz), (int) (bh * Data.BG_EFFECT_BLIZZARD_SIZE[size.get(i)] * siz));
+
+            g.setTransform(at);
+        }
+
+        g.delete(at);
+    }
+
+    @Override
     public void update(int w, double h, double midH) {
         capture.clear();
 

@@ -57,6 +57,7 @@ public abstract class AnimU<T extends AnimU.ImageKeeper> extends AnimD<AnimU<?>,
 	@StaticPermitted
 	public static final UType[] TYPE8 = { UType.WALK, UType.IDLE, UType.ATK, UType.HB, UType.BURROW_DOWN,
 			UType.BURROW_MOVE, UType.BURROW_UP, UType.ENTER };
+
 	@StaticPermitted
 	public static final UType[] SOUL = { UType.SOUL };
 

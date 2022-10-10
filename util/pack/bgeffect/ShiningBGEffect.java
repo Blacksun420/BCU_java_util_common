@@ -59,6 +59,16 @@ public class ShiningBGEffect extends BackgroundEffect {
     }
 
     @Override
+    public void draw(FakeGraphics g, double x, double y, double siz, int groundH, int skyH) {
+        g.setComposite(FakeGraphics.BLEND, 255, 1);
+        for(int i = 0; i < shinePosition.size(); i++) {
+            double size = Math.sin(Math.PI * time.get(i) / Data.BG_EFFECT_SHINING_TIME);
+            g.drawImage(shine, convertP(shinePosition.get(i).x, siz) + (int) (x - sw * size * siz / 2), (int) (shinePosition.get(i).y * siz - y - sh * size * siz / 2), sw * size * siz, sh * size * siz);
+        }
+        g.setComposite(FakeGraphics.DEF, 255, 0);
+    }
+
+    @Override
     public void update(int w, double h, double midH) {
         capture.clear();
 

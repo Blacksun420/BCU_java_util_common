@@ -146,6 +146,11 @@ public abstract class BackgroundEffect {
     public abstract void postDraw(FakeGraphics g, P rect, final double siz, final double midH);
 
     /**
+     * Used for Background preview only. Draws everything at once with no battle scaling
+     */
+    public abstract void draw(FakeGraphics g, double x, double y, double siz, int groundH, int skyH);
+
+    /**
      * Update data here
      * @param w Width of battlefield as P
      * @param h Height of battlefield as Px

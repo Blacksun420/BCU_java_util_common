@@ -31,6 +31,12 @@ public class MixedBGEffect extends BackgroundEffect {
     }
 
     @Override
+    public void draw(FakeGraphics g, double x, double y, double siz, int groundH, int skyH) {
+        for (int i = 0; i < effects.length; i++)
+            effects[i].draw(g, x, y, siz, groundH, skyH);
+    }
+
+    @Override
     public void update(int w, double h, double midH) {
         for(int i = 0; i < effects.length; i++)
             effects[i].update(w, h, midH);

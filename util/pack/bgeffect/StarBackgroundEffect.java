@@ -60,6 +60,19 @@ public class StarBackgroundEffect extends BackgroundEffect {
     }
 
     @Override
+    public void draw(FakeGraphics g, double x, double y, double siz, int groundH, int skyH) {
+        FakeTransform at = g.getTransform();
+        g.setComposite(FakeGraphics.BLEND, 255, 1);
+        for(int i = 0; i < number; i++) {
+            int[] c = starColors[colors.get(i)];
+            g.colRect(convertP(positions.get(i).x, siz) + (int) x, (int) (positions.get(i).y * siz - y), (int) Math.max(1, siz * 4 * 0.8), (int) Math.max(1, siz * 4 * 0.8), c[0], c[1], c[2], opacities.get(i));
+        }
+        g.setComposite(FakeGraphics.DEF, 255, 0);
+        g.setTransform(at);
+        g.delete(at);
+    }
+
+    @Override
     public void update(int w, double h, double midH) {
         capture.clear();
 

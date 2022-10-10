@@ -395,33 +395,11 @@ public class BGEffectHandler {
         }
     }
 
-    public void preDraw(FakeGraphics g, P rect, double siz) {
+    public void draw(FakeGraphics g, P rect, double siz, boolean post) {
         FakeTransform at = g.getTransform();
 
         for(int i = 0; i < count; i++) {
-            if(!zOrder[i]) {
-                if(segment.spacer != null) {
-                    segment.spacer.drawWithSpacer(g, rect, siz, this, i);
-                } else {
-                    EAnimD<BGEffectAnim.BGEffType> anim = animation.get(i);
-
-                    g.translate(convertP(position[i].x, siz) + rect.x, convertP(position[i].y, siz) - rect.y);
-                    g.rotate(angle[i]);
-                    anim.drawBGEffect(g, origin, siz * 0.8, opacity[i], size[i].x, size[i].y);
-                }
-            }
-
-            g.setTransform(at);
-        }
-
-        g.delete(at);
-    }
-
-    public void postDraw(FakeGraphics g, P rect, double siz) {
-        FakeTransform at = g.getTransform();
-
-        for(int i = 0; i < count; i++) {
-            if(zOrder[i]) {
+            if(zOrder[i] == post) {
                 if(segment.spacer != null) {
                     segment.spacer.drawWithSpacer(g, rect, siz, this, i);
                 } else {

@@ -76,6 +76,33 @@ public class RainBGEffect extends BackgroundEffect {
     }
 
     @Override
+    public void draw(FakeGraphics g, double x, double y, double siz, int groundH, int skyH) {
+        g.setComposite(FakeGraphics.TRANS, 96, 0);
+
+        for(int i = 0; i < splashPosition.size(); i++) {
+            g.drawImage(splash, convertP(splashPosition.get(i).x, siz) + (int) x, (int) (splashPosition.get(i).y * siz - y + groundH), sw * siz * 0.8, sh * siz * 0.8);
+        }
+        g.setComposite(FakeGraphics.TRANS, 127, 0);
+
+        FakeTransform at = g.getTransform();
+
+        for(int i = 0; i < rainPosition.size(); i++) {
+            //30 and 50 shifting is to draw image at center
+            g.translate(convertP(rainPosition.get(i).x, siz) + (int) x - 30 * siz * 0.8, (int) (rainPosition.get(i).y * siz - y + skyH * siz - 50 * siz * 0.8));
+            g.rotate(Math.PI / 3);
+
+            g.drawImage(rain, 0, 0, rw * siz * 0.8, rh * siz * 0.8);
+
+            g.setTransform(at);
+        }
+
+        g.setTransform(at);
+        g.delete(at);
+
+        g.setComposite(FakeGraphics.DEF, 255, 0);
+    }
+
+    @Override
     public void update(int w, double h, double midH) {
         for(int i = 0; i < splashPosition.size(); i++) {
             P.delete(splashPosition.get(i));
