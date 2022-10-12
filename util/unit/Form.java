@@ -1,5 +1,6 @@
 package common.util.unit;
 
+import com.google.gson.JsonObject;
 import common.CommonStatic;
 import common.battle.data.*;
 import common.io.json.JsonClass;
@@ -67,13 +68,9 @@ public class Form extends Animable<AnimU<?>, AnimU.UType> implements BasedCopabl
 	public int fid;
 	public Orb orbs = null;
 
-	@JsonField(io = JsonField.IOType.R)
-	public String name = "";
 	@JsonField(generic = MultiLangData.class)
 	public MultiLangData names = new MultiLangData();
 
-	@JsonField(io = JsonField.IOType.R)
-	public String explanation = "<br><br><br>";
 	@JsonField(generic = MultiLangData.class)
 	public MultiLangData description = new MultiLangData("<br><br><br>");
 
@@ -149,7 +146,7 @@ public class Form extends Animable<AnimU<?>, AnimU.UType> implements BasedCopabl
 	}
 
 	@OnInjected
-	public void onInjected() {
+	public void onInjected(JsonObject jobj) {
 		CustomUnit form = (CustomUnit) du;
 		form.pack = this;
 
@@ -158,10 +155,7 @@ public class Form extends Animable<AnimU<?>, AnimU.UType> implements BasedCopabl
 
 			if(u.getCont() instanceof PackData.UserPack) {
 				PackData.UserPack pack = (PackData.UserPack) u.getCont();
-
-				if (UserProfile.isOlderPack(pack, "0.5.1.0")) {
-					form.type = Data.reorderTrait(form.type);
-				}
+				JsonObject jdu = jobj.getAsJsonObject("du");
 
 				if (UserProfile.isOlderPack(pack, "0.5.2.0") && form.tba != 0) {
 					form.tba += form.getPost() + 1;
@@ -170,8 +164,12 @@ public class Form extends Animable<AnimU<?>, AnimU.UType> implements BasedCopabl
 				if (UserProfile.isOlderPack(pack, "0.6.0.0")) {
 					MaModel model = anim.loader.getMM();
 					form.limit = CommonStatic.customFormMinPos(model);
-					form.getProc().BARRIER.health = form.shield;
-					form.traits = Trait.convertType(form.type);
+					form.getProc().BARRIER.health = jdu.get("shield").getAsInt();
+
+					int type = jdu.get("type").getAsInt();
+					if (UserProfile.isOlderPack(pack, "0.5.1.0"))
+						type = Data.reorderTrait(type);
+					form.traits = Trait.convertType(type);
 					Proc proc = form.getProc();
 					if ((form.abi & (1 << 18)) != 0) //Seal Immunity
 						proc.IMUSEAL.mult = 100;
@@ -188,8 +186,9 @@ public class Form extends Animable<AnimU<?>, AnimU.UType> implements BasedCopabl
 				}
 
 				if (UserProfile.isOlderPack(pack, "0.6.4.0")) {
-					names.put(name);
-					description.put(explanation);
+					names.put(jobj.get("name").getAsString());
+					if (jobj.has("explanation"))
+						description.put(jobj.get("explanation").getAsString());
 				}
 
 				if (UserProfile.isOlderPack(pack, "0.6.5.0")) {
@@ -212,6 +211,9 @@ public class Form extends Animable<AnimU<?>, AnimU.UType> implements BasedCopabl
 					}
 				}
 				if (UserProfile.isOlderPack(pack, "0.6.8.0")) {
+					if (form.rep.specialTrait && form.rep.dire == -1)
+						form.rep.traits.addAll(form.traits);
+					form.rep.specialTrait = false;
 					for (MaskAtk ma : form.getAtks()) {
 						AtkDataModel adm = (AtkDataModel)ma;
 						if (adm.specialTrait && adm.dire == -1)

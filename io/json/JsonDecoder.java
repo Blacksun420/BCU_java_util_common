@@ -413,8 +413,13 @@ public class JsonDecoder {
 			Class<?> ccls = m.getParameterTypes()[0];
 			m.invoke(obj, decode(elem, ccls, getInvoker()));
 		}
-		if (oni != null)
-			oni.invoke(obj);
+		if (oni != null) {
+			if (oni.getParameterCount() == 0)
+				oni.invoke(obj);
+			else {
+				oni.invoke(obj, jobj);
+			}
+		}
 	}
 
 	private JsonDecoder getInvoker() {

@@ -1,5 +1,6 @@
 package common.util.unit;
 
+import com.google.gson.JsonObject;
 import common.CommonStatic;
 import common.battle.StageBasis;
 import common.battle.data.*;
@@ -38,13 +39,9 @@ public class Enemy extends Animable<AnimU<?>, UType> implements AbEnemy {
 	@JsonField
 	public final MaskEnemy de;
 
-	@JsonField(io = JsonField.IOType.R)
-	public String name = "";
 	@JsonField(generic = MultiLangData.class)
 	public MultiLangData names = new MultiLangData();
 
-	@JsonField(io = JsonField.IOType.R)
-	public String desc = "<br><br><br>";
 	@JsonField(generic = MultiLangData.class)
 	public MultiLangData description = new MultiLangData("<br><br><br>");
 
@@ -155,16 +152,13 @@ public class Enemy extends Animable<AnimU<?>, UType> implements AbEnemy {
 	}
 
 	@OnInjected
-	public void onInjected() {
+	public void onInjected(JsonObject jobj) {
 		CustomEnemy enemy = (CustomEnemy) de;
 		enemy.pack = this;
 
 		if(getCont() instanceof PackData.UserPack) {
 			PackData.UserPack pack = (PackData.UserPack) getCont();
-
-			if (UserProfile.isOlderPack(pack, "0.5.1.0")) {
-				enemy.type = Data.reorderTrait(enemy.type);
-			}
+			JsonObject jde = jobj.getAsJsonObject("de");
 
 			if (UserProfile.isOlderPack(pack, "0.5.2.0") && enemy.tba != 0) {
 				enemy.tba += enemy.getPost() + 1;
@@ -176,8 +170,13 @@ public class Enemy extends Animable<AnimU<?>, UType> implements AbEnemy {
 			}
 
 			if (UserProfile.isOlderPack(pack, "0.6.0.0")) {
-				enemy.getProc().BARRIER.health = enemy.shield;
-				enemy.traits = Trait.convertType(enemy.type);
+				enemy.getProc().BARRIER.health = jde.get("shield").getAsInt();
+				int type = jde.get("type").getAsInt();
+				if (UserProfile.isOlderPack(pack, "0.5.1.0")) {
+					type = Data.reorderTrait(type);
+				}
+				enemy.traits = Trait.convertType(type);
+
 				Proc proc = enemy.getProc();
 				if ((enemy.abi & (1 << 18)) != 0) //Seal Immunity
 					proc.IMUSEAL.mult = 100;
@@ -196,8 +195,9 @@ public class Enemy extends Animable<AnimU<?>, UType> implements AbEnemy {
 			}
 
 			if (UserProfile.isOlderPack(pack, "0.6.4.0")) {
-				names.put(name);
-				description.put(desc);
+				names.put(jobj.get("name").getAsString());
+				if (jobj.has("desc"))
+					description.put(jobj.get("desc").getAsString());
 			}
 
 			if (UserProfile.isOlderPack(pack, "0.6.5.0")) {
@@ -218,6 +218,9 @@ public class Enemy extends Animable<AnimU<?>, UType> implements AbEnemy {
 				}
 			}
 			if (UserProfile.isOlderPack(pack, "0.6.8.0")) {
+				if (enemy.rep.specialTrait && enemy.rep.dire == -1)
+					enemy.rep.traits.addAll(enemy.traits);
+				enemy.rep.specialTrait = false;
 				for (MaskAtk ma : enemy.getAtks()) {
 					AtkDataModel adm = (AtkDataModel)ma;
 					if ((adm.specialTrait && adm.dire == 1) || (!adm.specialTrait && adm.dire == -1))

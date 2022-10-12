@@ -1,39 +1,15 @@
 package common.io;
 
-import common.CommonStatic;
-import common.util.Data;
-
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 public strictfp interface InStream {
-
-	static InStream getIns(File f) {
-		return Data.err(() -> new ISStream(f));
-	}
 
 	default byte[] nextBytesB() {
 		int len = nextByte();
 		byte[] ints = new byte[len];
 		for (int i = 0; i < len; i++)
 			ints[i] = (byte) nextByte();
-		return ints;
-	}
-
-	default byte[] nextBytesI() {
-		int len = nextInt();
-		byte[] ints = new byte[len];
-		for (int i = 0; i < len; i++)
-			ints[i] = (byte) nextByte();
-		return ints;
-	}
-
-	default double[] nextDoubles() {
-		int len = nextByte();
-		double[] ints = new double[len];
-		for (int i = 0; i < len; i++)
-			ints[i] = nextDouble();
 		return ints;
 	}
 
@@ -64,15 +40,9 @@ public strictfp interface InStream {
 
 	double nextDouble();
 
-	float nextFloat();
-
 	int nextInt();
 
-	long nextLong();
-
 	int nextShort();
-
-	InStream subStream();
 
 	OutStream translate();
 
@@ -86,12 +56,6 @@ strictfp class InStreamDef extends DataIO implements InStream {
 	private final int[] bs;
 	private final int off, max;
 	private int index;
-
-	InStreamDef(InStreamDef isd) {
-		bs = isd.bs;
-		index = off = isd.index;
-		max = isd.max;
-	}
 
 	InStreamDef(int[] data, int ofs, int m) {
 		bs = data;
@@ -122,26 +86,10 @@ strictfp class InStreamDef extends DataIO implements InStream {
 	}
 
 	@Override
-	public float nextFloat() {
-		check(4);
-		float ans = toFloat(bs, index);
-		index += 4;
-		return ans;
-	}
-
-	@Override
 	public int nextInt() {
 		check(4);
 		int ans = toInt(bs, index);
 		index += 4;
-		return ans;
-	}
-
-	@Override
-	public long nextLong() {
-		check(8);
-		long ans = toLong(bs, index);
-		index += 8;
 		return ans;
 	}
 
@@ -157,28 +105,8 @@ strictfp class InStreamDef extends DataIO implements InStream {
 		return index - off;
 	}
 
-	public void reread() {
-		index = off;
-	}
-
 	public int size() {
 		return max - off;
-	}
-
-	public void skip(int n) {
-		index += n;
-	}
-
-	@Override
-	public InStreamDef subStream() {
-		int n = nextInt();
-		if (n > size()) {
-			new Exception("error in getting subStream").printStackTrace();
-			CommonStatic.def.save(false, true);
-		}
-		InStreamDef is = new InStreamDef(bs, index, index + n);
-		index += n;
-		return is;
 	}
 
 	@Override
@@ -214,12 +142,6 @@ strictfp class InStreamAnim extends DataIO implements InStream {
 	private final int off, max;
 	private int index;
 
-	InStreamAnim(InStreamAnim isd) {
-		bs = isd.bs;
-		index = off = isd.index;
-		max = isd.max;
-	}
-
 	InStreamAnim(int[] data, int ofs, int m) {
 		bs = data;
 		off = ofs;
@@ -249,26 +171,10 @@ strictfp class InStreamAnim extends DataIO implements InStream {
 	}
 
 	@Override
-	public float nextFloat() {
-		check(4);
-		float ans = toFloat(bs, index);
-		index += 4;
-		return ans;
-	}
-
-	@Override
 	public int nextInt() {
 		check(4);
 		int ans = toInt(bs, index);
 		index += 4;
-		return ans;
-	}
-
-	@Override
-	public long nextLong() {
-		check(8);
-		long ans = toLong(bs, index);
-		index += 8;
 		return ans;
 	}
 
@@ -284,28 +190,8 @@ strictfp class InStreamAnim extends DataIO implements InStream {
 		return index - off;
 	}
 
-	public void reread() {
-		index = off;
-	}
-
 	public int size() {
 		return max - off;
-	}
-
-	public void skip(int n) {
-		index += n;
-	}
-
-	@Override
-	public InStreamDef subStream() {
-		int n = nextInt();
-		if (n > size()) {
-			new Exception("error in getting subStream").printStackTrace();
-			CommonStatic.def.save(false, true);
-		}
-		InStreamDef is = new InStreamDef(bs, index, index + n);
-		index += n;
-		return is;
 	}
 
 	@Override
@@ -327,15 +213,6 @@ strictfp class InStreamAnim extends DataIO implements InStream {
 		byte[] ints = new byte[len];
 		for (int i = 0; i < len; i++)
 			ints[i] = (byte) nextByte();
-		return ints;
-	}
-
-	@Override
-	public double[] nextDoubles() {
-		int len = nextInt();
-		double[] ints = new double[len];
-		for (int i = 0; i < len; i++)
-			ints[i] = nextDouble();
 		return ints;
 	}
 

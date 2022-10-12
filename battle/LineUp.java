@@ -382,8 +382,7 @@ public class LineUp extends Data {
 			if (existing == 1) {
 				orbs = is.nextIntsBB();
 			}
-			if (u != null)
-				map.put(u.id, new Level(Level.LvList(lv), orbs));
+			map.put(u.id, new Level(Level.LvList(lv), orbs));
 		}
 		arrange();
 	}
