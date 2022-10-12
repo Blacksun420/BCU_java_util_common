@@ -540,7 +540,7 @@
                 "name": "summon anim",
                 "tooltip": [
                     "summon animation, 0 for no animation, 1 for warp animation,",
-                    " 2 for burrow animation, 3 for burrow animation and disable further burrow.",
+                    " 2 for burrow animation, 3 for burrow animation and disable further burrow, 4 for entry animation.",
                     " The summoned entity must have burrow animation in order to use 2 or 3."
                 ]
             },

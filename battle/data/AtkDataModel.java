@@ -3,10 +3,12 @@ package common.battle.data;
 import common.io.json.JsonClass;
 import common.io.json.JsonClass.NoTag;
 import common.io.json.JsonClass.RType;
+import common.io.json.JsonDecoder;
 import common.io.json.JsonField;
 import common.pack.Identifier;
 import common.system.BasedCopable;
 import common.util.Data;
+import common.util.stage.Music;
 import common.util.unit.Trait;
 
 import java.util.ArrayList;
@@ -23,6 +25,9 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 	public boolean specialTrait = false; //Special trait makes attacks that ignore traits consider traits, and attacks that don't do
 	@JsonField(generic = Trait.class, alias = Identifier.class)
 	public ArrayList<Trait> traits = new ArrayList<>(); //Gives attacks their own typings. SpecialTrait but better lol
+
+	@JsonField
+	public Identifier<Music> audio, audio1;
 
 	@JsonField
 	public Proc proc;
@@ -47,7 +52,9 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 		targ = adm.targ;
 		alt = adm.alt;
 		move = adm.move;
-		proc = adm.proc == null ? Proc.blank() : adm.proc.clone();
+		proc = adm.proc.clone();
+		audio = adm.audio;
+		audio1 = adm.audio1;
 	}
 
 	protected AtkDataModel(CustomEntity ene, MaskEntity me, int i) {
@@ -152,6 +159,17 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 	@Override
 	public boolean isOmni() {
 		return ld0 * ld1 < 0 || (ld0 == 0 && ld1 > 0) || (ld0 < 0 && ld1 == 0);
+	}
+
+	@Override
+	public Identifier<Music> getAudio(boolean sec) {
+		return sec ? audio1 : audio;
+	}
+
+	@JsonDecoder.OnInjected
+	public void onInjected() {
+		if (proc == null)
+			proc = Proc.blank();
 	}
 
 }

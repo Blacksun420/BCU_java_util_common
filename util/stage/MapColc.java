@@ -422,6 +422,7 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 
 		@OnInjected
 		public void onInjected() {
+			//TODO - JsonObject method to get name variables
 			if (UserProfile.isOlderPack(pack, "0.6.4.0"))
 				for (StageMap sm : maps) {
 					sm.names.put(sm.name);

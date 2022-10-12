@@ -432,7 +432,7 @@ public class Editors {
 					t.mult = Math.max(1, t.mult);
 					setComponentVisibility("SUMMON", false, 15);
 				}
-				t.type.anim_type = MathUtil.clip(t.type.anim_type, 0, 3);
+				t.type.anim_type = MathUtil.clip(t.type.anim_type, 0, 4);
 			}
 		}));
 

@@ -219,7 +219,7 @@ public class Form extends Animable<AnimU<?>, AnimU.UType> implements BasedCopabl
 						if (adm.specialTrait && adm.dire == -1)
 							adm.traits.addAll(form.traits);
 						adm.specialTrait = false;
-					}
+					} //TODO - Use jsonobject method to remove SpecialTrait
 					for (AtkDataModel adm : form.getSpAtks()) {
 						if (adm == null)
 							continue;

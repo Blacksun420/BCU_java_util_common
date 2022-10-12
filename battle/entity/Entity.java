@@ -1643,8 +1643,7 @@ public abstract class Entity extends AbEntity {
 		if (!shieldContinue)
 			return;
 
-		CommonStatic.setSE(isBase ? SE_HIT_BASE : (basis.r.irDouble() < 0.5 ? SE_HIT_0 : SE_HIT_1));
-
+		atk.playSound(isBase, basis.r.irDouble() < 0.5);
 		damage += dmg;
 		zx.damaged(atk);
 		status[P_BOUNTY][0] = atk.getProc().BOUNTY.mult;
@@ -1652,14 +1651,13 @@ public abstract class Entity extends AbEntity {
 		if (atk.atk < 0)
 			anim.getEff(HEAL);
 
-		//75.0 is guessed value compared from BC
 		if (atk.isLongAtk || atk instanceof AttackVolcano)
 			anim.smoke = effas().A_WHITE_SMOKE.getEAnim(DefEff.DEF);
 		else
 			anim.smoke = effas().A_ATK_SMOKE.getEAnim(DefEff.DEF);
 
-		anim.smokeLayer = (int) (layer + 3 - basis.r.nextDouble() * -6);
-		anim.smokeX = (int) (pos + 25 - basis.r.nextDouble() * -50);
+		anim.smokeLayer = (int) (layer + 3 - basis.r.irDouble() * -6);
+		anim.smokeX = (int) (pos + 25 - basis.r.irDouble() * -50);
 
 		bondTree.damaged(atk, dmg, proc);
 		final int FDmg = dmg;
@@ -2052,22 +2050,19 @@ public abstract class Entity extends AbEntity {
 	 * @param conf The type of animation used
 	 */
 	public void setSummon(int conf, Entity bond) {
-		// conf 1
 		if (conf == 1) {
-			kb.kbType = INT_WARP;
+			kb.kbType = INT_WARP; // conf 1 - Warp exit animation
 			kbTime = effas().A_W.len(WarpEff.EXIT);
 			status[P_WARP][2] = 1;
-		}
-		// conf 2
-		if (conf == 2 && data.getPack().anim.anims.length >= 7) {
-			kbTime = -3;
+		} else if (conf == 2 && data.getPack().anim.anims.length >= 7) {
+			kbTime = -3; // conf 2 - Unborrow animation
 			bdist = -1;
-		}
-
-		if (conf == 3 && data.getPack().anim.anims.length >= 7) {
-			kbTime = -3;
+		} else if (conf == 3 && data.getPack().anim.anims.length >= 7) {
+			kbTime = -3; // conf 3 - Unborrow with Disabled burrow
 			status[P_BURROW] = new int[PROC_WIDTH];
 			bdist = -1;
+		} else if (conf != 4) {
+			anim.setAnim(UType.WALK, true); // conf 0 - Sets animation to walk animation. conf 4 - sets the animation to entry, if unit has one
 		}
 
 		if (bond != null) {

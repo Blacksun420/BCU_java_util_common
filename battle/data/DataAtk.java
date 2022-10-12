@@ -1,9 +1,6 @@
 package common.battle.data;
 
 import common.util.Data.Proc;
-import common.util.unit.Trait;
-
-import java.util.ArrayList;
 
 public class DataAtk implements MaskAtk {
 
@@ -46,9 +43,6 @@ public class DataAtk implements MaskAtk {
 	public Proc getProc() {
 		return data.proc;
 	}
-
-	@Override
-	public ArrayList<Trait> getATKTraits() { return new ArrayList<>(); }
 
 	@Override
 	public int getShortPoint() {

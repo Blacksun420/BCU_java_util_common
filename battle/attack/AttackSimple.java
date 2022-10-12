@@ -1,11 +1,14 @@
 package common.battle.attack;
 
+import common.CommonStatic;
 import common.battle.data.MaskAtk;
 import common.battle.entity.AbEntity;
 import common.battle.entity.Entity;
 import common.battle.entity.Sniper;
+import common.pack.Identifier;
 import common.util.Data.Proc.MOVEWAVE;
 import common.util.Data.Proc.VOLC;
+import common.util.stage.Music;
 import common.util.unit.Trait;
 
 import java.util.ArrayList;
@@ -21,6 +24,7 @@ public class AttackSimple extends AttackAb {
 	private final Set<AbEntity> attacked = new HashSet<>();
 	private final boolean range;
 	public int ind = 0;
+	public Identifier<Music> sfx0, sfx1;
 
 	public AttackSimple(Entity attacker, AtkModelAb ent, int ATK, ArrayList<Trait> tr, int eab, Proc pro, double p0, double p1, boolean isr,
 						MaskAtk matk, int layer, boolean isLongAtk, int duration) {
@@ -36,6 +40,8 @@ public class AttackSimple extends AttackAb {
 			touch |= TCH_CORPSE;
 
 		dire *= mask.getDire();
+		sfx0 = mask.getAudio(false);
+		sfx1 = mask.getAudio(true);
 	}
 
 	public AttackSimple(Entity attacker, AtkModelAb ent, int ATK, ArrayList<Trait> tr, int eab, Proc proc, double p0, double p1, MaskAtk mask, int layer, boolean isLongAtk, int ind) {
@@ -151,4 +157,18 @@ public class AttackSimple extends AttackAb {
 		}
 	}
 
+	/**
+	 * If this attack has a custom sound effect, it is played over the in-game sound effects
+	 * @param isBase If attacked entity is base
+	 * @param alt Plays SE 0 if true, SE 1 if false
+	 */
+	@Override
+	public void playSound(boolean isBase, boolean alt) {
+		if (sfx0 == null && sfx1 == null || isBase)
+			super.playSound(isBase, alt);
+		else if (alt || sfx1 == null)
+			CommonStatic.setSE(sfx0);
+		else
+			CommonStatic.setSE(sfx1);
+	}
 }

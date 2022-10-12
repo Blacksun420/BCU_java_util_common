@@ -437,7 +437,10 @@ public class StageBasis extends BattleObj {
 			le.add(eu);
 			le.sort(Comparator.comparingInt(e -> e.layer));
 			money -= elu.price[i][j];
-			unitRespawnTime = 1;
+			if (st.minUSpawn == st.maxUSpawn)
+				unitRespawnTime = st.minUSpawn;
+			else
+				unitRespawnTime = st.minUSpawn + (int) ((st.maxUSpawn - st.minUSpawn) * r.nextDouble());
 			return true;
 		}
 		return false;

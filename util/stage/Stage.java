@@ -57,6 +57,7 @@ public class Stage extends Data
 	public boolean non_con, trail;
 	public int len, health, max, mush, bgh;
 	public int timeLimit = 0;
+	public int minUSpawn = 1, maxUSpawn = 1;
 	public int minSpawn = 1, maxSpawn = 1;
 	public Identifier<CastleImg> castle;
 	public Identifier<Background> bg, bg1;

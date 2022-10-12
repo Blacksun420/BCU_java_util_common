@@ -1,5 +1,6 @@
 package common.battle.attack;
 
+import common.CommonStatic;
 import common.battle.data.MaskAtk;
 import common.battle.entity.AbEntity;
 import common.battle.entity.Entity;
@@ -42,7 +43,7 @@ public abstract class AttackAb extends BattleObj {
 		abi = eab;
 		sta = p0;
 		end = p1;
-		this.duration = time;
+		duration = time;
 		this.matk = matk;
 		this.layer = layer;
 		this.isLongAtk = isLongAtk;
@@ -62,9 +63,9 @@ public abstract class AttackAb extends BattleObj {
 		canon = a.canon;
 		sta = STA;
 		end = END;
-		this.duration = 1;
-		this.matk = a.matk;
-		this.layer = a.layer;
+		duration = 1;
+		matk = a.matk;
+		layer = a.layer;
 		this.isLongAtk = isLongAtk;
 	}
 
@@ -223,6 +224,15 @@ public abstract class AttackAb extends BattleObj {
 		} else {
 			return val * side > 0;
 		}
+	}
+
+	/**
+	 * Plays the default hit sound.
+	 * @param isBase If attacked entity is base
+	 * @param alt Plays SE 0 if true, SE 1 if false
+	 */
+	public void playSound(boolean isBase, boolean alt) {
+		CommonStatic.setSE(isBase ? SE_HIT_BASE : (alt ? SE_HIT_0 : SE_HIT_1));
 	}
 
 	public void notifyEntity(Consumer<Entity> notifier) {
