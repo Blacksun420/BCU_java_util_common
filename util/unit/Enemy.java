@@ -217,7 +217,7 @@ public class Enemy extends Animable<AnimU<?>, UType> implements AbEnemy {
 					enemy.getProc().SUMMON.max_layer = -1;
 				}
 			}
-			if (UserProfile.isOlderPack(pack, "0.6.8.0")) {
+			if (UserProfile.isOlderPack(pack, "0.6.8.1")) {
 				if (enemy.rep.specialTrait && enemy.rep.dire == -1)
 					enemy.rep.traits.addAll(enemy.traits);
 				enemy.rep.specialTrait = false;

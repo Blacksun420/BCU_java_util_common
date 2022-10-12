@@ -210,7 +210,7 @@ public class Form extends Animable<AnimU<?>, AnimU.UType> implements BasedCopabl
 						form.getProc().SUMMON.max_layer = -1;
 					}
 				}
-				if (UserProfile.isOlderPack(pack, "0.6.8.0")) {
+				if (UserProfile.isOlderPack(pack, "0.6.8.1")) {
 					if (form.rep.specialTrait && form.rep.dire == -1)
 						form.rep.traits.addAll(form.traits);
 					form.rep.specialTrait = false;
