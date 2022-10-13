@@ -124,7 +124,7 @@ public class Enemy extends Animable<AnimU<?>, UType> implements AbEnemy {
 
 	public EAnimU getEntryAnim() {
 		EAnimU anim = getEAnim(AnimU.UType.ENTER);
-		if (!anim.check() || anim.len() == 1)
+		if (anim.unusable())
 			anim = getEAnim(AnimU.UType.WALK);
 
 		anim.setTime(0);

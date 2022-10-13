@@ -75,7 +75,10 @@ public class EStage extends BattleObj {
 				double multi = (data.multiple == 0 ? 100 : data.multiple) * mul * 0.01;
 				double mulatk = (data.multiple == 0 ? 100 : data.mult_atk) * mul * 0.01;
 				AbEnemy e = Identifier.getOr(data.enemy, AbEnemy.class);
+
 				EEnemy ee = e.getEntity(b, data, multi, mulatk, data.layer_0, data.layer_1, data.boss);
+				if (data.doorchance > 0 && b.r.nextDouble() * 100 < data.doorchance)
+					ee.door = data.doordis_0 == data.doordis_1 ? data.doordis_0 : (float) ((data.doordis_1 - data.doordis_0) * b.r.nextDouble());
 				ee.group = data.group;
 				return ee;
 			}

@@ -94,8 +94,8 @@ public class EAnimD<T extends Enum<T> & AnimI.AnimType<?, T>> extends EAnimI {
 		return ma.max + 1;
 	}
 
-	public boolean check() {
-		return ma != null;
+	public boolean unusable() {
+		return ma == null || ma.n == 0;
 	}
 
 	@Override

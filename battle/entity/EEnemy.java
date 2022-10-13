@@ -17,6 +17,7 @@ public class EEnemy extends Entity {
 	public final int mark;
 	public final double mult, mula;
 
+	public float door;
 	public byte hit;
 
 	public EEnemy(StageBasis b, MaskEnemy de, EAnimU ea, double magnif, double atkMagnif, int d0, int d1, int m) {

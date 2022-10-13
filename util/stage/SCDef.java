@@ -1,7 +1,6 @@
 package common.util.stage;
 
 import common.battle.StageBasis;
-import common.io.InStream;
 import common.io.json.JsonClass;
 import common.io.json.JsonClass.JCConstructor;
 import common.io.json.JsonClass.NoTag;
@@ -15,7 +14,6 @@ import common.util.unit.AbEnemy;
 import common.util.unit.EneRand;
 import common.util.unit.Enemy;
 
-import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
@@ -32,6 +30,7 @@ public class SCDef implements Copable<SCDef> {
 		public int castle_0, castle_1, layer_0, layer_1;
 		public int mult_atk;
 		public int kill_count;
+		public byte doorchance, doordis_0, doordis_1;
 
 		@JCConstructor
 		public Line() {
@@ -80,35 +79,6 @@ public class SCDef implements Copable<SCDef> {
 
 	@JCConstructor
 	public SCDef() {
-	}
-
-	protected SCDef(InStream is, int ver) {
-		if (ver >= 305) {
-			int n = is.nextByte();
-			datas = new Line[n];
-			int[] tmp = new int[SIZE];
-			for (int i = 0; i < n; i++) {
-				Arrays.fill(tmp, 0);
-				for (int j = 0; j < 10; j++)
-					tmp[j] = is.nextInt();
-				tmp[M1] = tmp[M];
-				datas[i] = new Line(tmp);
-			}
-		} else if (ver >= 203) {
-			int n = is.nextByte();
-			datas = new Line[n];
-			int[] tmp = new int[SIZE];
-			for (int i = 0; i < n; i++) {
-				Arrays.fill(tmp, 0);
-				for (int j = 0; j < 10; j++)
-					tmp[j] = is.nextInt();
-				if (tmp[5] < 100)
-					tmp[2] *= -1;
-				tmp[M1] = tmp[M];
-				datas[i] = new Line(tmp);
-			}
-		} else
-			datas = new Line[0];
 	}
 
 	public SCDef(int s) {
