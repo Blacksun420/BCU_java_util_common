@@ -82,10 +82,10 @@ public class ImgCut extends Data implements Cloneable {
 				cut[0] = 0;
 			if (cut[1] < 0)
 				cut[1] = 0;
-			if (cut[0] > w - 2)
-				cut[0] = w - 2;
-			if (cut[1] > h - 2)
-				cut[1] = h - 2;
+			if (cut[0] > w - 1)
+				cut[0] = w - 1;
+			if (cut[1] > h - 1)
+				cut[1] = h - 1;
 			if (cut[2] <= 0)
 				cut[2] = 1;
 			if (cut[3] <= 0)

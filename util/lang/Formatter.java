@@ -66,9 +66,11 @@ public class Formatter {
 		}
 
 		public String summonMagnification(int buff) {
-			if (!isEnemy)
+			if (!isEnemy) {
+				if (magnification.length == 1)
+					return "Level " + (int) (magnification[0] + buff); //Because entityAbilities is a thing
 				return "Level " + (int) (magnification[1] + buff);
-			else if (magnification[0] == magnification[1])
+			} else if (magnification[0] == magnification[1])
 				return (int) (buff * magnification[0]) + "%";
 			return "{" + (int) (buff * magnification[0]) + "%, " + (int) (buff * magnification[1]) + "%}";
 		}
