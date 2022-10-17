@@ -7,6 +7,8 @@ import common.system.fake.FakeTransform;
 import common.util.anim.AnimU;
 import common.util.pack.EffAnim;
 
+import java.util.Comparator;
+
 public class DoorCont extends EAnimCont {
 
     private final StageBasis bas;
@@ -43,6 +45,7 @@ public class DoorCont extends EAnimCont {
             } else if (!entLeft) {
                 ent.getAnim().paraTo(null);
                 bas.le.add(ent);
+                bas.le.sort(Comparator.comparingInt(en -> en.layer));
                 entLeft = true;
             }
         }
