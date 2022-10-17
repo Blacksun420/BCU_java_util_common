@@ -29,6 +29,9 @@ public abstract class EAnimI extends BattleObj {
 		}
 	}
 
+	/**
+	 * Outlines selected part. Only used in mamodel/maanim editor
+	 */
 	public int sele = -1;
 
 	public EPart[] ent = null;
@@ -56,10 +59,8 @@ public abstract class EAnimI extends BattleObj {
 	public void organize() {
 		ent = mamodel.arrange(this);
 		order = new EPart[ent.length];
-		for (int i = 0; i < ent.length; i++) {
-			ent[i].ea = this;
+		for (int i = 0; i < ent.length; i++)
 			order[i] = ent[i];
-		}
 		sort();
 	}
 

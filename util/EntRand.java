@@ -31,17 +31,17 @@ public abstract class EntRand<X> extends Data {
 		if (type != T_NL) {
 			Lock<X> l = map.get(sb);
 			if (l == null)
-				map.put(sb, l = type == T_LL ? new LockLL<X>() : new LockGL<X>());
+				map.put(sb, l = type == T_LL ? new LockLL<>() : new LockGL<>());
 			EREnt<X> ae = l.get(obj);
 			if (ae == null)
-				l.put(obj, ae = selector(sb, obj));
+				l.put(obj, ae = selector(sb));
 			return ae;
 		}
-		return selector(sb, obj);
+		return selector(sb);
 
 	}
 
-	private EREnt<X> selector(StageBasis sb, Object obj) {
+	private EREnt<X> selector(StageBasis sb) {
 		int tot = 0;
 		for (EREnt<X> e : list)
 			tot += e.share;

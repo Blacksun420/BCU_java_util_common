@@ -234,6 +234,8 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 		public EffAnim<DmgCap> A_DMGCAP;
 		@Order(72)
 		public EffAnim<DmgCap> A_E_DMGCAP;
+		@Order(73)
+		public EffAnim<DefEff> A_DOOR;
 
 		public EffAnim<?>[] values() {
 			Field[] fld = FieldOrder.getDeclaredFields(EffAnimStore.class);
@@ -444,6 +446,11 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 		effas.A_DEMON_SHIELD = new EffAnim<>("./org/battle/s14/skill_demonshield", vsh, icsh, ShieldEff.values());
 		effas.A_DEMON_SHIELD.rev = true;
 		effas.A_E_DEMON_SHIELD = new EffAnim<>("./org/battle/s14/skill_demonshield", vsh, icsh, ShieldEff.values());
+
+		String path = "./org/battle/skill_door/skill_door";
+		VImg vdr = new VImg(path + ".png");
+		ImgCut icdr = ImgCut.newIns(path + ".imgcut");
+		effas.A_DOOR = new EffAnim<>(path, vdr, icdr, DefEff.values());
 	}
 
 	private static void excColor(FakeImage fimg, Function<int[], Integer> f) {

@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 
 public abstract class AttackAb extends BattleObj {
 
-	public final int rawAtk, abi;
+	public final int abi;
 	public int atk;
 	public final ArrayList<Trait> trait;
 	public final AtkModelAb model;
@@ -37,8 +37,7 @@ public abstract class AttackAb extends BattleObj {
 		origin = this;
 		model = ent;
 		trait = matk != null && matk.getATKTraits().size() > 0 ? matk.getATKTraits() : tr;
-		rawAtk = ATK;
-		atk = rawAtk;
+		atk = ATK;
 		proc = pro;
 		abi = eab;
 		sta = p0;
@@ -54,8 +53,7 @@ public abstract class AttackAb extends BattleObj {
 		dire = a.dire;
 		origin = a.origin;
 		model = a.model;
-		rawAtk = a.atk;
-		atk = rawAtk;
+		atk = a.atk;
 		abi = a.abi;
 		trait = a.trait;
 		proc = a.proc;

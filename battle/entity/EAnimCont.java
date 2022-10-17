@@ -42,4 +42,7 @@ public class EAnimCont extends BattleObj {
 		anim.update(false);
 	}
 
+	protected EAnimD<?> getAnim() {
+		return anim;
+	}
 }

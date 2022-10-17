@@ -115,7 +115,7 @@ public class AssetLoader {
 		}
 	}
 
-	public static void merge() throws Exception {
+	public static void merge() {
 		try {
 			File folder = CommonStatic.ctx.getAssetFile("./assets/");
 			Map<String, Map<String, File>> map = new TreeMap<>();

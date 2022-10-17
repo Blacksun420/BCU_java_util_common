@@ -3,7 +3,6 @@ package common.util.unit;
 import common.CommonStatic;
 import common.battle.StageBasis;
 import common.battle.entity.EEnemy;
-import common.io.InStream;
 import common.io.json.JsonClass;
 import common.io.json.JsonField;
 import common.pack.Identifier;
@@ -78,29 +77,10 @@ public class EneRand extends EntRand<Identifier<AbEnemy>> implements AbEnemy {
 		return id.id + " - " + name + " (" + id.pack + ")";
 	}
 
-	public void zread(InStream is) {
-		int ver = getVer(is.nextString());
-		if (ver >= 400)
-			zread$000400(is);
-	}
-
 	private EEnemy get(EREnt<Identifier<AbEnemy>> x, StageBasis sb, Object obj, double mul, double mul2, int d0, int d1,
 			int m) {
 		return Identifier.getOr(x.ent, AbEnemy.class).getEntity(sb, obj, x.multi * mul / 100, x.multi * mul2 / 100, d0,
 				d1, m);
-	}
-
-	private void zread$000400(InStream is) {
-		name = is.nextString();
-		type = is.nextInt();
-		int n = is.nextInt();
-		for (int i = 0; i < n; i++) {
-			EREnt<Identifier<AbEnemy>> ere = new EREnt<>();
-			list.add(ere);
-			ere.ent = Identifier.parseInt(is.nextInt(), AbEnemy.class);
-			ere.multi = is.nextInt();
-			ere.share = is.nextInt();
-		}
 	}
 
 	@Override

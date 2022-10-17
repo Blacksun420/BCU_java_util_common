@@ -2079,9 +2079,9 @@ public abstract class Entity extends AbEntity {
 		if (isBase) return true;
 		boolean antiTrait = targetTraited(ent.traits);
 
-		for (int j = 0; j < ent.traits.size(); j++) {
-			Trait tr = ent.traits.get(j);
-			if (traits.contains(tr) || (antiTrait && tr.targetType) ||
+		for (int j = 0; j < traits.size(); j++) {
+			Trait tr = traits.get(j);
+			if (ent.traits.contains(tr) || (antiTrait && tr.targetType) ||
 					(ent.dire == -1 && tr.others.contains(((MaskUnit)ent.data).getPack())) || (dire == -1 && tr.others.contains(((MaskUnit)data).getPack())))
 				return true;
 		}
@@ -2535,5 +2535,12 @@ public abstract class Entity extends AbEntity {
 				if (le.get(i).targetable(this))
 					touchEnemy = true;
 		}
+	}
+
+	/*
+	 * Get anim. Used only for Door
+	 */
+	public EAnimU getAnim() {
+		return anim.anim;
 	}
 }

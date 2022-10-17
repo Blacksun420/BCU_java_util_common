@@ -28,6 +28,11 @@ public abstract class AbEntity extends BattleObj {
 		health = maxH = h;
 	}
 
+	/**
+	 * Sets the dire and position of the new entity
+	 * @param d dire
+	 * @param p position
+	 */
 	public void added(int d, double p) {
 		pos = p;
 		dire = d;

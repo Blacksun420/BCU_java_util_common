@@ -21,9 +21,7 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 	private P pos = new P(0, 0), piv = new P(0, 0), sca = new P(0, 0);
 	private int z, angle, opacity, glow, extendX, extendY, extType; // extType - 0 : Slow, 1 : Curse
 	private int hf, vf;
-	protected EAnimI ea;
-
-	public int par;// temp
+	public boolean EWarp = false;
 
 	protected EPart(MaModel mm, AnimI<?, ?> aa, int[] part, String str, int i, EPart[] ents) {
 		model = mm;
@@ -35,12 +33,26 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 		setValue();
 	}
 
+	/**
+	 * Gets this component's parent
+	 * @return this component's parent, or -1 if it doesn't has any
+	 */
+	public int getPar() {
+		if (fa == null)
+			return -1;
+
+		for (int i = 0; i < ent.length; i++)
+			if (fa == ent[i])
+				return i;
+		return -1;
+	}
+
 	public void alter(int m, int v) {
 		if (m == 0)
 			if (v < ent.length && v >= 0 && v != ind)
-				fa = ent[par = v];
+				fa = ent[v];
 			else
-				fa = ent[par = 0];
+				fa = ent[0];
 		else if (m == 1)
 			id = v;
 		else if (m == 2) {
@@ -100,13 +112,13 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 
 	public int getVal(int m) {
 		if (m == 0)
-			return par;
+			return getPar();
 		else if (m == 1)
 			return id;
 		else if (m == 2)
 			return img;
 		else if (m == 3)
-			return z;
+			return z / ent.length - ind;
 		else if (m == 4)
 			return (int) pos.x;
 		else if (m == 5)
@@ -249,7 +261,6 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 		angle = args[10];
 		opacity = args[11];
 		glow = args[12];
-		extendX = args[13];
 		gsca = model.ints[0];
 		hf = vf = 1;
 		extendX = extendY = 0;
@@ -303,11 +314,21 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 			siz = fa.getSize().times(sizer);
 		}
 
-		P tpos = P.newP(pos).times(siz);
-
 		if (ent[0] != this) {
+			P tpos = P.newP(pos).times(siz);
 			g.translate(tpos.x, tpos.y);
 			g.scale(hf, vf);
+			P.delete(tpos);
+		} else if (fa != null && model.confs.length > 0 && EWarp) {
+			int[] fir = fa.model.parts[0];
+			int[] data = model.confs[0];
+			P tpos = P.newP(data[2] * model.parts[0][8] / model.ints[0] - fir[6], data[3] * model.parts[0][8] / model.ints[0] - fir[7]).times(siz);
+			g.translate(-tpos.x, -tpos.y);
+			tpos = P.newP(-piv.x, -piv.y).times(siz);
+			g.translate(tpos.x, tpos.y);
+
+			g.scale(hf, vf);
+			P.delete(tpos);
 		} else {
 			if (model.confs.length > 0) {
 				int[] data = model.confs[0];
@@ -329,8 +350,6 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 		}
 		if (angle != 0)
 			g.rotate(Math.PI * 2 * angle / model.ints[1]);
-
-		P.delete(tpos);
 
 		if (fa != null)
 			P.delete(siz);

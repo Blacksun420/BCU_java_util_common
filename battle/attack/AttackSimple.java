@@ -24,7 +24,6 @@ public class AttackSimple extends AttackAb {
 	private final Set<AbEntity> attacked = new HashSet<>();
 	private final boolean range;
 	public int ind = 0;
-	public Identifier<Music> sfx0, sfx1;
 
 	public AttackSimple(Entity attacker, AtkModelAb ent, int ATK, ArrayList<Trait> tr, int eab, Proc pro, double p0, double p1, boolean isr,
 						MaskAtk matk, int layer, boolean isLongAtk, int duration) {
@@ -40,8 +39,6 @@ public class AttackSimple extends AttackAb {
 			touch |= TCH_CORPSE;
 
 		dire *= mask.getDire();
-		sfx0 = mask.getAudio(false);
-		sfx1 = mask.getAudio(true);
 	}
 
 	public AttackSimple(Entity attacker, AtkModelAb ent, int ATK, ArrayList<Trait> tr, int eab, Proc proc, double p0, double p1, MaskAtk mask, int layer, boolean isLongAtk, int ind) {
@@ -151,9 +148,8 @@ public class AttackSimple extends AttackAb {
 
 			ContVolcano volcano = new ContVolcano(new AttackVolcano(attacker, this, sta, end), p0, layer, volc.time, ind);
 
-			if(attacker != null) {
+			if(attacker != null)
 				attacker.summoned.add(volcano);
-			}
 		}
 	}
 
@@ -164,6 +160,8 @@ public class AttackSimple extends AttackAb {
 	 */
 	@Override
 	public void playSound(boolean isBase, boolean alt) {
+		Identifier<Music> sfx0 = matk == null ? null : matk.getAudio(false);
+		Identifier<Music> sfx1 = matk == null ? null : matk.getAudio(true);
 		if (sfx0 == null && sfx1 == null || isBase)
 			super.playSound(isBase, alt);
 		else if (alt || sfx1 == null)

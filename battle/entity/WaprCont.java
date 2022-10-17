@@ -20,6 +20,7 @@ public class WaprCont extends EAnimCont {
 		ent = a;
 		chara = effas().A_W_C.getEAnim(pa);
 		this.dire = dire;
+		ent.ent[0].EWarp = dire == 1;
 	}
 
 	@Override
@@ -28,10 +29,12 @@ public class WaprCont extends EAnimCont {
 		p.y -= 275 * psiz;
 		super.draw(gra, p, psiz);
 		gra.setTransform(at);
-		p.y += 275 * psiz;
+		p.y += (dire == 1 ? 250 : 275) * psiz;
 		ent.paraTo(chara);
 		ent.draw(gra, p, psiz);
 		ent.paraTo(null);
+		if (dire == 1)
+			p.y += 25 * psiz;
 		gra.delete(at);
 	}
 

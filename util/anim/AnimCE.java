@@ -218,7 +218,7 @@ public class AnimCE extends AnimCI {
 			mm0.strs0[i + mmn] = mm1.strs0[i];
 		}
 
-		for (int i = 0; i < 7; i++) {
+		for (int i = 0; i < Math.min(anims.length, a.anims.length); i++) {
 			MaAnim ma0 = anims[i];
 			MaAnim ma1 = a.anims[i];
 			int man = ma0.n;

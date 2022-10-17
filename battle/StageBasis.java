@@ -9,6 +9,7 @@ import common.util.BattleObj;
 import common.util.CopRand;
 import common.util.Data;
 import common.util.Data.Proc.THEME;
+import common.util.anim.AnimU;
 import common.util.pack.Background;
 import common.util.pack.EffAnim;
 import common.util.pack.EffAnim.DefEff;
@@ -499,8 +500,13 @@ public class StageBasis extends BattleObj {
 				EEnemy e = est.allow();
 				if (e != null) {
 					e.added(1, (e.mark >= 1 ? boss_spawn : 700.0) + (st.len - 800 - ebase.pos) * e.door / 100);
-					le.add(e);
-					le.sort(Comparator.comparingInt(en -> en.layer));
+					if (e.door > 0 && !e.getAnim().anim().getEAnim(AnimU.UType.WALK).unusable()) {
+						lea.add(new DoorCont(this, e));
+						lea.sort(Comparator.comparingInt(ea -> ea.layer));
+					} else {
+						le.add(e);
+						le.sort(Comparator.comparingInt(en -> en.layer));
+					}
 
 					if(st.minSpawn <= 0 || st.maxSpawn <= 0)
 						respawnTime = 1;
