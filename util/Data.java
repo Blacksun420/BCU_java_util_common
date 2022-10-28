@@ -25,21 +25,51 @@ public class Data {
 	public static class Proc implements BattleStatic {
 
 		@JsonClass(noTag = NoTag.LOAD)
-		public static class ARMOR extends ProcItem {
+		public static class PROB extends ProcItem {
+			@Order(0)
+			public int prob;
+		}
+
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class MULT extends ProcItem {
+			@Order(0)
+			public int mult;
+		}
+
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class PM extends ProcItem {
+			@Order(0)
+			public int prob;
+			@Order(1)
+			public int mult;
+		}
+
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class PT extends ProcItem {
+			@Order(0)
+			public int prob;
+			@Order(1)
+			public int time;
+		}
+
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class PTD extends ProcItem {
+			@Order(0)
+			public int prob;
+			@Order(1)
+			public int time;
+			@Order(2)
+			public int dis;
+		}
+
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class PTM extends ProcItem {
 			@Order(0)
 			public int prob;
 			@Order(1)
 			public int time;
 			@Order(2)
 			public int mult;
-		}
-
-		@JsonClass(noTag = NoTag.LOAD)
-		public static class BURROW extends ProcItem {
-			@Order(0)
-			public int count;
-			@Order(1)
-			public int dis;
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -58,6 +88,352 @@ public class Data {
 			public int block;
 			@Order(2)
 			public int smartImu;
+		}
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class WAVE extends ProcItem {
+			@Order(0)
+			public int prob;
+			@Order(1)
+			public int lv;
+		}
+
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class MINIWAVE extends ProcItem {
+			@Order(0)
+			public int prob;
+			@Order(1)
+			public int lv;
+			@Order(2)
+			public int multi;
+		}
+
+		@JsonClass(noTag = NoTag.LOAD) //Used for procs that lack the block reformat
+		public static class WAVEI extends ProcItem {
+			@Order(0)
+			public int mult;
+		}
+
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class CANNI extends ProcItem {
+			@Order(0)
+			public int mult;
+			@Order(1)
+			public int type;
+		}
+
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class VOLC extends ProcItem {
+			@Order(0)
+			public int prob;
+			@Order(1)
+			public int dis_0;
+			@Order(2)
+			public int dis_1;
+			@Order(3)
+			public int time;
+		}
+
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class STRONG extends ProcItem {
+			@Order(0)
+			public int health;
+			@Order(1)
+			public int mult;
+		}
+
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class BURROW extends ProcItem {
+			@Order(0)
+			public int count;
+			@Order(1)
+			public int dis;
+		}
+
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class REVIVE extends ProcItem {
+
+			@JsonClass(noTag = NoTag.LOAD)
+			public static class TYPE extends IntType {
+				@BitCount(2)
+				@Order(0)
+				public int range_type;
+				@Order(1)
+				public boolean imu_zkill;
+				@Order(2)
+				public boolean revive_non_zombie;
+				@Order(3)
+				public boolean revive_others;
+			}
+
+			@Order(0)
+			public int count;
+			@Order(1)
+			public int time;
+			@Order(2)
+			public int health;
+			@Order(3)
+			public int dis_0;
+			@Order(4)
+			public int dis_1;
+			@Order(5)
+			public TYPE type = new TYPE();
+		}
+
+		@JsonClass(noTag = NoTag.LOAD) // Starred Barrier
+		public static class BARRIER extends ProcItem {
+
+			@JsonClass(noTag = NoTag.LOAD)
+			public static class TYPE extends IntType {
+				@Order(0)
+				public boolean magnif;
+			}
+			@Order(0)
+			public int health;
+			@Order(1)
+			public int regentime;
+			@Order(2)
+			public int timeout;
+			@Order(3)
+			public TYPE type = new TYPE();
+		}
+
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class DSHIELD extends ProcItem {
+			@Order(0)
+			public int hp;
+			@Order(1)
+			public int regen;
+		}
+
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class BSTHUNT extends ProcItem {
+			@JsonClass(noTag = NoTag.LOAD)
+			public static class TYPE extends IntType {
+				@Order(0)
+				public boolean active;
+			}
+			@Order(0)
+			public TYPE type = new TYPE();
+			@Order(1)
+			public int prob;
+			@Order(2)
+			public int time;
+		}
+
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class CDSETTER extends ProcItem {
+			@Order(0)
+			public int prob;
+			@Order(1)
+			public int amount;
+			@Order(2)
+			public int slot;
+			@Order(3)
+			public int type; //0 - frames, 1 - %, 2 - set
+		}
+
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class AURA extends ProcItem {
+			@JsonClass(noTag = NoTag.LOAD)
+			public static class TYPE extends IntType {
+				@Order(0)
+				public boolean trait; //classic ignore/consider trait
+			}
+			@Order(0)
+			public int amult; //Modifies Damage
+			@Order(1)
+			public int dmult; //Modifies Defense
+			@Order(2)
+			public int smult; //Modifies Speed
+			@Order(3)
+			public int tmult; //Modifies TBA
+			@Order(4)
+			public int min_dis;
+			@Order(5)
+			public int max_dis;
+			@Order(6)
+			public TYPE type = new TYPE();
+		}
+
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class LETHARGY extends ProcItem {
+			@JsonClass(noTag = NoTag.LOAD)
+			public static class TYPE extends IntType {
+				@Order(0)
+				public boolean percentage;
+			}
+			@Order(0)
+			public int prob;
+			@Order(1)
+			public int time;
+			@Order(2)
+			public int mult;
+			@Order(3)
+			public TYPE type = new TYPE();
+		}
+
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class MOVEWAVE extends ProcItem {
+			@Order(0)
+			public int prob;
+			@Order(1)
+			public int speed;
+			@Order(2)
+			public int width;
+			@Order(3)
+			public int time;
+			@Order(4)
+			public int dis;
+			@Order(5)
+			public int itv;
+		}
+
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class POISON extends ProcItem {
+
+			@JsonClass(noTag = NoTag.LOAD)
+			public static class TYPE extends IntType {
+				@BitCount(2)
+				@Order(0)
+				public int damage_type;
+				@Order(1)
+				public boolean unstackable;
+				@Order(2)
+				public boolean ignoreMetal;
+				@Order(3)
+				public boolean modifAffected;
+			}
+
+			@Order(0)
+			public int prob;
+			@Order(1)
+			public int time;
+			@Order(2)
+			public int damage;
+			@Order(3)
+			public int itv;
+			@Order(4)
+			public TYPE type = new TYPE();
+		}
+
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class TIME extends ProcItem {
+			@Order(0)
+			public int prob;
+			@Order(1)
+			public int time;
+			@Order(2)
+			public int intensity;
+		}
+
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class SPEED extends ProcItem {
+			@Order(0)
+			public int prob;
+			@Order(1)
+			public int time;
+			@Order(2)
+			public int speed;
+			@Order(3)
+			public int type;
+		}
+
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class SUMMON extends ProcItem {
+
+			@JsonClass(noTag = NoTag.LOAD)
+			public static class TYPE extends IntType {
+
+				@BitCount(2)
+				@Order(0)
+				public int anim_type;
+				@Order(1)
+				public boolean ignore_limit;
+				@Order(2)
+				public boolean fix_buff;
+				@Order(3)
+				public boolean same_health;
+				@Order(4)
+				public boolean bond_hp;
+				@Order(5)
+				public boolean on_hit;
+				@Order(6)
+				public boolean on_kill;
+
+			}
+
+			@Order(0)
+			public int prob;
+			@Order(1)
+			public Identifier<?> id;
+			@Order(2)
+			public int dis;
+			@Order(3)
+			public int max_dis;
+			@Order(4)
+			public int mult;
+			@Order(5)
+			public int min_layer;
+			@Order(6)
+			public int max_layer;
+			@Order(7)
+			public TYPE type = new TYPE();
+			@Order(8)
+			public int time;
+			@Order(9)
+			public int form;
+		}
+
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class THEME extends ProcItem {
+
+			@JsonClass(noTag = NoTag.LOAD)
+			public static class TYPE extends IntType {
+				@Order(0)
+				public boolean kill;
+			}
+
+			@Order(0)
+			public int prob;
+			@Order(1)
+			public int time;
+			@Order(2)
+			public Identifier<Background> id;
+			@Order(3)
+			public Identifier<Music> mus;
+			@Order(4)
+			public TYPE type = new TYPE();
+		}
+
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class COUNTER extends ProcItem {
+
+			@JsonClass(noTag = NoTag.LOAD)
+			public static class TYPE extends IntType {
+				@BitCount(2)
+				@Order(0)
+				public int counterWave;
+				@BitCount(2)
+				@Order(1)
+				public int procType;
+				@Order(1)
+				public boolean useOwnDamage;
+				@Order(2)
+				public boolean outRange;
+				@Order(3)
+				public boolean areaAttack;
+			}
+
+			@Order(0)
+			public int prob;
+			@Order(1)
+			public int damage;
+			@Order(2)
+			public int minRange;
+			@Order(3)
+			public int maxRange;
+			@Order(4)
+			public TYPE type = new TYPE();
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -153,70 +529,6 @@ public class Data {
 				return ans;
 			}
 
-		}
-
-		@JsonClass(noTag = NoTag.LOAD)
-		public static class MOVEWAVE extends ProcItem {
-			@Order(0)
-			public int prob;
-			@Order(1)
-			public int speed;
-			@Order(2)
-			public int width;
-			@Order(3)
-			public int time;
-			@Order(4)
-			public int dis;
-			@Order(5)
-			public int itv;
-		}
-
-		@JsonClass(noTag = NoTag.LOAD)
-		public static class PM extends ProcItem {
-			@Order(0)
-			public int prob;
-			@Order(1)
-			public int mult;
-		}
-
-		@JsonClass(noTag = NoTag.LOAD)
-		public static class POISON extends ProcItem {
-
-			@JsonClass(noTag = NoTag.LOAD)
-			public static class TYPE extends IntType {
-				@BitCount(2)
-				@Order(0)
-				public int damage_type;
-				@Order(1)
-				public boolean unstackable;
-				@Order(2)
-				public boolean ignoreMetal;
-				@Order(3)
-				public boolean modifAffected;
-			}
-
-			@Order(0)
-			public int prob;
-			@Order(1)
-			public int time;
-			@Order(2)
-			public int damage;
-			@Order(3)
-			public int itv;
-			@Order(4)
-			public TYPE type = new TYPE();
-		}
-
-		@JsonClass(noTag = NoTag.LOAD)
-		public static class PROB extends ProcItem {
-			@Order(0)
-			public int prob;
-		}
-
-		@JsonClass(noTag = NoTag.LOAD)
-		public static class MULT extends ProcItem {
-			@Order(0)
-			public int mult;
 		}
 
 		public static abstract class ProcItem implements Cloneable, BattleStatic {
@@ -370,277 +682,6 @@ public class Data {
 
 		}
 
-		@JsonClass(noTag = NoTag.LOAD)
-		public static class PT extends ProcItem {
-			@Order(0)
-			public int prob;
-			@Order(1)
-			public int time;
-		}
-
-		@JsonClass(noTag = NoTag.LOAD)
-		public static class PTD extends ProcItem {
-			@Order(0)
-			public int prob;
-			@Order(1)
-			public int time;
-			@Order(2)
-			public int dis;
-		}
-
-		@JsonClass(noTag = NoTag.LOAD)
-		public static class TIME extends ProcItem {
-			@Order(0)
-			public int prob;
-			@Order(1)
-			public int time;
-			@Order(2)
-			public int intensity;
-		}
-
-		@JsonClass(noTag = NoTag.LOAD)
-		public static class REVIVE extends ProcItem {
-
-			@JsonClass(noTag = NoTag.LOAD)
-			public static class TYPE extends IntType {
-				@BitCount(2)
-				@Order(0)
-				public int range_type;
-				@Order(1)
-				public boolean imu_zkill;
-				@Order(2)
-				public boolean revive_non_zombie;
-				@Order(3)
-				public boolean revive_others;
-			}
-
-			@Order(0)
-			public int count;
-			@Order(1)
-			public int time;
-			@Order(2)
-			public int health;
-			@Order(3)
-			public int dis_0;
-			@Order(4)
-			public int dis_1;
-			@Order(5)
-			public TYPE type = new TYPE();
-		}
-
-		@JsonClass(noTag = NoTag.LOAD) // Starred Barrier
-		public static class BARRIER extends ProcItem {
-
-			@JsonClass(noTag = NoTag.LOAD)
-			public static class TYPE extends IntType {
-				@Order(0)
-				public boolean magnif;
-			}
-			@Order(0)
-			public int health;
-			@Order(1)
-			public int regentime;
-			@Order(2)
-			public int timeout;
-			@Order(3)
-			public TYPE type = new TYPE();
-		}
-
-		@JsonClass(noTag = NoTag.LOAD)
-		public static class SPEED extends ProcItem {
-			@Order(0)
-			public int prob;
-			@Order(1)
-			public int time;
-			@Order(2)
-			public int speed;
-			@Order(3)
-			public int type;
-		}
-
-		@JsonClass(noTag = NoTag.LOAD)
-		public static class STRONG extends ProcItem {
-			@Order(0)
-			public int health;
-			@Order(1)
-			public int mult;
-		}
-
-		@JsonClass(noTag = NoTag.LOAD)
-		public static class SUMMON extends ProcItem {
-
-			@JsonClass(noTag = NoTag.LOAD)
-			public static class TYPE extends IntType {
-
-				@BitCount(2)
-				@Order(0)
-				public int anim_type;
-				@Order(1)
-				public boolean ignore_limit;
-				@Order(2)
-				public boolean fix_buff;
-				@Order(3)
-				public boolean same_health;
-				@Order(4)
-				public boolean bond_hp;
-				@Order(5)
-				public boolean on_hit;
-				@Order(6)
-				public boolean on_kill;
-
-			}
-
-			@Order(0)
-			public int prob;
-			@Order(1)
-			public Identifier<?> id;
-			@Order(2)
-			public int dis;
-			@Order(3)
-			public int max_dis;
-			@Order(4)
-			public int mult;
-			@Order(5)
-			public int min_layer;
-			@Order(6)
-			public int max_layer;
-			@Order(7)
-			public TYPE type = new TYPE();
-			@Order(8)
-			public int time;
-			@Order(9)
-			public int form;
-		}
-
-		@JsonClass(noTag = NoTag.LOAD)
-		public static class THEME extends ProcItem {
-
-			@JsonClass(noTag = NoTag.LOAD)
-			public static class TYPE extends IntType {
-				@Order(0)
-				public boolean kill;
-			}
-
-			@Order(0)
-			public int prob;
-			@Order(1)
-			public int time;
-			@Order(2)
-			public Identifier<Background> id;
-			@Order(3)
-			public Identifier<Music> mus;
-			@Order(4)
-			public TYPE type = new TYPE();
-		}
-
-		@JsonClass(noTag = NoTag.LOAD)
-		public static class COUNTER extends ProcItem {
-
-			@JsonClass(noTag = NoTag.LOAD)
-			public static class TYPE extends IntType {
-				@BitCount(2)
-				@Order(0)
-				public int counterWave;
-				@BitCount(2)
-				@Order(1)
-				public int procType;
-				@Order(1)
-				public boolean useOwnDamage;
-				@Order(2)
-				public boolean outRange;
-				@Order(3)
-				public boolean areaAttack;
-			}
-
-			@Order(0)
-			public int prob;
-			@Order(1)
-			public int damage;
-			@Order(2)
-			public int minRange;
-			@Order(3)
-			public int maxRange;
-			@Order(4)
-			public TYPE type = new TYPE();
-		}
-
-		@JsonClass(noTag = NoTag.LOAD)
-		public static class VOLC extends ProcItem {
-			@Order(0)
-			public int prob;
-			@Order(1)
-			public int dis_0;
-			@Order(2)
-			public int dis_1;
-			@Order(3)
-			public int time;
-		}
-
-		@JsonClass(noTag = NoTag.LOAD)
-		public static class WAVE extends ProcItem {
-			@Order(0)
-			public int prob;
-			@Order(1)
-			public int lv;
-		}
-
-		@JsonClass(noTag = NoTag.LOAD)
-		public static class MINIWAVE extends ProcItem {
-			@Order(0)
-			public int prob;
-			@Order(1)
-			public int lv;
-			@Order(2)
-			public int multi;
-		}
-
-		@JsonClass(noTag = NoTag.LOAD) //Used for procs that lack the block reformat
-		public static class WAVEI extends ProcItem {
-			@Order(0)
-			public int mult;
-		}
-
-		@JsonClass(noTag = NoTag.LOAD)
-		public static class CANNI extends ProcItem {
-			@Order(0)
-			public int mult;
-			@Order(1)
-			public int type;
-		}
-
-		@JsonClass(noTag = NoTag.LOAD)
-		public static class WEAK extends ProcItem {
-			@Order(0)
-			public int prob;
-			@Order(1)
-			public int time;
-			@Order(2)
-			public int mult;
-		}
-
-		@JsonClass(noTag = NoTag.LOAD)
-		public static class DSHIELD extends ProcItem {
-			@Order(0)
-			public int hp;
-			@Order(1)
-			public int regen;
-		}
-
-		@JsonClass(noTag = NoTag.LOAD)
-		public static class BSTHUNT extends ProcItem {
-			@JsonClass(noTag = NoTag.LOAD)
-			public static class TYPE extends IntType {
-				@Order(0)
-				public boolean active;
-			}
-			@Order(0)
-			public TYPE type = new TYPE();
-			@Order(1)
-			public int prob;
-			@Order(2)
-			public int time;
-		}
-
 		public static Proc blank() {
 			return new Proc();
 		}
@@ -689,7 +730,7 @@ public class Data {
 		@Order(7)
 		public final VOLC VOLC = new VOLC();
 		@Order(8)
-		public final WEAK WEAK = new WEAK();
+		public final PTM WEAK = new PTM();
 		@Order(9)
 		public final PROB BREAK = new PROB();
 		@Order(10)
@@ -717,7 +758,7 @@ public class Data {
 		@Order(21)
 		public final PM POIATK = new PM();
 		@Order(22)
-		public final ARMOR ARMOR = new ARMOR();
+		public final PTM ARMOR = new PTM();
 		@Order(23)
 		public final SPEED SPEED = new SPEED();
 		@Order(24)
@@ -781,7 +822,19 @@ public class Data {
 		@Order(53)
 		public final MULT ATKBASE = new MULT();
 		@Order(54)
-		public final BSTHUNT BSTHUNT = new BSTHUNT(); //Unsure what does the 1st param of beast killer do, so this is temporary
+		public final BSTHUNT BSTHUNT = new BSTHUNT();
+		@Order(55)
+		public final PM WORKERLV = new PM();
+		@Order(55)
+		public final CDSETTER CDSETTER = new CDSETTER();
+		@Order(56)
+		public final AURA WEAKAURA = new AURA();
+		@Order(57)
+		public final AURA STRONGAURA = new AURA();
+		@Order(58)
+		public final LETHARGY LETHARGY = new LETHARGY();
+		@Order(58)
+		public final IMUAD IMULETHARGY = new IMUAD();
 
 		@Override
 		public Proc clone() {
@@ -1129,8 +1182,14 @@ public class Data {
 	public static final int P_BOUNTY = 52;
 	public static final int P_ATKBASE = 53;
 	public static final int P_BSTHUNT = 54; //Beast Killer
-	public static final byte PROC_TOT = 55;// 53
-	public static final byte PROC_WIDTH = 6;
+	public static final int P_WORKERLV = 55;
+	public static final int P_CDSETTER = 56;
+	public static final int P_WEAKAURA = 57;
+	public static final int P_STRONGAURA = 58;
+	public static final int P_LETHARGY = 59;
+	public static final int P_IMULETHARGY = 60;
+	public static final byte PROC_TOT = 61;// 53
+	public static final byte PROC_WIDTH = 3;
 
 	public static final boolean[] procSharable = {
 			false, //kb
@@ -1188,6 +1247,12 @@ public class Data {
 			false, //2x money
 			false, //base destroyer
 			true, //beast hunter
+			false, //Worker change
+			false, //Cooldown change
+			true, //Weaken Aura
+			true, //Strengthen Aura
+			false, //Lethargy
+			true //Imu.Lethargy
 	};
 
 	/**
@@ -1199,7 +1264,7 @@ public class Data {
 	 * Procs in this list are removed when an unit is hit and has a barrier or Aku shield active
 	 */
 	public static final byte[] REMOVABLE_PROC = {
-			P_STOP, P_SLOW, P_WEAK, P_CURSE, P_SEAL, P_POISON, P_ARMOR, P_SPEED
+			P_STOP, P_SLOW, P_WEAK, P_CURSE, P_SEAL, P_POISON, P_ARMOR, P_SPEED, P_LETHARGY
 	};
 
 	public static final byte WT_WAVE = 1;
@@ -1461,10 +1526,6 @@ public class Data {
 	public static final short W_U_WID = 400;
 	public static final byte W_TIME = 3;
 	public static final byte W_MINI_TIME = 2; // mini wave spawn interval
-	public static final byte E_IMU = -1;
-	public static final byte E_IWAVE = -2;
-	public static final byte E_SWAVE = -3;
-	public static final short W_VOLC = 375;
 	public static final short W_VOLC_INNER = 250; // volcano inner width
 	public static final byte W_VOLC_PIERCE = 125; // volcano pierce width
 	public static final byte VOLC_ITV = 20;

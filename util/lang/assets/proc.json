@@ -95,7 +95,7 @@
         "abbr_name": "weak",
         "full_name": "Weaken",
         "tooltip": null,
-        "format": "(prob)% chance to [(mult>100){strengthen}(mult<=100){weaken}] target's attack to [(mult>100){(mult)}(mult<=100){(mult)}]% for (_dispTime(time))",
+        "format": "(prob)% chance to [(mult>100){strengthen}(mult<=100){weaken}] target's attack to (mult)% for (_dispTime(time))",
         "class": {
             "prob": {
                 "name": "chance",
@@ -108,6 +108,30 @@
             "mult": {
                 "name": "multiplier",
                 "tooltip": "What percent of original attack the target will be weaken to"
+            }
+        }
+    },
+    "LETHARGY": {
+        "abbr_name": "Lethargy",
+        "full_name": "Lethargy",
+        "tooltip": null,
+        "format": "(prob)% chance to [(mult>0){increase}(mult<0){decrease}] target's TBA by (_abs(mult))[(type.percentage){%}] for (_dispTime(time))",
+        "class": {
+            "prob": {
+                "name": "chance",
+                "tooltip": null
+            },
+            "time": {
+                "name": "duration",
+                "tooltip": null
+            },
+            "mult": {
+                "name": "multiplier",
+                "tooltip": "What amount will the original TBA of the target will be increased to"
+            },
+            "type.percentage": {
+                "name": "Percentage",
+                "tooltip": "Simply adds when false, and increases the TBA by percentage when true"
             }
         }
     },
@@ -356,6 +380,30 @@
             "smartImu": {
                 "name": "Ignore",
                 "tooltip": "0 = Resist buffs and debuffs, 1 = Only resistant to attack debuffs, -1 = Only resistant to attack buffs"
+            }
+        }
+    },
+    "IMULETHARGY": {
+        "abbr_name": "imu. Lethargy",
+        "full_name": "Immune/Resistant to Lethargy",
+        "tooltip": null,
+        "format": ["[(mult!=0&block!=100){[(mult==100){Immune}(mult<100&mult>0){Resistant}(mult<0){Weak}] to Lethargy",
+            "[(mult<100&mult>0){ (_left)Decreases duration by (mult)%(_right)}(mult<0){ (_left)Increases duration by (_abs(mult))%(_right)}]",
+            "[(block!=0&block<100){ & }]}][(block!=0){Lethargy [(block==100){blocker}(block<100&block>0){absorber}(block<0){increaser}]",
+            "[(block<100&block>0){ (_left)Decreases duration by (block)%(_right)}(block<0){ (_left)Increases duration by (_abs(block))%(_right)}]}]",
+            "[(smartImu!=0){. Only affects attack [(smartImu>0){debuffs}(smartImu<0){buffs}]}]"],
+        "class": {
+            "mult": {
+                "name": "percent",
+                "tooltip": null
+            },
+            "block": {
+                "name": "Blocker",
+                "tooltip": "Set from 1 to 99 to reduce duration amongst all units. Set to 100 to completely block Lethargy"
+            },
+            "smartImu": {
+                "name": "Ignore",
+                "tooltip": "0 = Resist buffs and debuffs, 1 = Only resistant to debuffs, -1 = Only resistant to buffs"
             }
         }
     },
@@ -1245,6 +1293,134 @@
             "time": {
                 "name": "duration",
                 "tooltip": null
+            }
+        }
+    },
+    "WORKERLV": {
+        "abbr_name": "Worker Lv",
+        "full_name": "Efficiency Bonus",
+        "tooltip": "Increases worker level by a given amount",
+        "format": "(prob)% chance to [(mult>0){increase}(mult<0){decrease}] Worker Cat's level by (mult)",
+        "class": {
+            "prob": {
+                "name": "Chance",
+                "tooltip": null
+            },
+            "mult": {
+                "name": "Lv increase",
+                "tooltip": "The amount to add. Use negative numbers to decrease worker lv instead"
+            }
+        }
+    },
+    "CDSETTER": {
+        "abbr_name": "CD Modifier",
+        "full_name": "Research Stopper",
+        "tooltip": "Increases a certain unit's cooldown by a given amount",
+        "format": ["(prob)% chance to [(type==2){set}(type!=2){[(amount>0){increase}(amount<0){decrease}]}] ",
+                    "[(slot<0){a random unit}(slot>=0){the unit in the lineup's (slot)th slot}]'s cooldown ",
+                    "[(type==2){to}(type!=2){by}] (amount)[(type!=1){f}(type==1){%}]"],
+        "class": {
+            "prob": {
+                "name": "Chance",
+                "tooltip": null
+            },
+            "amount": {
+                "name": "increase",
+                "tooltip": "The amount to add. Use negative numbers to decrease cooldown instead"
+            },
+            "slot": {
+                "name": "slot",
+                "tooltip": "The slot of the unit to affect. Use -1 for random"
+            },
+            "type": {
+                "name": "type",
+                "tooltip": "0 = unit increase, 1 = percentage increase, 2 = set to value"
+            }
+        }
+    },
+    "WEAKAURA": {
+        "abbr_name": "Weak Aura",
+        "full_name": "Weakening Aura",
+        "tooltip": "Decreases morale for all enemies in the given range",
+        "format": ["[(type.trait){All }]Enemies within (min_dis) ~ (max_dis) from this entity will have ",
+            "[(amult!=0){their attack [(amult>100){increased}(amult<100){decreased}] to (amult)%}]",
+            "[(amult!=0){[(dmult!=0&smult!=0|dmult!=0&smult!=0|smult!=0&tmult!=0){, }(dmult==0^smult==0|dmult==0^tmult==0|smult==0^tmult==0){ and }]}]",
+            "[(dmult!=0){receive (_abs(dmult))% [(dmult>0){more}(dmult<0){less}] damage per hit}]",
+            "[(amult!=0|dmult!=0){[(smult!=0&tmult!=0){, }(smult==0^tmult==0){ and }]}]",
+            "[(smult!=0){their speed [(smult>100){increased}(smult<100){decreased}] to (smult)%}]",
+            "[(amult!=0|dmult!=0|smult!=0&tmult!=0){ and }]",
+            "[(tmult!=0){their TBA [(amult>0){increased}(amult<0){decreased}] by (_abs(amult))%}]."],
+        "class": {
+            "amult": {
+                "name": "ATK Mult.",
+                "tooltip": "Attack Modifier"
+            },
+            "dmult": {
+                "name": "DEF Mult.",
+                "tooltip": "Defense Modifier"
+            },
+            "smult": {
+                "name": "SPD Mult.",
+                "tooltip": "Speed Modifier"
+            },
+            "tmult": {
+                "name": "TBA Mult.",
+                "tooltip": "TBA Modifier"
+            },
+            "min_dis": {
+                "name": "Blindspot",
+                "tooltip": "Below this range, aura has no effect"
+            },
+            "max_dis": {
+                "name": "Max Reach",
+                "tooltip": "Above this range, aura has no effect"
+            },
+            "type.trait": {
+                "name": "Ignore Traits",
+                "tooltip": "Weakens all enemies regardless of typing if true"
+            }
+        }
+    },
+    "STRONGAURA": {
+        "abbr_name": "Strong Aura",
+        "full_name": "Empowering Aura",
+        "tooltip": "Increases morale for all units in the given range (WIP DESC)",
+        "format": ["[(type.trait){All }]Units within (min_dis) ~ (max_dis) from this entity will have ",
+            "[(amult!=0){their attack [(amult>0){increased}(amult<0){decreased}] by (_abs(dmult))%, }]",
+            "[(amult!=0){[(dmult!=0&smult!=0|dmult!=0&smult!=0|smult!=0&tmult!=0){, }(dmult==0^smult==0|dmult==0^tmult==0|smult==0^tmult==0){ and }]}]",
+            "[(dmult!=0){receive (dmult)% damage from attacks, }]",
+            "[(amult!=0|dmult!=0){[(smult!=0&tmult!=0){, }(smult==0^tmult==0){ and }]}]",
+            "[(smult!=0){their speed [(smult>0){increased}(smult<0){decreased}] by (smult)%, }]",
+            "[(amult!=0|dmult!=0|smult!=0&tmult!=0){ and }]",
+            "[(tmult!=0){and their TBA [(amult>0){increased}(amult<0){decreased}] by (_abs(amult))%, }]"],
+        "class": {
+            "amult": {
+                "name": "ATK Mult.",
+                "tooltip": "Attack Modifier"
+            },
+            "dmult": {
+                "name": "DEF Mult.",
+                "tooltip": "Defense Modifier"
+            },
+            "smult": {
+                "name": "SPD Mult.",
+                "tooltip": "Speed Modifier"
+            },
+            "tmult": {
+                "name": "TBA Mult.",
+                "tooltip": "TBA Modifier"
+            },
+            "min_dis": {
+                "name": "Blindspot",
+                "tooltip": "Below this range, aura has no effect"
+            },
+            "max_dis": {
+                "name": "Max Reach",
+                "tooltip": "Above this range, aura has no effect"
+            },
+            "type.trait": {
+                "name": "Ignore Traits",
+                "tooltip": "Strenghtens all allies regardless of typing if true"
             }
         }
     }

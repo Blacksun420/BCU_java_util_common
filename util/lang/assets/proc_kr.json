@@ -1212,5 +1212,127 @@
                 "tooltip": "공격 무효가 얼마동안 발동될지 정합니다"
             }
         }
+    },
+    "WORKERLV": {
+        "abbr_name": "Worker Lv",
+        "full_name": "Efficiency Bonus",
+        "tooltip": "Increases worker level by a given amount",
+        "format": "(prob)% chance to [(mult>0){increase}(mult<0){decrease}] Worker Cat's level by (mult)",
+        "class": {
+            "prob": {
+                "name": "Chance",
+                "tooltip": null
+            },
+            "mult": {
+                "name": "Lv increase",
+                "tooltip": "The amount to add. Use negative numbers to decrease worker lv instead"
+            }
+        }
+    },
+    "CDSETTER": {
+        "abbr_name": "CD Modifier",
+        "full_name": "Research Stopper",
+        "tooltip": "Increases a certain unit's cooldown by a given amount",
+        "format": ["(prob)% chance to [(type==2){set}(type!=2){[(amount>0){increase}(amount<0){decrease}]}] ",
+            "[(slot<0){a random unit}(slot>=0){the unit in the lineup's (slot)th slot}]'s cooldown ",
+            "[(type==2){to}(type!=2){by}] (amount)[(type!=1){f}(type==1){%}]"],
+        "class": {
+            "prob": {
+                "name": "Chance",
+                "tooltip": null
+            },
+            "amount": {
+                "name": "increase",
+                "tooltip": "The amount to add. Use negative numbers to decrease cooldown instead"
+            },
+            "slot": {
+                "name": "slot",
+                "tooltip": "The slot of the unit to affect. Use -1 for random"
+            },
+            "type": {
+                "name": "type",
+                "tooltip": "0 = unit increase, 1 = percentage increase, 2 = set to value"
+            }
+        }
+    },
+    "WEAKAURA": {
+        "abbr_name": "Weak Aura",
+        "full_name": "Weakening Aura",
+        "tooltip": "Decreases morale for all enemies in the given range",
+        "format": ["[(type.trait){All }]Enemies within (min_dis) ~ (max_dis) from this entity will have ",
+            "[(amult!=0){their attack [(amult>100){increased}(amult<100){decreased}] to (amult)%, }]",
+            "[(dmult!=0){receive (_abs(dmult))% [(dmult>0){more}(dmult<0){less}] damage per hit, }]",
+            "[(smult!=0){their speed [(smult>100){increased}(smult<100){decreased}] to (smult)%, }]",
+            "[(tmult!=0){their TBA [(amult>0){increased}(amult<0){decreased}] by (_abs(amult))%, }]"],
+        "class": {
+            "amult": {
+                "name": "ATK Mult.",
+                "tooltip": "Attack Modifier"
+            },
+            "dmult": {
+                "name": "DEF Mult.",
+                "tooltip": "Defense Modifier"
+            },
+            "smult": {
+                "name": "SPD Mult.",
+                "tooltip": "Speed Modifier"
+            },
+            "tmult": {
+                "name": "TBA Mult.",
+                "tooltip": "TBA Modifier"
+            },
+            "min_dis": {
+                "name": "Blindspot",
+                "tooltip": "Below this range, aura has no effect"
+            },
+            "max_dis": {
+                "name": "Max Reach",
+                "tooltip": "Above this range, aura has no effect"
+            },
+            "type.trait": {
+                "name": "Ignore Traits",
+                "tooltip": "Weakens all enemies regardless of typing if true"
+            }
+        }
+    },
+    "STRONGAURA": {
+        "abbr_name": "Strong Aura",
+        "full_name": "Empowering Aura",
+        "tooltip": "Increases morale for all units in the given range (WIP DESC)",
+        "format": ["[(type.trait){All }]Units within (min_dis) ~ (max_dis) from this entity will have ",
+            "[(amult!=0){their attack [(amult>0){increased}(amult<0){decreased}] by (_abs(dmult))%, }]",
+            "[(dmult!=0){receive (dmult)% damage from attacks, }]",
+            "[(smult!=0){their speed [(smult>0){increased}(smult<0){decreased}] by (smult)%, }]",
+            "[(tmult!=0){their TBA [(amult>100){increased}(amult<100){decreased}] to (_abs(amult))%, }]"],
+        "class": {
+            "amult": {
+                "name": "ATK Mult.",
+                "tooltip": "Attack Modifier"
+            },
+            "dmult": {
+                "name": "DEF Mult.",
+                "tooltip": "Defense Modifier"
+            },
+            "smult": {
+                "name": "SPD Mult.",
+                "tooltip": "Speed Modifier"
+            },
+            "tmult": {
+                "name": "TBA Mult.",
+                "tooltip": "TBA Modifier"
+            },
+            "min_dis": {
+                "name": "Blindspot",
+                "tooltip": "Below this range, aura has no effect"
+            },
+            "max_dis": {
+                "name": "Max Reach",
+                "tooltip": "Above this range, aura has no effect"
+            },
+            "type.trait": {
+                "name": "Ignore Traits",
+                "tooltip": "Strenghtens all allies regardless of typing if true"
+            }
+        }
     }
 }

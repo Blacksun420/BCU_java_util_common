@@ -129,6 +129,7 @@ public class AtkModelUnit extends AtkModelEntity {
 			atk = atk * e.status[P_WEAK][1] / 100;
 		if (e.status[P_STRONG][0] != 0)
 			atk += atk * (e.status[P_STRONG][0] + bas.getInc(C_STRONG)) / 100;
+		atk *= e.auras.getAtkAura();
 		return atk;
 	}
 

@@ -19,7 +19,7 @@ public class AtkModelEnemy extends AtkModelEntity {
 	protected AtkModelEnemy(EEnemy ent, double d0) {
 		super(ent, d0, 1);
 		String[] arr = { "KB", "STOP", "SLOW", "WEAK", "WARP", "CURSE", "SNIPER", "SEAL", "POISON", "BOSS",
-				"POIATK", "ARMOR", "SPEED", "DMGCUT", "DMGCAP" };
+				"POIATK", "ARMOR", "SPEED", "DMGCUT", "DMGCAP", "LETHARGY" };
 		cursed = new Proc[data.getAtkCount()];
 		for (int i = 0; i < cursed.length; i++) {
 			cursed[i] = data.getAtkModel(i).getProc().clone();
@@ -121,6 +121,7 @@ public void summon(SUMMON proc, Entity ent, Object acs, int resist) {
 			atk = atk * e.status[P_WEAK][1] / 100;
 		if (e.status[P_STRONG][0] != 0)
 			atk += atk * e.status[P_STRONG][0] / 100;
+		atk *= e.auras.getAtkAura();
 		return atk;
 	}
 

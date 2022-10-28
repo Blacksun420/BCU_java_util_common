@@ -86,7 +86,7 @@ public class EUnit extends Entity {
 			atk = atk * status[P_WEAK][1] / 100;
 		if (status[P_STRONG][0] != 0)
 			atk += atk * (status[P_STRONG][0] + basis.b.getInc(C_STRONG)) / 100;
-
+		atk *= auras.getAtkAura();
 		return atk;
 	}
 

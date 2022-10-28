@@ -37,33 +37,7 @@ public class Replay extends Data {
 	}
 
 	public static void read() {
-		/* File fold = CommonStatic.def.route("./replay/");
-		if (fold.exists()) {
-			File[] fs = fold.listFiles();
-			for (File fi : fs) {
-				String str = fi.getName();
-				if (str.endsWith(".replay")) {
-					try {
-						String name = str.substring(0, str.length() - 7);
-						InStream is = CommonStatic.def.readBytes(fi);
-						Replay rec = getRecd(is, new ResourceLocation(ResourceLocation.LOCAL, name), null);
-						rec.write();
-						getMap().put(name, rec);
-					} catch (Exception e) {
-						e.printStackTrace();
-						CommonStatic.ctx.noticeErr(e, ErrType.FATAL, "Failed to reformat "+fi.getName());
-					}
-				}
-			}
-		}
-		try {
-			Context.delete(fold);
-		} catch (IOException e) {
-			e.printStackTrace();
-			CommonStatic.ctx.noticeErr(e, ErrType.FATAL, "Failed to remove folder : "+fold.getName());
-		}
-		*/
-		File f = CommonStatic.ctx.getWorkspaceFile("./_local/" + Source.BasePath.REPLAY.toString());
+		File f = CommonStatic.ctx.getWorkspaceFile("./_local/" + Source.BasePath.REPLAY);
 		if (f.exists())
 			for (File fi : f.listFiles())
 				if (fi.getName().endsWith(".replay"))

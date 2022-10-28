@@ -128,6 +128,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 				c++;
 			}
 		ans += temp / c;
+		ans *= e.auras.getAtkAura();
 		return ans;
 	}
 
@@ -226,8 +227,15 @@ public abstract class AtkModelEntity extends AtkModelAb {
 					b.temp_n_inten = (float)Math.abs(getProc(ind).TIME.intensity) / b.sn_temp_stop;
 				}
 			}
-			if (getProc(ind).THEME.prob != 0 && (getProc(ind).THEME.prob == 100 || b.r.nextDouble() * 100 < getProc(ind).THEME.prob))
-				b.changeTheme(getProc(ind).THEME);
+			Proc.THEME t = getProc(ind).THEME;
+			if (t.prob != 0 && (t.prob == 100 || b.r.nextDouble() * 100 < t.prob))
+				b.changeTheme(t);
+			Proc.PM w = getProc(ind).WORKERLV;
+			if (w.prob != 0 && (w.prob == 100 || b.r.nextDouble() * 100 < w.prob))
+				b.changeWorkerLv(w.mult);
+			Proc.CDSETTER c = getProc(ind).CDSETTER;
+			if (c.prob != 0 && (c.prob == 100 || b.r.nextDouble() * 100 < c.prob))
+				b.changeUnitCooldown(c.amount, c.slot, c.type);
 		}
 	}
 
@@ -246,7 +254,8 @@ public abstract class AtkModelEntity extends AtkModelAb {
 
 	protected void setProc(int ind, Proc proc) {
 		String[] par = { "CRIT", "WAVE", "KB", "WARP", "STOP", "SLOW", "WEAK", "POISON", "MOVEWAVE", "CURSE", "SNIPER",
-				"BOSS", "SEAL", "BREAK", "SUMMON", "SATK", "POIATK", "VOLC", "ARMOR", "SPEED", "MINIWAVE", "SHIELDBREAK" };
+				"BOSS", "SEAL", "BREAK", "SUMMON", "SATK", "POIATK", "VOLC", "ARMOR", "SPEED", "MINIWAVE", "SHIELDBREAK",
+				"WORKERLV", "CDSETTER", "LETHARGY"};
 
 		for (String s0 : par)
 			if (getProc(ind).get(s0).perform(b.r))

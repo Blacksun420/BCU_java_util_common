@@ -183,6 +183,35 @@ public class StageBasis extends BattleObj {
 		themeType = th.type;
 	}
 
+	public void changeWorkerLv(int lv) {
+		work_lv = Math.max(1, work_lv + lv);
+		work_lv = Math.min(8, work_lv);
+
+		upgradeCost = b.t().getLvCost(work_lv);
+		maxMoney = b.t().getMaxMon(work_lv);
+		money = Math.min(money, maxMoney);
+	}
+
+	public void changeUnitCooldown(int amount, int slot, int type) {
+		if (b.lu.efs[0][0] == null)
+			return; //skip if player for some reason didn't bring a lineup
+		int totUni = 0;
+		while (b.lu.efs[totUni >= 5 ? 1 : 0][totUni % 5] != null && totUni < 10)
+			totUni++;
+		if (slot == -1 || b.lu.efs[Math.floorDiv(slot, 5)][slot % 5] == null)
+			slot = (int) (r.nextDouble() * totUni); //Pick random unit if chosen one isn't there
+		int i = slot >= 5 ? 1 : 0;
+
+		if (type == 0) {
+			elu.cool[i][slot % 5] += amount;
+		} else if (type == 1) {
+			elu.cool[i][slot % 5] += elu.maxC[i][slot % 5] * slot;
+		} else {
+			elu.cool[i][slot % 5] = amount;
+		}
+		elu.cool[i][slot % 5] = Math.min(elu.maxC[i][slot % 5], elu.cool[i][slot % 5]);
+	}
+
 	public void changeBG(Identifier<Background> id) {
 		theme = id;
 	}

@@ -205,29 +205,17 @@ public class FixIndexList<T> extends Data {
 		return arr[ind];
 	}
 
-	public int getFirstInd() {
-		if (size == 0)
-			return -1;
-		for (int i = 0; i < arr.length; i++)
-			if (arr[i] != null)
-				return i;
-		return -1;
-	}
-
+	/**
+	 * Returns a list containing all of the contents of this FixIndexList
+	 * Note that doing any changes to this list will not affect the FixIndexList
+	 * @return New list containing all elements in this FixIndexList
+	 */
 	public List<T> getList() {
 		List<T> ans = new ArrayList<>(size);
 		for (T t : arr)
 			if (t != null)
 				ans.add(t);
 		return ans;
-	}
-
-	public Map<Integer, T> getMap() {
-		Map<Integer, T> map = new TreeMap<>();
-		for (int i = 0; i < arr.length; i++)
-			if (arr[i] != null)
-				map.put(i, arr[i]);
-		return map;
 	}
 
 	public int indexOf(T tar) {
@@ -269,7 +257,7 @@ public class FixIndexList<T> extends Data {
 	}
 
 	@JsonField(tag = "data", io = IOType.R)
-	public void zgen(JsonElement e) throws Exception {
+	public void zgen(JsonElement e) {
 		@SuppressWarnings("unchecked")
 		Class<T> cls = (Class<T>) arr.getClass().getComponentType();
 		JsonArray jarr = e.getAsJsonArray();
@@ -283,7 +271,7 @@ public class FixIndexList<T> extends Data {
 	}
 
 	@JsonField(tag = "data", io = IOType.W)
-	public JsonElement zser() throws Exception {
+	public JsonElement zser() {
 		JsonArray data = new JsonArray();
 		for (int i = 0; i < arr.length; i++)
 			if (arr[i] != null) {

@@ -120,6 +120,14 @@ public abstract class AttackAb extends BattleObj {
 					else
 						proc.WEAK.time *= (100 - imus.IMUWEAK.block) / 100.0;
 				}
+				if (proc.LETHARGY.time > 0 && checkAIImmunity(proc.LETHARGY.mult,imus.IMULETHARGY.smartImu, imus.IMULETHARGY.block > 0)) {
+					if (imus.IMULETHARGY.block > 0)
+						blocked = true;
+					if (imus.IMULETHARGY.block == 100)
+						proc.LETHARGY.clear();
+					else
+						proc.LETHARGY.time *= (100 - imus.IMULETHARGY.block) / 100.0;
+				}
 				if (proc.WARP.time > 0 && imus.IMUWARP.block != 0) {
 					if (imus.IMUWARP.block > 0)
 						blocked = true;

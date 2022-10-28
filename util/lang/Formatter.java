@@ -141,6 +141,8 @@ public class Formatter {
 					stack.push(stack.pop() & nextElem());
 				else if (ch == '|')
 					stack.push(nextElem());
+				else if (ch == '^')
+					stack.push(stack.pop() ^ nextElem());
 				else
 					throw new Exception("unknown operator " + ch + " at " + (ind - 1));
 			}
@@ -174,13 +176,13 @@ public class Formatter {
 
 			collect.append(ch);
 
-			while (ch != '&' && ch != '|' && ind < p1) {
+			while (ch != '&' && ch != '|' && ch != '^' && ind < p1) {
 				ch = str.charAt(++ind);
 				collect.append(ch);
 
 				//Check if collected ch is int field
-				//If it's int field, then we can pass these two letters specially
-				if(ind < p1 && (str.charAt(ind) == '&' || str.charAt(ind) == '|') && test(collect.toString(), pre, ind)) {
+				//If it's int field, then we can pass these three letters specially
+				if(ind < p1 && (str.charAt(ind) == '&' || str.charAt(ind) == '|' || str.charAt(ind) == '^') && test(collect.toString(), pre, ind)) {
 					ch = str.charAt(++ind);
 					collect.append(ch);
 				}
@@ -338,6 +340,8 @@ public class Formatter {
 					stack.push(stack.pop() & nextElem());
 				} else if (ch == '|') {
 					stack.push(stack.pop() | nextElem());
+				} else if (ch == '^') {
+					stack.push(stack.pop() ^ nextElem());
 				} else
 					throw new Exception("unknown operator " + ch + " at " + (ind - 1));
 				prevOp = ch;
@@ -375,7 +379,7 @@ public class Formatter {
 			if (ch >= '0' && ch <= '9')
 				return neg * readNumber();
 			int pre = ind;
-			while (ch != '+' && ch != '-' && ch != '*' && ch != '/' && ch != '%' && ch != '&' && ch != '|' && ind < p1)
+			while (ch != '+' && ch != '-' && ch != '*' && ch != '/' && ch != '%' && ch != '&' && ch != '|' && ch != '^' && ind < p1)
 				ch = str.charAt(++ind);
 			return neg * (Integer) new RefObj(pre, ind).eval();
 		}
