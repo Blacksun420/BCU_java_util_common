@@ -4,8 +4,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import common.CommonStatic;
-import common.pack.Context;
 import common.util.anim.AnimCE;
+import common.pack.Context;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

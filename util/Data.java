@@ -3,6 +3,9 @@ package common.util;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import common.CommonStatic;
+import common.util.pack.Background;
+import common.util.pack.EffAnim;
+import common.util.stage.Music;
 import common.io.assets.Admin.StaticPermitted;
 import common.io.json.*;
 import common.io.json.FieldOrder.Order;
@@ -11,9 +14,6 @@ import common.pack.Context.ErrType;
 import common.pack.Context.RunExc;
 import common.pack.Context.SupExc;
 import common.pack.Identifier;
-import common.util.pack.Background;
-import common.util.pack.EffAnim.EffAnimStore;
-import common.util.stage.Music;
 
 import java.lang.annotation.*;
 import java.lang.reflect.Field;
@@ -1055,20 +1055,19 @@ public class Data {
 	public static final int AB_MASSIVE = 1 << 2;
 	public static final int AB_ONLY = 1 << 3;
 	public static final int AB_METALIC = 1 << 4;
-	public static final int AB_WAVES = 1 << 5;
-	public static final int AB_SNIPERI = 1 << 6;
-	public static final int AB_TIMEI = 1 << 7;
-	public static final int AB_GHOST = 1 << 8;
-	public static final int AB_ZKILL = 1 << 9;
-	public static final int AB_WKILL = 1 << 10;
-	public static final int AB_GLASS = 1 << 11;
-	public static final int AB_THEMEI = 1 << 12;
-	public static final int AB_EKILL = 1 << 13;
-	public static final int AB_IMUSW = 1 << 14;
-	public static final int AB_RESISTS = 1 << 15;
-	public static final int AB_MASSIVES = 1 << 16;
-	public static final int AB_BAKILL = 1 << 17;
-	public static final int AB_CKILL = 1 << 18;
+	public static final int AB_SNIPERI = 1 << 5;
+	public static final int AB_TIMEI = 1 << 6;
+	public static final int AB_GHOST = 1 << 7;
+	public static final int AB_ZKILL = 1 << 8;
+	public static final int AB_WKILL = 1 << 9;
+	public static final int AB_GLASS = 1 << 10;
+	public static final int AB_THEMEI = 1 << 11;
+	public static final int AB_EKILL = 1 << 12;
+	public static final int AB_IMUSW = 1 << 13;
+	public static final int AB_RESISTS = 1 << 14;
+	public static final int AB_MASSIVES = 1 << 15;
+	public static final int AB_BAKILL = 1 << 16;
+	public static final int AB_CKILL = 1 << 17;
 
 	// abi index
 	public static final byte ABI_GOOD = 0;
@@ -1600,7 +1599,7 @@ public class Data {
 
 	public static final String[] SUFX = new String[] { "f", "c", "s" };
 
-	public static EffAnimStore effas() {
+	public static EffAnim.EffAnimStore effas() {
 		return CommonStatic.getBCAssets().effas;
 	}
 

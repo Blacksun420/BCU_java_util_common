@@ -1,6 +1,7 @@
 package common.util.stage;
 
 import common.CommonStatic;
+import common.util.stage.info.DefStageInfo;
 import common.io.json.JsonClass;
 import common.io.json.JsonClass.JCConstructor;
 import common.io.json.JsonField;
@@ -13,7 +14,6 @@ import common.system.files.VFile;
 import common.util.Data;
 import common.util.lang.MultiLangCont;
 import common.util.lang.MultiLangData;
-import common.util.stage.info.DefStageInfo;
 
 import java.util.ArrayList;
 import java.util.Queue;

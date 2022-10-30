@@ -61,10 +61,10 @@ public class EForm extends Data {
 		return result;
 	}
 
-	public EUnit invokeEntity(StageBasis b, int minLayer, int maxLayer) {
+	public EUnit invokeEntity(StageBasis b, int minLayer, int maxLayer, int[] index) {
 		double d = f.unit.lv.getMult(level.getLv());
 		EAnimU anim = getEntryAnim();
-		return new EUnit(b, du, anim, d, minLayer, maxLayer, level, f.du.getPCoin(), null);
+		return new EUnit(b, du, anim, d, minLayer, maxLayer, level, f.du.getPCoin(), index);
 	}
 
 	public EUnit invokeEntity(StageBasis b, int Lvl, int minLayer, int maxLayer) {

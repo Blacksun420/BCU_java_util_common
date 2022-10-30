@@ -2,6 +2,9 @@ package common.util.anim;
 
 import common.CommonStatic;
 import common.CommonStatic.EditLink;
+import common.util.unit.Enemy;
+import common.util.unit.Form;
+import common.util.unit.Unit;
 import common.io.InStream;
 import common.io.OutStream;
 import common.io.json.JsonClass;
@@ -16,9 +19,6 @@ import common.system.VImg;
 import common.system.fake.FakeImage;
 import common.util.AnimGroup;
 import common.util.Animable;
-import common.util.unit.Enemy;
-import common.util.unit.Form;
-import common.util.unit.Unit;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -393,7 +393,7 @@ public class AnimCE extends AnimCI {
 			anims = new MaAnim[] { ori.anims.length > 0 ? ori.anims[0].clone() : new MaAnim() };
 		}
 		loader.setNum(ori.getNum().cloneImage());
-		types = isAnim ? AnimU.TYPE8 : AnimU.SOUL;
+		types = isAnim ? TYPE8 : SOUL;
 		parts = imgcut.cut(ori.getNum());
 		if (ori instanceof AnimU<?>) {
 			AnimU<?> au = (AnimU<?>) ori;

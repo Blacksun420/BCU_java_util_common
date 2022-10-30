@@ -1,10 +1,10 @@
 package common.util.unit.rand;
 
+import common.util.unit.AbEnemy;
 import common.io.json.JsonClass;
 import common.pack.Identifier;
 import common.system.Copable;
 import common.util.BattleStatic;
-import common.util.unit.AbEnemy;
 import org.jetbrains.annotations.Nullable;
 
 @JsonClass(noTag = JsonClass.NoTag.LOAD)

@@ -60,7 +60,7 @@ public class PCoin extends Data {
 			}
 		}
 
-		du = Identifier.parseInt(id, Unit.class).get().forms[2].du;
+		du = Identifier.parseInt(id, Unit.class).get().getForms()[2].du;
 		((DataUnit)du).pcoin = this;
 		full = improve(max);
 	}

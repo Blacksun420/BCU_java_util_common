@@ -12,14 +12,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import common.CommonStatic;
+import common.util.pack.Background;
+import common.util.pack.EffAnim;
+import common.util.pack.NyCastle;
+import common.util.pack.WaveAnim;
 import common.io.assets.Admin.StaticPermitted;
 import common.util.anim.AnimI;
-import common.util.anim.AnimU;
 import common.util.anim.AnimU.UType;
-import common.util.pack.Background.BGWvType;
-import common.util.pack.EffAnim;
-import common.util.pack.NyCastle.NyType;
-import common.util.pack.WaveAnim.WaveType;
 
 public class AnimTypeLocale {
 
@@ -27,10 +26,10 @@ public class AnimTypeLocale {
 	public static final Set<AnimI.AnimType<?, ?>> TYPES = new HashSet<>();
 
 	static {
-		Collections.addAll(TYPES, BGWvType.values());
-		Collections.addAll(TYPES, NyType.values());
+		Collections.addAll(TYPES, Background.BGWvType.values());
+		Collections.addAll(TYPES, NyCastle.NyType.values());
 		Collections.addAll(TYPES, UType.values());
-		Collections.addAll(TYPES, WaveType.values());
+		Collections.addAll(TYPES, WaveAnim.WaveType.values());
 		Collections.addAll(TYPES, EffAnim.ArmorEff.values());
 		Collections.addAll(TYPES, EffAnim.BarrierEff.values());
 		Collections.addAll(TYPES, EffAnim.DefEff.values());

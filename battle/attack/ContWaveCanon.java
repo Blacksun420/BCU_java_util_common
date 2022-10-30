@@ -72,11 +72,17 @@ public class ContWaveCanon extends ContWaveAb {
 		if (t >= 1 && t <= attack) {
 			atk.capture();
 			for (AbEntity e : atk.capt)
-				if ((e.getAbi() & AB_WAVES) > 0) {
-					if (e instanceof Entity)
-						((Entity) e).anim.getEff(STPWAVE);
-					deactivate();
-					return;
+				if (e instanceof Entity) {
+					int waves = ((Entity)e).getProc().IMUWAVE.block;
+					if (waves != 0) {
+						if (waves > 0)
+							((Entity) e).anim.getEff(STPWAVE);
+						if (waves == 100) {
+							deactivate();
+							return;
+						} else
+							atk.atk = atk.atk * (100 - waves) / 100;
+					}
 				}
 		}
 		if (!activate)

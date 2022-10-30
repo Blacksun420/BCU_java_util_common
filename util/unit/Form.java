@@ -11,6 +11,7 @@ import common.pack.Identifier;
 import common.pack.PackData;
 import common.pack.UserProfile;
 import common.system.BasedCopable;
+import common.system.VImg;
 import common.util.Animable;
 import common.util.Data;
 import common.util.anim.AnimU;
@@ -24,12 +25,12 @@ import java.util.ArrayList;
 
 @JCGeneric(Form.FormJson.class)
 @JsonClass(read = RType.FILL)
-public class Form extends Animable<AnimU<?>, AnimU.UType> implements Comparable<Form>, BasedCopable<Form, AbForm> {
+public class Form extends Animable<AnimU<?>, AnimU.UType> implements BasedCopable<AbForm, AbUnit>, AbForm {
 
 	@JsonClass(noTag = NoTag.LOAD)
 	public static class FormJson {
 
-		public Identifier<AbForm> uid;
+		public Identifier<AbUnit> uid;
 		public int fid;
 
 		@JCConstructor
@@ -63,7 +64,7 @@ public class Form extends Animable<AnimU<?>, AnimU.UType> implements Comparable<
 	@JsonField
 	public final MaskUnit du;
 	public final Unit unit;
-	public final Identifier<AbForm> uid;
+	public final Identifier<AbUnit> uid;
 	@JsonField
 	public int fid;
 	public Orb orbs = null;
@@ -121,12 +122,23 @@ public class Form extends Animable<AnimU<?>, AnimU.UType> implements Comparable<
 	}
 
 	@Override
-	public Form copy(AbForm b) {
+	public Form copy(AbUnit b) {
 		CustomUnit cu = new CustomUnit();
 		cu.importData(du);
 		return new Form((Unit) b, fid, names.toString(), anim, cu);
 	}
 
+	@Override
+	public Identifier<AbUnit> getID() {
+		return uid;
+	}
+
+	@Override
+	public int getFid() {
+		return fid;
+	}
+
+	@Override
 	public int getDefaultPrice(int sta) {
 		MaskUnit upc = maxu();
 		return (int) (upc.getPrice() * (1 + sta * 0.5));
@@ -146,8 +158,13 @@ public class Form extends Animable<AnimU<?>, AnimU.UType> implements Comparable<
 	}
 
 	@Override
-	public int compareTo(Form f) {
-		return uid.compareTo(f.uid);
+	public VImg getIcon() {
+		return anim.getEdi();
+	}
+
+	@Override
+	public VImg getDeployIcon() {
+		return anim.getUni();
 	}
 
 	@OnInjected
@@ -233,6 +250,11 @@ public class Form extends Animable<AnimU<?>, AnimU.UType> implements Comparable<
 							adm.traits.addAll(form.traits);
 						adm.specialTrait = false;
 					}
+				}
+				if (UserProfile.isOlderPack(pack, "0.6.8.2")) {
+					if ((form.abi & 5) > 0)
+						form.getProc().IMUWAVE.block = 100;
+					form.abi = Data.reorderAbi(form.abi, 2);
 				}
 
 				if (form.getProc().SUMMON.prob > 0 && form.getProc().SUMMON.form == 0) {

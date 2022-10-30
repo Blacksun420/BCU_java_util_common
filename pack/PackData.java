@@ -25,11 +25,11 @@ import common.system.files.VFileRoot;
 import common.util.Data;
 import common.util.Res;
 import common.util.anim.AnimUD;
-import common.util.pack.*;
 import common.util.lang.MultiLangData;
+import common.util.pack.*;
 import common.util.pack.bgeffect.BackgroundEffect;
-import common.util.stage.CastleList.PackCasList;
 import common.util.stage.*;
+import common.util.stage.CastleList.PackCasList;
 import common.util.stage.MapColc.DefMapColc;
 import common.util.stage.MapColc.PackMapColc;
 import common.util.unit.*;
@@ -92,6 +92,7 @@ public abstract class PackData implements IndexContainer {
 			this.enemies.reset();
 			this.randEnemies.reset();
 			this.units.reset();
+			this.randUnits.reset();
 			this.unitLevels.reset();
 			this.groups.reset();
 			this.lvrs.reset();
@@ -120,7 +121,7 @@ public abstract class PackData implements IndexContainer {
 				int id = CommonStatic.parseIntN(strs[0]);
 				int type = CommonStatic.parseIntN(strs[2]);
 				@SuppressWarnings("unchecked")
-				Identifier<AbForm>[] units = new Identifier[strs.length - 3];
+				Identifier<AbUnit>[] units = new Identifier[strs.length - 3];
 				for (int i = 3; i < strs.length; i++)
 					units[i - 3] = Identifier.parseInt(CommonStatic.parseIntN(strs[i]), Unit.class);
 				groups.set(id, new CharaGroup(id, type, units));
@@ -475,8 +476,10 @@ public abstract class PackData implements IndexContainer {
 	public <R> R getList(Class cls, Reductor<R, FixIndexMap> func, R def) {
 		if (cls == Trait.class)
 			def = func.reduce(def, traits);
-		if (cls == Unit.class)
+		if (cls == Unit.class || cls == AbUnit.class)
 			def = func.reduce(def, units);
+		if (cls == UniRand.class || cls == AbUnit.class)
+			def = func.reduce(def, randUnits);
 		if (cls == UnitLevel.class)
 			def = func.reduce(def, unitLevels);
 		if (cls == Enemy.class || cls == AbEnemy.class)

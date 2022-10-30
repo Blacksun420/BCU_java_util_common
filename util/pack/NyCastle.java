@@ -2,6 +2,7 @@ package common.util.pack;
 
 import common.CommonStatic;
 import common.CommonStatic.BCAuxAssets;
+import common.battle.data.util.anim.*;
 import common.system.VImg;
 import common.system.fake.FakeImage;
 import common.util.anim.*;

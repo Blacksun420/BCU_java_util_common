@@ -4,6 +4,9 @@ import com.google.gson.JsonObject;
 import common.CommonStatic;
 import common.battle.StageBasis;
 import common.battle.data.*;
+import common.util.stage.MapColc;
+import common.util.stage.Stage;
+import common.util.stage.StageMap;
 import common.battle.entity.EEnemy;
 import common.io.json.JsonClass;
 import common.io.json.JsonDecoder.OnInjected;
@@ -22,10 +25,6 @@ import common.util.anim.EAnimU;
 import common.util.anim.MaModel;
 import common.util.lang.MultiLangCont;
 import common.util.lang.MultiLangData;
-import common.util.stage.MapColc;
-import common.util.stage.MapColc.PackMapColc;
-import common.util.stage.Stage;
-import common.util.stage.StageMap;
 
 import java.util.*;
 
@@ -91,7 +90,7 @@ public class Enemy extends Animable<AnimU<?>, UType> implements AbEnemy {
 	public List<MapColc> findMap() {
 		List<MapColc> ans = new ArrayList<>();
 		for (MapColc mc : MapColc.values()) {
-			if (mc instanceof PackMapColc)
+			if (mc instanceof MapColc.PackMapColc)
 				continue;
 			boolean col = false;
 			for (StageMap sm : mc.maps) {
@@ -231,10 +230,9 @@ public class Enemy extends Animable<AnimU<?>, UType> implements AbEnemy {
 						adm.specialTrait = false;
 					}
 				} //Finish 6.8.1 check
-				if ((enemy.abi & 5) > 0) {
+				if ((enemy.abi & 5) > 0)
 					enemy.getProc().IMUWAVE.block = 100;
-					enemy.abi = Data.reorderAbi(enemy.abi, 2);
-				}
+				enemy.abi = Data.reorderAbi(enemy.abi, 2);
 			} //Finish 6.8.2 check
 
 			if (enemy.getProc().SUMMON.prob > 0 && (enemy.getProc().SUMMON.id == null || !AbEnemy.class.isAssignableFrom(enemy.getProc().SUMMON.id.cls)))

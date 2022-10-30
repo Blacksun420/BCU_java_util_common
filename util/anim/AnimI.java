@@ -1,9 +1,9 @@
 package common.util.anim;
 
+import common.util.lang.MultiLangCont;
 import common.system.fake.FakeImage;
 import common.util.Animable;
 import common.util.BattleStatic;
-import common.util.lang.MultiLangCont;
 
 public abstract class AnimI<A extends AnimI<A, T>, T extends Enum<T> & AnimI.AnimType<A, T>> extends Animable<A, T>
 		implements BattleStatic {

@@ -22,7 +22,6 @@ import common.util.anim.EAnimD;
 import common.util.anim.EAnimI;
 import common.util.anim.EAnimU;
 import common.util.pack.EffAnim;
-import common.util.pack.EffAnim.*;
 import common.util.pack.Soul;
 import common.util.unit.Level;
 import common.util.unit.Trait;

@@ -30,7 +30,7 @@ public class JsonEncoder {
 		if (obj instanceof String)
 			return new JsonPrimitive((String) obj);
 		if (obj instanceof Enum)
-			return encode(((Enum<?>) obj).toString(), par);
+			return encode(obj.toString(), par);
 		if (obj instanceof Class)
 			return new JsonPrimitive(((Class<?>) obj).getName());
 		Class<?> cls = obj.getClass();
@@ -62,7 +62,7 @@ public class JsonEncoder {
 					break;
 				}
 			if (!found)
-				throw new JsonException(Type.TYPE_MISMATCH, null, "class not present in JCGeneric");
+				throw new JsonException(Type.TYPE_MISMATCH, null, cls + " not present in JCGeneric");
 			for (Field f : cls.getFields()) {
 				JCIdentifier jcgw = f.getAnnotation(JCIdentifier.class);
 				if (jcgw != null && f.getType() == alias)

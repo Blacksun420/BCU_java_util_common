@@ -2,6 +2,7 @@ package common.util;
 
 import common.CommonStatic;
 import common.CommonStatic.BCAuxAssets;
+import common.util.anim.ImgCut;
 import common.battle.entity.AbEntity;
 import common.system.P;
 import common.system.SymCoord;
@@ -9,7 +10,6 @@ import common.system.VImg;
 import common.system.fake.FakeGraphics;
 import common.system.fake.FakeImage;
 import common.system.fake.ImageBuilder;
-import common.util.anim.ImgCut;
 
 public class Res extends ImgCore {
 

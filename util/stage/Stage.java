@@ -1,6 +1,8 @@
 package common.util.stage;
 
 import common.CommonStatic;
+import common.util.stage.info.DefStageInfo;
+import common.util.stage.info.StageInfo;
 import common.io.assets.Admin.StaticPermitted;
 import common.io.json.Dependency;
 import common.io.json.JsonClass;
@@ -20,8 +22,6 @@ import common.util.lang.MultiLangCont;
 import common.util.lang.MultiLangData;
 import common.util.pack.Background;
 import common.util.stage.SCDef.Line;
-import common.util.stage.info.DefStageInfo;
-import common.util.stage.info.StageInfo;
 import common.util.unit.Enemy;
 
 import java.util.*;

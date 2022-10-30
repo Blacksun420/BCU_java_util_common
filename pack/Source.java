@@ -1,6 +1,11 @@
 package common.pack;
 
 import common.CommonStatic;
+import common.util.anim.*;
+import common.util.unit.Enemy;
+import common.util.unit.Form;
+import common.util.unit.Trait;
+import common.util.unit.Unit;
 import common.io.PackLoader;
 import common.io.PackLoader.ZipDesc;
 import common.io.assets.Admin.StaticPermitted;
@@ -16,16 +21,11 @@ import common.system.files.FDFile;
 import common.system.files.FileData;
 import common.system.files.VFile;
 import common.util.Data;
-import common.util.anim.*;
 import common.util.pack.Background;
 import common.util.stage.CastleImg;
 import common.util.stage.Replay;
 import common.util.stage.Stage;
 import common.util.stage.StageMap;
-import common.util.unit.Enemy;
-import common.util.unit.Form;
-import common.util.unit.Trait;
-import common.util.unit.Unit;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -490,6 +490,10 @@ public abstract class Source {
 			return getFile("./" + BasePath.TRAIT + "/" + Data.trio(id.id) + ".png");
 		}
 
+		public File getRandIconFile(String type, Identifier<?> id) { //id must be either AbEnemy or Abunit
+			return getFile("./" + BasePath.RAND + "/" + type + "/" + Data.trio(id.id) + ".png");
+		}
+
 		@Override
 		public FileData getFileData(String string) {
 			return new FDFile(getFile(string));
@@ -637,7 +641,8 @@ public abstract class Source {
 		MUSIC("musics"),
 		REPLAY("replays"),
 		SOUL("souls"),
-		TRAIT("traitIcons");
+		TRAIT("traitIcons"),
+		RAND("randIcons");
 
 		private final String path;
 

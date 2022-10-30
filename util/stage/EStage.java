@@ -6,7 +6,6 @@ import common.battle.entity.EEnemy;
 import common.pack.Identifier;
 import common.pack.UserProfile;
 import common.util.BattleObj;
-import common.util.stage.SCDef.Line;
 import common.util.unit.AbEnemy;
 
 public class EStage extends BattleObj {
@@ -24,7 +23,7 @@ public class EStage extends BattleObj {
 		s = st;
 		star = stars;
 		st.validate();
-		Line[] datas = s.data.getSimple();
+		SCDef.Line[] datas = s.data.getSimple();
 		rem = new int[datas.length];
 		num = new int[datas.length];
 		for (int i = 0; i < rem.length; i++)
@@ -49,7 +48,7 @@ public class EStage extends BattleObj {
 			return null;
 
 		for (int i = 0; i < rem.length; i++) {
-			Line data = s.data.getSimple(i);
+			SCDef.Line data = s.data.getSimple(i);
 
 			if (inHealth(data) && s.data.allow(b, data.group, Identifier.getOr(data.enemy, AbEnemy.class)) && rem[i] == 0 && num[i] != -1 && killCounter[i] == 0) {
 				if(!s.trail && data.respawn_0 >= data.respawn_1)
@@ -88,7 +87,7 @@ public class EStage extends BattleObj {
 
 	public void assign(StageBasis sb) {
 		b = sb;
-		Line[] datas = s.data.getSimple();
+		SCDef.Line[] datas = s.data.getSimple();
 		for (int i = 0; i < rem.length; i++) {
 			rem[i] = datas[i].spawn_0;
 
@@ -107,7 +106,7 @@ public class EStage extends BattleObj {
 		int ind = num.length - 1;
 		if (ind < 0)
 			return null;
-		Line data = s.data.getSimple(ind);
+		SCDef.Line data = s.data.getSimple(ind);
 		if (data.castle_0 == 0) {
 			num[ind] = -1;
 			double multi = data.multiple * mul * 0.01;
@@ -136,7 +135,7 @@ public class EStage extends BattleObj {
 	 */
 	public boolean hasBoss() {
 		for (int i = 0; i < rem.length; i++) {
-			Line data = s.data.getSimple(i);
+			SCDef.Line data = s.data.getSimple(i);
 			if (data.boss == 1 && num[i] > 0)
 				return true;
 		}
@@ -145,7 +144,7 @@ public class EStage extends BattleObj {
 
 	public void update() {
 		for (int i = 0; i < rem.length; i++) {
-			Line data = s.data.getSimple(i);
+			SCDef.Line data = s.data.getSimple(i);
 			if (inHealth(data) && rem[i] < 0)
 				rem[i] *= -1;
 			if (rem[i] > 0)
@@ -153,7 +152,7 @@ public class EStage extends BattleObj {
 		}
 	}
 
-	private boolean inHealth(Line line) {
+	private boolean inHealth(SCDef.Line line) {
 		int c0 = !s.trail ? Math.min(line.castle_0, 100) : line.castle_0;
 		int c1 = line.castle_1;
 		double d = !s.trail ? b.getEBHP() : b.ebase.maxH - b.ebase.health;

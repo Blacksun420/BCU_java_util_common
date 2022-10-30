@@ -1,14 +1,12 @@
 package common.util.lang;
 
 import com.google.common.primitives.Ints;
+import common.util.unit.Unit;
 import common.pack.Identifier;
 import common.pack.UserProfile;
 import common.util.Data;
 import common.util.Data.Proc;
 import common.util.Data.Proc.ProcItem;
-import common.util.lang.LocaleCenter.Displayable;
-import common.util.lang.ProcLang.ItemLang;
-import common.util.unit.Unit;
 import org.jcodec.common.tools.MathUtil;
 
 import java.lang.reflect.Field;
@@ -22,7 +20,7 @@ public class Editors {
 
 	private static final Map<String, EditorGroup> eg = new HashMap<>();
 
-	public static class DispItem implements Displayable {
+	public static class DispItem implements LocaleCenter.Displayable {
 
 		private final ProcLang.ItemLang lang;
 		private final Supplier<Proc.ProcItem> proc;
@@ -197,7 +195,7 @@ public class Editors {
 			this.cls = Data.err(() -> Proc.class.getDeclaredField(proc)).getType();
 			this.callback = cb;
 			ctrl = map().get(proc);
-			ItemLang item = ProcLang.get().get(proc);
+			ProcLang.ItemLang item = ProcLang.get().get(proc);
 			String[] arr = item.list();
 			list = new Editor[arr.length];
 			for (int i = 0; i < arr.length; i++) {
@@ -208,7 +206,7 @@ public class Editors {
 
 		public LocaleCenter.Binder getItem(Formatter.Context ctx) {
 			ProcLang.ItemLang lang = ProcLang.get().get(proc);
-			Displayable disp = new DispItem(lang, this::getProcItem, ctx);
+			LocaleCenter.Displayable disp = new DispItem(lang, this::getProcItem, ctx);
 			return new LocaleCenter.ObjBinder(disp, proc, (name) -> getItem(ctx));
 		}
 

@@ -2,8 +2,6 @@ package common.util.lang;
 
 import common.CommonStatic;
 import common.CommonStatic.Lang;
-import common.pack.UserProfile;
-import common.util.anim.AnimI;
 import common.util.stage.MapColc;
 import common.util.stage.Stage;
 import common.util.stage.StageMap;
@@ -11,6 +9,8 @@ import common.util.unit.Combo;
 import common.util.unit.Enemy;
 import common.util.unit.Form;
 import common.util.unit.Unit;
+import common.pack.UserProfile;
+import common.util.anim.AnimI;
 
 import java.util.*;
 

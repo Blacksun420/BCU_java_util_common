@@ -16,7 +16,7 @@ import common.pack.Context.ErrType;
 import common.pack.Identifier;
 import common.pack.UserProfile;
 import common.system.Copable;
-import common.util.unit.AbForm;
+import common.util.unit.AbUnit;
 import common.util.unit.Form;
 import common.util.unit.Level;
 import common.util.unit.Unit;
@@ -66,7 +66,7 @@ public class BasisSet extends Basis implements Copable<BasisSet> {
 
 		for(BasisSet set : list()) {
 			for(BasisLU lu : set.lb) {
-				for(Identifier<AbForm> id : lu.lu.map.keySet()) {
+				for(Identifier<AbUnit> id : lu.lu.map.keySet()) {
 					if(id.equals(u.id)) {
 						Level l = lu.lu.map.get(id);
 

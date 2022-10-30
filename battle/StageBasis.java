@@ -3,6 +3,10 @@ package common.battle;
 import common.CommonStatic;
 import common.battle.attack.AttackAb;
 import common.battle.attack.ContAb;
+import common.util.stage.*;
+import common.util.unit.EForm;
+import common.util.unit.EneRand;
+import common.util.unit.Form;
 import common.battle.entity.*;
 import common.pack.Identifier;
 import common.util.BattleObj;
@@ -14,9 +18,7 @@ import common.util.pack.Background;
 import common.util.pack.EffAnim;
 import common.util.pack.EffAnim.DefEff;
 import common.util.pack.bgeffect.BackgroundEffect;
-import common.util.stage.*;
 import common.util.stage.MapColc.DefMapColc;
-import common.util.unit.*;
 
 import java.util.*;
 

@@ -1,23 +1,24 @@
 package common.util.unit.rand;
 
+import common.util.unit.Form;
+import common.util.unit.Level;
 import common.io.json.JsonClass;
 import common.io.json.JsonField;
 import common.system.Copable;
 import common.util.BattleStatic;
-import common.util.unit.Form;
-import common.util.unit.Level;
+import common.util.unit.AbForm;
 
 @JsonClass(noTag = JsonClass.NoTag.LOAD)
 public class UREnt implements BattleStatic, Copable<UREnt> {
 
-    @JsonField(alias = Form.FormJson.class)
-    public Form ent;
+    @JsonField(generic = AbForm.class)
+    public AbForm ent;
     public Level lv;
     public int share = 1;
 
-    public UREnt(Form f) {
+    public UREnt(AbForm f) {
         ent = f;
-        lv = new Level(f.getPrefLvs());
+        lv = f instanceof Form ? new Level(((Form) f).getPrefLvs()) : new Level();
     }
 
     @Override

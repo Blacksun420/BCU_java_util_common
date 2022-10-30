@@ -15,13 +15,13 @@ import common.pack.PackData;
 import common.pack.PackData.UserPack;
 import common.pack.UserProfile;
 import common.util.Data;
-import common.util.unit.AbForm;
+import common.util.unit.AbUnit;
 import common.util.unit.Form;
 import common.util.unit.Unit;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.TreeSet;
 
 @IndexCont(PackData.class)
 @JsonClass(noTag = NoTag.LOAD)
@@ -36,7 +36,7 @@ public class CharaGroup extends Data implements Indexable<PackData, CharaGroup>,
 	public int type = 0;
 
 	@JsonField(generic = Form.class, alias = Form.FormJson.class)
-	public final TreeSet<Form> fset = new TreeSet<>();
+		public final ArrayList<Form> fset = new ArrayList<>();
 
 	@JsonClass.JCConstructor
 	public CharaGroup() {
@@ -52,23 +52,18 @@ public class CharaGroup extends Data implements Indexable<PackData, CharaGroup>,
 		this.id = id;
 	}
 
-	public CharaGroup(int ID, int t, Identifier<AbForm>[] units) {
-		this(t, units);
-		id = Identifier.parseInt(ID, CharaGroup.class);
-	}
-
-	@SuppressWarnings("unchecked")
-	private CharaGroup(int t, Identifier<AbForm>... units) {
+	public CharaGroup(int ID, int t, Identifier<AbUnit>[] units) {
 		type = t;
-		for (Identifier<AbForm> uid : units) {
-			AbForm u = Identifier.get(uid);
+		for (Identifier<AbUnit> uid : units) {
+			AbUnit u = Identifier.get(uid);
 			if (u != null)
 				fset.addAll(Arrays.asList(u.getForms()));
 		}
+		id = Identifier.parseInt(ID, CharaGroup.class);
 	}
 
-	public boolean allow(Unit u) {
-		return (type != 0 || fset.contains(u)) && (type != 2 || !fset.contains(u));
+	public boolean allow(Form f) {
+		return (type != 0 || fset.contains(f)) && (type != 2 || !fset.contains(f));
 	}
 
 	public CharaGroup combine(CharaGroup cg) {
@@ -119,8 +114,9 @@ public class CharaGroup extends Data implements Indexable<PackData, CharaGroup>,
 		if (UserProfile.isOlderPack(pack, "0.6.8.2")) {
 			JsonArray jarr = jobj.get("set").getAsJsonArray();
 			for (int i = 0; i < jarr.size(); i++) {
+				String pacc = jarr.get(i).getAsJsonObject().get("pack").getAsString();
 				int id = jarr.get(i).getAsJsonObject().get("id").getAsInt();
-				Unit u = (Unit) new Identifier<>(this.id.pack, Unit.class, id).get();
+				Unit u = (Unit) new Identifier<>(pacc, Unit.class, id).get();
 				if (u != null)
 					Collections.addAll(fset, u.forms);
 			}

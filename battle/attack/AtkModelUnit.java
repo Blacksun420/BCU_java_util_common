@@ -9,10 +9,7 @@ import common.battle.entity.EntCont;
 import common.battle.entity.Entity;
 import common.pack.Identifier;
 import common.util.Data.Proc.SUMMON;
-import common.util.unit.AbEnemy;
-import common.util.unit.EForm;
-import common.util.unit.Level;
-import common.util.unit.Unit;
+import common.util.unit.*;
 import org.jcodec.common.tools.MathUtil;
 
 public class AtkModelUnit extends AtkModelEntity {
@@ -40,24 +37,24 @@ public class AtkModelUnit extends AtkModelEntity {
 	@Override
 	public void summon(SUMMON proc, Entity ent, Object acs, int resist) {
 		if (resist < 100) {
+			SUMMON.TYPE conf = proc.type;
+			if (conf.same_health && ent.health <= 0)
+				return;
+			int dis = proc.dis == proc.max_dis ? proc.dis : (int) (proc.dis + b.r.nextDouble() * (proc.max_dis - proc.dis + 1));
+			double up = ent.pos + getDire() * dis;
+			int time = proc.time;
+			int minlayer = proc.min_layer, maxlayer = proc.max_layer;
+			if (proc.min_layer == proc.max_layer && proc.min_layer == -1)
+				minlayer = maxlayer = e.layer;
+
 			if (proc.id == null || proc.id.cls == Unit.class) {
 				Unit u = Identifier.getOr(proc.id, Unit.class);
-				SUMMON.TYPE conf = proc.type;
-				if (conf.same_health && ent.health <= 0)
-					return;
-				int time = proc.time;
 				if (b.entityCount(-1) < b.max_num - u.forms[proc.form - 1].du.getWill() || conf.ignore_limit) {
 					int lvl = proc.mult + ((EUnit) e).lvl;
 					if (conf.fix_buff)
 						lvl = proc.mult;
 					lvl = MathUtil.clip(lvl, 1, u.max + u.maxp);
 					lvl *= (100.0 - resist) / 100;
-
-					int dis = proc.dis == proc.max_dis ? proc.dis : (int) (proc.dis + b.r.nextDouble() * (proc.max_dis - proc.dis + 1));
-					double up = ent.pos + getDire() * dis;
-					int minlayer = proc.min_layer, maxlayer = proc.max_layer;
-					if (proc.min_layer == proc.max_layer && proc.min_layer == -1)
-						minlayer = maxlayer = e.layer;
 
 					EForm ef = new EForm(u.forms[Math.max(proc.form - 1, 0)], proc.mult + ((EUnit) e).lvl);
 					EUnit eu = ef.invokeEntity(b, lvl, minlayer, maxlayer);
@@ -68,38 +65,42 @@ public class AtkModelUnit extends AtkModelEntity {
 					b.tempe.add(new EntCont(eu, time));
 					eu.setSummon(conf.anim_type, conf.bond_hp ? e : null);
 				}
+			} else if (proc.id.cls == UniRand.class) {
+				UniRand ur = Identifier.getOr(proc.id, UniRand.class);
+				int lvl = proc.mult + ((EUnit) e).lvl;
+				if (conf.fix_buff)
+					lvl = proc.mult;
+				EUnit eu = ur.getEntity(b, acs, b.max_num - b.entityCount(-1), minlayer, maxlayer, lvl, resist, ((EUnit)e).index);
+				if (eu != null) {
+					if (conf.same_health)
+						eu.health = e.health;
+
+					eu.added(-1, (int) up);
+					b.tempe.add(new EntCont(eu, time));
+					eu.setSummon(conf.anim_type, conf.bond_hp ? e : null);
+				}
 			} else {
 				AbEnemy ene = Identifier.getOr(proc.id, AbEnemy.class);
-				SUMMON.TYPE conf = proc.type;
-				if (conf.same_health && ent.health <= 0)
-					return;
-
-				int time = proc.time;
 				int allow = b.st.data.allow(b, ene);
 				if (allow >= 0 || conf.ignore_limit) {
-					int dis = proc.dis == proc.max_dis ? proc.dis : (int) (proc.dis + b.r.nextDouble() * (proc.max_dis - proc.dis + 1));
-					double ep = ent.pos + getDire() * dis;
 					double mula = proc.mult * 0.01;
 					double mult = proc.mult * 0.01;
+					if (!conf.fix_buff) {
+						mula *= 1 + ((((EUnit) e).lvl - 1) * 0.2);
+						mult *= 1 + ((((EUnit) e).lvl - 1) * 0.2);
+					}
 
 					mula *= (100.0 - resist) / 100;
 					mult *= (100.0 - resist) / 100;
-
-					int minlayer = proc.min_layer, maxlayer = proc.max_layer;
-					if (proc.min_layer == proc.max_layer && proc.min_layer == -1)
-						minlayer = maxlayer = e.layer;
 					EEnemy ee = ene.getEntity(b, acs, mult, mula, minlayer, maxlayer, 0);
 
 					ee.group = allow;
+					if (up < ee.data.getWidth())
+						up = ee.data.getWidth();
+					if (up > b.st.len - 800)
+						up = b.st.len - 800;
 
-					if (ep < ee.data.getWidth())
-						ep = ee.data.getWidth();
-
-					if (ep > b.st.len - 800)
-						ep = b.st.len - 800;
-
-					ee.added(1, (int) ep);
-
+					ee.added(1, (int) up);
 					b.tempe.add(new EntCont(ee, time));
 
 					if (conf.same_health)

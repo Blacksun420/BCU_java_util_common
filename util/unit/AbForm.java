@@ -1,15 +1,53 @@
 package common.util.unit;
 
+import common.io.json.JsonClass;
 import common.pack.Identifier;
-import common.pack.IndexContainer;
-import common.pack.PackData;
-import common.system.BasedCopable;
 import common.system.VImg;
 
-@IndexContainer.IndexCont(PackData.class)
+/**
+ * Placeholder class to connect RandomUnit with Form
+ */
+@JsonClass.JCGeneric(AbForm.AbFormJson.class)
+@JsonClass(read = JsonClass.RType.FILL)
 public interface AbForm {
+    @JsonClass(noTag = JsonClass.NoTag.LOAD)
+    class AbFormJson {
+
+        public Identifier<AbUnit> uid;
+        public int fid;
+
+        @JsonClass.JCConstructor
+        public AbFormJson() {
+        }
+
+        @JsonClass.JCConstructor
+        public AbFormJson(AbForm f) {
+            uid = f.getID();
+            fid = f.getFid();
+        }
+
+        @JsonClass.JCGetter
+        public AbForm get() {
+            if (uid.get() instanceof UniRand)
+                return (UniRand) uid.get();
+
+            try {
+                return uid.get().getForms()[fid];
+            } catch (Exception e) {
+                return null;
+            }
+        }
+    }
+
+    Identifier<AbUnit> getID();
+
+    default int getFid() {
+        return 0;
+    }
+
+    int getDefaultPrice(int sta);
 
     VImg getIcon();
 
-    Form[] getForms();
+    VImg getDeployIcon();
 }

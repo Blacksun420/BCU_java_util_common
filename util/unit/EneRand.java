@@ -4,8 +4,11 @@ import common.CommonStatic;
 import common.battle.StageBasis;
 import common.battle.entity.EEnemy;
 import common.io.json.JsonClass;
+import common.io.json.JsonDecoder;
 import common.io.json.JsonField;
 import common.pack.Identifier;
+import common.pack.Source;
+import common.pack.UserProfile;
 import common.system.VImg;
 import common.util.BattleObj;
 import common.util.Data;
@@ -67,6 +70,7 @@ public class EneRand extends Data implements AbEnemy {
 
 	@JsonField
 	public String name = "";
+	public VImg icon = null;
 
 	@JsonClass.JCConstructor
 	public EneRand() {
@@ -99,6 +103,8 @@ public class EneRand extends Data implements AbEnemy {
 
 	@Override
 	public VImg getIcon() {
+		if (icon != null)
+			return icon;
 		return CommonStatic.getBCAssets().ico[0][0];
 	}
 
@@ -147,6 +153,11 @@ public class EneRand extends Data implements AbEnemy {
 		}
 
 		return false;
+	}
+
+	@JsonDecoder.OnInjected
+	public void onInjected() {
+		icon = UserProfile.getUserPack(id.pack).source.readImage(Source.BasePath.RAND + "/enemyDisplayIcons", id.id);
 	}
 }
 

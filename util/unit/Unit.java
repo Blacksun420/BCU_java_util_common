@@ -8,9 +8,11 @@ import common.io.json.JsonClass.JCGeneric;
 import common.io.json.JsonClass.JCIdentifier;
 import common.io.json.JsonField;
 import common.io.json.JsonField.GenType;
-import common.pack.*;
+import common.pack.Identifier;
+import common.pack.Source;
 import common.pack.Source.ResourceLocation;
 import common.pack.Source.Workspace;
+import common.pack.UserProfile;
 import common.system.files.VFile;
 import common.util.Data;
 import common.util.anim.AnimCE;
@@ -23,7 +25,7 @@ import java.util.Queue;
 
 @JCGeneric(Identifier.class)
 @JsonClass
-public class Unit extends Data implements Comparable<Unit>, IndexContainer.Indexable<PackData, Unit> {
+public class Unit extends Data implements AbUnit {
 
 	public static class UnitInfo {
 
@@ -58,7 +60,7 @@ public class Unit extends Data implements Comparable<Unit>, IndexContainer.Index
 	@JsonField
 	@JCIdentifier
 	@FieldOrder.Order(0)
-	public final Identifier<Unit> id;
+	public final Identifier<AbUnit> id;
 	@JsonField
 	@FieldOrder.Order(1)
 	public int rarity, max, maxp;
@@ -76,11 +78,11 @@ public class Unit extends Data implements Comparable<Unit>, IndexContainer.Index
 		id = null;
 	}
 
-	public Unit(Identifier<Unit> identifier) {
+	public Unit(Identifier<AbUnit> identifier) {
 		id = identifier;
 	}
 
-	public Unit(Identifier<Unit> id, AnimCE ce, CustomUnit cu) {
+	public Unit(Identifier<AbUnit> id, AnimCE ce, CustomUnit cu) {
 		this.id = id;
 		forms = new Form[] { new Form(this, 0, "new unit", ce, cu) };
 		max = 50;
@@ -111,7 +113,7 @@ public class Unit extends Data implements Comparable<Unit>, IndexContainer.Index
 			f.anim.getEdi().check();
 	}
 
-	protected Unit(Identifier<Unit> id, Unit u) {
+	protected Unit(Identifier<AbUnit> id, Unit u) {
 		this.id = id;
 		rarity = u.rarity;
 		max = u.max;
@@ -130,6 +132,7 @@ public class Unit extends Data implements Comparable<Unit>, IndexContainer.Index
 		}
 	}
 
+	@Override
 	public Form[] getForms() {
 		return forms;
 	}
@@ -139,7 +142,7 @@ public class Unit extends Data implements Comparable<Unit>, IndexContainer.Index
 		List<Combo> comboList = UserProfile.getBCData().combos.getList();
 		UserProfile.getUserPacks().forEach(p -> comboList.addAll(p.combos.getList()));
 		for (Combo c : comboList)
-			for (Form f : id.get().getForms())
+			for (Form f : forms)
 				if (Arrays.stream(c.forms).anyMatch(form -> form.uid.compareTo(f.uid) == 0)) {
 					ans.add(c);
 					break;
@@ -148,12 +151,12 @@ public class Unit extends Data implements Comparable<Unit>, IndexContainer.Index
 	}
 
 	@Override
-	public Identifier<Unit> getID() {
+	public Identifier<AbUnit> getID() {
 		return id;
 	}
 
 	@Override
-	public int compareTo(Unit u) {
+	public int compareTo(AbUnit u) {
 		return getID().compareTo(u.getID());
 	}
 

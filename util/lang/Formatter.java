@@ -1,13 +1,13 @@
 package common.util.lang;
 
 import common.CommonStatic;
+import common.util.pack.Background;
 import common.io.assets.Admin.StaticPermitted;
 import common.io.json.JsonClass;
 import common.io.json.JsonEncoder;
 import common.io.json.JsonField;
 import common.pack.Context.ErrType;
 import common.pack.Identifier;
-import common.util.pack.Background;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

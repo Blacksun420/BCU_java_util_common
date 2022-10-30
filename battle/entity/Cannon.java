@@ -162,7 +162,7 @@ public class Cannon extends AtkModelAb {
 
 		if (preTime == -1 && id == 2) {
 			// wall canon
-			Form f = Identifier.parseInt(339, Unit.class).get().forms[0];
+			Form f = Identifier.parseInt(339, Unit.class).get().getForms()[0];
 			EAnimU enter = f.getEAnim(UType.ENTER);
 			enter.setTime(0);
 			wall = new EUnit(b, f.du, enter, 1);

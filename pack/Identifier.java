@@ -5,16 +5,13 @@ import common.util.Data;
 import common.util.pack.Background;
 import common.util.stage.CastleImg;
 import common.util.stage.Stage;
-import common.util.unit.AbEnemy;
-import common.util.unit.EneRand;
-import common.util.unit.Enemy;
 
 import java.lang.reflect.Method;
 import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.Queue;
 
-import common.util.unit.Unit;
+import common.util.unit.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,6 +39,8 @@ public class Identifier<T extends IndexContainer.Indexable<?, T>> implements Com
 
 		if(cls == EneRand.class) {
 			return (T) new Identifier(DEF, Enemy.class, 0).get();
+		} else if (cls == UniRand.class) {
+			return (T) new Identifier(DEF, Unit.class, 0).get();
 		} else if (cls == Stage.class) {
 			return (T) new Identifier(DEF + "/0", Stage.class, 0).get();
 		} else {

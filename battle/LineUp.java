@@ -19,7 +19,7 @@ import java.util.TreeMap;
 public class LineUp extends Data {
 
 	@JsonField(generic = { Identifier.class, Level.class })
-	public final TreeMap<Identifier<AbForm>, Level> map = new TreeMap<>();
+	public final TreeMap<Identifier<AbUnit>, Level> map = new TreeMap<>();
 
 	@JsonField(alias = Form.FormJson.class)
 	public final Form[][] fs = new Form[2][5];
@@ -44,7 +44,7 @@ public class LineUp extends Data {
 		for (int i = 0; i < 2; i++)
 			for (int j = 0; j < 5; j++)
 				fs[i][j] = ref.fs[i][j];
-		for (Entry<Identifier<AbForm>, Level> e : ref.map.entrySet()) {
+		for (Entry<Identifier<AbUnit>, Level> e : ref.map.entrySet()) {
 			map.put(e.getKey(), e.getValue().clone());
 		}
 		renew();
@@ -338,9 +338,9 @@ public class LineUp extends Data {
 	private void validate() {
 		for (int i = 0; i < 10; i++)
 			if (getFS(i) != null) {
-				Identifier<AbForm> id = getFS(i).uid;
+				Identifier<AbUnit> id = getFS(i).uid;
 				int f = getFS(i).fid;
-				AbForm u = Identifier.get(id);
+				AbUnit u = Identifier.get(id);
 				if (u == null || u.getForms()[f] == null)
 					setFS(null, i);
 			}
