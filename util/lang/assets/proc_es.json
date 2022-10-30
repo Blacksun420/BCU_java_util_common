@@ -488,8 +488,8 @@
         "full_name": "Invocación",
         "tooltip": null,
         "format": [
-            "Probabilidad del (prob)% de invocar un (_entity(id)) con una fuerza de [(!type.fix_buff){(_summonMagnification(mult))}(type.fix_buff){[(_isEnemy){(mult)%}(!_isEnemy){Nv(mult)}]}] tras (_dispTime(time)), ",
-            "uno invocado a un alcance de (dis) alejado de",
+            "Probabilidad del (prob)% de invocar (amount) (_entity(id)) con una fuerza de [(!type.fix_buff){(_summonMagnification(mult))}(type.fix_buff){[(_isEnemy){(mult)%}(!_isEnemy){Nv(mult)}]}] tras (_dispTime(time)), ",
+            "invocadas a un alcance de (dis) alejado de",
             "[(type.on_kill|type.on_hit){ cada objetivo}",
             "(!type.on_hit&!type.on_kill){l invocador}] ",
             "[(type.on_hit){golpeado}",
@@ -577,6 +577,10 @@
                     " Invocación por cada objetivo eliminado, las distancias de origen son relativas a las posiciones de los blancos.",
                     " Las invocaciones múltiples son posibles para ataques de área."
                 ]
+            },
+            "amount": {
+                "name": "Amount",
+                "tooltip": "The amount to be summoned."
             },
             "form": {
                 "name": "Forma",

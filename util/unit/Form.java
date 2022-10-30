@@ -226,7 +226,7 @@ public class Form extends Animable<AnimU<?>, AnimU.UType> implements BasedCopabl
 					}
 				}
 				if (UserProfile.isOlderPack(pack, "0.6.8.2")) {
-					if ((form.abi & 5) > 0)
+					if ((form.abi & 32) > 0)
 						form.getProc().IMUWAVE.block = 100;
 					form.abi = Data.reorderAbi(form.abi, 2);
 				}

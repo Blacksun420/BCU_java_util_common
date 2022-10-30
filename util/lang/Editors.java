@@ -402,7 +402,7 @@ public class Editors {
 			if (t.prob == 0) {
 				t.dis = t.max_dis = 0;
 				t.id = null;
-				t.mult = t.time = t.form = 0;
+				t.mult = t.time = t.form = t.amount = 0;
 				t.type.anim_type = 0;
 				t.type.fix_buff = t.type.ignore_limit = t.type.on_hit = t.type.on_kill = false;
 				t.min_layer = t.max_layer = 0;
@@ -416,6 +416,7 @@ public class Editors {
 				temp = t.min_layer;
 				t.min_layer = Math.min(temp, t.max_layer);
 				t.max_layer = Math.max(temp, t.max_layer);
+				t.amount = Math.max(t.amount, 1);
 
 				EditorSupplier edi = UserProfile.getStatic("Editor_Supplier", () -> null);
 				if ((!edi.isEnemy() && t.id == null) || (t.id != null && t.id.cls == Unit.class)) {
@@ -425,11 +426,11 @@ public class Editors {
 						t.mult = MathUtil.clip(t.mult, -u.max - u.maxp, u.max + u.maxp);
 					else
 						t.mult = MathUtil.clip(t.mult, 1, u.max + u.maxp);
-					setComponentVisibility("SUMMON", true, 15);
+					setComponentVisibility("SUMMON", true, 16);
 				} else {
 					t.form = 1;
 					t.mult = Math.max(1, t.mult);
-					setComponentVisibility("SUMMON", false, 15);
+					setComponentVisibility("SUMMON", false, 16);
 				}
 				t.type.anim_type = MathUtil.clip(t.type.anim_type, 0, 4);
 			}

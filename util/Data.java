@@ -381,6 +381,8 @@ public class Data {
 			@Order(8)
 			public int time;
 			@Order(9)
+			public int amount;
+			@Order(10)
 			public int form;
 		}
 

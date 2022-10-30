@@ -480,6 +480,10 @@
                 "name": "배율",
                 "tooltip": "소환되는 상대의 배율을 정합니다. 적을 위한 값이며 유닛은 따르지 않습니다. \"고정된 버프\"를 활성화 시키면 소환자의 배율에 상대적으로 소환됩니다"
             },
+            "amount": {
+                "name": "Amount",
+                "tooltip": "The amount to be summoned."
+            },
             "time": {
                 "name": "지연 시간",
                 "tooltip": "정해진 시간 뒤에 개체가 소환됩니다"

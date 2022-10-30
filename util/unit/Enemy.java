@@ -230,7 +230,7 @@ public class Enemy extends Animable<AnimU<?>, UType> implements AbEnemy {
 						adm.specialTrait = false;
 					}
 				} //Finish 6.8.1 check
-				if ((enemy.abi & 5) > 0)
+				if ((enemy.abi & 32) > 0)
 					enemy.getProc().IMUWAVE.block = 100;
 				enemy.abi = Data.reorderAbi(enemy.abi, 2);
 			} //Finish 6.8.2 check

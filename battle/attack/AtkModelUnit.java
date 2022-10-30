@@ -40,8 +40,6 @@ public class AtkModelUnit extends AtkModelEntity {
 			SUMMON.TYPE conf = proc.type;
 			if (conf.same_health && ent.health <= 0)
 				return;
-			int dis = proc.dis == proc.max_dis ? proc.dis : (int) (proc.dis + b.r.nextDouble() * (proc.max_dis - proc.dis + 1));
-			double up = ent.pos + getDire() * dis;
 			int time = proc.time;
 			int minlayer = proc.min_layer, maxlayer = proc.max_layer;
 			if (proc.min_layer == proc.max_layer && proc.min_layer == -1)
@@ -56,28 +54,36 @@ public class AtkModelUnit extends AtkModelEntity {
 					lvl = MathUtil.clip(lvl, 1, u.max + u.maxp);
 					lvl *= (100.0 - resist) / 100;
 
-					EForm ef = new EForm(u.forms[Math.max(proc.form - 1, 0)], proc.mult + ((EUnit) e).lvl);
-					EUnit eu = ef.invokeEntity(b, lvl, minlayer, maxlayer);
-					if (conf.same_health)
-						eu.health = e.health;
+					for (int i = 0; i < proc.amount; i++) {
+						int dis = proc.dis == proc.max_dis ? proc.dis : (int) (proc.dis + b.r.nextDouble() * (proc.max_dis - proc.dis + 1));
+						double up = ent.pos + getDire() * dis;
+						EForm ef = new EForm(u.forms[Math.max(proc.form - 1, 0)], proc.mult + ((EUnit) e).lvl);
+						EUnit eu = ef.invokeEntity(b, lvl, minlayer, maxlayer);
+						if (conf.same_health)
+							eu.health = e.health;
 
-					eu.added(-1, (int) up);
-					b.tempe.add(new EntCont(eu, time));
-					eu.setSummon(conf.anim_type, conf.bond_hp ? e : null);
+						eu.added(-1, (int) up);
+						b.tempe.add(new EntCont(eu, time));
+						eu.setSummon(conf.anim_type, conf.bond_hp ? e : null);
+					}
 				}
 			} else if (proc.id.cls == UniRand.class) {
 				UniRand ur = Identifier.getOr(proc.id, UniRand.class);
 				int lvl = proc.mult + ((EUnit) e).lvl;
 				if (conf.fix_buff)
 					lvl = proc.mult;
-				EUnit eu = ur.getEntity(b, acs, b.max_num - b.entityCount(-1), minlayer, maxlayer, lvl, resist, ((EUnit)e).index);
-				if (eu != null) {
-					if (conf.same_health)
-						eu.health = e.health;
+				for (int i = 0; i < proc.amount; i++) {
+					int dis = proc.dis == proc.max_dis ? proc.dis : (int) (proc.dis + b.r.nextDouble() * (proc.max_dis - proc.dis + 1));
+					double up = ent.pos + getDire() * dis;
+					EUnit eu = ur.getEntity(b, acs, b.max_num - b.entityCount(-1), minlayer, maxlayer, lvl, resist, ((EUnit) e).index);
+					if (eu != null) {
+						if (conf.same_health)
+							eu.health = e.health;
 
-					eu.added(-1, (int) up);
-					b.tempe.add(new EntCont(eu, time));
-					eu.setSummon(conf.anim_type, conf.bond_hp ? e : null);
+						eu.added(-1, (int) up);
+						b.tempe.add(new EntCont(eu, time));
+						eu.setSummon(conf.anim_type, conf.bond_hp ? e : null);
+					}
 				}
 			} else {
 				AbEnemy ene = Identifier.getOr(proc.id, AbEnemy.class);
@@ -92,21 +98,25 @@ public class AtkModelUnit extends AtkModelEntity {
 
 					mula *= (100.0 - resist) / 100;
 					mult *= (100.0 - resist) / 100;
-					EEnemy ee = ene.getEntity(b, acs, mult, mula, minlayer, maxlayer, 0);
+					for (int i = 0; i < proc.amount; i++) {
+						int dis = proc.dis == proc.max_dis ? proc.dis : (int) (proc.dis + b.r.nextDouble() * (proc.max_dis - proc.dis + 1));
+						double up = ent.pos + getDire() * dis;
+						EEnemy ee = ene.getEntity(b, acs, mult, mula, minlayer, maxlayer, 0);
 
-					ee.group = allow;
-					if (up < ee.data.getWidth())
-						up = ee.data.getWidth();
-					if (up > b.st.len - 800)
-						up = b.st.len - 800;
+						ee.group = allow;
+						if (up < ee.data.getWidth())
+							up = ee.data.getWidth();
+						if (up > b.st.len - 800)
+							up = b.st.len - 800;
 
-					ee.added(1, (int) up);
-					b.tempe.add(new EntCont(ee, time));
+						ee.added(1, (int) up);
+						b.tempe.add(new EntCont(ee, time));
 
-					if (conf.same_health)
-						ee.health = e.health;
+						if (conf.same_health)
+							ee.health = e.health;
 
-					ee.setSummon(conf.anim_type, conf.bond_hp ? e : null);
+						ee.setSummon(conf.anim_type, conf.bond_hp ? e : null);
+					}
 				}
 			}
 		} else

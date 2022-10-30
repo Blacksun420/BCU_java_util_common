@@ -539,8 +539,8 @@
         "full_name": "Summon",
         "tooltip": null,
         "format": [
-            "(prob)% chance to summon a [(!type.fix_buff){(_summonMagnification(mult))}(type.fix_buff){[(_isEnemy){(mult)%}(!_isEnemy){Lv(mult)}]}] (_entity(id)) after (_dispTime(time)), ",
-            "one summoned (dis)[(max_dis!=dis){ ~ (max_dis)}] range away from ",
+            "(prob)% chance to summon (amount) [(!type.fix_buff){(_summonMagnification(mult))}(type.fix_buff){[(_isEnemy){(mult)%}(!_isEnemy){Lv(mult)}]}] (_entity(id)) after (_dispTime(time)), ",
+            "each summoned (dis)[(max_dis!=dis){ ~ (max_dis)}] range away from ",
             "[(type.on_kill|type.on_hit){each target}",
             "(!type.on_hit&!type.on_kill){the summoner}] ",
             "[(type.on_hit){hit}",
@@ -548,7 +548,7 @@
             "(!type.on_kill&!type.on_hit){on this attack}], ",
             "[(type.same_health){each entity will have the same hp as the summoner, }]",
             "[(type.bond_hp){the summoner's hp will be bound with each summoned entity's hp, }]",
-            "and is[(type.ignore_limit){n't}] restricted by the stage entity limit. ",
+            "and are[(type.ignore_limit){n't}] restricted by the stage entity limit. ",
             "Summoned entities will be in [(min_layer==max_layer){[(min_layer==-1){the same layer as this entity}(min_layer!=-1){layer (min_layer)}]}",
             "(min_layer!=max_layer){a random layer between (min_layer) and (max_layer)}]. ",
             "Summon will display [(type.anim_type==0){no}(type.anim_type==1){warp}(type.anim_type>=2){burrow}]",
@@ -629,6 +629,10 @@
                     " Summon per target killed, distance origins are set to the targets' positions.",
                     " Multiple summon possible for ranged attack."
                 ]
+            },
+            "amount": {
+                "name": "Amount",
+                "tooltip": "The amount to be summoned."
             },
             "form": {
                 "name": "Form",
