@@ -1,7 +1,6 @@
 package common.util.pack;
 
 import common.CommonStatic;
-import common.battle.data.util.anim.*;
 import common.io.json.FieldOrder;
 import common.io.json.FieldOrder.Order;
 import common.system.VImg;
