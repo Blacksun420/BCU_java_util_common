@@ -90,7 +90,7 @@ public class DataEnemy extends DefaultData implements MaskEnemy {
 		if (ints[37] == 1)
 			proc.IMUWAVE.mult = 100;
 		if (ints[38] == 1)
-			a |= AB_WAVES;
+			proc.IMUWAVE.block = 100;
 		if (ints[39] == 1)
 			proc.IMUKB.mult = 100;
 		if (ints[40] == 1)

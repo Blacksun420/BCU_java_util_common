@@ -95,7 +95,7 @@ public class DataUnit extends DefaultData implements MaskUnit, Cloneable {
 		if (ints[46] == 1)
 			proc.IMUWAVE.mult = 100;
 		if (ints[47] == 1)
-			a |= AB_WAVES;
+			proc.IMUWAVE.block = 100;
 		if (ints[48] == 1)
 			proc.IMUKB.mult = 100;
 		if (ints[49] == 1)

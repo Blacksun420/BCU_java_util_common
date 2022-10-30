@@ -1,19 +1,26 @@
 package common.util.stage;
 
-import common.io.InStream;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import common.io.json.JsonClass;
 import common.io.json.JsonClass.JCGeneric;
 import common.io.json.JsonClass.JCIdentifier;
 import common.io.json.JsonClass.NoTag;
+import common.io.json.JsonDecoder;
 import common.io.json.JsonField;
 import common.pack.Identifier;
 import common.pack.IndexContainer.IndexCont;
 import common.pack.IndexContainer.Indexable;
 import common.pack.PackData;
 import common.pack.PackData.UserPack;
+import common.pack.UserProfile;
 import common.util.Data;
+import common.util.unit.AbForm;
+import common.util.unit.Form;
 import common.util.unit.Unit;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.TreeSet;
 
 @IndexCont(PackData.class)
@@ -28,8 +35,8 @@ public class CharaGroup extends Data implements Indexable<PackData, CharaGroup>,
 
 	public int type = 0;
 
-	@JsonField(generic = Unit.class, alias = Identifier.class)
-	public final TreeSet<Unit> set = new TreeSet<>();
+	@JsonField(generic = Form.class, alias = Form.FormJson.class)
+	public final TreeSet<Form> fset = new TreeSet<>();
 
 	@JsonClass.JCConstructor
 	public CharaGroup() {
@@ -38,60 +45,44 @@ public class CharaGroup extends Data implements Indexable<PackData, CharaGroup>,
 
 	public CharaGroup(CharaGroup cg) {
 		type = cg.type;
-		set.addAll(cg.set);
+		fset.addAll(cg.fset);
 	}
 
 	public CharaGroup(Identifier<CharaGroup> id) {
 		this.id = id;
 	}
 
-	public CharaGroup(int ID, int t, Identifier<Unit>[] units) {
+	public CharaGroup(int ID, int t, Identifier<AbForm>[] units) {
 		this(t, units);
 		id = Identifier.parseInt(ID, CharaGroup.class);
 	}
 
-	@Deprecated
-	public CharaGroup(UserPack mc, InStream is) {
-		int ver = getVer(is.nextString());
-		if (ver == 308) {
-			name = is.nextString();
-			id = mc.getID(CharaGroup.class, is.nextInt());
-			type = is.nextInt();
-			int m = is.nextInt();
-			for (int j = 0; j < m; j++) {
-				Unit u = Identifier.parseInt(is.nextInt(), Unit.class).get();
-				if (u != null)
-					set.add(u);
-			}
-		}
-	}
-
 	@SuppressWarnings("unchecked")
-	private CharaGroup(int t, Identifier<Unit>... units) {
+	private CharaGroup(int t, Identifier<AbForm>... units) {
 		type = t;
-		for (Identifier<Unit> uid : units) {
-			Unit u = Identifier.get(uid);
+		for (Identifier<AbForm> uid : units) {
+			AbForm u = Identifier.get(uid);
 			if (u != null)
-				set.add(u);
+				fset.addAll(Arrays.asList(u.getForms()));
 		}
 	}
 
 	public boolean allow(Unit u) {
-		return (type != 0 || set.contains(u)) && (type != 2 || !set.contains(u));
+		return (type != 0 || fset.contains(u)) && (type != 2 || !fset.contains(u));
 	}
 
 	public CharaGroup combine(CharaGroup cg) {
 		CharaGroup ans = new CharaGroup(this);
 		if (type == 0 && cg.type == 0)
-			ans.set.retainAll(cg.set);
+			ans.fset.retainAll(cg.fset);
 		else if (type == 0 && cg.type == 2)
-			ans.set.removeAll(cg.set);
+			ans.fset.removeAll(cg.fset);
 		else if (type == 2 && cg.type == 0) {
 			ans.type = 0;
-			ans.set.addAll(cg.set);
-			ans.set.removeAll(set);
+			ans.fset.addAll(cg.fset);
+			ans.fset.removeAll(fset);
 		} else if (type == 2 && cg.type == 2)
-			ans.set.addAll(cg.set);
+			ans.fset.addAll(cg.fset);
 		return ans;
 	}
 
@@ -122,4 +113,17 @@ public class CharaGroup extends Data implements Indexable<PackData, CharaGroup>,
 		return false;
 	}
 
+	@JsonDecoder.OnInjected
+	public void onInjected(JsonObject jobj) {
+		UserPack pack = (UserPack) getCont();
+		if (UserProfile.isOlderPack(pack, "0.6.8.2")) {
+			JsonArray jarr = jobj.get("set").getAsJsonArray();
+			for (int i = 0; i < jarr.size(); i++) {
+				int id = jarr.get(i).getAsJsonObject().get("id").getAsInt();
+				Unit u = (Unit) new Identifier<>(this.id.pack, Unit.class, id).get();
+				if (u != null)
+					Collections.addAll(fset, u.forms);
+			}
+		}
+	}
 }

@@ -1,7 +1,6 @@
 package common.battle;
 
 import common.CommonStatic;
-import common.io.InStream;
 import common.io.json.JsonClass;
 import common.io.json.JsonDecoder.OnInjected;
 import common.io.json.JsonField;
@@ -20,7 +19,7 @@ import java.util.TreeMap;
 public class LineUp extends Data {
 
 	@JsonField(generic = { Identifier.class, Level.class })
-	public final TreeMap<Identifier<Unit>, Level> map = new TreeMap<>();
+	public final TreeMap<Identifier<AbForm>, Level> map = new TreeMap<>();
 
 	@JsonField(alias = Form.FormJson.class)
 	public final Form[][] fs = new Form[2][5];
@@ -39,21 +38,13 @@ public class LineUp extends Data {
 	}
 
 	/**
-	 * read a LineUp object from data
-	 */
-	protected LineUp(int ver, InStream is) {
-		zread(ver, is);
-		renew();
-	}
-
-	/**
 	 * clone a LineUp object
 	 */
 	protected LineUp(LineUp ref) {
 		for (int i = 0; i < 2; i++)
 			for (int j = 0; j < 5; j++)
 				fs[i][j] = ref.fs[i][j];
-		for (Entry<Identifier<Unit>, Level> e : ref.map.entrySet()) {
+		for (Entry<Identifier<AbForm>, Level> e : ref.map.entrySet()) {
 			map.put(e.getKey(), e.getValue().clone());
 		}
 		renew();
@@ -347,44 +338,12 @@ public class LineUp extends Data {
 	private void validate() {
 		for (int i = 0; i < 10; i++)
 			if (getFS(i) != null) {
-				Identifier<Unit> id = getFS(i).uid;
+				Identifier<AbForm> id = getFS(i).uid;
 				int f = getFS(i).fid;
-				Unit u = Identifier.get(id);
-				if (u == null || u.forms[f] == null)
+				AbForm u = Identifier.get(id);
+				if (u == null || u.getForms()[f] == null)
 					setFS(null, i);
 			}
 		arrange();
 	}
-
-	/**
-	 * read data from file, support multiple version
-	 */
-	private void zread(int ver, InStream is) {
-		int val = getVer(is.nextString());
-		if (val >= 400)
-			zread$000400(is);
-	}
-
-	private void zread$000400(InStream is) {
-		int n = is.nextInt();
-		for (int i = 0; i < n; i++) {
-			int uid = is.nextInt();
-			int fid = is.nextInt();
-			setFS(Identifier.parseInt(uid, Unit.class).get().forms[fid], i);
-		}
-		int m = is.nextInt();
-		for (int i = 0; i < m; i++) {
-			int uid = is.nextInt();
-			int[] lv = is.nextIntsB();
-			Unit u = Identifier.getOr(Identifier.parseInt(uid, Unit.class), Unit.class);
-			int[][] orbs = null;
-			int existing = is.nextInt();
-			if (existing == 1) {
-				orbs = is.nextIntsBB();
-			}
-			map.put(u.id, new Level(Level.LvList(lv), orbs));
-		}
-		arrange();
-	}
-
 }

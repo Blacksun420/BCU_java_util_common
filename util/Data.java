@@ -772,9 +772,9 @@ public class Data {
 		@Order(28)
 		public final IMU IMUSLOW = new IMU();
 		@Order(29)
-		public final WAVEI IMUWAVE = new WAVEI();
+		public final IMU IMUWAVE = new IMU();
 		@Order(30)
-		public final WAVEI IMUVOLC = new WAVEI();
+		public final IMU IMUVOLC = new IMU();
 		@Order(31)
 		public final IMUAD IMUWEAK = new IMUAD();
 		@Order(32)
@@ -1076,21 +1076,20 @@ public class Data {
 	public static final byte ABI_MASSIVE = 2;
 	public static final byte ABI_ONLY = 3;
 	public static final byte ABI_METALIC = 4;
-	public static final byte ABI_WAVES = 5;
-	public static final byte ABI_SNIPERI = 6;
-	public static final byte ABI_TIMEI = 7;
-	public static final byte ABI_GHOST = 8;
-	public static final byte ABI_ZKILL = 9;
-	public static final byte ABI_WKILL = 10;
-	public static final byte ABI_GLASS = 11;
-	public static final byte ABI_THEMEI = 12;
-	public static final byte ABI_EKILL = 13;
-	public static final byte ABI_IMUSW = 14;
-	public static final byte ABI_RESISTS = 15;
-	public static final byte ABI_MASSIVES = 16;
-	public static final byte ABI_BAKILL = 17;
-	public static final byte ABI_CKILL = 18;
-	public static final byte ABI_TOT = 19;// 20 currently
+	public static final byte ABI_SNIPERI = 5;
+	public static final byte ABI_TIMEI = 6;
+	public static final byte ABI_GHOST = 7;
+	public static final byte ABI_ZKILL = 8;
+	public static final byte ABI_WKILL = 9;
+	public static final byte ABI_GLASS = 10;
+	public static final byte ABI_THEMEI = 11;
+	public static final byte ABI_EKILL = 12;
+	public static final byte ABI_IMUSW = 13;
+	public static final byte ABI_RESISTS = 14;
+	public static final byte ABI_MASSIVES = 15;
+	public static final byte ABI_BAKILL = 16;
+	public static final byte ABI_CKILL = 17;
+	public static final byte ABI_TOT = 18;// 20 currently
 
 	// proc index
 	public static final int P_KB = 0;
@@ -1310,7 +1309,7 @@ public class Data {
 			{ 0, P_IMUSLOW }, // 20: res slow
 			{ 0, P_IMUKB }, // 21: res kb
 			{ 0, P_IMUWAVE }, // 22: res wave
-			{ 1, AB_WAVES, 0 }, // 23: waveblock
+			{ 5, P_IMUWAVE, 0 }, // 23: waveblock
 			{ 0, P_IMUWARP, 0 }, // 24: res warp
 			{ 2, PC2_COST }, // 25: reduce cost
 			{ 2, PC2_CD }, // 26: reduce cooldown
@@ -1714,24 +1713,37 @@ public class Data {
 
 	public static int reorderAbi(int ab, int ver) {
 		int newAbi = 0, abiAdd = 0;
-		if (ver == 0) {
-			for (int i = 0; i + abiAdd < ABI_TOT + 2; i++) {
-				if (i == 7 || i == 12 || i == 18)
-					abiAdd++;
-				int i1 = i + abiAdd;
-				if (i1 == 12 || i1 == 18)
-					continue;
-				if (((ab >> i1) & 1) > 0)
-					newAbi |= 1 << i;
-			}
-		} else if (ver == 1) { //Reformat Bounty and Base destroyer
-			for (int i = 0; i + abiAdd < ABI_TOT; i++) {
-				if (i == 4)
-					abiAdd += 2;
-				int i1 = i + abiAdd;
-				if (((ab >> i1) & 1) > 0)
-					newAbi |= 1 << i;
-			}
+		switch (ver) {
+			case 0:
+				for (int i = 0; i + abiAdd < ABI_TOT + 3; i++) {
+					if (i == 7 || i == 12 || i == 18)
+						abiAdd++;
+					int i1 = i + abiAdd;
+					if (i1 == 12 || i1 == 18)
+						continue;
+					if (((ab >> i1) & 1) > 0)
+						newAbi |= 1 << i;
+				}
+				break;
+			case 1: //Reformat Bounty and Base destroyer
+				for (int i = 0; i + abiAdd < ABI_TOT + 1; i++) {
+					if (i == 4)
+						abiAdd += 2;
+					int i1 = i + abiAdd;
+					if (((ab >> i1) & 1) > 0)
+						newAbi |= 1 << i;
+				}
+				break;
+			case 2: //Reofrmat waveblock
+				for (int i = 0; i + abiAdd < ABI_TOT; i++) {
+					if (i == 5)
+						abiAdd++;
+					int i1 = i + abiAdd;
+					if (((ab >> i1) & 1) > 0)
+						newAbi |= 1 << i;
+				}
+				break;
+
 		}
 		return newAbi;
 	}

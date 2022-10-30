@@ -351,7 +351,10 @@
         "abbr_name": "imu. Wave",
         "full_name": "Immune/Resistant to Wave",
         "tooltip": null,
-        "format": "[(mult==100){Immune}(mult<100&mult>0){Resistant}(mult<0){Weak}] to Wave[(mult<100&mult>0){ (_left)Decreases damage taken by (mult)%(_right)}(mult<0){ (_left)Increases damage taken by (_abs(mult))%(_right)}]",
+        "format": ["[(mult!=0&block!=100){[(mult==100){Immune}(mult<100&mult>0){Resistant}(mult<0){Weak}] to Wave",
+            "[(mult<100&mult>0){ (_left)Decreases damage taken by (mult)%(_right)}(mult<0){ (_left)Increases damage taken by (_abs(mult))%(_right)}]",
+            "[(block!=0&block<100){ & }]}][(block!=0){Wave [(block==100){blocker}(block<100&block>0){absorber}(block<0){increaser}]",
+            "[(block<100&block>0){ (_left)Decreases damage by (block)%(_right)}(block<0){ (_left)Increases damage by (_abs(block))%(_right)}]}]"],
         "class": {
             "mult": {
                 "name": "percent",
@@ -911,7 +914,10 @@
         "abbr_name": "imu. Surge",
         "full_name": "Immune/Resistant to Surge",
         "tooltip": null,
-        "format": "[(mult==100){Immune}(mult<100&mult>0){Resistant}(mult<0){Weak}] to Surge Attack[(mult<100&mult>0){ (_left)Decreases damage taken by (mult)%(_right)}(mult<0){ (_left)Increases taken damage by (_abs(mult))%(_right)}]",
+        "format": ["[(mult!=0&block!=100){[(mult==100){Immune}(mult<100&mult>0){Resistant}(mult<0){Weak}] to Surge Attack[(mult<100&mult>0)",
+            "{ (_left)Decreases damage taken by (mult)%(_right)}(mult<0){ (_left)Increases taken damage by (_abs(mult))%(_right)}]",
+            "[(block!=0&block<100){ & }]}][(block!=0){Surge Attack [(block==100){blocker}(block<100&block>0){absorber}(block<0){increaser}]",
+            "[(block<100&block>0){ (_left)Decreases damage by (block)%(_right)}(block<0){ (_left)Increases damage by (_abs(block))%(_right)}]}]"],
         "class": {
             "mult": {
                 "name": "percent",

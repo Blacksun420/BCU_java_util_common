@@ -8,14 +8,9 @@ import common.io.json.JsonClass.JCGeneric;
 import common.io.json.JsonClass.JCIdentifier;
 import common.io.json.JsonField;
 import common.io.json.JsonField.GenType;
-import common.pack.Identifier;
-import common.pack.IndexContainer.IndexCont;
-import common.pack.IndexContainer.Indexable;
-import common.pack.PackData;
-import common.pack.Source;
+import common.pack.*;
 import common.pack.Source.ResourceLocation;
 import common.pack.Source.Workspace;
-import common.pack.UserProfile;
 import common.system.files.VFile;
 import common.util.Data;
 import common.util.anim.AnimCE;
@@ -26,10 +21,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Queue;
 
-@IndexCont(PackData.class)
 @JCGeneric(Identifier.class)
 @JsonClass
-public class Unit extends Data implements Comparable<Unit>, Indexable<PackData, Unit> {
+public class Unit extends Data implements Comparable<Unit>, IndexContainer.Indexable<PackData, Unit> {
 
 	public static class UnitInfo {
 
@@ -136,12 +130,16 @@ public class Unit extends Data implements Comparable<Unit>, Indexable<PackData, 
 		}
 	}
 
+	public Form[] getForms() {
+		return forms;
+	}
+
 	public List<Combo> allCombo() {
 		List<Combo> ans = new ArrayList<>();
 		List<Combo> comboList = UserProfile.getBCData().combos.getList();
 		UserProfile.getUserPacks().forEach(p -> comboList.addAll(p.combos.getList()));
 		for (Combo c : comboList)
-			for (Form f : id.get().forms)
+			for (Form f : id.get().getForms())
 				if (Arrays.stream(c.forms).anyMatch(form -> form.uid.compareTo(f.uid) == 0)) {
 					ans.add(c);
 					break;
@@ -150,13 +148,13 @@ public class Unit extends Data implements Comparable<Unit>, Indexable<PackData, 
 	}
 
 	@Override
-	public int compareTo(Unit u) {
-		return id.compareTo(u.id);
+	public Identifier<Unit> getID() {
+		return id;
 	}
 
 	@Override
-	public Identifier<Unit> getID() {
-		return id;
+	public int compareTo(Unit u) {
+		return getID().compareTo(u.getID());
 	}
 
 	public int getPrefLv() {

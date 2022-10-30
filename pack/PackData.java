@@ -19,17 +19,14 @@ import common.io.json.JsonField;
 import common.io.json.JsonField.GenType;
 import common.pack.FixIndexList.FixIndexMap;
 import common.pack.Source.Workspace;
-import common.system.VImg;
 import common.system.files.FDFile;
 import common.system.files.VFile;
 import common.system.files.VFileRoot;
 import common.util.Data;
 import common.util.Res;
-import common.util.anim.AnimCE;
 import common.util.anim.AnimUD;
 import common.util.pack.*;
 import common.util.lang.MultiLangData;
-import common.util.pack.*;
 import common.util.pack.bgeffect.BackgroundEffect;
 import common.util.stage.CastleList.PackCasList;
 import common.util.stage.*;
@@ -123,7 +120,7 @@ public abstract class PackData implements IndexContainer {
 				int id = CommonStatic.parseIntN(strs[0]);
 				int type = CommonStatic.parseIntN(strs[2]);
 				@SuppressWarnings("unchecked")
-				Identifier<Unit>[] units = new Identifier[strs.length - 3];
+				Identifier<AbForm>[] units = new Identifier[strs.length - 3];
 				for (int i = 3; i < strs.length; i++)
 					units[i - 3] = Identifier.parseInt(CommonStatic.parseIntN(strs[i]), Unit.class);
 				groups.set(id, new CharaGroup(id, type, units));
@@ -457,18 +454,20 @@ public abstract class PackData implements IndexContainer {
 	@Order(4)
 	public final FixIndexMap<Unit> units = new FixIndexMap<>(Unit.class);
 	@Order(5)
-	public final FixIndexMap<Soul> souls = new FixIndexMap<>(Soul.class);
+	public final FixIndexMap<UniRand> randUnits = new FixIndexMap<>(UniRand.class);
 	@Order(6)
-	public final FixIndexMap<DemonSoul> demonSouls = new FixIndexMap<>(DemonSoul.class);
+	public final FixIndexMap<Soul> souls = new FixIndexMap<>(Soul.class);
 	@Order(7)
-	public final FixIndexMap<Background> bgs = new FixIndexMap<>(Background.class);
+	public final FixIndexMap<DemonSoul> demonSouls = new FixIndexMap<>(DemonSoul.class);
 	@Order(8)
-	public final FixIndexMap<CharaGroup> groups = new FixIndexMap<>(CharaGroup.class);
+	public final FixIndexMap<Background> bgs = new FixIndexMap<>(Background.class);
 	@Order(9)
-	public final FixIndexMap<LvRestrict> lvrs = new FixIndexMap<>(LvRestrict.class);
+	public final FixIndexMap<CharaGroup> groups = new FixIndexMap<>(CharaGroup.class);
 	@Order(10)
-	public final FixIndexMap<Music> musics = new FixIndexMap<>(Music.class);
+	public final FixIndexMap<LvRestrict> lvrs = new FixIndexMap<>(LvRestrict.class);
 	@Order(11)
+	public final FixIndexMap<Music> musics = new FixIndexMap<>(Music.class);
+	@Order(12)
 	public final FixIndexMap<Combo> combos = new FixIndexMap<>(Combo.class);
 
 	@Override

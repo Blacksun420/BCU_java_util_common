@@ -85,8 +85,8 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 				break;
 		forms = new Form[n];
 		for (int i = 0; i < n; i++) {
-			Identifier<Unit> u = Identifier.parseInt(Integer.parseInt(strs[2 + i * 2]), Unit.class);
-			forms[i] = u.get().forms[Integer.parseInt(strs[3 + i * 2])];
+			Identifier<AbForm> u = Identifier.parseInt(Integer.parseInt(strs[2 + i * 2]), Unit.class);
+			forms[i] = u.get().getForms()[Integer.parseInt(strs[3 + i * 2])];
 		}
 		type = Integer.parseInt(strs[12]);
 		lv = Integer.parseInt(strs[13]);

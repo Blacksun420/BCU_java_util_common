@@ -106,7 +106,7 @@ public class Orb extends Data {
 				int id = CommonStatic.parseIntN(strs[0]);
 				int slots = CommonStatic.parseIntN(strs[1]);
 
-				Unit u = Identifier.parseInt(id, Unit.class).get();
+				Unit u = (Unit) Identifier.parseInt(id, Unit.class).get();
 
 				if (u == null || u.forms.length != 3) {
 					continue;

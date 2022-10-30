@@ -7,15 +7,59 @@ import common.io.json.JsonClass;
 import common.io.json.JsonField;
 import common.pack.Identifier;
 import common.system.VImg;
-import common.util.EREnt;
-import common.util.EntRand;
+import common.util.BattleObj;
+import common.util.Data;
+import common.util.unit.rand.EREnt;
 
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 @JsonClass.JCGeneric(Identifier.class)
 @JsonClass
-public class EneRand extends EntRand<Identifier<AbEnemy>> implements AbEnemy {
+public class EneRand extends Data implements AbEnemy {
+
+	public static final byte T_NL = 0, T_LL = 1;
+
+	@JsonField(generic = EREnt.class)
+	public final ArrayList<EREnt> list = new ArrayList<>();
+
+	public final Map<StageBasis, ELock> map = new HashMap<>();
+
+	@JsonField
+	public int type = 0;
+
+	public void updateCopy(StageBasis sb, Object o) {
+		if (o != null)
+			map.put(sb, (ELock) o);
+	}
+
+	protected EREnt getSelection(StageBasis sb, Object obj) {
+		if (type != T_NL) {
+			ELock l = map.get(sb);
+			if (l == null)
+				map.put(sb, l = type == T_LL ? new ELockLL() : new ELockGL());
+			EREnt ae = l.get(obj);
+			if (ae == null)
+				l.put(obj, ae = selector(sb));
+			return ae;
+		}
+		return selector(sb);
+
+	}
+
+	private EREnt selector(StageBasis sb) {
+		int tot = 0;
+		for (EREnt e : list)
+			tot += e.share;
+		if (tot > 0) {
+			int r = (int) (sb.r.nextDouble() * tot);
+			for (EREnt ent : list) {
+				r -= ent.share;
+				if (r < 0)
+					return ent;
+			}
+		}
+		return null;
+	}
 
 	@JsonClass.JCIdentifier
 	@JsonField
@@ -35,7 +79,7 @@ public class EneRand extends EntRand<Identifier<AbEnemy>> implements AbEnemy {
 
 	public void fillPossible(Set<Enemy> se, Set<EneRand> sr) {
 		sr.add(this);
-		for (EREnt<Identifier<AbEnemy>> e : list) {
+		for (EREnt e : list) {
 			AbEnemy ae = Identifier.get(e.ent);
 			if (ae instanceof Enemy)
 				se.add((Enemy) ae);
@@ -70,22 +114,19 @@ public class EneRand extends EntRand<Identifier<AbEnemy>> implements AbEnemy {
 		return te;
 	}
 
-
-
 	@Override
 	public String toString() {
 		return id.id + " - " + name + " (" + id.pack + ")";
 	}
 
-	private EEnemy get(EREnt<Identifier<AbEnemy>> x, StageBasis sb, Object obj, double mul, double mul2, int d0, int d1,
+	private EEnemy get(EREnt x, StageBasis sb, Object obj, double mul, double mul2, int d0, int d1,
 			int m) {
 		return Identifier.getOr(x.ent, AbEnemy.class).getEntity(sb, obj, x.multi * mul / 100, x.multi * mul2 / 100, d0,
 				d1, m);
 	}
 
-	@Override
 	public boolean contains(Identifier<AbEnemy> e, Identifier<AbEnemy> origin) {
-		for(EREnt<Identifier<AbEnemy>> id :list) {
+		for(EREnt id : list) {
 			Identifier<AbEnemy> i = id.ent;
 
 			if(i == null)
@@ -107,4 +148,36 @@ public class EneRand extends EntRand<Identifier<AbEnemy>> implements AbEnemy {
 
 		return false;
 	}
+}
+
+interface ELock {
+
+	EREnt get(Object obj);
+
+	EREnt put(Object obj, EREnt ae);
+
+}
+
+class ELockGL extends BattleObj implements ELock {
+
+	private EREnt ae;
+
+	@Override
+	public EREnt get(Object obj) {
+		return ae;
+	}
+
+	@Override
+	public EREnt put(Object obj, EREnt e) {
+		EREnt pre = ae;
+		ae = e;
+		return pre;
+	}
+
+}
+
+class ELockLL extends HashMap<Object, EREnt> implements ELock {
+
+	private static final long serialVersionUID = 1L;
+
 }

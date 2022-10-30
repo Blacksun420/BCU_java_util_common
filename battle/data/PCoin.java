@@ -168,6 +168,8 @@ public class PCoin extends Data {
 				Trait types = UserProfile.getBCData().traits.get(type[1]);
 				if (!ans.getTraits().contains(types))
 					ans.getTraits().add(types);
+			} else if (type[0] == 5) { //waveblock
+				ans.getProc().getArr(type[1]).set(1, 100);
 			}
 		}
 		return ans;

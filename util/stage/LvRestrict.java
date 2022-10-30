@@ -121,7 +121,7 @@ public class LvRestrict extends Data implements Indexable<PackData, LvRestrict> 
 		int[] lv = MAX.clone();
 		boolean mod = false;
 		for (CharaGroup cg : res.keySet())
-			if (cg.set.contains(f.unit)) {
+			if (cg.fset.contains(f.unit)) {
 				int[] rst = res.get(cg);
 				for (int i = 0; i < 6; i++)
 					lv[i] = Math.min(lv[i], rst[i]);

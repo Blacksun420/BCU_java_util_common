@@ -158,84 +158,84 @@ public class Enemy extends Animable<AnimU<?>, UType> implements AbEnemy {
 
 		if(getCont() instanceof PackData.UserPack) {
 			PackData.UserPack pack = (PackData.UserPack) getCont();
-			JsonObject jde = jobj.getAsJsonObject("de");
+			if (UserProfile.isOlderPack(pack, "0.6.8.2")) {
+				if (UserProfile.isOlderPack(pack, "0.6.8.1")) {
+					JsonObject jde = jobj.getAsJsonObject("de");
+					if (UserProfile.isOlderPack(pack, "0.6.6.0")) {
+						if (UserProfile.isOlderPack(pack, "0.6.5.0")) {
+							if (UserProfile.isOlderPack(pack, "0.6.4.0")) {
+								if (UserProfile.isOlderPack(pack, "0.6.1.0")) {
+									if (UserProfile.isOlderPack(pack, "0.6.0.0")) {
+										enemy.getProc().BARRIER.health = jde.get("shield").getAsInt();
+										int type = jde.get("type").getAsInt();
+										if (UserProfile.isOlderPack(pack, "0.5.4.0")) {
+											if (UserProfile.isOlderPack(pack, "0.5.2.0") && enemy.tba != 0) {
+												enemy.tba += enemy.getPost() + 1;
+											}
+											if (UserProfile.isOlderPack(pack, "0.5.1.0")) {
+												type = Data.reorderTrait(type);
+											}
+											MaModel model = anim.loader.getMM();
+											enemy.limit = CommonStatic.customEnemyMinPos(model);
+										}
+										enemy.traits = Trait.convertType(type);
 
-			if (UserProfile.isOlderPack(pack, "0.5.2.0") && enemy.tba != 0) {
-				enemy.tba += enemy.getPost() + 1;
-			}
+										Proc proc = enemy.getProc();
+										if ((enemy.abi & (1 << 18)) != 0) //Seal Immunity
+											proc.IMUSEAL.mult = 100;
+										if ((enemy.abi & (1 << 7)) != 0) //Moving atk Immunity
+											proc.IMUMOVING.mult = 100;
+										if ((enemy.abi & (1 << 12)) != 0) //Poison Immunity
+											proc.IMUPOI.mult = 100;
+										enemy.abi = Data.reorderAbi(enemy.abi, 0);
+									} //Finish 6.0.0 check
+									enemy.getProc().DMGCUT.reduction = 100;
+									enemy.getProc().DMGCUT.type.traitIgnore = true;
+									enemy.getProc().DMGCAP.type.traitIgnore = true;
+									enemy.getProc().POISON.type.ignoreMetal = true;
+								} //Finish 6.1.0 check
+								names.put(jobj.get("name").getAsString());
+								if (jobj.has("desc"))
+									description.put(jobj.get("desc").getAsString());
+							} //Finish 6.4.0 check
+							Proc proc = enemy.getProc();
 
-			if (UserProfile.isOlderPack(pack, "0.5.4.0")) {
-				MaModel model = anim.loader.getMM();
-				enemy.limit = CommonStatic.customEnemyMinPos(model);
-			}
+							if ((enemy.abi & 32) > 0) //base destroyer
+								proc.ATKBASE.mult = 300;
+							enemy.abi = Data.reorderAbi(enemy.abi, 1);
+						} //Finish 6.5.0 check
+						if (enemy.getProc().TIME.prob > 0)
+							enemy.getProc().TIME.intensity = enemy.getProc().TIME.time;
 
-			if (UserProfile.isOlderPack(pack, "0.6.0.0")) {
-				enemy.getProc().BARRIER.health = jde.get("shield").getAsInt();
-				int type = jde.get("type").getAsInt();
-				if (UserProfile.isOlderPack(pack, "0.5.1.0")) {
-					type = Data.reorderTrait(type);
+						if (enemy.getProc().SUMMON.prob > 0) {
+							enemy.getProc().SUMMON.max_dis = enemy.getProc().SUMMON.dis;
+							enemy.getProc().SUMMON.min_layer = -1;
+							enemy.getProc().SUMMON.max_layer = -1;
+						}
+					} //Finish 6.6.0 check
+					if (enemy.rep.specialTrait && enemy.rep.dire == -1)
+						enemy.rep.traits.addAll(enemy.traits);
+					enemy.rep.specialTrait = false;
+					for (MaskAtk ma : enemy.getAtks()) {
+						AtkDataModel adm = (AtkDataModel) ma;
+						if ((adm.specialTrait && adm.dire == 1) || (!adm.specialTrait && adm.dire == -1))
+							adm.traits.addAll(enemy.traits);
+						adm.specialTrait = false;
+					}
+					for (AtkDataModel adm : enemy.getSpAtks()) {
+						if (adm == null)
+							continue;
+
+						if ((adm.specialTrait && adm.dire == 1) || (!adm.specialTrait && adm.dire == -1))
+							adm.traits.addAll(enemy.traits);
+						adm.specialTrait = false;
+					}
+				} //Finish 6.8.1 check
+				if ((enemy.abi & 5) > 0) {
+					enemy.getProc().IMUWAVE.block = 100;
+					enemy.abi = Data.reorderAbi(enemy.abi, 2);
 				}
-				enemy.traits = Trait.convertType(type);
-
-				Proc proc = enemy.getProc();
-				if ((enemy.abi & (1 << 18)) != 0) //Seal Immunity
-					proc.IMUSEAL.mult = 100;
-				if ((enemy.abi & (1 << 7)) != 0) //Moving atk Immunity
-					proc.IMUMOVING.mult = 100;
-				if ((enemy.abi & (1 << 12)) != 0) //Poison Immunity
-					proc.IMUPOI.mult = 100;
-				enemy.abi = Data.reorderAbi(enemy.abi, 0);
-			}
-
-			if (UserProfile.isOlderPack(pack, "0.6.1.0")) {
-				enemy.getProc().DMGCUT.reduction = 100;
-				enemy.getProc().DMGCUT.type.traitIgnore = true;
-				enemy.getProc().DMGCAP.type.traitIgnore = true;
-				enemy.getProc().POISON.type.ignoreMetal = true;
-			}
-
-			if (UserProfile.isOlderPack(pack, "0.6.4.0")) {
-				names.put(jobj.get("name").getAsString());
-				if (jobj.has("desc"))
-					description.put(jobj.get("desc").getAsString());
-			}
-
-			if (UserProfile.isOlderPack(pack, "0.6.5.0")) {
-				Proc proc = enemy.getProc();
-
-				if ((enemy.abi & 32) > 0) //base destroyer
-					proc.ATKBASE.mult = 300;
-				enemy.abi = Data.reorderAbi(enemy.abi, 1);
-			}
-			if (UserProfile.isOlderPack(pack, "0.6.6.0")) {
-				if (enemy.getProc().TIME.prob > 0)
-					enemy.getProc().TIME.intensity = enemy.getProc().TIME.time;
-
-				if (enemy.getProc().SUMMON.prob > 0) {
-					enemy.getProc().SUMMON.max_dis = enemy.getProc().SUMMON.dis;
-					enemy.getProc().SUMMON.min_layer = -1;
-					enemy.getProc().SUMMON.max_layer = -1;
-				}
-			}
-			if (UserProfile.isOlderPack(pack, "0.6.8.1")) {
-				if (enemy.rep.specialTrait && enemy.rep.dire == -1)
-					enemy.rep.traits.addAll(enemy.traits);
-				enemy.rep.specialTrait = false;
-				for (MaskAtk ma : enemy.getAtks()) {
-					AtkDataModel adm = (AtkDataModel)ma;
-					if ((adm.specialTrait && adm.dire == 1) || (!adm.specialTrait && adm.dire == -1))
-						adm.traits.addAll(enemy.traits);
-					adm.specialTrait = false;
-				}
-				for (AtkDataModel adm : enemy.getSpAtks()) {
-					if (adm == null)
-						continue;
-
-					if ((adm.specialTrait && adm.dire == 1) || (!adm.specialTrait && adm.dire == -1))
-						adm.traits.addAll(enemy.traits);
-					adm.specialTrait = false;
-				}
-			}
+			} //Finish 6.8.2 check
 
 			if (enemy.getProc().SUMMON.prob > 0 && (enemy.getProc().SUMMON.id == null || !AbEnemy.class.isAssignableFrom(enemy.getProc().SUMMON.id.cls)))
 				enemy.getProc().SUMMON.form = 1; //There for imports

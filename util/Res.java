@@ -158,7 +158,6 @@ public class Res extends ImgCore {
 		aux.icon[0][ABI_RESIST] = new VImg(parts[204]);
 		aux.icon[0][ABI_MASSIVE] = new VImg(parts[206]);
 		aux.icon[0][ABI_METALIC] = new VImg(parts[209]);
-		aux.icon[0][ABI_WAVES] = new VImg(parts[218]);
 		aux.icon[0][ABI_WKILL] = new VImg(parts[258]);
 		aux.icon[0][ABI_RESISTS] = new VImg(parts[122]);
 		aux.icon[0][ABI_MASSIVES] = new VImg(parts[114]);
@@ -263,6 +262,7 @@ public class Res extends ImgCore {
 		aux.icon[4][PC2_CD] = new VImg(parts[94]);
 		aux.icon[4][PC2_HB] = new VImg(parts[98]);
 
+		aux.waveShield = new VImg(parts[218]);
 		CommonStatic.getConfig().icon = false;
 	}
 

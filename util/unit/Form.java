@@ -24,12 +24,12 @@ import java.util.ArrayList;
 
 @JCGeneric(Form.FormJson.class)
 @JsonClass(read = RType.FILL)
-public class Form extends Animable<AnimU<?>, AnimU.UType> implements BasedCopable<Form, Unit> {
+public class Form extends Animable<AnimU<?>, AnimU.UType> implements Comparable<Form>, BasedCopable<Form, AbForm> {
 
 	@JsonClass(noTag = NoTag.LOAD)
 	public static class FormJson {
 
-		public Identifier<Unit> uid;
+		public Identifier<AbForm> uid;
 		public int fid;
 
 		@JCConstructor
@@ -45,7 +45,7 @@ public class Form extends Animable<AnimU<?>, AnimU.UType> implements BasedCopabl
 		@JCGetter
 		public Form get() {
 			try {
-				return uid.get().forms[fid];
+				return uid.get().getForms()[fid];
 			} catch (Exception e) {
 				return null;
 			}
@@ -63,7 +63,7 @@ public class Form extends Animable<AnimU<?>, AnimU.UType> implements BasedCopabl
 	@JsonField
 	public final MaskUnit du;
 	public final Unit unit;
-	public final Identifier<Unit> uid;
+	public final Identifier<AbForm> uid;
 	@JsonField
 	public int fid;
 	public Orb orbs = null;
@@ -121,10 +121,10 @@ public class Form extends Animable<AnimU<?>, AnimU.UType> implements BasedCopabl
 	}
 
 	@Override
-	public Form copy(Unit b) {
+	public Form copy(AbForm b) {
 		CustomUnit cu = new CustomUnit();
 		cu.importData(du);
-		return new Form(b, fid, names.toString(), anim, cu);
+		return new Form((Unit) b, fid, names.toString(), anim, cu);
 	}
 
 	public int getDefaultPrice(int sta) {
@@ -145,13 +145,18 @@ public class Form extends Animable<AnimU<?>, AnimU.UType> implements BasedCopabl
 		return du;
 	}
 
+	@Override
+	public int compareTo(Form f) {
+		return uid.compareTo(f.uid);
+	}
+
 	@OnInjected
 	public void onInjected(JsonObject jobj) {
 		CustomUnit form = (CustomUnit) du;
 		form.pack = this;
 
 		if((unit != null || uid != null)) {
-			Unit u = unit == null ? uid.get() : unit;
+			Unit u = unit == null ? (Unit)uid.get() : unit;
 
 			if(u.getCont() instanceof PackData.UserPack) {
 				PackData.UserPack pack = (PackData.UserPack) u.getCont();

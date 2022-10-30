@@ -50,6 +50,7 @@ public class CommonStatic {
 		 * Use this if trait.icon is null
 		 */
 		public VImg dummyTrait;
+		public VImg waveShield;
 
 		// Background resources
 		public final List<ImgCut> iclist = new ArrayList<>();

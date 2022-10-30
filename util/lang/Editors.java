@@ -568,7 +568,7 @@ public class Editors {
 
 		map().put("IMUSLOW", imu);
 
-		map().put("IMUWAVE", wavei);
+		map().put("IMUWAVE", imu);
 
 		map().put("IMUWEAK", imuad);
 
@@ -580,7 +580,7 @@ public class Editors {
 
 		map().put("IMUPOIATK", imu);
 
-		map().put("IMUVOLC", wavei);
+		map().put("IMUVOLC", imu);
 
 		map().put("IMUSUMMON", imu);
 
