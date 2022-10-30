@@ -12,11 +12,10 @@ public class AttackCanon extends AttackSimple {
 		canon = c.id > 2 ? 1 << (c.id - 1) : 1 << c.id;
 		excludeLastEdge = c.id == 6;
 		waveType |= WT_CANN;
-		if (canon == 16 || canon == 32) {
+		if (canon == 16)
+			touch |= TCH_UG | TCH_CORPSE;
+		if (canon == 32)
 			touch |= TCH_CORPSE;
-			if (canon == 16)
-				touch |= TCH_UG;
-		}
 	}
 
 }
