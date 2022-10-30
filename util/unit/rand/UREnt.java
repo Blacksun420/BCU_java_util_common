@@ -11,10 +11,15 @@ import common.util.unit.AbForm;
 @JsonClass(noTag = JsonClass.NoTag.LOAD)
 public class UREnt implements BattleStatic, Copable<UREnt> {
 
-    @JsonField(generic = AbForm.class)
+    @JsonField(generic = AbForm.class, alias = AbForm.AbFormJson.class)
     public AbForm ent;
     public Level lv;
     public int share = 1;
+
+    public UREnt() {
+        ent = null;
+        lv = null;
+    }
 
     public UREnt(AbForm f) {
         ent = f;

@@ -64,7 +64,7 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 	@JsonField
 	public int lv, show, type;
 
-	@JsonField(alias = Form.FormJson.class)
+	@JsonField(alias = AbForm.AbFormJson.class)
 	public Form[] forms;
 
 	@JsonField

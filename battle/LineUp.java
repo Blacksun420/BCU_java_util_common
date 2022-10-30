@@ -21,7 +21,7 @@ public class LineUp extends Data {
 	@JsonField(generic = { Identifier.class, Level.class })
 	public final TreeMap<Identifier<AbUnit>, Level> map = new TreeMap<>();
 
-	@JsonField(alias = Form.FormJson.class)
+	@JsonField(alias = AbForm.AbFormJson.class)
 	public final Form[][] fs = new Form[2][5];
 	public final EForm[][] efs = new EForm[2][5];
 	public int[] inc = new int[C_TOT], loc = new int[5];

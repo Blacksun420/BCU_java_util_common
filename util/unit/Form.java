@@ -23,35 +23,9 @@ import common.util.lang.MultiLangData;
 
 import java.util.ArrayList;
 
-@JCGeneric(Form.FormJson.class)
+@JCGeneric(AbForm.AbFormJson.class)
 @JsonClass(read = RType.FILL)
 public class Form extends Animable<AnimU<?>, AnimU.UType> implements BasedCopable<AbForm, AbUnit>, AbForm {
-
-	@JsonClass(noTag = NoTag.LOAD)
-	public static class FormJson {
-
-		public Identifier<AbUnit> uid;
-		public int fid;
-
-		@JCConstructor
-		public FormJson() {
-		}
-
-		@JCConstructor
-		public FormJson(Form f) {
-			uid = f.uid;
-			fid = f.fid;
-		}
-
-		@JCGetter
-		public Form get() {
-			try {
-				return uid.get().getForms()[fid];
-			} catch (Exception e) {
-				return null;
-			}
-		}
-	}
 
 	public static String lvString(int[] lvs) {
 		StringBuilder str = new StringBuilder("Lv." + lvs[0] + ", {");

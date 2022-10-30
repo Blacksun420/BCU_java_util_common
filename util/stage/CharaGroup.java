@@ -15,6 +15,7 @@ import common.pack.PackData;
 import common.pack.PackData.UserPack;
 import common.pack.UserProfile;
 import common.util.Data;
+import common.util.unit.AbForm;
 import common.util.unit.AbUnit;
 import common.util.unit.Form;
 import common.util.unit.Unit;
@@ -35,7 +36,7 @@ public class CharaGroup extends Data implements Indexable<PackData, CharaGroup>,
 
 	public int type = 0;
 
-	@JsonField(generic = Form.class, alias = Form.FormJson.class)
+	@JsonField(generic = Form.class, alias = AbForm.AbFormJson.class)
 		public final ArrayList<Form> fset = new ArrayList<>();
 
 	@JsonClass.JCConstructor

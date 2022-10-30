@@ -26,6 +26,12 @@ public interface AbForm {
             fid = f.getFid();
         }
 
+        @JsonClass.JCConstructor
+        public AbFormJson(Form f) {
+            uid = f.uid;
+            fid = f.fid;
+        }
+
         @JsonClass.JCGetter
         public AbForm get() {
             if (uid.get() instanceof UniRand)
