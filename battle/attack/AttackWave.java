@@ -81,6 +81,7 @@ public class AttackWave extends AttackAb {
 				incl.add((Entity) e);
 			}
 		}
+		r.clear();
 	}
 
 }

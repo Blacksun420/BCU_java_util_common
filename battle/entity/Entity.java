@@ -1543,8 +1543,6 @@ public abstract class Entity extends AbEntity {
 				dmg = dmg * (100 - getProc().IMUVOLC.mult) / 100;
 		}
 
-		tokens.add(atk);
-
 		Proc.PT imuatk = getProc().IMUATK;
 		if (imuatk.prob > 0 && (atk.dire == -1 || receive(-1)) || ctargetable(atk.trait, atk.attacker)) {
 			if (status[P_IMUATK][0] == 0 && (imuatk.prob == 100 || basis.r.nextDouble() * 100 < imuatk.prob)) {
@@ -1581,6 +1579,44 @@ public abstract class Entity extends AbEntity {
 				dmg = 0;
 			} else
 				dmg = status[P_DMGCAP][0];
+		}
+
+		if (atk.attacker != null) {
+			Proc.REMOTESHIELD remote = getProc().REMOTESHIELD;
+			double stRange = Math.abs(atk.attacker.pos - pos);
+			if (remote.prob > 0 && remote.reduction + remote.block != 0 && ((!remote.type.traitCon && status[P_CURSE][0] == 0) || ctargetable(atk.trait, atk.attacker)) &&
+					stRange >= remote.minrange && stRange <= remote.maxrange && (remote.prob == 100 || basis.r.nextDouble() * 100 < remote.prob)) {
+				if (remote.type.procs)
+					proc = false;
+
+				if (remote.block != 0) {
+					atk.r.add(remote);
+					if (remote.block > 0)
+						anim.getEff(STPWAVE);
+				} else if (remote.reduction > 0)
+					anim.getEff(dmgcap.type.nullify ? DMGCAP_SUCCESS : DMGCAP_FAIL);
+
+				if (remote.reduction == 100) {
+					if (!proc)
+						return;
+					dmg = 0;
+				} else if (remote.reduction != 0)
+					dmg = dmg * (100 - remote.reduction) / 100;
+			}
+			for (Proc.REMOTESHIELD r : atk.r) {
+				if ((!r.type.traitCon && status[P_CURSE][0] == 0) || ctargetable(atk.trait, atk.attacker) &&
+						stRange >= r.minrange && stRange <= r.maxrange) {
+					if (r.type.procs)
+						proc = false;
+
+					if (r.block == 100) {
+						if (!proc)
+							return;
+						dmg = 0;
+					} else if (remote.block != 0)
+						dmg = dmg * (100 - remote.block) / 100;
+				}
+			}
 		}
 
 		boolean barrierContinue = status[P_BARRIER][0] == 0;
@@ -1644,6 +1680,7 @@ public abstract class Entity extends AbEntity {
 		if (!shieldContinue)
 			return;
 
+		tokens.add(atk);
 		atk.playSound(isBase, basis.r.irDouble() < 0.5);
 		damage += dmg;
 		zx.damaged(atk);

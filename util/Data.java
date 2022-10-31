@@ -480,6 +480,29 @@ public class Data {
 			public TYPE type = new TYPE();
 		}
 
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class REMOTESHIELD extends ProcItem {
+			@JsonClass(noTag = NoTag.LOAD)
+			public static class TYPE extends IntType {
+				@Order(0)
+				public boolean traitCon;
+				@Order(1)
+				public boolean procs;
+			}
+			@Order(0)
+			public int prob;
+			@Order(1)
+			public int minrange;
+			@Order(2)
+			public int maxrange;
+			@Order(3)
+			public int reduction;
+			@Order(4)
+			public int block;
+			@Order(5)
+			public TYPE type = new TYPE();
+		}
+
 		public static abstract class IntType implements Cloneable, BattleStatic {
 
 			@Documented
@@ -837,6 +860,8 @@ public class Data {
 		public final LETHARGY LETHARGY = new LETHARGY();
 		@Order(58)
 		public final IMUAD IMULETHARGY = new IMUAD();
+		@Order(59)
+		public final REMOTESHIELD REMOTESHIELD = new REMOTESHIELD();
 
 		@Override
 		public Proc clone() {
@@ -1188,7 +1213,8 @@ public class Data {
 	public static final int P_STRONGAURA = 58;
 	public static final int P_LETHARGY = 59;
 	public static final int P_IMULETHARGY = 60;
-	public static final byte PROC_TOT = 61;// 53
+	public static final int P_REMOTESHIELD = 61;
+	public static final byte PROC_TOT = 62;// 53
 	public static final byte PROC_WIDTH = 3;
 
 	public static final boolean[] procSharable = {
@@ -1252,7 +1278,8 @@ public class Data {
 			true, //Weaken Aura
 			true, //Strengthen Aura
 			false, //Lethargy
-			true //Imu.Lethargy
+			true, //Imu.Lethargy
+			true //Remote shield
 	};
 
 	/**

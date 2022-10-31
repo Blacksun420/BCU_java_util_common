@@ -111,6 +111,7 @@ public class AttackSimple extends AttackAb {
 			e.damaged(this);
 			attacked.add(e);
 		}
+		r.clear();
 		if (capt.size() > 0 && proc.WAVE.exists()) {
 			int dire = model.getDire();
 			int wid = dire == 1 ? W_E_WID : W_U_WID;

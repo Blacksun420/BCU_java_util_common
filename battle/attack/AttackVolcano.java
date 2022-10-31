@@ -65,5 +65,6 @@ public class AttackVolcano extends AttackAb {
 				vcapt.add((Entity) e);
 			}
 		}
+		r.clear();
 	}
 }

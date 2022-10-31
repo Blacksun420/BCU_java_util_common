@@ -28,6 +28,7 @@ public abstract class AttackAb extends BattleObj {
 	public int touch = TCH_N, dire, canon = -2, waveType = 0;
 
 	protected final Proc proc;
+	public final List<Proc.REMOTESHIELD> r = new ArrayList<>();
 	protected final List<AbEntity> capt = new ArrayList<>();
 	protected double sta, end;
 
