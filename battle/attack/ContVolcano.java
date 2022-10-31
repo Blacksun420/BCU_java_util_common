@@ -2,6 +2,8 @@ package common.battle.attack;
 
 import common.CommonStatic;
 import common.CommonStatic.BattleConst;
+import common.battle.entity.AbEntity;
+import common.battle.entity.Entity;
 import common.system.P;
 import common.system.fake.FakeGraphics;
 import common.system.fake.FakeTransform;
@@ -54,7 +56,21 @@ public class ContVolcano extends ContAb {
 		if (t >= VOLC_PRE && t < VOLC_PRE + aliveTime && (t - VOLC_PRE) % VOLC_SE == 0) {
 			CommonStatic.setSE(SE_VOLC_LOOP);
 		}
+		v.capture();
+		for (AbEntity e : v.capt)
+			if (e instanceof Entity) {
+				int volcs = ((Entity)e).getProc().IMUVOLC.block;
+				if (volcs != 0) {
+					if (volcs > 0)
+						((Entity) e).anim.getEff(STPWAVE);
+					if (volcs == 100) {
 
+						activate = false;
+						return;
+					} else
+						v.atk = v.atk * (100 - volcs) / 100;
+				}
+			}
 		if (t >= aliveTime + VOLC_POST + VOLC_PRE) {
 			activate = false;
 		} else {
