@@ -24,6 +24,12 @@ public interface AbForm {
         public AbFormJson(AbForm f) {
             uid = f.getID();
             fid = f.getFid();
+        } //TODO - Test if this constructor isn't necessary
+
+        @JsonClass.JCConstructor
+        public AbFormJson(UniRand ur) {
+            uid = ur.getID();
+            fid = 0;
         }
 
         @JsonClass.JCConstructor

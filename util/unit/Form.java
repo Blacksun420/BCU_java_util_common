@@ -206,7 +206,7 @@ public class Form extends Animable<AnimU<?>, AnimU.UType> implements BasedCopabl
 						form.getProc().SUMMON.max_layer = -1;
 					}
 				}
-				if (UserProfile.isOlderPack(pack, "0.6.8.1")) {
+				if (UserProfile.isOlderPack(pack, "0.6.9.1")) {
 					if (form.rep.specialTrait && form.rep.dire == -1)
 						form.rep.traits.addAll(form.traits);
 					form.rep.specialTrait = false;
@@ -225,7 +225,7 @@ public class Form extends Animable<AnimU<?>, AnimU.UType> implements BasedCopabl
 						adm.specialTrait = false;
 					}
 				}
-				if (UserProfile.isOlderPack(pack, "0.6.8.2")) {
+				if (UserProfile.isOlderPack(pack, "0.6.9.2")) {
 					if ((form.abi & 32) > 0)
 						form.getProc().IMUWAVE.block = 100;
 					form.abi = Data.reorderAbi(form.abi, 2);

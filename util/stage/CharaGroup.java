@@ -112,7 +112,7 @@ public class CharaGroup extends Data implements Indexable<PackData, CharaGroup>,
 	@JsonDecoder.OnInjected
 	public void onInjected(JsonObject jobj) {
 		UserPack pack = (UserPack) getCont();
-		if (UserProfile.isOlderPack(pack, "0.6.8.2")) {
+		if (UserProfile.isOlderPack(pack, "0.6.9.2")) {
 			JsonArray jarr = jobj.get("set").getAsJsonArray();
 			for (int i = 0; i < jarr.size(); i++) {
 				String pacc = jarr.get(i).getAsJsonObject().get("pack").getAsString();

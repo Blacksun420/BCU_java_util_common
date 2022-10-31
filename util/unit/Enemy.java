@@ -157,8 +157,8 @@ public class Enemy extends Animable<AnimU<?>, UType> implements AbEnemy {
 
 		if(getCont() instanceof PackData.UserPack) {
 			PackData.UserPack pack = (PackData.UserPack) getCont();
-			if (UserProfile.isOlderPack(pack, "0.6.8.2")) {
-				if (UserProfile.isOlderPack(pack, "0.6.8.1")) {
+			if (UserProfile.isOlderPack(pack, "0.6.9.2")) {
+				if (UserProfile.isOlderPack(pack, "0.6.9.1")) {
 					JsonObject jde = jobj.getAsJsonObject("de");
 					if (UserProfile.isOlderPack(pack, "0.6.6.0")) {
 						if (UserProfile.isOlderPack(pack, "0.6.5.0")) {
