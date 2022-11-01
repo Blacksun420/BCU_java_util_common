@@ -92,6 +92,25 @@ public abstract class CustomEntity extends DataEntity {
 		return atks;
 	}
 
+	public AtkDataModel[] getAllAtks() { //Used only on OnInjected for non-shareable procs
+		int l = 0;
+		AtkDataModel[] sp = getSpAtks();
+		for (int i = 0; i < sp.length; i++)
+			if (sp[i] != null)
+				l++;
+
+		AtkDataModel[] allAtks = new AtkDataModel[atks.length + 1 + l];
+		allAtks[0] = rep;
+		System.arraycopy(atks, 0, allAtks, 1, atks.length);
+		l = 0;
+		for (int i = 0; i < sp.length; i++)
+			if (sp[i] != null)
+				allAtks[i + 1 + atks.length - l] = sp[i];
+			else
+				l++;
+		return allAtks;
+	}
+
 	@Override
 	public AtkDataModel[] getSpAtks() {
 		return new AtkDataModel[]{rev, res, bur, resu, revi, entr};

@@ -444,6 +444,7 @@ public abstract class Entity extends AbEntity {
 					id = dire == -1 ? A_WEAK_UP : A_E_WEAK_UP;
 				}
 
+				status[P_WEAK][1] = 100;
 				effs[id] = null;
 			}
 			if (status[P_LETHARGY][0] == 0) {
@@ -1455,6 +1456,7 @@ public abstract class Entity extends AbEntity {
 	 * Initializes all non-final variables found in both constructors
 	 */
 	private void ini(double hpMagnif) {
+		status[P_WEAK][1] = 100;
 		status[P_BARRIER][0] = getProc().BARRIER.type.magnif ? (int) (getProc().BARRIER.health * hpMagnif) : getProc().BARRIER.health;
 		status[P_BARRIER][1] = getProc().BARRIER.regentime;
 		status[P_BARRIER][2] = getProc().BARRIER.timeout;
@@ -1837,7 +1839,7 @@ public abstract class Entity extends AbEntity {
 					status[P_WEAK][0] = Math.max(status[P_WEAK][0], Math.abs(val));
 				else
 					status[P_WEAK][0] = val;
-				status[P_WEAK][1] = Math.min(status[P_WEAK][1], atk.getProc().WEAK.mult);
+				status[P_WEAK][1] = status[P_WEAK][1] == 100 ? atk.getProc().WEAK.mult : Math.min(status[P_WEAK][1], atk.getProc().WEAK.mult);
 
 				anim.getEff(P_WEAK);
 			} else

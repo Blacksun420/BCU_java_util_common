@@ -151,91 +151,87 @@ public class Form extends Animable<AnimU<?>, AnimU.UType> implements BasedCopabl
 
 			if(u.getCont() instanceof PackData.UserPack) {
 				PackData.UserPack pack = (PackData.UserPack) u.getCont();
-				JsonObject jdu = jobj.getAsJsonObject("du");
+				AtkDataModel[] atks = form.getAllAtks();
 
-				if (UserProfile.isOlderPack(pack, "0.5.2.0") && form.tba != 0) {
-					form.tba += form.getPost() + 1;
-				}
-
-				if (UserProfile.isOlderPack(pack, "0.6.0.0")) {
-					MaModel model = anim.loader.getMM();
-					form.limit = CommonStatic.customFormMinPos(model);
-					form.getProc().BARRIER.health = jdu.get("shield").getAsInt();
-
-					int type = jdu.get("type").getAsInt();
-					if (UserProfile.isOlderPack(pack, "0.5.1.0"))
-						type = Data.reorderTrait(type);
-					form.traits = Trait.convertType(type);
-					Proc proc = form.getProc();
-					if ((form.abi & (1 << 18)) != 0) //Seal Immunity
-						proc.IMUSEAL.mult = 100;
-					if ((form.abi & (1 << 7)) != 0) //Moving atk Immunity
-						proc.IMUMOVING.mult = 100;
-					if ((form.abi & (1 << 12)) != 0) //Poison Immunity
-						proc.IMUPOI.mult = 100;
-					form.abi = Data.reorderAbi(form.abi, 0);
-				}
-
-				if (UserProfile.isOlderPack(pack, "0.6.1.0")) {
-					form.getProc().DMGCUT.reduction = 100;
-					form.getProc().POISON.type.ignoreMetal = true;
-				}
-
-				if (UserProfile.isOlderPack(pack, "0.6.4.0")) {
-					names.put(jobj.get("name").getAsString());
-					if (jobj.has("explanation"))
-						description.put(jobj.get("explanation").getAsString());
-				}
-
-				if (UserProfile.isOlderPack(pack, "0.6.5.0")) {
-					Proc proc = form.getProc();
-
-					if ((form.abi & 16) > 0) //2x money
-						proc.BOUNTY.mult = 100;
-					if ((form.abi & 32) > 0) //base destroyer
-						proc.ATKBASE.mult = 300;
-					form.abi = Data.reorderAbi(form.abi, 1);
-				}
-				if (UserProfile.isOlderPack(pack, "0.6.6.0")) {
-					if (form.getProc().TIME.prob > 0)
-						form.getProc().TIME.intensity = form.getProc().TIME.time;
-
-					if (form.getProc().SUMMON.prob > 0) {
-						form.getProc().SUMMON.max_dis = form.getProc().SUMMON.dis;
-						form.getProc().SUMMON.min_layer = -1;
-						form.getProc().SUMMON.max_layer = -1;
-					}
-				}
-				if (UserProfile.isOlderPack(pack, "0.6.9.1")) {
-					if (form.rep.specialTrait && form.rep.dire == -1)
-						form.rep.traits.addAll(form.traits);
-					form.rep.specialTrait = false;
-					for (MaskAtk ma : form.getAtks()) {
-						AtkDataModel adm = (AtkDataModel)ma;
-						if (adm.specialTrait && adm.dire == -1)
-							adm.traits.addAll(form.traits);
-						adm.specialTrait = false;
-					} //TODO - Use jsonobject method to remove SpecialTrait
-					for (AtkDataModel adm : form.getSpAtks()) {
-						if (adm == null)
-							continue;
-
-						if (adm.specialTrait && adm.dire == -1)
-							adm.traits.addAll(form.traits);
-						adm.specialTrait = false;
-					}
-				}
 				if (UserProfile.isOlderPack(pack, "0.6.9.2")) {
-					if ((form.abi & 32) > 0)
-						form.getProc().IMUWAVE.block = 100;
-					form.abi = Data.reorderAbi(form.abi, 2);
-				}
+					Proc proc = form.getProc();
+					if (UserProfile.isOlderPack(pack, "0.6.9.1")) {
+						if (UserProfile.isOlderPack(pack, "0.6.6.0")) {
+							if (UserProfile.isOlderPack(pack, "0.6.5.0")) {
+								if (UserProfile.isOlderPack(pack, "0.6.4.0")) {
+									if (UserProfile.isOlderPack(pack, "0.6.1.0")) {
+										if (UserProfile.isOlderPack(pack, "0.6.0.0")) {
+											JsonObject jdu = jobj.getAsJsonObject("du");
+											int type = jdu.get("type").getAsInt();
+											if (UserProfile.isOlderPack(pack, "0.5.2.0") && form.tba != 0) {
+												if (UserProfile.isOlderPack(pack, "0.5.1.0"))
+													type = Data.reorderTrait(type);
+												//Finish 0.5.1.0 check
+												form.tba += form.getPost() + 1;
+											} //Finish 0.5.2.0 check
+											MaModel model = anim.loader.getMM();
+											form.limit = CommonStatic.customFormMinPos(model);
+											proc.BARRIER.health = jdu.get("shield").getAsInt();
+											form.traits = Trait.convertType(type);
+											if ((form.abi & (1 << 18)) != 0) //Seal Immunity
+												proc.IMUSEAL.mult = 100;
+											if ((form.abi & (1 << 7)) != 0) //Moving atk Immunity
+												proc.IMUMOVING.mult = 100;
+											if ((form.abi & (1 << 12)) != 0) //Poison Immunity
+												proc.IMUPOI.mult = 100;
+											form.abi = Data.reorderAbi(form.abi, 0);
+										} //Finish 0.6.0.0 check
+										proc.DMGCUT.reduction = 100;
+										for (AtkDataModel atk : atks)
+											if (atk.getProc().POISON.prob > 0)
+												atk.getProc().POISON.type.ignoreMetal = true;
+									} //Finish 0.6.1.0 check
+									names.put(jobj.get("name").getAsString());
+									if (jobj.has("explanation"))
+										description.put(jobj.get("explanation").getAsString());
+								} //Finish 0.6.4.0 check
+								if ((form.abi & 16) > 0) //2x money
+									for (AtkDataModel atk : atks)
+										atk.getProc().BOUNTY.mult = 100;
+								if ((form.abi & 32) > 0) //base destroyer
+									for (AtkDataModel atk : atks)
+										atk.getProc().ATKBASE.mult = 300;
+								form.abi = Data.reorderAbi(form.abi, 1);
+							} //Finish 0.6.5.0 check
+							for (AtkDataModel atk : atks)
+								if (atk.getProc().TIME.prob > 0)
+									atk.getProc().TIME.intensity = atk.getProc().TIME.time;
 
-				if (form.getProc().SUMMON.prob > 0 && form.getProc().SUMMON.form == 0) {
-					form.getProc().SUMMON.form = 1;
-					form.getProc().SUMMON.mult = 1;
-					form.getProc().SUMMON.type.fix_buff = true;
-				}
+							for (AtkDataModel atk : atks)
+								if (atk.getProc().SUMMON.prob > 0) {
+									atk.getProc().SUMMON.max_dis = atk.getProc().SUMMON.dis;
+									atk.getProc().SUMMON.min_layer = -1;
+									atk.getProc().SUMMON.max_layer = -1;
+								}
+						} //Finish 0.6.6.0 check
+						for (AtkDataModel ma : atks) {
+							if (ma.specialTrait && ma.dire == -1)
+								ma.traits.addAll(form.traits);
+							ma.specialTrait = false;
+						} //TODO - Use jsonobject method to remove SpecialTrait
+					} //Finish 0.6.9.1 check
+					if ((form.abi & 32) > 0)
+						proc.IMUWAVE.block = 100;
+					form.abi = Data.reorderAbi(form.abi, 2);
+					for (AtkDataModel atk : atks)
+						if (atk.getProc().SUMMON.prob > 0) {
+							if (!Unit.class.isAssignableFrom(atk.getProc().SUMMON.id.cls))
+								atk.getProc().SUMMON.type.fix_buff = true;
+							atk.getProc().SUMMON.amount = 1;
+						}
+				} //Finish 0.6.9.2 check
+
+				for (AtkDataModel atk : atks)
+					if (atk.getProc().SUMMON.prob > 0 && atk.getProc().SUMMON.form == 0) {
+						atk.getProc().SUMMON.form = 1;
+						atk.getProc().SUMMON.mult = 1;
+						atk.getProc().SUMMON.type.fix_buff = true;
+					}
 			}
 		}
 		if (form.getPCoin() != null)
