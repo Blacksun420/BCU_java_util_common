@@ -488,6 +488,8 @@ public class Data {
 				public boolean traitCon;
 				@Order(1)
 				public boolean procs;
+				@Order(2)
+				public boolean waves;
 			}
 			@Order(0)
 			public int prob;

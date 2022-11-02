@@ -11,10 +11,7 @@ import common.util.Data.Proc.VOLC;
 import common.util.stage.Music;
 import common.util.unit.Trait;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class AttackSimple extends AttackAb {
 
@@ -82,7 +79,8 @@ public class AttackSimple extends AttackAb {
 			capt.clear();
 			int r = (int) (model.b.r.nextDouble() * ents.size());
 			capt.add(ents.get(r));
-		}
+		} else
+			capt.sort(Comparator.comparingInt(e -> -e.getProc().REMOTESHIELD.prob));
 	}
 
 	/**

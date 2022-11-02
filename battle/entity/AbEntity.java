@@ -38,6 +38,10 @@ public abstract class AbEntity extends BattleObj {
 		dire = d;
 	}
 
+	public Proc getProc() {
+		return Proc.blank();
+	}
+
 	public abstract void damaged(AttackAb atk);
 
 	public abstract int getAbi();

@@ -1372,5 +1372,50 @@
                 "tooltip": "Strenghtens all allies regardless of typing if true"
             }
         }
+    },
+    "REMOTESHIELD": {
+        "abbr_name": "rangeshield",
+        "full_name": "Remote Shield",
+        "tooltip": "Lowers damage of attacks coming from a specified range",
+        "format": ["[(reduction!=0&block!=100){(prob)% chance to [(reduction>0){reduce}(reduction<0){increase}][(!type.traitCon){ all}] damage",
+            " taken from hits originating (minrange) ~ (maxrange) units away from this entity by (_abs(reduction))%[(type.procs){ and",
+            " ignore the attack's procs}].[(block!=0){Additionally, [(block>0){lower}(block<0){increase}] damage taken from other units hit by",
+            " the attack by (_abs(block))%}]}(reduction==0&block!=0){(prob)% chance to [(block>0){block}(block<0){amplify}][(!type.traitCon){ all}]",
+            " damage taken from hits originating (minrange) ~ (maxrange) units away from this entity by (_abs(block))%[(type.procs){ and block the ",
+            " attack's procs}].}][(type.waves){Wave/Surge attacks will be affected by this too.}]"],
+        "class": {
+            "prob": {
+                "name": "chance",
+                "tooltip": null
+            },
+            "minrange": {
+                "name": "Min. Range",
+                "tooltip": "Attacks originating closer than this point will not be affected."
+            },
+            "maxrange": {
+                "name": "Max. Range",
+                "tooltip": "Attacks originating further than this point will not be affected."
+            },
+            "reduction": {
+                "name": "Reduction",
+                "tooltip": null
+            },
+            "block": {
+                "name": "Block",
+                "tooltip": "Like reduction, but applies to all units"
+            },
+            "type.traitCon": {
+                "name": "Focus Traits",
+                "tooltip": "Activate this to make this proc only work if the this unit targets a trait from the attacker"
+            },
+            "type.procs": {
+                "name": "Evade Procs",
+                "tooltip": "Attack's procs won't apply if shield triggers and this is activated"
+            },
+            "type.waves": {
+                "name": "Target waves",
+                "tooltip": null
+            }
+        }
     }
 }

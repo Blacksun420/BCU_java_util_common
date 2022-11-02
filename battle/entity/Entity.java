@@ -1587,7 +1587,7 @@ public abstract class Entity extends AbEntity {
 			Proc.REMOTESHIELD remote = getProc().REMOTESHIELD;
 			double stRange = Math.abs(atk.attacker.pos - pos);
 			if (remote.prob > 0 && remote.reduction + remote.block != 0 && ((!remote.type.traitCon && status[P_CURSE][0] == 0) || ctargetable(atk.trait, atk.attacker)) &&
-					stRange >= remote.minrange && stRange <= remote.maxrange && (remote.prob == 100 || basis.r.nextDouble() * 100 < remote.prob)) {
+					(remote.type.waves || atk instanceof AttackSimple) && stRange >= remote.minrange && stRange <= remote.maxrange && (remote.prob == 100 || basis.r.nextDouble() * 100 < remote.prob)) {
 				if (remote.type.procs)
 					proc = false;
 
@@ -1606,8 +1606,8 @@ public abstract class Entity extends AbEntity {
 					dmg = dmg * (100 - remote.reduction) / 100;
 			}
 			for (Proc.REMOTESHIELD r : atk.r) {
-				if ((!r.type.traitCon && status[P_CURSE][0] == 0) || ctargetable(atk.trait, atk.attacker) &&
-						stRange >= r.minrange && stRange <= r.maxrange) {
+				if (((!r.type.traitCon && status[P_CURSE][0] == 0) || ctargetable(atk.trait, atk.attacker))
+						&& stRange >= r.minrange && stRange <= r.maxrange) {
 					if (r.type.procs)
 						proc = false;
 
@@ -1615,8 +1615,8 @@ public abstract class Entity extends AbEntity {
 						if (!proc)
 							return;
 						dmg = 0;
-					} else if (remote.block != 0)
-						dmg = dmg * (100 - remote.block) / 100;
+					} else if (r.block != 0)
+						dmg = dmg * (100 - r.block) / 100;
 				}
 			}
 		}
@@ -1994,6 +1994,7 @@ public abstract class Entity extends AbEntity {
 	/**
 	 * get the current proc array
 	 */
+	@Override
 	public Proc getProc() {
 		if (status[P_SEAL][0] > 0)
 			return sealed;

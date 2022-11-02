@@ -683,6 +683,17 @@ public class Editors {
 			}
 		}));
 
+		map().put("REMOTESHIELD", new EditControl<>(Proc.REMOTESHIELD.class, (t) -> {
+			if (t.prob == 0) {
+				t.minrange = t.maxrange = t.reduction = t.block = 0;
+				t.type.traitCon = t.type.procs = t.type.waves = false;
+			} else {
+				int min = t.minrange;
+				t.minrange = Math.min(min, t.maxrange);
+				t.maxrange = Math.max(min, t.maxrange);
+			}
+		}));
+
 		map().put("BSTHUNT", new EditControl<>(Proc.BSTHUNT.class, (t) -> {
 			setComponentVisibility("BSTHUNT", t.type.active, 1);
 			if (t.type.active) {
@@ -693,8 +704,7 @@ public class Editors {
 					t.time = Math.max(1, t.time);
 				setComponentVisibility("BSTHUNT", t.prob != 0, 2);
 			} else {
-				t.prob = 0;
-				t.time = 0;
+				t.prob = t.time = 0;
 			}
 		}));
 	}
