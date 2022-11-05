@@ -56,7 +56,7 @@ public class EAnimU extends EAnimD<AnimU.UType> {
 
 	/**
 	 * Similar to default paraTo, but allows to select the model part to connect to
-	 * Used solely for Everywhere Door. Use default method for null
+	 * Used solely for Everywhere Door. Not null-safe, use regular one for that
 	 */
 	public void paraTo(EAnimD<?> base, int bas) {
 		ent[0].setPara(base.ent[bas]);

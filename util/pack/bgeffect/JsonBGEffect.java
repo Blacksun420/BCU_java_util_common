@@ -87,7 +87,13 @@ public class JsonBGEffect implements BackgroundEffect {
 
     @Override
     public void draw(FakeGraphics g, double x, double y, double siz, int groundH, int skyH) {
-        //TODO
+        //FIXME
+        siz *= 0.8;
+        P pee = new P(x, 1530 * siz - skyH);
+        for(int i = 0; i < handlers.size(); i++) {
+            handlers.get(i).draw(g, pee, siz, false);
+            handlers.get(i).draw(g, pee, siz, true);
+        }
     }
 
     @Override

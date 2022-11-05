@@ -10,6 +10,7 @@ import common.util.Data;
 import common.util.pack.Background;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @JsonClass.JCGeneric(BackgroundEffect.BGIdentifier.class)
@@ -24,8 +25,6 @@ public class MixedBGEffect implements BackgroundEffect {
     public String name;
     @JsonField(generic = BackgroundEffect.class, alias = BGIdentifier.class)
     public final ArrayList<BackgroundEffect> effects = new ArrayList<>();
-    //Used for battle to not get Identifiers each time
-    private final ArrayList<BackgroundEffect> loadedEffects = new ArrayList<>();
 
     @JsonClass.JCConstructor
     public MixedBGEffect() {
@@ -35,60 +34,47 @@ public class MixedBGEffect implements BackgroundEffect {
     public MixedBGEffect(Identifier<BackgroundEffect> id, BackgroundEffect... effects) {
         this.id = id;
         name = "BGEffect " + id;
-        for (int i = 0; i < effects.length; i++)
-            this.effects.add(effects[i]);
+        this.effects.addAll(Arrays.asList(effects));
     }
 
     public MixedBGEffect(Identifier<BackgroundEffect> id, List<BackgroundEffect> effects) {
         this.id = id;
         name = "BGEffect " + id;
-        for (BackgroundEffect be : effects)
-            this.effects.add(be);
+        this.effects.addAll(effects);
     }
-
-    public ArrayList<BackgroundEffect> getLoadedEffects() {
-        check();
-        return loadedEffects;
-    };
 
     @Override
     public void check() {
-        loadedEffects.clear();
-        for(int i = 0; i < effects.size(); i++) {
-            BackgroundEffect bge = effects.get(i);
-            bge.check();
-            loadedEffects.add(bge);
-        }
     }
 
     @Override
     public void preDraw(FakeGraphics g, P rect, double siz, double midH) {
         for(int i = 0; i < effects.size(); i++)
-            loadedEffects.get(i).preDraw(g, rect, siz, midH);
+            effects.get(i).preDraw(g, rect, siz, midH);
     }
 
     @Override
     public void postDraw(FakeGraphics g, P rect, double siz, double midH) {
         for(int i = 0; i < effects.size(); i++)
-            loadedEffects.get(i).postDraw(g, rect, siz, midH);
+            effects.get(i).postDraw(g, rect, siz, midH);
     }
 
     @Override
     public void draw(FakeGraphics g, double x, double y, double siz, int groundH, int skyH) {
         for (int i = 0; i < effects.size(); i++)
-            loadedEffects.get(i).draw(g, x, y, siz, groundH, skyH);
+            effects.get(i).draw(g, x, y, siz, groundH, skyH);
     }
 
     @Override
     public void update(int w, double h, double midH) {
         for(int i = 0; i < effects.size(); i++)
-            loadedEffects.get(i).update(w, h, midH);
+            effects.get(i).update(w, h, midH);
     }
 
     @Override
     public void initialize(int w, double h, double midH, Background bg) {
         for(int i = 0; i < effects.size(); i++)
-            loadedEffects.get(i).initialize(w, h, midH, bg);
+            effects.get(i).initialize(w, h, midH, bg);
     }
 
     @Override
@@ -99,7 +85,7 @@ public class MixedBGEffect implements BackgroundEffect {
     @Override
     public void release() {
         for(int i = 0; i < effects.size(); i++)
-            loadedEffects.get(i).release();
+            effects.get(i).release();
     }
 
     @Override

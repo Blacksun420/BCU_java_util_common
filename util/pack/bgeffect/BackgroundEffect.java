@@ -42,22 +42,19 @@ public interface BackgroundEffect extends IndexContainer.Indexable<PackData, Bac
 
         @JsonClass.JCGetter
         public BackgroundEffect getter() {
-            System.out.println("hoy");
             return id.get();
         }
     }
 
     /**
-     * Used for manual constructorl. Do not delete
+     * Used for manual constructor. Do not delete
      * @param elem Json Data
-     * @return Object decoded to it's proper class
+     * @return Object decoded to its proper class
      */
     static Object construct(JsonElement elem) {
-        try {
-            return JsonDecoder.decode(elem, MixedBGEffect.class);
-        } catch (Exception e) {
+        if (elem.getAsJsonObject().has("spacer"))
             return JsonDecoder.decode(elem, CustomBGEffect.class);
-        }
+        return JsonDecoder.decode(elem, MixedBGEffect.class);
     }
 
     static void read() {

@@ -137,6 +137,7 @@ public abstract class Source {
 		public static final String[] MA_ENTITY = { "maanim_walk.txt", "maanim_idle.txt", "maanim_attack.txt", "maanim_kb.txt",
 				"maanim_burrow_down.txt", "maanim_burrow_move.txt", "maanim_burrow_up.txt", "maanim_entry.txt" };
 		public static final String[] MA_SOUL = { "maanim_soul.txt" };
+		public static final String[] MA_BACKGROUND = { "maanim_foreground.txt", "maanim_background.txt" };
 		public static final String SP = "sprite.png";
 		public static final String EDI = "icon_display.png";
 		public static final String UNI = "icon_deploy.png";
@@ -152,8 +153,10 @@ public abstract class Source {
 		private String[] getBaseMA() {
 			if (id.base.equals(BasePath.ANIM))
 				return MA_ENTITY;
-			else
+			else if (id.base.equals(BasePath.SOUL))
 				return MA_SOUL;
+			else
+				return MA_BACKGROUND;
 		}
 
 		@Override
@@ -240,11 +243,13 @@ public abstract class Source {
 				write("imgcut.txt", anim.imgcut::write);
 				write("mamodel.txt", anim.mamodel::write);
 				if (id.base.equals(BasePath.ANIM)) {
-					for (int i = 0; i < SourceAnimLoader.MA_ENTITY.length; i++) {
+					for (int i = 0; i < SourceAnimLoader.MA_ENTITY.length; i++)
 						write(SourceAnimLoader.MA_ENTITY[i], anim.anims[i]::write);
-					}
-				} else {
+				} else if (id.base.equals(BasePath.SOUL))
 					write(SourceAnimLoader.MA_SOUL[0], anim.anims[0]::write);
+				else {
+					write(SourceAnimLoader.MA_BACKGROUND[0], anim.anims[0]::write);
+					write(SourceAnimLoader.MA_BACKGROUND[1], anim.anims[1]::write);
 				}
 			} catch (IOException e) {
 				CommonStatic.ctx.noticeErr(e, ErrType.ERROR, "Error during saving animation data: " + anim);
@@ -658,7 +663,7 @@ public abstract class Source {
 		SOUL("souls"),
 		TRAIT("traitIcons"),
 		RAND("randIcons"),
-		BGEffect("BGEffects");
+		BGEffect("backgroundeffects");
 
 		private final String path;
 

@@ -439,7 +439,7 @@ public class BGEffectHandler {
      * @param siz Size of battle
      * @return Converted pixel
      */
-    private int convertP(double p, double siz) {
+    private static int convertP(double p, double siz) {
         return (int) (p * BattleRange.battleRatio * siz);
     }
 

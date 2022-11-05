@@ -197,8 +197,8 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 	public VImg img;
 	@JsonField
 	public int[][] cs = new int[4][3];
-	@JsonField
 	public int effect = -1;
+	@JsonField
 	public Identifier<BackgroundEffect> bgEffect = null;
 	@JsonField
 	public int overlayAlpha;

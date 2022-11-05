@@ -485,9 +485,9 @@ public abstract class PackData implements IndexContainer {
 	@Order(7)
 	public final FixIndexMap<DemonSoul> demonSouls = new FixIndexMap<>(DemonSoul.class);
 	@Order(8)
-	public final FixIndexMap<BackgroundEffect> bgEffects = new FixIndexMap<>(BackgroundEffect.class);
-	@Order(9)
 	public final FixIndexMap<Background> bgs = new FixIndexMap<>(Background.class);
+	@Order(9)
+	public final FixIndexMap<BackgroundEffect> bgEffects = new FixIndexMap<>(BackgroundEffect.class);
 	@Order(10)
 	public final FixIndexMap<CharaGroup> groups = new FixIndexMap<>(CharaGroup.class);
 	@Order(11)
