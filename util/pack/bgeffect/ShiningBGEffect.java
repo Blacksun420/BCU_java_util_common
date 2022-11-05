@@ -1,5 +1,8 @@
 package common.util.pack.bgeffect;
 
+import common.CommonStatic;
+import common.io.json.JsonClass;
+import common.pack.Identifier;
 import common.pack.UserProfile;
 import common.system.P;
 import common.system.fake.FakeGraphics;
@@ -11,8 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+@JsonClass.JCGeneric(BackgroundEffect.BGIdentifier.class)
 @SuppressWarnings("ForLoopReplaceableByForEach")
-public class ShiningBGEffect extends BackgroundEffect {
+public class ShiningBGEffect implements BackgroundEffect {
+    private final Identifier<BackgroundEffect> id;
     private final FakeImage shine;
 
     private final int sw;
@@ -24,7 +29,8 @@ public class ShiningBGEffect extends BackgroundEffect {
 
     private final List<Integer> capture = new ArrayList<>();
 
-    public ShiningBGEffect() {
+    public ShiningBGEffect(Identifier<BackgroundEffect> id) {
+        this.id = id;
         Background bg = UserProfile.getBCData().bgs.get(55);
 
         bg.load();
@@ -52,7 +58,7 @@ public class ShiningBGEffect extends BackgroundEffect {
         for(int i = 0; i < shinePosition.size(); i++) {
             double size = Math.sin(Math.PI * time.get(i) / Data.BG_EFFECT_SHINING_TIME);
 
-            g.drawImage(shine, convertP(shinePosition.get(i).x, siz) + (int) (rect.x - sw * size * siz / 2), (int) (shinePosition.get(i).y * siz - rect.y - sh * size * siz / 2), sw * size * siz, sh * size * siz);
+            g.drawImage(shine, BackgroundEffect.convertP(shinePosition.get(i).x, siz) + (int) (rect.x - sw * size * siz / 2), (int) (shinePosition.get(i).y * siz - rect.y - sh * size * siz / 2), sw * size * siz, sh * size * siz);
         }
 
         g.setComposite(FakeGraphics.DEF, 255, 0);
@@ -63,7 +69,7 @@ public class ShiningBGEffect extends BackgroundEffect {
         g.setComposite(FakeGraphics.BLEND, 255, 1);
         for(int i = 0; i < shinePosition.size(); i++) {
             double size = Math.sin(Math.PI * time.get(i) / Data.BG_EFFECT_SHINING_TIME);
-            g.drawImage(shine, convertP(shinePosition.get(i).x, siz) + (int) (x - sw * size * siz / 2), (int) (shinePosition.get(i).y * siz - y - sh * size * siz / 2), sw * size * siz, sh * size * siz);
+            g.drawImage(shine, BackgroundEffect.convertP(shinePosition.get(i).x, siz) + (int) (x - sw * size * siz / 2), (int) (shinePosition.get(i).y * siz - y - sh * size * siz / 2), sw * size * siz, sh * size * siz);
         }
         g.setComposite(FakeGraphics.DEF, 255, 0);
     }
@@ -104,5 +110,15 @@ public class ShiningBGEffect extends BackgroundEffect {
             shinePosition.add(P.newP(r.nextInt(w + battleOffset), r.nextInt(BGHeight * 3 - BGHeight)));
             time.add((byte) (r.nextInt(Data.BG_EFFECT_SHINING_TIME)));
         }
+    }
+
+    @Override
+    public Identifier<BackgroundEffect> getID() {
+        return id;
+    }
+
+    @Override
+    public String toString() {
+        return CommonStatic.def.getBtnName(0, "bgeff" + id.id);
     }
 }

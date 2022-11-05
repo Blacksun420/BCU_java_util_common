@@ -14,7 +14,6 @@ import common.util.anim.ImgCut;
 import common.util.anim.MaModel;
 import common.util.pack.EffAnim.EffAnimStore;
 import common.util.pack.NyCastle;
-import common.util.pack.bgeffect.BackgroundEffect;
 import common.util.stage.Music;
 import common.util.unit.UnitLevel;
 
@@ -22,7 +21,6 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -82,10 +80,6 @@ public class CommonStatic {
 
 		// def unit level
 		public UnitLevel defLv;
-
-		// bg effect
-		public final ArrayList<BackgroundEffect> bgEffects = new ArrayList<>();
-
 	}
 
 	@JsonClass(noTag = NoTag.LOAD)
@@ -194,6 +188,8 @@ public class CommonStatic {
 		void setSE(Identifier<Music> mus);
 
 		void setBGM(Identifier<Music> mus);
+
+		String getBtnName(int m, String s);
 	}
 
 	public static class Lang {

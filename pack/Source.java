@@ -252,14 +252,14 @@ public abstract class Source {
 		}
 
 		public void saveIconDeploy() {
-			if (anim.getUni() != null && !id.base.equals(BasePath.SOUL))
+			if (anim.getUni() != null && id.base.equals(BasePath.ANIM))
 				CommonStatic.ctx.noticeErr(() -> write("icon_deploy.png", anim.getUni().getImg()), ErrType.ERROR,
 						"Error during saving deploy icon: " + id);
 		}
 
 		public void saveIconDisplay() {
-			if (anim.getEdi() != null)
-				CommonStatic.ctx.noticeErr(() -> write("icon_display.png", anim.getEdi().getImg()), ErrType.ERROR,
+				if (anim.getEdi() != null && !id.base.equals(BasePath.BGEffect))
+					CommonStatic.ctx.noticeErr(() -> write("icon_display.png", anim.getEdi().getImg()), ErrType.ERROR,
 						"Error during saving display icon: " + id);
 		}
 
@@ -297,6 +297,7 @@ public abstract class Source {
 				id = ResourceLocation.LOCAL;
 			File animFolder = CommonStatic.ctx.getWorkspaceFile("./" + id + "/" + BasePath.ANIM + "/");
 			File soulFolder = CommonStatic.ctx.getWorkspaceFile("./" + id + "/" + BasePath.SOUL + "/");
+			File bgEffFolder = CommonStatic.ctx.getWorkspaceFile("./" + id + "/" + BasePath.BGEffect + "/");
 			if (animFolder.exists() && animFolder.isDirectory()) {
 				File[] animFiles = animFolder.listFiles();
 				Arrays.sort(animFiles);
@@ -319,6 +320,20 @@ public abstract class Source {
 
 					if (f.isDirectory() && CommonStatic.ctx.getWorkspaceFile(path).exists()) {
 						ResourceLocation rl = new ResourceLocation(id, f.getName(), BasePath.SOUL);
+						AnimCE anim = new AnimCE(rl);
+
+						AnimCE.map().put(f.getName(), anim);
+					}
+				}
+			}
+			if (bgEffFolder.exists() && bgEffFolder.isDirectory()) {
+				File[] bgeFiles = bgEffFolder.listFiles();
+				Arrays.sort(bgeFiles);
+				for (File f : bgeFiles) {
+					String path = "./" + id + "/" + BasePath.BGEffect + "/" + f.getName() + "/sprite.png";
+
+					if (f.isDirectory() && CommonStatic.ctx.getWorkspaceFile(path).exists()) {
+						ResourceLocation rl = new ResourceLocation(id, f.getName(), BasePath.BGEffect);
 						AnimCE anim = new AnimCE(rl);
 
 						AnimCE.map().put(f.getName(), anim);
@@ -634,7 +649,7 @@ public abstract class Source {
 
 	}
 
-	public static enum BasePath {
+	public enum BasePath {
 		ANIM("animations"),
 		BG("backgrounds"),
 		CASTLE("castles"),
@@ -642,7 +657,8 @@ public abstract class Source {
 		REPLAY("replays"),
 		SOUL("souls"),
 		TRAIT("traitIcons"),
-		RAND("randIcons");
+		RAND("randIcons"),
+		BGEffect("BGEffects");
 
 		private final String path;
 

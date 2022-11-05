@@ -13,7 +13,9 @@
         "ENTER": "enter",
         "ATK": "attack",
         "WALK": "walk",
-        "SOUL": "soul"
+        "SOUL": "soul",
+        "FOREGROUND": "foreground",
+        "BACKGROUND": "background"
     },
     "VolcEff": {
         "DURING": "on",

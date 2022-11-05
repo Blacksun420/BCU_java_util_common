@@ -94,14 +94,11 @@ public class StageBasis extends BattleObj {
 		elu = new ELineUp(bas.lu, this);
 		est.assign(this);
 		bg = Identifier.getOr(st.bg, Background.class);
+		if (bg.bgEffect != null)
+			bgEffect = bg.bgEffect.get();
+
 		boss_spawn = Identifier.getOr(st.castle, CastleImg.class).boss_spawn;
-		if (bg.effect != -1) {
-			if(bg.effect == -bg.id.id && BackgroundEffect.mixture.containsKey(bg.id.id)) {
-				bgEffect = BackgroundEffect.mixture.get(bg.id.id);
-			} else if(bg.effect >= 0) {
-				bgEffect = CommonStatic.getBCAssets().bgEffects.get(bg.effect);
-			}
-		}
+
 		EEnemy ee = est.base(this);
 		if (ee != null) {
 			ebase = ee;
@@ -303,15 +300,8 @@ public class StageBasis extends BattleObj {
 	}
 
 	public void release() {
-		if(bg != null && bg.effect != -1) {
-			if(bg.effect < 0) {
-				BackgroundEffect eff = BackgroundEffect.mixture.get(-bg.effect);
-
-				if(eff != null)
-					eff.release();
-			} else {
-				CommonStatic.getBCAssets().bgEffects.get(bg.effect).release();
-			}
+		if(bgEffect != null) {
+			bgEffect.release();
 		}
 	}
 
@@ -492,7 +482,7 @@ public class StageBasis extends BattleObj {
 	 */
 	protected void update() {
 		boolean active = ebase.health > 0 && ubase.health > 0;
-		if(midH != -1 && bgEffect != null && !bgEffectInitialized) {
+		if(midH != -1 && bg.bgEffect != null && !bgEffectInitialized) {
 			bgEffect.initialize(st.len, battleHeight, midH, bg);
 			bgEffectInitialized = true;
 		}
@@ -520,7 +510,7 @@ public class StageBasis extends BattleObj {
 		}
 
 		if (s_stop == 0) {
-			if(bgEffect != null)
+			if(bg.bgEffect != null)
 				bgEffect.update(st.len, battleHeight, midH);
 
 			ubase.preUpdate();

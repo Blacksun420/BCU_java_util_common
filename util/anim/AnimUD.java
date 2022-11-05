@@ -72,6 +72,8 @@ public class AnimUD extends AnimU<AnimUD.DefImgLoader> {
 		public BasePath getBasePath() {
 			if (getMA().length == 1)
 				return BasePath.SOUL;
+			if (getMA().length == 2)
+				return BasePath.BGEffect;
 			return BasePath.ANIM;
 		}
 

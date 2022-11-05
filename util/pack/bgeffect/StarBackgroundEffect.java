@@ -1,5 +1,8 @@
 package common.util.pack.bgeffect;
 
+import common.CommonStatic;
+import common.io.json.JsonClass;
+import common.pack.Identifier;
 import common.system.P;
 import common.system.fake.FakeGraphics;
 import common.system.fake.FakeTransform;
@@ -10,8 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+@JsonClass.JCGeneric(BackgroundEffect.BGIdentifier.class)
 @SuppressWarnings("ForLoopReplaceableByForEach")
-public class StarBackgroundEffect extends BackgroundEffect {
+public class StarBackgroundEffect implements BackgroundEffect {
     private static final int[][] starColors = {
             {233, 248, 255},
             {199, 249, 218},
@@ -19,6 +23,7 @@ public class StarBackgroundEffect extends BackgroundEffect {
             {167, 169, 255}
     };
 
+    private final Identifier<BackgroundEffect> id;
     private final List<Integer> opacities = new ArrayList<>();
     private final List<P> positions = new ArrayList<>();
     private final List<Byte> colors = new ArrayList<>();
@@ -30,6 +35,10 @@ public class StarBackgroundEffect extends BackgroundEffect {
 
     private int range;
     private int number;
+
+    public StarBackgroundEffect(Identifier<BackgroundEffect> id) {
+        this.id = id;
+    }
 
     @Override
     public void check() {
@@ -45,7 +54,7 @@ public class StarBackgroundEffect extends BackgroundEffect {
         for(int i = 0; i < number; i++) {
             int[] c = starColors[colors.get(i)];
 
-            g.colRect(convertP(positions.get(i).x, siz) + (int) rect.x, (int) (positions.get(i).y * siz - rect.y), (int) Math.max(1, siz * 4 * 0.8), (int) Math.max(1, siz * 4 * 0.8), c[0], c[1], c[2], opacities.get(i));
+            g.colRect(BackgroundEffect.convertP(positions.get(i).x, siz) + (int) rect.x, (int) (positions.get(i).y * siz - rect.y), (int) Math.max(1, siz * 4 * 0.8), (int) Math.max(1, siz * 4 * 0.8), c[0], c[1], c[2], opacities.get(i));
         }
 
         g.setComposite(FakeGraphics.DEF, 255, 0);
@@ -65,7 +74,7 @@ public class StarBackgroundEffect extends BackgroundEffect {
         g.setComposite(FakeGraphics.BLEND, 255, 1);
         for(int i = 0; i < number; i++) {
             int[] c = starColors[colors.get(i)];
-            g.colRect(convertP(positions.get(i).x, siz) + (int) x, (int) (positions.get(i).y * siz - y), (int) Math.max(1, siz * 4 * 0.8), (int) Math.max(1, siz * 4 * 0.8), c[0], c[1], c[2], opacities.get(i));
+            g.colRect(BackgroundEffect.convertP(positions.get(i).x, siz) + (int) x, (int) (positions.get(i).y * siz - y), (int) Math.max(1, siz * 4 * 0.8), (int) Math.max(1, siz * 4 * 0.8), c[0], c[1], c[2], opacities.get(i));
         }
         g.setComposite(FakeGraphics.DEF, 255, 0);
         g.setTransform(at);
@@ -124,5 +133,15 @@ public class StarBackgroundEffect extends BackgroundEffect {
             colors.add((byte) (r.nextInt(starColors.length - 1)));
             times.add(time);
         }
+    }
+
+    @Override
+    public Identifier<BackgroundEffect> getID() {
+        return id;
+    }
+
+    @Override
+    public String toString() {
+        return CommonStatic.def.getBtnName(0, "bgeff" + id.id);
     }
 }

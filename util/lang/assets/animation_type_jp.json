@@ -12,7 +12,9 @@
     "BURROW_DOWN": "潜る",
     "ENTER": "到着",
     "ATK": "攻撃",
-    "WALK": "移動"
+    "WALK": "移動",
+    "FOREGROUND": "foreground",
+    "BACKGROUND": "background"
   },
   "VolcEff": {
     "DURING": "中",

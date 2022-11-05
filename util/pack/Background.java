@@ -21,6 +21,7 @@ import common.util.Data;
 import common.util.anim.AnimI;
 import common.util.anim.EAnimD;
 import common.util.anim.ImgCut;
+import common.util.pack.bgeffect.BackgroundEffect;
 
 import java.awt.image.BufferedImage;
 import java.util.Queue;
@@ -58,48 +59,47 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 			}
 
 			Background bg = new Background(ints);
-
 			switch (bg.id.id) {
 				case 2:
 				case 14:
 				case 26:
 				case 34:
-					bg.effect = Data.BG_EFFECT_STAR;
+					bg.bgEffect = Identifier.rawParseInt(BG_EFFECT_STAR, BackgroundEffect.class);
 					break;
 				case 33:
 				case 58:
-					bg.effect = Data.BG_EFFECT_RAIN;
+					bg.bgEffect = Identifier.rawParseInt(BG_EFFECT_RAIN, BackgroundEffect.class);
 					break;
 				case 13:
 				case 15:
 				case 72:
-					bg.effect = Data.BG_EFFECT_BUBBLE;
+					bg.bgEffect = Identifier.rawParseInt(BG_EFFECT_BUBBLE, BackgroundEffect.class);
 					break;
 				case 40:
-					bg.effect = Data.BG_EFFECT_FALLING_SNOW;
+					bg.bgEffect = Identifier.rawParseInt(BG_EFFECT_FALLING_SNOW, BackgroundEffect.class);
 					break;
 				case 3:
-					bg.effect = Data.BG_EFFECT_SNOW;
+					bg.bgEffect = Identifier.rawParseInt(BG_EFFECT_SNOW, BackgroundEffect.class);
 					break;
 				case 27:
-					bg.effect = Data.BG_EFFECT_SNOWSTAR;
+					bg.bgEffect = Identifier.rawParseInt(BG_EFFECT_SNOWSTAR, BackgroundEffect.class);
 					break;
 				case 46:
 				case 47:
-					bg.effect = Data.BG_EFFECT_BLIZZARD;
+					bg.bgEffect = Identifier.rawParseInt(BG_EFFECT_BLIZZARD, BackgroundEffect.class);
 					break;
 				case 55:
-					bg.effect = Data.BG_EFFECT_SHINING;
+					bg.bgEffect = Identifier.rawParseInt(BG_EFFECT_SHINING, BackgroundEffect.class);
 					break;
 				case 81:
 				case 101:
 				case 123:
 				case 146:
-					bg.effect = Data.BG_EFFECT_BALLOON;
+					bg.bgEffect = Identifier.rawParseInt(BG_EFFECT_BALLOON, BackgroundEffect.class);
 					break;
 				case 41:
 				case 75:
-					bg.effect = Data.BG_EFFECT_ROCK;
+					bg.bgEffect = Identifier.rawParseInt(BG_EFFECT_ROCK, BackgroundEffect.class);
 					break;
 			}
 
@@ -199,6 +199,7 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 	public int[][] cs = new int[4][3];
 	@JsonField
 	public int effect = -1;
+	public Identifier<BackgroundEffect> bgEffect = null;
 	@JsonField
 	public int overlayAlpha;
 	@JsonField
@@ -294,7 +295,7 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 		System.arraycopy(cs, 0, bg.cs, 0, 4);
 		bg.top = top;
 		bg.ic = ic;
-		bg.effect = effect;
+		bg.bgEffect = bgEffect;
 		bg.overlay = overlay;
 		bg.overlayAlpha = overlayAlpha;
 		return bg;
@@ -409,6 +410,13 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 	@OnInjected
 	public void onInjected() {
 		img = ((PackData.UserPack) getCont()).source.readImage(Source.BasePath.BG.toString(), id.id);
+		if (effect >= 0) {
+			PackData.DefPack data = UserProfile.getBCData();
+			bgEffect = data.bgEffects.get(effect).getID();
+		}
+		if (effect < -1)
+			System.out.println("Uh oh a " + effect + " in the loose");
+		effect = -1;
 	}
 
 	@Override

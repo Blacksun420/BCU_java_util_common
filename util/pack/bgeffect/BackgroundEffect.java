@@ -1,31 +1,69 @@
 package common.util.pack.bgeffect;
 
+import com.google.gson.JsonElement;
 import common.CommonStatic;
 import common.io.json.JsonClass;
-import common.pack.Context;
-import common.pack.Identifier;
-import common.pack.UserProfile;
+import common.io.json.JsonDecoder;
+import common.pack.*;
 import common.system.P;
 import common.system.fake.FakeGraphics;
 import common.system.fake.FakeImage;
 import common.system.files.VFile;
+import common.util.Data;
 import common.util.anim.ImgCut;
 import common.util.pack.Background;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
-@JsonClass.JCGeneric(Identifier.class)
-@JsonClass
-public abstract class BackgroundEffect {
-    public static Map<Integer, MixedBGEffect> mixture = new HashMap<>();
-    public static int BGHeight = 512;
-    public static final int battleOffset = (int) (400 / CommonStatic.BattleConst.ratio);
-    public static final List<Integer> jsonList = new ArrayList<>();
+@IndexContainer.IndexCont(PackData.class)
+@JsonClass.JCGeneric(BackgroundEffect.BGIdentifier.class)
+@JsonClass(read = JsonClass.RType.MANUAL, generator = "construct")
+public interface BackgroundEffect extends IndexContainer.Indexable<PackData, BackgroundEffect> {
+    //Only MixedBGEffect and CustomBGEffect need Custom dependence. The rest only matter for defPack.
+    int BGHeight = 512;
+    int battleOffset = (int) (400 / CommonStatic.BattleConst.ratio);
+    List<Integer> jsonList = new ArrayList<>();
 
-    public static void read() {
-        CommonStatic.BCAuxAssets asset = CommonStatic.getBCAssets();
+    @JsonClass(noTag = JsonClass.NoTag.LOAD)
+    class BGIdentifier {
+        public Identifier<BackgroundEffect> id;
 
-        asset.bgEffects.add(new StarBackgroundEffect());
+        @JsonClass.JCConstructor
+        public BGIdentifier() {
+            id = null;
+        }
+
+        @JsonClass.JCConstructor
+        public BGIdentifier(BackgroundEffect bge) {
+            id = bge.getID();
+        }
+
+        @JsonClass.JCGetter
+        public BackgroundEffect getter() {
+            System.out.println("hoy");
+            return id.get();
+        }
+    }
+
+    /**
+     * Used for manual constructorl. Do not delete
+     * @param elem Json Data
+     * @return Object decoded to it's proper class
+     */
+    static Object construct(JsonElement elem) {
+        try {
+            return JsonDecoder.decode(elem, MixedBGEffect.class);
+        } catch (Exception e) {
+            return JsonDecoder.decode(elem, CustomBGEffect.class);
+        }
+    }
+
+    static void read() {
+        PackData.DefPack assets = UserProfile.getBCData();
+
+        assets.bgEffects.add(new StarBackgroundEffect(assets.getNextID(BackgroundEffect.class)));
 
         VFile rainFile = VFile.get("./org/battle/a/000_a.png");
 
@@ -34,35 +72,36 @@ public abstract class BackgroundEffect {
 
         FakeImage[] images = rainCut.cut(rainImage);
 
-        asset.bgEffects.add(new RainBGEffect(images[29], images[28]));
+        assets.bgEffects.add(new RainBGEffect(assets.getNextID(BackgroundEffect.class), images[29], images[28]));
 
         VFile bubbleFile = VFile.get("./org/img/bgEffect/bubble02.png");
 
         FakeImage bubbleImage = bubbleFile.getData().getImg();
 
-        asset.bgEffects.add(new BubbleBGEffect(bubbleImage));
+        assets.bgEffects.add(new BubbleBGEffect(assets.getNextID(BackgroundEffect.class), bubbleImage));
 
         VFile secondBubbleFile = VFile.get("./org/img/bgEffect/bubble03_bg040.png");
 
         FakeImage secondBubbleImage = secondBubbleFile.getData().getImg();
 
-        asset.bgEffects.add(new FallingSnowBGEffect(secondBubbleImage));
+        assets.bgEffects.add(new FallingSnowBGEffect(assets.getNextID(BackgroundEffect.class), secondBubbleImage));
 
         VFile snowFile = VFile.get("./org/img/bgEffect/img021.png");
 
         FakeImage snowImage = snowFile.getData().getImg();
 
-        asset.bgEffects.add(new SnowBGEffect(snowImage));
+        assets.bgEffects.add(new SnowBGEffect(assets.getNextID(BackgroundEffect.class), snowImage));
 
-        asset.bgEffects.add(new SnowStarBGEffect());
+        assets.bgEffects.add(new MixedBGEffect(assets.getNextID(BackgroundEffect.class),
+                UserProfile.getBCData().bgEffects.get(Data.BG_EFFECT_STAR), UserProfile.getBCData().bgEffects.get(Data.BG_EFFECT_SNOW)));
 
-        asset.bgEffects.add(new BlizzardBGEffect(secondBubbleImage));
+        assets.bgEffects.add(new BlizzardBGEffect(assets.getNextID(BackgroundEffect.class), secondBubbleImage));
 
-        asset.bgEffects.add(new ShiningBGEffect());
+        assets.bgEffects.add(new ShiningBGEffect(assets.getNextID(BackgroundEffect.class)));
 
-        asset.bgEffects.add(new BalloonBGEffect());
+        assets.bgEffects.add(new BalloonBGEffect(assets.getNextID(BackgroundEffect.class)));
 
-        asset.bgEffects.add(new RockBGEffect());
+        assets.bgEffects.add(new RockBGEffect(assets.getNextID(BackgroundEffect.class)));
 
         CommonStatic.ctx.noticeErr(() -> {
             VFile vf = VFile.get("./org/data/");
@@ -83,41 +122,35 @@ public abstract class BackgroundEffect {
             }
 
             jsonList.sort(Integer::compareTo);
-
-            int currentSize = asset.bgEffects.size();
-
             for (Integer id : jsonList) {
-                asset.bgEffects.add(new JsonBGEffect(id));
-                UserProfile.getBCData().bgs.getRaw(id).effect = currentSize;
-
-                currentSize++;
+                JsonBGEffect jbg = new JsonBGEffect(assets.getNextID(BackgroundEffect.class), id);
+                assets.bgEffects.add(jbg);
+                UserProfile.getBCData().bgs.getRaw(id).bgEffect = jbg.getID();
             }
 
             for(int i = 0; i < UserProfile.getBCData().bgs.size(); i++) {
                 Background bg = UserProfile.getBCData().bgs.get(i);
 
                 if(bg.reference != -1) {
-                    Background ref = UserProfile.getBCData().bgs.findByID(bg.reference);
+                    Background ref = assets.bgs.findByID(bg.reference);
 
                     if(ref == null)
                         continue;
 
-                    if(bg.effect == -1)
-                        bg.effect = ref.effect;
-                    else if(bg.effect >= 0 && ref.effect != -1) {
-                        if(ref.effect >= 0) {
-                            mixture.put(bg.id.id, new MixedBGEffect(asset.bgEffects.get(bg.effect), asset.bgEffects.get(ref.effect)));
-
-                            bg.effect = -bg.id.id;
-                        } else if(ref.effect == -ref.id.id && mixture.containsKey(ref.id.id)) {
-                            mixture.put(bg.id.id, new MixedBGEffect(asset.bgEffects.get(bg.effect), mixture.get(ref.id.id)));
-
-                            bg.effect = -bg.id.id;
-                        } else if(ref.id.id != -ref.id.id || !mixture.containsKey(ref.id.id)) {
-                            System.out.println("W/BackgroundEffect::read - Unhandled situation for background effect mixing -> Reference BG ID : "+ref.id.id+" | Mixture contains key : "+mixture.containsKey(ref.id.id));
-                        }
+                    if(bg.bgEffect == null)
+                        bg.bgEffect = ref.bgEffect;
+                    else if(ref.bgEffect != null) {
+                        if (bg.bgEffect.cls == MixedBGEffect.class)
+                            ((MixedBGEffect) bg.bgEffect.get()).effects.add(ref.bgEffect.get());
+                        else
+                            bg.bgEffect = new MixedBGEffect(assets.getNextID(BackgroundEffect.class), bg.bgEffect.get(), ref.bgEffect.get()).getID();
                     }
                 }
+            }
+            for(int i = 0; i < UserProfile.getBCData().bgs.size(); i++) {
+                Background bg = UserProfile.getBCData().bgs.get(i);
+                if (bg.bgEffect != null && bg.bgEffect.cls == MixedBGEffect.class)
+                    assets.bgEffects.add(bg.bgEffect.get());
             }
         }, Context.ErrType.FATAL, "Failed to read bg effect data");
     }
@@ -125,7 +158,7 @@ public abstract class BackgroundEffect {
     /**
      * Load image or any data here
      */
-    public abstract void check();
+    void check();
 
     /**
      * Effects which will be drawn behind entities
@@ -134,7 +167,7 @@ public abstract class BackgroundEffect {
      * @param siz size of battle
      * @param midH how battle will be shifted along y-axis
      */
-    public abstract void preDraw(FakeGraphics g, P rect, final double siz, final double midH);
+    void preDraw(FakeGraphics g, P rect, final double siz, final double midH);
 
     /**
      * Effects which will be drawn in front of entities
@@ -143,28 +176,28 @@ public abstract class BackgroundEffect {
      * @param siz size of battle
      * @param midH how battle will be shifted along y-axis
      */
-    public abstract void postDraw(FakeGraphics g, P rect, final double siz, final double midH);
+    void postDraw(FakeGraphics g, P rect, final double siz, final double midH);
 
     /**
      * Used for Background preview only. Draws everything at once with no battle scaling
      */
-    public abstract void draw(FakeGraphics g, double x, double y, double siz, int groundH, int skyH);
+    void draw(FakeGraphics g, double x, double y, double siz, int groundH, int skyH);
 
     /**
      * Update data here
      * @param w Width of battlefield as P
      * @param h Height of battlefield as Px
      */
-    public abstract void update(int w, double h, double midH);
+    void update(int w, double h, double midH);
 
     /**
      * Initialize data here
      * @param w Width of battlefield as P
      * @param h Height of battlefield as Px
      */
-    public abstract void initialize(int w, double h, double midH, Background bg);
+    void initialize(int w, double h, double midH, Background bg);
 
-    public void release() {
+    default void release() {
 
     }
 
@@ -174,11 +207,18 @@ public abstract class BackgroundEffect {
      * @param siz Size of battle
      * @return Converted pixel
      */
-    protected int convertP(double p, double siz) {
+    static int convertP(double p, double siz) {
         return (int) (p * CommonStatic.BattleConst.ratio * siz);
     }
 
-    protected int revertP(double px) {
+    static int revertP(double px) {
         return (int) (px / CommonStatic.BattleConst.ratio);
+    }
+
+    @Override
+    Identifier<BackgroundEffect> getID();
+
+    default String getName() {
+        return "";
     }
 }

@@ -1,5 +1,8 @@
 package common.util.pack.bgeffect;
 
+import common.CommonStatic;
+import common.io.json.JsonClass;
+import common.pack.Identifier;
 import common.system.P;
 import common.system.fake.FakeGraphics;
 import common.system.fake.FakeImage;
@@ -11,8 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+@JsonClass.JCGeneric(BackgroundEffect.BGIdentifier.class)
 @SuppressWarnings("ForLoopReplaceableByForEach")
-public class RainBGEffect extends BackgroundEffect {
+public class RainBGEffect implements BackgroundEffect {
+    private final Identifier<BackgroundEffect> id;
     private final FakeImage rain;
     private final FakeImage splash;
 
@@ -25,7 +30,8 @@ public class RainBGEffect extends BackgroundEffect {
     private final List<P> splashPosition = new ArrayList<>();
     private final Random r = new Random();
 
-    public RainBGEffect(FakeImage rain, FakeImage splash) {
+    public RainBGEffect(Identifier<BackgroundEffect> i, FakeImage rain, FakeImage splash) {
+        id = i;
         this.rain = rain;
         this.splash = splash;
 
@@ -47,7 +53,7 @@ public class RainBGEffect extends BackgroundEffect {
         g.setComposite(FakeGraphics.TRANS, 96, 0);
 
         for(int i = 0; i < splashPosition.size(); i++) {
-            g.drawImage(splash, convertP(splashPosition.get(i).x, siz) + (int) rect.x, (int) (splashPosition.get(i).y * siz - rect.y), sw * siz * 0.8, sh * siz * 0.8);
+            g.drawImage(splash, BackgroundEffect.convertP(splashPosition.get(i).x, siz) + (int) rect.x, (int) (splashPosition.get(i).y * siz - rect.y), sw * siz * 0.8, sh * siz * 0.8);
         }
 
         g.setComposite(FakeGraphics.DEF, 255, 0);
@@ -61,7 +67,7 @@ public class RainBGEffect extends BackgroundEffect {
 
         for(int i = 0; i < rainPosition.size(); i++) {
             //30 and 50 shifting is to draw image at center
-            g.translate(convertP(rainPosition.get(i).x, siz) + (int) rect.x - 30 * siz * 0.8, (int) (rainPosition.get(i).y * siz - rect.y + midH * siz - 50 * siz * 0.8));
+            g.translate(BackgroundEffect.convertP(rainPosition.get(i).x, siz) + (int) rect.x - 30 * siz * 0.8, (int) (rainPosition.get(i).y * siz - rect.y + midH * siz - 50 * siz * 0.8));
             g.rotate(Math.PI / 3);
 
             g.drawImage(rain, 0, 0, rw * siz * 0.8, rh * siz * 0.8);
@@ -80,7 +86,7 @@ public class RainBGEffect extends BackgroundEffect {
         g.setComposite(FakeGraphics.TRANS, 96, 0);
 
         for(int i = 0; i < splashPosition.size(); i++) {
-            g.drawImage(splash, convertP(splashPosition.get(i).x, siz) + (int) x, (int) (splashPosition.get(i).y * siz - y + groundH), sw * siz * 0.8, sh * siz * 0.8);
+            g.drawImage(splash, BackgroundEffect.convertP(splashPosition.get(i).x, siz) + (int) x, (int) (splashPosition.get(i).y * siz - y + groundH), sw * siz * 0.8, sh * siz * 0.8);
         }
         g.setComposite(FakeGraphics.TRANS, 127, 0);
 
@@ -88,7 +94,7 @@ public class RainBGEffect extends BackgroundEffect {
 
         for(int i = 0; i < rainPosition.size(); i++) {
             //30 and 50 shifting is to draw image at center
-            g.translate(convertP(rainPosition.get(i).x, siz) + (int) x - 30 * siz * 0.8, (int) (rainPosition.get(i).y * siz - y + skyH * siz - 50 * siz * 0.8));
+            g.translate(BackgroundEffect.convertP(rainPosition.get(i).x, siz) + (int) x - 30 * siz * 0.8, (int) (rainPosition.get(i).y * siz - y + skyH * siz - 50 * siz * 0.8));
             g.rotate(Math.PI / 3);
 
             g.drawImage(rain, 0, 0, rw * siz * 0.8, rh * siz * 0.8);
@@ -134,5 +140,15 @@ public class RainBGEffect extends BackgroundEffect {
     @Override
     public void initialize(int w, double h, double midH, Background bg) {
 
+    }
+
+    @Override
+    public Identifier<BackgroundEffect> getID() {
+        return id;
+    }
+
+    @Override
+    public String toString() {
+        return CommonStatic.def.getBtnName(0, "bgeff" + id.id);
     }
 }

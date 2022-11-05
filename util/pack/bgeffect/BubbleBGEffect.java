@@ -1,5 +1,8 @@
 package common.util.pack.bgeffect;
 
+import common.CommonStatic;
+import common.io.json.JsonClass;
+import common.pack.Identifier;
 import common.system.P;
 import common.system.fake.FakeGraphics;
 import common.system.fake.FakeImage;
@@ -10,8 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+@JsonClass.JCGeneric(BackgroundEffect.BGIdentifier.class)
 @SuppressWarnings("ForLoopReplaceableByForEach")
-public class BubbleBGEffect extends BackgroundEffect {
+public class BubbleBGEffect implements BackgroundEffect {
+    private final Identifier<BackgroundEffect> id;
     private final FakeImage bubble;
 
     private final int bw;
@@ -23,7 +28,8 @@ public class BubbleBGEffect extends BackgroundEffect {
 
     private final List<Integer> capture = new ArrayList<>();
 
-    public BubbleBGEffect(FakeImage bubble) {
+    public BubbleBGEffect(Identifier<BackgroundEffect> i, FakeImage bubble) {
+        id = i;
         this.bubble = bubble;
 
         bw = (int) (this.bubble.getWidth() * 1.8);
@@ -45,7 +51,7 @@ public class BubbleBGEffect extends BackgroundEffect {
         for(int i = 0; i < bubblePosition.size(); i++) {
             g.drawImage(
                     bubble,
-                    convertP(bubblePosition.get(i).x + Data.BG_EFFECT_BUBBLE_FACTOR * Math.sin(differentiator.get(i) + bubblePosition.get(i).y / Data.BG_EFFECT_BUBBLE_STABILIZER), siz) + (int) rect.x,
+                    BackgroundEffect.convertP(bubblePosition.get(i).x + Data.BG_EFFECT_BUBBLE_FACTOR * Math.sin(differentiator.get(i) + bubblePosition.get(i).y / Data.BG_EFFECT_BUBBLE_STABILIZER), siz) + (int) rect.x,
                     (int) (bubblePosition.get(i).y * siz - rect.y + midH * siz),
                     bw * siz, bh * siz
             );
@@ -57,7 +63,7 @@ public class BubbleBGEffect extends BackgroundEffect {
         for(int i = 0; i < bubblePosition.size(); i++) {
             g.drawImage(
                     bubble,
-                    convertP(bubblePosition.get(i).x + Data.BG_EFFECT_BUBBLE_FACTOR * Math.sin(differentiator.get(i) + bubblePosition.get(i).y / Data.BG_EFFECT_BUBBLE_STABILIZER), siz) + (int) x,
+                    BackgroundEffect.convertP(bubblePosition.get(i).x + Data.BG_EFFECT_BUBBLE_FACTOR * Math.sin(differentiator.get(i) + bubblePosition.get(i).y / Data.BG_EFFECT_BUBBLE_STABILIZER), siz) + (int) x,
                     (int) (bubblePosition.get(i).y * siz - y + skyH * siz),
                     bw * siz, bh * siz
             );
@@ -101,5 +107,15 @@ public class BubbleBGEffect extends BackgroundEffect {
             bubblePosition.add(P.newP(r.nextInt(w + battleOffset), r.nextDouble() * (BGHeight * 3.0 + bh)));
             differentiator.add((byte) (3 - r.nextInt(6)));
         }
+    }
+
+    @Override
+    public String toString() {
+        return CommonStatic.def.getBtnName(0, "bgeff" + id.id);
+    }
+
+    @Override
+    public Identifier<BackgroundEffect> getID() {
+        return id;
     }
 }

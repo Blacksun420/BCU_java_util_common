@@ -1,5 +1,8 @@
 package common.util.pack.bgeffect;
 
+import common.CommonStatic;
+import common.io.json.JsonClass;
+import common.pack.Identifier;
 import common.system.P;
 import common.system.fake.FakeGraphics;
 import common.system.fake.FakeImage;
@@ -11,10 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+@JsonClass.JCGeneric(BackgroundEffect.BGIdentifier.class)
 @SuppressWarnings("ForLoopReplaceableByForEach")
-public class BlizzardBGEffect extends BackgroundEffect {
+public class BlizzardBGEffect implements BackgroundEffect {
+    private final Identifier<BackgroundEffect> id;
     private final FakeImage blizzard;
-
     private final int bw;
     private final int bh;
 
@@ -28,7 +32,8 @@ public class BlizzardBGEffect extends BackgroundEffect {
 
     private final List<Integer> capture = new ArrayList<>();
 
-    public BlizzardBGEffect(FakeImage blizzard) {
+    public BlizzardBGEffect(Identifier<BackgroundEffect> id, FakeImage blizzard) {
+        this.id = id;
         this.blizzard = blizzard;
 
         bw = this.blizzard.getWidth();
@@ -50,7 +55,7 @@ public class BlizzardBGEffect extends BackgroundEffect {
         FakeTransform at = g.getTransform();
 
         for(int i = 0; i < blizzardPosition.size(); i++) {
-            g.translate(convertP(blizzardPosition.get(i).x, siz) + rect.x, blizzardPosition.get(i).y * siz - rect.y + midH * siz);
+            g.translate(BackgroundEffect.convertP(blizzardPosition.get(i).x, siz) + rect.x, blizzardPosition.get(i).y * siz - rect.y + midH * siz);
             g.rotate(-angle.get(i));
 
             g.drawImage(blizzard, 0, 0, (int) (bw * 0.5 * Data.BG_EFFECT_BLIZZARD_SIZE[size.get(i)] * siz), (int) (bh * Data.BG_EFFECT_BLIZZARD_SIZE[size.get(i)] * siz));
@@ -66,7 +71,7 @@ public class BlizzardBGEffect extends BackgroundEffect {
         FakeTransform at = g.getTransform();
 
         for(int i = 0; i < blizzardPosition.size(); i++) {
-            g.translate(convertP(blizzardPosition.get(i).x, siz) + x, blizzardPosition.get(i).y * siz - y + skyH * siz);
+            g.translate(BackgroundEffect.convertP(blizzardPosition.get(i).x, siz) + x, blizzardPosition.get(i).y * siz - y + skyH * siz);
             g.rotate(-angle.get(i));
 
             g.drawImage(blizzard, 0, 0, (int) (bw * 0.5 * Data.BG_EFFECT_BLIZZARD_SIZE[size.get(i)] * siz), (int) (bh * Data.BG_EFFECT_BLIZZARD_SIZE[size.get(i)] * siz));
@@ -86,7 +91,7 @@ public class BlizzardBGEffect extends BackgroundEffect {
                 capture.add(i);
             } else {
                 blizzardPosition.get(i).y += speed.get(i);
-                blizzardPosition.get(i).x = revertP(slope.get(i) * (blizzardPosition.get(i).y - initPos.get(i).y)) + initPos.get(i).x;
+                blizzardPosition.get(i).x = BackgroundEffect.revertP(slope.get(i) * (blizzardPosition.get(i).y - initPos.get(i).y)) + initPos.get(i).x;
             }
         }
 
@@ -94,7 +99,7 @@ public class BlizzardBGEffect extends BackgroundEffect {
             for(int i = 0; i < capture.size(); i++) {
                 byte sizeIndex = (byte) Math.min(Data.BG_EFFECT_BLIZZARD_SIZE.length - 1, r.nextInt(Data.BG_EFFECT_BLIZZARD_SIZE.length));
 
-                double x = r.nextDouble() * (w + battleOffset + bw * Data.BG_EFFECT_BLIZZARD_SIZE[sizeIndex] + revertP(BGHeight * 3)) - revertP(BGHeight * 3);
+                double x = r.nextDouble() * (w + battleOffset + bw * Data.BG_EFFECT_BLIZZARD_SIZE[sizeIndex] + BackgroundEffect.revertP(BGHeight * 3)) - BackgroundEffect.revertP(BGHeight * 3);
                 double y = -bh * Data.BG_EFFECT_BLIZZARD_SIZE[sizeIndex];
 
                 blizzardPosition.get(capture.get(i)).x = x;
@@ -132,7 +137,7 @@ public class BlizzardBGEffect extends BackgroundEffect {
         for(int i = 0; i < number; i++) {
             byte sizeIndex = (byte) Math.min(Data.BG_EFFECT_BLIZZARD_SIZE.length - 1, r.nextInt(Data.BG_EFFECT_BLIZZARD_SIZE.length));
 
-            double x = r.nextDouble() * (w + battleOffset + bw * Data.BG_EFFECT_BLIZZARD_SIZE[sizeIndex] + revertP(BGHeight * 3)) - revertP(BGHeight * 3);
+            double x = r.nextDouble() * (w + battleOffset + bw * Data.BG_EFFECT_BLIZZARD_SIZE[sizeIndex] + BackgroundEffect.revertP(BGHeight * 3)) - BackgroundEffect.revertP(BGHeight * 3);
             double y = r.nextDouble() * (BGHeight * 3 + bh * Data.BG_EFFECT_BLIZZARD_SIZE[sizeIndex]);
 
             blizzardPosition.add(P.newP(x, y));
@@ -145,5 +150,15 @@ public class BlizzardBGEffect extends BackgroundEffect {
             slope.add(Math.tan(a));
             size.add(sizeIndex);
         }
+    }
+
+    @Override
+    public String toString() {
+        return CommonStatic.def.getBtnName(0, "bgeff" + id.id);
+    }
+
+    @Override
+    public Identifier<BackgroundEffect> getID() {
+        return id;
     }
 }

@@ -97,6 +97,7 @@ public abstract class PackData implements IndexContainer {
 			this.groups.reset();
 			this.lvrs.reset();
 			this.bgs.reset();
+			this.bgEffects.reset();
 			this.musics.reset();
 			this.combos.reset();
 			for (CastleList cl : CastleList.map().values())
@@ -241,6 +242,7 @@ public abstract class PackData implements IndexContainer {
 	@JsonClass(noTag = NoTag.LOAD)
 	public static class PackDesc {
 		public String BCU_VERSION;
+		public int FORK_VERSION; // The same as BCU_VERSION, but for this fork exclusively
 		public String id;
 		public String author;
 
@@ -251,7 +253,7 @@ public abstract class PackData implements IndexContainer {
 
 		public String desc;
 		public String time;
-		public int version;
+		public byte version;
 		public boolean allowAnim = false;
 		public byte[] parentPassword;
 		@JsonField(generic = String.class)
@@ -264,6 +266,7 @@ public abstract class PackData implements IndexContainer {
 
 		public PackDesc(String id) {
 			BCU_VERSION = AssetLoader.CORE_VER;
+			FORK_VERSION = 0; //0 by default to differ Fork packs and non-fork packs
 			this.id = id;
 			this.dependency = new ArrayList<>();
 		}
@@ -426,10 +429,14 @@ public abstract class PackData implements IndexContainer {
 		}
 
 		public ArrayList<String> preGetDependencies() {
+			if (!desc.dependency.isEmpty())
+				return desc.dependency;
+
 			ArrayList<String> deps = new ArrayList<>();
 			JsonArray jarr = elem.getAsJsonObject().getAsJsonObject("desc").get("dependency").getAsJsonArray();
 			for (int i = 0; i < jarr.size(); i++)
 				deps.add(jarr.get(i).getAsString());
+			desc.dependency = deps;
 			return deps;
 		}
 
@@ -450,6 +457,7 @@ public abstract class PackData implements IndexContainer {
 			//Since it succeeded to load all data, update Core version of this workspace pack
 			if(editable) {
 				desc.BCU_VERSION = AssetLoader.CORE_VER;
+				desc.FORK_VERSION = AssetLoader.FORK_VER;
 			}
 		}
 
@@ -477,14 +485,16 @@ public abstract class PackData implements IndexContainer {
 	@Order(7)
 	public final FixIndexMap<DemonSoul> demonSouls = new FixIndexMap<>(DemonSoul.class);
 	@Order(8)
-	public final FixIndexMap<Background> bgs = new FixIndexMap<>(Background.class);
+	public final FixIndexMap<BackgroundEffect> bgEffects = new FixIndexMap<>(BackgroundEffect.class);
 	@Order(9)
-	public final FixIndexMap<CharaGroup> groups = new FixIndexMap<>(CharaGroup.class);
+	public final FixIndexMap<Background> bgs = new FixIndexMap<>(Background.class);
 	@Order(10)
-	public final FixIndexMap<LvRestrict> lvrs = new FixIndexMap<>(LvRestrict.class);
+	public final FixIndexMap<CharaGroup> groups = new FixIndexMap<>(CharaGroup.class);
 	@Order(11)
-	public final FixIndexMap<Music> musics = new FixIndexMap<>(Music.class);
+	public final FixIndexMap<LvRestrict> lvrs = new FixIndexMap<>(LvRestrict.class);
 	@Order(12)
+	public final FixIndexMap<Music> musics = new FixIndexMap<>(Music.class);
+	@Order(13)
 	public final FixIndexMap<Combo> combos = new FixIndexMap<>(Combo.class);
 
 	@Override
@@ -504,6 +514,8 @@ public abstract class PackData implements IndexContainer {
 			def = func.reduce(def, randEnemies);
 		if (cls == Background.class)
 			def = func.reduce(def, bgs);
+		if (cls == BackgroundEffect.class)
+			def = func.reduce(def, bgEffects);
 		if (cls == Soul.class)
 			def = func.reduce(def, souls);
 		if (cls == Music.class)

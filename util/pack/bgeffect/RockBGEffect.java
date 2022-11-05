@@ -1,5 +1,7 @@
 package common.util.pack.bgeffect;
 
+import common.CommonStatic;
+import common.io.json.JsonClass;
 import common.pack.Identifier;
 import common.pack.UserProfile;
 import common.system.P;
@@ -13,8 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+@JsonClass.JCGeneric(BackgroundEffect.BGIdentifier.class)
 @SuppressWarnings("ForLoopReplaceableByForEach")
-public class RockBGEffect extends BackgroundEffect {
+public class RockBGEffect implements BackgroundEffect {
+    private final Identifier<BackgroundEffect> id;
     private FakeImage rock;
     private FakeImage segment;
 
@@ -31,6 +35,10 @@ public class RockBGEffect extends BackgroundEffect {
     private final Random r = new Random();
 
     boolean vibrate = false;
+
+    public RockBGEffect(Identifier<BackgroundEffect> id) {
+        this.id = id;
+    }
 
     @Override
     public void check() {
@@ -52,7 +60,7 @@ public class RockBGEffect extends BackgroundEffect {
                 FakeImage img = isRock.get(i) ? rock : segment;
                 double s = size.get(i);
 
-                g.translate(convertP(rockPosition.get(i).x, siz) + (int) rect.x, (int) (rockPosition.get(i).y * siz - rect.y));
+                g.translate(BackgroundEffect.convertP(rockPosition.get(i).x, siz) + (int) rect.x, (int) (rockPosition.get(i).y * siz - rect.y));
                 g.rotate(angle.get(i));
                 g.drawImage(img, 0, 0, img.getWidth() * s * siz, img.getHeight() * s * siz);
 
@@ -75,7 +83,7 @@ public class RockBGEffect extends BackgroundEffect {
                 FakeImage img = isRock.get(i) ? rock : segment;
                 double s = size.get(i);
 
-                g.translate(convertP(rockPosition.get(i).x + (vibrate ? 2 : -2), siz) + (int) rect.x, (int) (rockPosition.get(i).y * siz - rect.y + midH * siz));
+                g.translate(BackgroundEffect.convertP(rockPosition.get(i).x + (vibrate ? 2 : -2), siz) + (int) rect.x, (int) (rockPosition.get(i).y * siz - rect.y + midH * siz));
                 g.rotate(angle.get(i));
                 g.drawImage(img, 0, 0, img.getWidth() * s * siz, img.getHeight() * s * siz);
 
@@ -97,7 +105,7 @@ public class RockBGEffect extends BackgroundEffect {
                 FakeImage img = isRock.get(i) ? rock : segment;
                 double s = size.get(i);
 
-                g.translate(convertP(rockPosition.get(i).x, siz) + (int) x, (int) (rockPosition.get(i).y * siz - y));
+                g.translate(BackgroundEffect.convertP(rockPosition.get(i).x, siz) + (int) x, (int) (rockPosition.get(i).y * siz - y));
                 g.rotate(angle.get(i));
                 g.drawImage(img, 0, 0, img.getWidth() * s * siz, img.getHeight() * s * siz);
 
@@ -110,7 +118,7 @@ public class RockBGEffect extends BackgroundEffect {
                 FakeImage img = isRock.get(i) ? rock : segment;
                 double s = size.get(i);
 
-                g.translate(convertP(rockPosition.get(i).x + (vibrate ? 2 : -2), siz) + (int) x, (int) (rockPosition.get(i).y * siz - y + skyH * siz));
+                g.translate(BackgroundEffect.convertP(rockPosition.get(i).x + (vibrate ? 2 : -2), siz) + (int) x, (int) (rockPosition.get(i).y * siz - y + skyH * siz));
                 g.rotate(angle.get(i));
                 g.drawImage(img, 0, 0, img.getWidth() * s * siz, img.getHeight() * s * siz);
 
@@ -214,5 +222,15 @@ public class RockBGEffect extends BackgroundEffect {
             size.add(siz);
             opacity.add(255);
         }
+    }
+
+    @Override
+    public Identifier<BackgroundEffect> getID() {
+        return id;
+    }
+
+    @Override
+    public String toString() {
+        return CommonStatic.def.getBtnName(0, "bgeff" + id.id);
     }
 }

@@ -1,5 +1,7 @@
 package common.util.pack.bgeffect;
 
+import common.CommonStatic;
+import common.io.json.JsonClass;
 import common.pack.Identifier;
 import common.pack.UserProfile;
 import common.system.P;
@@ -12,8 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+@JsonClass.JCGeneric(BackgroundEffect.BGIdentifier.class)
 @SuppressWarnings("ForLoopReplaceableByForEach")
-public class BalloonBGEffect extends BackgroundEffect {
+public class BalloonBGEffect implements BackgroundEffect {
+
+    @JsonClass.JCIdentifier
+    private final Identifier<BackgroundEffect> id;
     private FakeImage balloon;
     private FakeImage bigBalloon;
 
@@ -23,6 +29,10 @@ public class BalloonBGEffect extends BackgroundEffect {
     private final Random r = new Random();
 
     private final List<Integer> capture = new ArrayList<>();
+
+    public BalloonBGEffect(Identifier<BackgroundEffect> id) {
+        this.id = id;
+    }
 
     @Override
     public void check() {
@@ -45,7 +55,7 @@ public class BalloonBGEffect extends BackgroundEffect {
 
             g.drawImage(
                     img,
-                    convertP(balloonPosition.get(i).x + Data.BG_EFFECT_BALLOON_FACTOR * Math.sin(balloonPosition.get(i).y / Data.BG_EFFECT_BALLOON_STABILIZER), siz) + (int) rect.x,
+                    BackgroundEffect.convertP(balloonPosition.get(i).x + Data.BG_EFFECT_BALLOON_FACTOR * Math.sin(balloonPosition.get(i).y / Data.BG_EFFECT_BALLOON_STABILIZER), siz) + (int) rect.x,
                     (int) (balloonPosition.get(i).y * siz - rect.y + midH * siz),
                     img.getWidth() * siz,
                     img.getHeight() * siz
@@ -59,7 +69,7 @@ public class BalloonBGEffect extends BackgroundEffect {
             FakeImage img = isBigBalloon.get(i) ? bigBalloon : balloon;
             g.drawImage(
                     img,
-                    convertP(balloonPosition.get(i).x + Data.BG_EFFECT_BALLOON_FACTOR * Math.sin(balloonPosition.get(i).y / Data.BG_EFFECT_BALLOON_STABILIZER), siz) + (int) x,
+                    BackgroundEffect.convertP(balloonPosition.get(i).x + Data.BG_EFFECT_BALLOON_FACTOR * Math.sin(balloonPosition.get(i).y / Data.BG_EFFECT_BALLOON_STABILIZER), siz) + (int) x,
                     (int) (balloonPosition.get(i).y * siz - y + skyH * siz),
                     img.getWidth() * siz,
                     img.getHeight() * siz
@@ -87,7 +97,7 @@ public class BalloonBGEffect extends BackgroundEffect {
 
                 int bw = isBig ? bigBalloon.getWidth() : balloon.getWidth();
 
-                balloonPosition.get(capture.get(i)).x = r.nextInt(w + battleOffset + 2 * revertP(bw)) - revertP(bw);
+                balloonPosition.get(capture.get(i)).x = r.nextInt(w + battleOffset + 2 * BackgroundEffect.revertP(bw)) - BackgroundEffect.revertP(bw);
                 balloonPosition.get(capture.get(i)).y = BGHeight * 3;
                 isBigBalloon.set(capture.get(i), isBig);
             }
@@ -108,7 +118,7 @@ public class BalloonBGEffect extends BackgroundEffect {
 
         Background background;
 
-        if(!bg.id.pack.equals(Identifier.DEF) || bg.effect != Data.BG_EFFECT_BALLOON) {
+        if(!bg.id.pack.equals(Identifier.DEF) || bg.bgEffect.id != Data.BG_EFFECT_BALLOON) {
             background = UserProfile.getBCData().bgs.get(81);
         } else {
             background = bg;
@@ -126,9 +136,19 @@ public class BalloonBGEffect extends BackgroundEffect {
 
             int bw = isBig ? bigBalloon.getWidth() : balloon.getWidth();
 
-            balloonPosition.add(P.newP(r.nextInt(w + battleOffset + 2 * revertP(bw)) - revertP(bw), r.nextInt(BGHeight) * 3));
+            balloonPosition.add(P.newP(r.nextInt(w + battleOffset + 2 * BackgroundEffect.revertP(bw)) - BackgroundEffect.revertP(bw), r.nextInt(BGHeight) * 3));
             isBigBalloon.add(isBig);
             speed.add((byte) Data.BG_EFFECT_BALLOON_SPEED);
         }
+    }
+
+    @Override
+    public String toString() {
+        return CommonStatic.def.getBtnName(0, "bgeff" + id.id);
+    }
+
+    @Override
+    public Identifier<BackgroundEffect> getID() {
+        return id;
     }
 }

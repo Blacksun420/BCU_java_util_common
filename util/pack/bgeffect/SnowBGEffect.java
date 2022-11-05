@@ -1,5 +1,8 @@
 package common.util.pack.bgeffect;
 
+import common.CommonStatic;
+import common.io.json.JsonClass;
+import common.pack.Identifier;
 import common.system.P;
 import common.system.fake.FakeGraphics;
 import common.system.fake.FakeImage;
@@ -10,8 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+@JsonClass.JCGeneric(BackgroundEffect.BGIdentifier.class)
 @SuppressWarnings("ForLoopReplaceableByForEach")
-public class SnowBGEffect extends BackgroundEffect{
+public class SnowBGEffect implements BackgroundEffect{
+    private final Identifier<BackgroundEffect> id;
     private final double maxSlope = Math.tan(Math.toRadians(75));
     private final FakeImage snow;
 
@@ -26,7 +31,8 @@ public class SnowBGEffect extends BackgroundEffect{
 
     private final List<Integer> capture = new ArrayList<>();
 
-    public SnowBGEffect(FakeImage snow) {
+    public SnowBGEffect(Identifier<BackgroundEffect> i, FakeImage snow) {
+        id = i;
         this.snow = snow;
 
         this.sw = (int) (snow.getWidth() * 1.8);
@@ -48,7 +54,7 @@ public class SnowBGEffect extends BackgroundEffect{
         g.setComposite(FakeGraphics.TRANS, 127, 0);
 
         for(int i = 0; i < snowPosition.size(); i++) {
-            g.drawImage(snow, convertP(snowPosition.get(i).x, siz) + (int) rect.x, (int) (snowPosition.get(i).y * siz - rect.y + midH * siz), sw * siz, sh * siz);
+            g.drawImage(snow, BackgroundEffect.convertP(snowPosition.get(i).x, siz) + (int) rect.x, (int) (snowPosition.get(i).y * siz - rect.y + midH * siz), sw * siz, sh * siz);
         }
 
         g.setComposite(FakeGraphics.DEF, 255, 0);
@@ -58,7 +64,7 @@ public class SnowBGEffect extends BackgroundEffect{
     public void draw(FakeGraphics g, double x, double y, double siz, int groundH, int skyH) {
         g.setComposite(FakeGraphics.TRANS, 127, 0);
         for(int i = 0; i < snowPosition.size(); i++)
-            g.drawImage(snow, convertP(snowPosition.get(i).x, siz) + (int) x, (int) (snowPosition.get(i).y * siz - y + skyH * siz), sw * siz, sh * siz);
+            g.drawImage(snow, BackgroundEffect.convertP(snowPosition.get(i).x, siz) + (int) x, (int) (snowPosition.get(i).y * siz - y + skyH * siz), sw * siz, sh * siz);
         g.setComposite(FakeGraphics.DEF, 255, 0);
     }
 
@@ -72,7 +78,7 @@ public class SnowBGEffect extends BackgroundEffect{
             } else {
                 snowPosition.get(i).y += speed.get(i);
                 //slope(y - initY) + initX = x
-                snowPosition.get(i).x = revertP(slope.get(i) * (snowPosition.get(i).y - initPos.get(i).y)) + initPos.get(i).x;
+                snowPosition.get(i).x = BackgroundEffect.revertP(slope.get(i) * (snowPosition.get(i).y - initPos.get(i).y)) + initPos.get(i).x;
             }
         }
 
@@ -119,5 +125,15 @@ public class SnowBGEffect extends BackgroundEffect{
             speed.add((byte) ((Data.BG_EFFECT_SNOW_SPEED - r.nextInt(Data.BG_EFFECT_SNOW_SPEED - 3)) * (-0.75 * angle / maxSlope + 1)));
             slope.add(Math.tan(-angle));
         }
+    }
+
+    @Override
+    public String toString() {
+        return CommonStatic.def.getBtnName(0, "bgeff" + id.id);
+    }
+
+    @Override
+    public Identifier<BackgroundEffect> getID() {
+        return id;
     }
 }

@@ -33,7 +33,7 @@ public abstract class AnimU<T extends AnimU.ImageKeeper> extends AnimD<AnimU<?>,
 
 	public enum UType implements AnimI.AnimType<AnimU<?>, UType>, EditableType {
 		WALK(false), IDLE(false), ATK(true), HB(false), ENTER(true), BURROW_DOWN(true), BURROW_MOVE(false),
-		BURROW_UP(true), SOUL(true);
+		BURROW_UP(true), SOUL(true), FOREGROUND(false), BACKGROUND(false);
 
 		private final boolean rotate;
 
@@ -60,6 +60,9 @@ public abstract class AnimU<T extends AnimU.ImageKeeper> extends AnimD<AnimU<?>,
 
 	@StaticPermitted
 	public static final UType[] SOUL = { UType.SOUL };
+
+	@StaticPermitted
+	public static final UType[] BGEFFECT = { UType.FOREGROUND, UType.BACKGROUND };
 
 	protected boolean partial = false;
 	public final T loader;
@@ -126,7 +129,8 @@ public abstract class AnimU<T extends AnimU.ImageKeeper> extends AnimD<AnimU<?>,
 			imgcut = loader.getIC();
 			mamodel = loader.getMM();
 			anims = loader.getMA();
-			types = loader.getBasePath() == BasePath.SOUL ? SOUL : anims.length == 4 ? TYPE4 : anims.length == 5 ? TYPE5 : anims.length == 7 ? TYPE7 : TYPE8;
+			BasePath bp = loader.getBasePath();
+			types = bp == BasePath.SOUL ? SOUL : bp == BasePath.BGEffect ? BGEFFECT : anims.length == 4 ? TYPE4 : anims.length == 5 ? TYPE5 : anims.length == 7 ? TYPE7 : TYPE8;
 		}
 	}
 

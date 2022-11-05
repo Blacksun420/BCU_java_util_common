@@ -40,21 +40,6 @@ public class Node<T> {
 		return ret;
 	}
 
-	public static Node<Enemy> getList(List<Enemy> list, Enemy enemy) {
-		Node<Enemy> ans = null, ret = null;
-		for (Enemy e : list) {
-			if (ans != null && ans.val == e)
-				continue;
-			Node<Enemy> temp = new Node<>(e);
-			if (ans != null)
-				ans.add(temp);
-			if (e == enemy)
-				ret = temp;
-			ans = temp;
-		}
-		return ret;
-	}
-
 	public static Node<Unit> getList(List<Form> list, Form unit) {
 		Node<Unit> ans = null, ret = null;
 		for (Form v : list) {
