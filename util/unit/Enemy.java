@@ -156,70 +156,71 @@ public class Enemy extends Animable<AnimU<?>, UType> implements AbEnemy {
 		enemy.pack = this;
 
 		PackData.UserPack pack = (PackData.UserPack) getCont();
+		Proc proc = enemy.getProc();
 		AtkDataModel[] atks = enemy.getAllAtks();
-		if (UserProfile.isOlderPack(pack, "0.6.9.2")) {
-			Proc proc = enemy.getProc();
-			if (UserProfile.isOlderPack(pack, "0.6.9.1")) {
-				if (UserProfile.isOlderPack(pack, "0.6.6.0")) {
-					if (UserProfile.isOlderPack(pack, "0.6.5.0")) {
-						if (UserProfile.isOlderPack(pack, "0.6.4.0")) {
-							if (UserProfile.isOlderPack(pack, "0.6.1.0")) {
-								if (UserProfile.isOlderPack(pack, "0.6.0.0")) {
-									JsonObject jde = jobj.getAsJsonObject("de");
-									proc.BARRIER.health = jde.get("shield").getAsInt();
-									int type = jde.get("type").getAsInt();
-									if (UserProfile.isOlderPack(pack, "0.5.4.0")) {
-										if (UserProfile.isOlderPack(pack, "0.5.2.0") && enemy.tba != 0) {
-											if (UserProfile.isOlderPack(pack, "0.5.1.0"))
-												type = Data.reorderTrait(type);
-											//Finish 5.1.0 check
-											enemy.tba += enemy.getPost() + 1;
-										} //Finish 5.2.0 check
-										MaModel model = anim.loader.getMM();
-										enemy.limit = CommonStatic.customEnemyMinPos(model);
-									} //Finish 5.4.0 check
-									enemy.traits = Trait.convertType(type);
-									if ((enemy.abi & (1 << 18)) != 0) //Seal Immunity
-										proc.IMUSEAL.mult = 100;
-									if ((enemy.abi & (1 << 7)) != 0) //Moving atk Immunity
-										proc.IMUMOVING.mult = 100;
-									if ((enemy.abi & (1 << 12)) != 0) //Poison Immunity
-										proc.IMUPOI.mult = 100;
-									enemy.abi = Data.reorderAbi(enemy.abi, 0);
-								} //Finish 6.0.0 check
-								proc.DMGCUT.reduction = 100;
-								proc.DMGCUT.type.traitIgnore = true;
-								proc.DMGCAP.type.traitIgnore = true;
-								for (AtkDataModel atk : atks)
-									if (atk.getProc().POISON.prob > 0)
-										atk.getProc().POISON.type.ignoreMetal = true;
-							} //Finish 6.1.0 check
-							names.put(jobj.get("name").getAsString());
-							if (jobj.has("desc"))
-								description.put(jobj.get("desc").getAsString());
-						} //Finish 6.4.0 check
-						if ((enemy.abi & 32) > 0) //base destroyer
-							for (AtkDataModel atk : atks)
-								atk.getProc().ATKBASE.mult = 300;
-						enemy.abi = Data.reorderAbi(enemy.abi, 1);
-					} //Finish 6.5.0 check
-					for (AtkDataModel atk : atks)
-						if (atk.getProc().TIME.prob > 0)
-							atk.getProc().TIME.intensity = atk.getProc().TIME.time;
 
+		if (UserProfile.isOlderPack(pack, "0.6.6.0")) {
+			if (UserProfile.isOlderPack(pack, "0.6.5.0")) {
+				if (UserProfile.isOlderPack(pack, "0.6.4.0")) {
+					if (UserProfile.isOlderPack(pack, "0.6.1.0")) {
+						if (UserProfile.isOlderPack(pack, "0.6.0.0")) {
+							JsonObject jde = jobj.getAsJsonObject("de");
+							proc.BARRIER.health = jde.get("shield").getAsInt();
+							int type = jde.get("type").getAsInt();
+							if (UserProfile.isOlderPack(pack, "0.5.4.0")) {
+								if (UserProfile.isOlderPack(pack, "0.5.2.0") && enemy.tba != 0) {
+									if (UserProfile.isOlderPack(pack, "0.5.1.0"))
+										type = Data.reorderTrait(type);
+									//Finish 5.1.0 check
+									enemy.tba += enemy.getPost() + 1;
+								} //Finish 5.2.0 check
+								MaModel model = anim.loader.getMM();
+								enemy.limit = CommonStatic.customEnemyMinPos(model);
+							} //Finish 5.4.0 check
+							enemy.traits = Trait.convertType(type);
+							if ((enemy.abi & (1 << 18)) != 0) //Seal Immunity
+								proc.IMUSEAL.mult = 100;
+							if ((enemy.abi & (1 << 7)) != 0) //Moving atk Immunity
+								proc.IMUMOVING.mult = 100;
+							if ((enemy.abi & (1 << 12)) != 0) //Poison Immunity
+								proc.IMUPOI.mult = 100;
+							enemy.abi = Data.reorderAbi(enemy.abi, 0);
+						} //Finish 6.0.0 check
+						proc.DMGCUT.reduction = 100;
+						proc.DMGCUT.type.traitIgnore = true;
+						proc.DMGCAP.type.traitIgnore = true;
+						for (AtkDataModel atk : atks)
+							if (atk.getProc().POISON.prob > 0)
+								atk.getProc().POISON.type.ignoreMetal = true;
+					} //Finish 6.1.0 check
+					names.put(jobj.get("name").getAsString());
+					if (jobj.has("desc"))
+						description.put(jobj.get("desc").getAsString());
+				} //Finish 6.4.0 check
+				if ((enemy.abi & 32) > 0) //base destroyer
 					for (AtkDataModel atk : atks)
-						if (atk.getProc().SUMMON.prob > 0) {
-							atk.getProc().SUMMON.max_dis = atk.getProc().SUMMON.dis;
-							atk.getProc().SUMMON.min_layer = -1;
-							atk.getProc().SUMMON.max_layer = -1;
-						}
-				} //Finish 6.6.0 check
-				for (AtkDataModel ma : atks) {
-					if ((ma.specialTrait && ma.dire == 1) || (!ma.specialTrait && ma.dire == -1))
-						ma.traits.addAll(enemy.traits);
-					ma.specialTrait = false;
+						atk.getProc().ATKBASE.mult = 300;
+				enemy.abi = Data.reorderAbi(enemy.abi, 1);
+			} //Finish 6.5.0 check
+			for (AtkDataModel atk : atks)
+				if (atk.getProc().TIME.prob > 0)
+					atk.getProc().TIME.intensity = atk.getProc().TIME.time;
+
+			for (AtkDataModel atk : atks)
+				if (atk.getProc().SUMMON.prob > 0) {
+					atk.getProc().SUMMON.max_dis = atk.getProc().SUMMON.dis;
+					atk.getProc().SUMMON.min_layer = -1;
+					atk.getProc().SUMMON.max_layer = -1;
 				}
-			} //Finish 6.9.1 check
+		} //Finish 6.6.0 check
+
+		//Updates stuff to match this fork without core version issues
+		if (pack.desc.FORK_VERSION < 1) {
+			for (AtkDataModel ma : atks) {
+				if ((ma.specialTrait && ma.dire == 1) || (!ma.specialTrait && ma.dire == -1))
+					ma.traits.addAll(enemy.traits);
+				ma.specialTrait = false;
+			}
 			if ((enemy.abi & 32) > 0)
 				proc.IMUWAVE.block = 100;
 			enemy.abi = Data.reorderAbi(enemy.abi, 2);
@@ -229,7 +230,7 @@ public class Enemy extends Animable<AnimU<?>, UType> implements AbEnemy {
 						ma.getProc().SUMMON.type.fix_buff = true;
 					ma.getProc().SUMMON.amount = 1;
 				}
-			} //Finish 6.9.2 check
+		} //Finish FORK_VERSION 1 checks
 
 		for (MaskAtk ma : atks)
 			if (ma.getProc().SUMMON.prob > 0 && (ma.getProc().SUMMON.id == null || !AbEnemy.class.isAssignableFrom(ma.getProc().SUMMON.id.cls)))

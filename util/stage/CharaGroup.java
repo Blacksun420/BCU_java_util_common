@@ -13,7 +13,6 @@ import common.pack.IndexContainer.IndexCont;
 import common.pack.IndexContainer.Indexable;
 import common.pack.PackData;
 import common.pack.PackData.UserPack;
-import common.pack.UserProfile;
 import common.util.Data;
 import common.util.unit.AbForm;
 import common.util.unit.AbUnit;
@@ -112,7 +111,7 @@ public class CharaGroup extends Data implements Indexable<PackData, CharaGroup>,
 	@JsonDecoder.OnInjected
 	public void onInjected(JsonObject jobj) {
 		UserPack pack = (UserPack) getCont();
-		if (UserProfile.isOlderPack(pack, "0.6.9.2")) {
+		if (pack.desc.FORK_VERSION < 1) {
 			JsonArray jarr = jobj.get("set").getAsJsonArray();
 			for (int i = 0; i < jarr.size(); i++) {
 				String pacc = jarr.get(i).getAsJsonObject().get("pack").getAsString();

@@ -263,7 +263,7 @@ public abstract class Source {
 		}
 
 		public void saveIconDisplay() {
-				if (anim.getEdi() != null && !id.base.equals(BasePath.BGEffect))
+				if (anim.getEdi() != null)
 					CommonStatic.ctx.noticeErr(() -> write("icon_display.png", anim.getEdi().getImg()), ErrType.ERROR,
 						"Error during saving display icon: " + id);
 		}

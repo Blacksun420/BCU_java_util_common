@@ -102,7 +102,7 @@ public class MixedBGEffect implements BackgroundEffect {
         }
         if (getName().length() == 0)
             return id.toString();
-        return id + " - " + getName();
+        return Data.trio(id.id) + " - " + getName();
     }
 
     @Override

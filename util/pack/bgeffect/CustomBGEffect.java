@@ -8,6 +8,7 @@ import common.system.P;
 import common.system.fake.FakeGraphics;
 import common.system.fake.FakeTransform;
 import common.util.Animable;
+import common.util.Data;
 import common.util.anim.*;
 import common.util.pack.Background;
 
@@ -64,7 +65,7 @@ public class CustomBGEffect extends Animable<AnimU<?>, AnimU.UType> implements B
     public void postDraw(FakeGraphics g, P rect, double siz, double midH) {
         FakeTransform at = g.getTransform();
         g.translate(convertP(1024, siz) + rect.x, convertP(7000 - midH, siz) - rect.y);
-        ebg[1].drawBGEffect(g, origin, siz * 0.8, 1000, 1, 1);
+        ebg[1].drawBGEffect(g, origin, siz * 0.8, 255, 1, 1);
         g.setTransform(at);
         g.delete(at);
     }
@@ -113,7 +114,7 @@ public class CustomBGEffect extends Animable<AnimU<?>, AnimU.UType> implements B
     public String toString() {
         if (getName().length() == 0)
             return id.toString();
-        return id + " - " + getName();
+        return Data.trio(id.id) + " - " + getName();
     }
 
     @Override
