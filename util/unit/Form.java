@@ -206,7 +206,6 @@ public class Form extends Animable<AnimU<?>, AnimU.UType> implements BasedCopabl
 					}
 			} //Finish 0.6.6.0 check
 
-			System.out.println(pack.desc.names.toString() + " --- " + pack.desc.FORK_VERSION);
 			//Updates stuff to match this fork without core version issues
 			if (pack.desc.FORK_VERSION < 1) {
 				for (AtkDataModel ma : atks) {
