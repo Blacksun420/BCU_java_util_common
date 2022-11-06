@@ -8,6 +8,7 @@ import common.util.anim.AnimU.UType;
 
 public class EAnimU extends EAnimD<AnimU.UType> {
 
+	private boolean flipped = false;
 	protected EAnimU(AnimU<?> ani, UType i) {
 		super(ani, ani.mamodel, ani.getMaAnim(i), i);
 		type = i;
@@ -18,6 +19,14 @@ public class EAnimU extends EAnimD<AnimU.UType> {
 		return (AnimU<?>) a;
 	}
 
+	public void draw(FakeGraphics g, P ori, double siz, boolean flip) {
+		if (flip != flipped) {
+			for (EPart e : order)
+				e.revert();
+			flipped = flip;
+		}
+		draw(g, ori, siz);
+	}
 	@Override
 	public void draw(FakeGraphics g, P ori, double siz) {
 		if (f == -1) {

@@ -136,7 +136,7 @@ public abstract class Entity extends AbEntity {
 
 			anim.paraTo(back);
 			if (e.kbTime == 0 || e.kb.kbType != INT_WARP)
-				anim.draw(gra, p, siz);
+				anim.draw(gra, p, siz, e.negSpeed());
 			anim.paraTo(null);
 			gra.setTransform(at);
 			if (CommonStatic.getConfig().ref)
@@ -2426,6 +2426,25 @@ public abstract class Entity extends AbEntity {
 		pos += mov * dire;
 
 		return maxl > mov;
+	}
+
+	protected boolean negSpeed() {
+		if (cantGoMore() || getAnim().type != UType.WALK)
+			return false;
+
+		double mov = status[P_SLOW][0] > 0 ? 0.25 : data.getSpeed() * 0.5;
+		if (status[P_SPEED][0] > 0 && status[P_SLOW][0] <= 0) {
+			if (status[P_SPEED][2] == 0) {
+				mov += status[P_SPEED][1] * 0.5;
+			} else if (status[P_SPEED][2] == 1) {
+				mov = mov * (100 + status[P_SPEED][1]) / 100;
+			} else if (status[P_SPEED][2] == 2) {
+				mov = status[P_SPEED][1] * 0.5;
+			}
+		}
+		mov *= auras.getSpdAura();
+
+		return mov < 0;
 	}
 
 	/**

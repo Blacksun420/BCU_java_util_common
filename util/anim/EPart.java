@@ -22,6 +22,7 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 	private int z, angle, opacity, glow, extendX, extendY, extType; // extType - 0 : Slow, 1 : Curse
 	private int hf, vf;
 	public boolean EWarp = false;
+	private boolean flipped = false;
 
 	protected EPart(MaModel mm, AnimI<?, ?> aa, int[] part, String str, int i, EPart[] ents) {
 		model = mm;
@@ -80,11 +81,11 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 		else if (m == 8)
 			gsca = v;
 		else if (m == 9)
-			sca.x = 1.0 * args[8] * v / model.ints[0];
+			sca.x = 1.0 * args[8] * v / model.ints[0] * (flipped && fa == null ? -1 : 1);
 		else if (m == 10)
 			sca.y = 1.0 * args[9] * v / model.ints[0];
 		else if (m == 11)
-			angle = args[10] + v;
+			angle = (args[10] + v) * (flipped ? -1 : 1);
 		else if (m == 12)
 			opacity = v * args[11] / model.ints[2];
 		else if (m == 13)
@@ -188,6 +189,13 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 		P.delete(sc);
 		g.setTransform(at);
 		g.delete(at);
+	}
+
+	public void revert() {
+		flipped = !flipped;
+		if (fa == null)
+			sca.x *= -1;
+		angle *= -1;
 	}
 
 	/**
