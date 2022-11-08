@@ -87,7 +87,21 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 		public String path() {
 			return path;
 		}
+	}
 
+	public enum LethargyEff implements EffType<LethargyEff> {
+		DOWN("0"), UP("1");
+
+		private final String path;
+
+		LethargyEff(String str) {
+			path = str;
+		}
+
+		@Override
+		public String path() {
+			return path;
+		}
 	}
 
 	public static class EffAnimStore {
@@ -236,6 +250,10 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 		public EffAnim<DmgCap> A_E_DMGCAP;
 		@Order(73)
 		public EffAnim<DefEff> A_DOOR;
+		@Order(74)
+		public EffAnim<LethargyEff> A_LETHARGY;
+		@Order(75)
+		public EffAnim<LethargyEff> A_E_LETHARGY;
 
 		public EffAnim<?>[] values() {
 			Field[] fld = FieldOrder.getDeclaredFields(EffAnimStore.class);
@@ -451,6 +469,13 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 		VImg vdr = new VImg(path + ".png");
 		ImgCut icdr = ImgCut.newIns(path + ".imgcut");
 		effas.A_DOOR = new EffAnim<>(path, vdr, icdr, DefEff.values());
+
+		path = "./org/battle/skill_lethargy/skill_lethargy";
+		VImg vlt = new VImg(path + ".png");
+		ImgCut iclt = ImgCut.newIns(path + ".imgcut");
+		effas.A_LETHARGY = new EffAnim<>(path, vlt, iclt, LethargyEff.values());
+		effas.A_E_LETHARGY = new EffAnim<>(path, vlt, iclt, LethargyEff.values());
+		effas.A_E_LETHARGY.rev = true;
 	}
 
 	private static void excColor(FakeImage fimg, Function<int[], Integer> f) {

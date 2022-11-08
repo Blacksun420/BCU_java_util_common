@@ -161,12 +161,10 @@ public abstract class Entity extends AbEntity {
 			}
 
 			for(int i = 0; i < effs.length; i++) {
-				if(i == A_B || i == A_E_B || i == A_DEMON_SHIELD || i == A_E_DEMON_SHIELD ||
-						i == A_COUNTER || i == A_E_COUNTER || i == A_DMGCUT || i == A_E_DMGCUT ||
-						i == A_DMGCAP || i == A_E_DMGCAP)
+				if(i == A_B || i == A_DEMON_SHIELD || i == A_COUNTER || i == A_DMGCUT || i == A_DMGCAP)
 					continue;
 
-				if (((i == A_SLOW || i == A_E_SLOW) && status[P_STOP][0] != 0) || ((i == A_UP || i == A_E_UP) && status[P_WEAK][0] != 0) || ((i == A_CURSE || i == A_E_CURSE) && status[P_SEAL][0] != 0))
+				if ((i == A_SLOW && status[P_STOP][0] != 0) || (i == A_UP && status[P_WEAK][0] != 0) || (i == A_CURSE && status[P_SEAL][0] != 0))
 					continue;
 
 				EAnimD<?> eae = effs[i];
@@ -184,9 +182,7 @@ public abstract class Entity extends AbEntity {
 			x = p.x;
 
 			for(int i = 0; i < effs.length; i++) {
-				if(i == A_B || i == A_E_B || i == A_DEMON_SHIELD || i == A_E_DEMON_SHIELD ||
-						i == A_COUNTER || i == A_E_COUNTER || i == A_DMGCUT || i == A_E_DMGCUT ||
-						i == A_DMGCAP || i == A_E_DMGCAP) {
+				if(i == A_B || i == A_DEMON_SHIELD || i == A_COUNTER || i == A_DMGCUT || i == A_DMGCAP) {
 					EAnimD<?> eae = effs[i];
 
 					if(eae == null)
@@ -209,214 +205,149 @@ public abstract class Entity extends AbEntity {
 		@SuppressWarnings("unchecked")
 		public void getEff(int t) {
 			int dire = e.dire;
-			if (t == INV) {
-				effs[eftp] = null;
-				eftp = A_EFF_INV;
-				effs[eftp] = effas().A_EFF_INV.getEAnim(DefEff.DEF);
-				efft = effas().A_EFF_INV.len(DefEff.DEF);
-			}
-			if (t == P_WAVE) {
-				int id = dire == -1 ? A_WAVE_INVALID : A_E_WAVE_INVALID;
-				EffAnim<DefEff> eff = dire == -1 ? effas().A_WAVE_INVALID : effas().A_E_WAVE_INVALID;
-				effs[id] = eff.getEAnim(DefEff.DEF);
-				status[P_WAVE][0] = eff.len(DefEff.DEF);
-			}
-			if (t == STPWAVE) {
-				effs[eftp] = null;
-				eftp = dire == -1 ? A_WAVE_STOP : A_E_WAVE_STOP;
-				EffAnim<DefEff> eff = dire == -1 ? effas().A_WAVE_STOP : effas().A_E_WAVE_STOP;
-				effs[eftp] = eff.getEAnim(DefEff.DEF);
-				efft = eff.len(DefEff.DEF);
-			}
-			if (t == INVWARP) {
-				effs[eftp] = null;
-				eftp = dire == -1 ? A_FARATTACK : A_E_FARATTACK;
-				EffAnim<DefEff> eff = dire == -1 ? effas().A_FARATTACK : effas().A_E_FARATTACK;
-				effs[eftp] = eff.getEAnim(DefEff.DEF);
-				efft = eff.len(DefEff.DEF);
-			}
-			if (t == P_STOP) {
-				int id = dire == -1 ? A_STOP : A_E_STOP;
-				effs[id] = (dire == -1 ? effas().A_STOP : effas().A_E_STOP).getEAnim(DefEff.DEF);
-			}
-			if (t == P_IMUATK) {
-				effs[A_IMUATK] = effas().A_IMUATK.getEAnim(DefEff.DEF);
-			}
-			if (t == P_SLOW) {
-				int id = dire == -1 ? A_SLOW : A_E_SLOW;
-				effs[id] = (dire == -1 ? effas().A_SLOW : effas().A_E_SLOW).getEAnim(DefEff.DEF);
-			}
-			if (t == P_WEAK && status[P_WEAK][1] != 100) {
-				if (status[P_WEAK][1] < 100) {
-					int id = dire == -1 ? A_DOWN : A_E_DOWN;
-					effs[id] = (dire == -1 ? effas().A_DOWN : effas().A_E_DOWN).getEAnim(DefEff.DEF);
-					effs[dire == -1 ? A_WEAK_UP : A_E_WEAK_UP] = null;
-				} else {
-					int id = dire == -1 ? A_WEAK_UP : A_E_WEAK_UP;
-					effs[id] = (dire == -1 ? effas().A_WEAK_UP : effas().A_E_WEAK_UP).getEAnim(WeakUpEff.UP);
-				}
-			}
-			if (t == P_CURSE) {
-				int id = dire == -1 ? A_CURSE : A_E_CURSE;
-				effs[id] = (dire == -1 ? effas().A_CURSE : effas().A_E_CURSE).getEAnim(DefEff.DEF);
-			}
-			if (t == P_POISON) {
-				int mask = status[P_POISON][0];
-				EffAnim<?>[] arr = { effas().A_POI0, e.dire == -1 ? effas().A_POI1 : effas().A_POI1_E, effas().A_POI2, effas().A_POI3, effas().A_POI4,
-						effas().A_POI5, effas().A_POI6, effas().A_POI7 };
-				for (int i = 0; i < A_POIS.length; i++)
-					if ((mask & (1 << i)) > 0) {
-						int id = A_POIS[i];
-						effs[id] = ((EffAnim<DefEff>) arr[i]).getEAnim(DefEff.DEF);
+			switch (t) {
+				case INV: {
+					effs[eftp] = null;
+					eftp = A_EFF_INV;
+					effs[eftp] = effas().A_EFF_INV.getEAnim(DefEff.DEF);
+					efft = effas().A_EFF_INV.len(DefEff.DEF);
+					break;
+				} case P_WAVE: {
+					effs[A_WAVE_INVALID] = (dire == -1 ? effas().A_WAVE_INVALID : effas().A_E_WAVE_INVALID).getEAnim(DefEff.DEF);
+					break;
+				} case STPWAVE: {
+					effs[eftp] = null;
+					eftp = A_WAVE_STOP;
+					EffAnim<DefEff> eff = dire == -1 ? effas().A_WAVE_STOP : effas().A_E_WAVE_STOP;
+					effs[eftp] = eff.getEAnim(DefEff.DEF);
+					efft = eff.len(DefEff.DEF);
+					break;
+				} case INVWARP: {
+					effs[eftp] = null;
+					eftp = A_FARATTACK;
+					EffAnim<DefEff> eff = dire == -1 ? effas().A_FARATTACK : effas().A_E_FARATTACK;
+					effs[eftp] = eff.getEAnim(DefEff.DEF);
+					efft = eff.len(DefEff.DEF);
+					break;
+				} case P_STOP: {
+					effs[A_STOP] = (dire == -1 ? effas().A_STOP : effas().A_E_STOP).getEAnim(DefEff.DEF);
+					break;
+				} case P_IMUATK: {
+					effs[A_IMUATK] = effas().A_IMUATK.getEAnim(DefEff.DEF);
+					break;
+				} case P_SLOW: {
+					effs[A_SLOW] = (dire == -1 ? effas().A_SLOW : effas().A_E_SLOW).getEAnim(DefEff.DEF);
+					break;
+				} case P_LETHARGY: {
+					effs[A_LETHARGY] = (dire == -1 ? effas().A_LETHARGY : effas().A_E_LETHARGY).getEAnim(status[P_LETHARGY][1] > 0 ? LethargyEff.DOWN : LethargyEff.UP);
+					break;
+				} case P_WEAK: {
+					if (status[P_WEAK][1] == 100)
+						break;
+					if (status[P_WEAK][1] < 100) {
+						effs[A_DOWN] = (dire == -1 ? effas().A_DOWN : effas().A_E_DOWN).getEAnim(DefEff.DEF);
+						effs[A_WEAK_UP] = null;
+					} else {
+						effs[A_WEAK_UP] = (dire == -1 ? effas().A_WEAK_UP : effas().A_E_WEAK_UP).getEAnim(WeakUpEff.UP);
+						effs[A_DOWN] = null;
 					}
+					break;
+				} case P_CURSE: {
+					effs[A_CURSE] = (dire == -1 ? effas().A_CURSE : effas().A_E_CURSE).getEAnim(DefEff.DEF);
+					break;
+				} case P_POISON: {
+					int mask = status[P_POISON][0];
+					EffAnim<?>[] arr = {effas().A_POI0, e.dire == -1 ? effas().A_POI1 : effas().A_POI1_E, effas().A_POI2, effas().A_POI3, effas().A_POI4,
+							effas().A_POI5, effas().A_POI6, effas().A_POI7};
+					for (int i = 0; i < A_POIS.length; i++)
+						if ((mask & (1 << i)) > 0) {
+							int id = A_POIS[i];
+							effs[id] = ((EffAnim<DefEff>) arr[i]).getEAnim(DefEff.DEF);
+						}
+					break;
+				} case P_SEAL: {
+					effs[A_SEAL] = (dire == -1 ? effas().A_SEAL : effas().A_E_SEAL).getEAnim(DefEff.DEF);
+					break;
+				} case P_STRONG: {
+					effs[A_UP] = (dire == -1 ? effas().A_UP : effas().A_E_UP).getEAnim(DefEff.DEF);
+					break;
+				} case P_LETHAL: {
+					EffAnim<DefEff> ea = dire == -1 ? effas().A_SHIELD : effas().A_E_SHIELD;
+					effs[A_SHIELD] = ea.getEAnim(DefEff.DEF);
+					CommonStatic.setSE(SE_LETHAL);
+					break;
+				} case P_WARP: {
+					EffAnim<WarpEff> ea = effas().A_W;
+					int ind = status[P_WARP][2];
+					WarpEff pa = ind == 0 ? WarpEff.ENTER : WarpEff.EXIT;
+					e.basis.lea.add(new WaprCont(e.pos, pa, e.layer, anim, e.dire));
+					e.basis.lea.sort(Comparator.comparingInt(e -> e.layer));
+					CommonStatic.setSE(ind == 0 ? SE_WARP_ENTER : SE_WARP_EXIT);
+					status[P_WARP][ind] = ea.len(pa);
+					break;
+				} case BREAK_ABI: {
+					effs[A_B] = (dire == -1 ? effas().A_B : effas().A_E_B).getEAnim(BarrierEff.BREAK);
+					CommonStatic.setSE(SE_BARRIER_ABI);
+					break;
+				} case BREAK_ATK: {
+					effs[A_B] = (dire == -1 ? effas().A_B : effas().A_E_B).getEAnim(BarrierEff.DESTR);
+					CommonStatic.setSE(SE_BARRIER_ATK);
+					break;
+				} case BREAK_NON: {
+					effs[A_B] = (dire == -1 ? effas().A_B : effas().A_E_B).getEAnim(BarrierEff.NONE);
+					CommonStatic.setSE(SE_BARRIER_NON);
+					break;
+				} case P_ARMOR: {
+					ArmorEff index = status[P_ARMOR][1] >= 0 ? ArmorEff.DEBUFF : ArmorEff.BUFF;
+					effs[A_ARMOR] = (dire == -1 ? effas().A_ARMOR : effas().A_E_ARMOR).getEAnim(index);
+					break;
+				} case P_SPEED: {
+					SpeedEff index;
+					if (status[P_SPEED][2] <= 1)
+						index = status[P_SPEED][1] >= 0 ? SpeedEff.UP : SpeedEff.DOWN;
+					else
+						index = status[P_SPEED][1] >= e.data.getSpeed() ? SpeedEff.UP : SpeedEff.DOWN;
+					effs[A_SPEED] = (dire == -1 ? effas().A_SPEED : effas().A_E_SPEED).getEAnim(index);
+					break;
+				} case HEAL: {
+					effs[A_HEAL] = (dire == -1 ? effas().A_HEAL : effas().A_E_HEAL).getEAnim(DefEff.DEF);
+					break;
+				} case SHIELD_HIT: {
+					EffAnim<ShieldEff> eff = dire == -1 ? effas().A_DEMON_SHIELD : effas().A_E_DEMON_SHIELD;
+					boolean half = e.currentShield * 1.0 / (e.getProc().DEMONSHIELD.hp * e.shieldMagnification) < 0.5;
 
-			}
-			if (t == P_SEAL) {
-				effs[dire == -1 ? A_SEAL : A_E_SEAL] = (dire == -1 ? effas().A_SEAL : effas().A_E_SEAL).getEAnim(DefEff.DEF);
-			}
-			if (t == P_STRONG) {
-				int id = dire == -1 ? A_UP : A_E_UP;
-				effs[id] = (dire == -1 ? effas().A_UP : effas().A_E_UP).getEAnim(DefEff.DEF);
-			}
-			if (t == P_LETHAL) {
-				int id = dire == -1 ? A_SHIELD : A_E_SHIELD;
-				EffAnim<DefEff> ea = dire == -1 ? effas().A_SHIELD : effas().A_E_SHIELD;
-				status[P_LETHAL][1] = ea.len(DefEff.DEF);
-				effs[id] = ea.getEAnim(DefEff.DEF);
-				CommonStatic.setSE(SE_LETHAL);
-			}
-			if (t == P_WARP) {
-				EffAnim<WarpEff> ea = effas().A_W;
-				int ind = status[P_WARP][2];
-				WarpEff pa = ind == 0 ? WarpEff.ENTER : WarpEff.EXIT;
-				e.basis.lea.add(new WaprCont(e.pos, pa, e.layer, anim, e.dire));
-				e.basis.lea.sort(Comparator.comparingInt(e -> e.layer));
-				CommonStatic.setSE(ind == 0 ? SE_WARP_ENTER : SE_WARP_EXIT);
-				status[P_WARP][ind] = ea.len(pa);
-
-			}
-
-			if (t == BREAK_ABI) {
-				int id = dire == -1 ? A_B : A_E_B;
-				effs[id] = (dire == -1 ? effas().A_B : effas().A_E_B).getEAnim(BarrierEff.BREAK);
-				status[P_BREAK][0] = effs[id].len();
-				CommonStatic.setSE(SE_BARRIER_ABI);
-			}
-			if (t == BREAK_ATK) {
-				int id = dire == -1 ? A_B : A_E_B;
-				effs[id] = (dire == -1 ? effas().A_B : effas().A_E_B).getEAnim(BarrierEff.DESTR);
-				status[P_BREAK][0] = effs[id].len();
-				CommonStatic.setSE(SE_BARRIER_ATK);
-			}
-			if (t == BREAK_NON) {
-				int id = dire == -1 ? A_B : A_E_B;
-				effs[id] = (dire == -1 ? effas().A_B : effas().A_E_B).getEAnim(BarrierEff.NONE);
-				status[P_BREAK][0] = effs[id].len();
-				CommonStatic.setSE(SE_BARRIER_NON);
-			}
-			if (t == P_ARMOR) {
-				int id = dire == -1 ? A_ARMOR : A_E_ARMOR;
-				EffAnim<ArmorEff> eff = dire == -1 ? effas().A_ARMOR : effas().A_E_ARMOR;
-				ArmorEff index = status[P_ARMOR][1] >= 0 ? ArmorEff.DEBUFF : ArmorEff.BUFF;
-				effs[id] = eff.getEAnim(index);
-			}
-
-			if (t == P_SPEED) {
-				int id = dire == -1 ? A_SPEED : A_E_SPEED;
-				EffAnim<SpeedEff> eff = dire == -1 ? effas().A_SPEED : effas().A_E_SPEED;
-				SpeedEff index;
-
-				if (status[P_SPEED][2] <= 1) {
-					index = status[P_SPEED][1] >= 0 ? SpeedEff.UP : SpeedEff.DOWN;
-				} else {
-					index = status[P_SPEED][1] >= e.data.getSpeed() ? SpeedEff.UP : SpeedEff.DOWN;
+					effs[A_DEMON_SHIELD] = eff.getEAnim(half ? ShieldEff.HALF : ShieldEff.FULL);
+					status[P_DEMONSHIELD][0] = effs[A_DEMON_SHIELD].len();
+					CommonStatic.setSE(SE_SHIELD_HIT);
+					break;
+				} case SHIELD_BROKEN: {
+					effs[A_DEMON_SHIELD] = (dire == -1 ? effas().A_DEMON_SHIELD : effas().A_E_DEMON_SHIELD).getEAnim(ShieldEff.BROKEN);
+					status[P_DEMONSHIELD][0] = effs[A_DEMON_SHIELD].len();
+					CommonStatic.setSE(SE_SHIELD_BROKEN);
+					break;
+				} case SHIELD_REGEN: {
+					effs[A_DEMON_SHIELD] = (dire == -1 ? effas().A_DEMON_SHIELD : effas().A_E_DEMON_SHIELD).getEAnim(ShieldEff.REGENERATION);
+					status[P_DEMONSHIELD][0] = effs[A_DEMON_SHIELD].len();
+					CommonStatic.setSE(SE_SHIELD_REGEN);
+					break;
+				} case SHIELD_BREAKER: {
+					effs[A_DEMON_SHIELD] = (dire == -1 ? effas().A_DEMON_SHIELD : effas().A_E_DEMON_SHIELD).getEAnim(ShieldEff.BREAKER);
+					status[P_DEMONSHIELD][0] = effs[A_DEMON_SHIELD].len();
+					CommonStatic.setSE(SE_SHIELD_BREAKER);
+					break;
+				} case P_COUNTER: {
+					effs[A_COUNTER] = (dire == -1 ? effas().A_COUNTER : effas().A_E_COUNTER).getEAnim(DefEff.DEF);
+					break;
+				} case P_DMGCUT: {
+					effs[A_DMGCUT] = (dire == -1 ? effas().A_DMGCUT : effas().A_E_DMGCUT).getEAnim(DefEff.DEF);
+					break;
+				} case DMGCAP_FAIL: {
+					effs[A_DMGCAP] = (dire == -1 ? effas().A_DMGCAP : effas().A_E_DMGCAP).getEAnim(DmgCap.FAIL);
+					break;
+				} case DMGCAP_SUCCESS: {
+					effs[A_DMGCAP] = (dire == -1 ? effas().A_DMGCAP : effas().A_E_DMGCAP).getEAnim(DmgCap.SUCCESS);
+					break;
 				}
-
-				effs[id] = eff.getEAnim(index);
-			}
-
-			if (t == HEAL) {
-				EffAnim<DefEff> eff = dire == -1 ? effas().A_HEAL : effas().A_E_HEAL;
-
-				effs[dire == -1 ? A_HEAL : A_E_HEAL] = eff.getEAnim(DefEff.DEF);
-			}
-
-			if (t == SHIELD_HIT) {
-				int id = dire == -1 ? A_DEMON_SHIELD : A_E_DEMON_SHIELD;
-
-				EffAnim<ShieldEff> eff = dire == -1 ? effas().A_DEMON_SHIELD : effas().A_E_DEMON_SHIELD;
-
-				boolean half = e.currentShield * 1.0 / (e.getProc().DEMONSHIELD.hp * e.shieldMagnification) < 0.5;
-
-				effs[id] = eff.getEAnim(half ? ShieldEff.HALF : ShieldEff.FULL);
-				status[P_DEMONSHIELD][0] = effs[id].len();
-
-				CommonStatic.setSE(SE_SHIELD_HIT);
-			}
-
-			if (t == SHIELD_BROKEN) {
-				int id = dire == -1 ? A_DEMON_SHIELD : A_E_DEMON_SHIELD;
-
-				EffAnim<ShieldEff> eff = dire == -1 ? effas().A_DEMON_SHIELD : effas().A_E_DEMON_SHIELD;
-
-				effs[id] = eff.getEAnim(ShieldEff.BROKEN);
-				status[P_DEMONSHIELD][0] = effs[id].len();
-
-				CommonStatic.setSE(SE_SHIELD_BROKEN);
-			}
-
-			if (t == SHIELD_REGEN) {
-				int id = dire == -1 ? A_DEMON_SHIELD : A_E_DEMON_SHIELD;
-
-				EffAnim<ShieldEff> eff = dire == -1 ? effas().A_DEMON_SHIELD : effas().A_E_DEMON_SHIELD;
-
-				effs[id] = eff.getEAnim(ShieldEff.REGENERATION);
-				status[P_DEMONSHIELD][0] = effs[id].len();
-
-				CommonStatic.setSE(SE_SHIELD_REGEN);
-			}
-
-			if (t == SHIELD_BREAKER) {
-				int id = dire == -1 ? A_DEMON_SHIELD : A_E_DEMON_SHIELD;
-
-				EffAnim<ShieldEff> eff = dire == -1 ? effas().A_DEMON_SHIELD : effas().A_E_DEMON_SHIELD;
-
-				effs[id] = eff.getEAnim(ShieldEff.BREAKER);
-				status[P_DEMONSHIELD][0] = effs[id].len();
-
-				CommonStatic.setSE(SE_SHIELD_BREAKER);
-			}
-
-			if(t == P_COUNTER) {
-				int id = dire == -1 ? A_COUNTER : A_E_COUNTER;
-
-				EffAnim<DefEff> eff = dire == -1 ? effas().A_COUNTER : effas().A_E_COUNTER;
-
-				effs[id] = eff.getEAnim(DefEff.DEF);
-			}
-
-			if(t == P_DMGCUT) {
-				int id = dire == -1 ? A_DMGCUT : A_E_DMGCUT;
-
-				EffAnim<DefEff> eff = dire == -1 ? effas().A_DMGCUT : effas().A_E_DMGCUT;
-
-				effs[id] = eff.getEAnim(DefEff.DEF);
-			}
-
-			if(t == DMGCAP_FAIL) {
-				int id = dire == -1 ? A_DMGCAP : A_E_DMGCAP;
-
-				EffAnim<DmgCap> eff = dire == -1 ? effas().A_DMGCAP : effas().A_E_DMGCAP;
-
-				effs[id] = eff.getEAnim(DmgCap.FAIL);
-			}
-
-			if(t == DMGCAP_SUCCESS) {
-				int id = dire == -1 ? A_DMGCAP : A_E_DMGCAP;
-
-				EffAnim<DmgCap> eff = dire == -1 ? effas().A_DMGCAP : effas().A_E_DMGCAP;
-
-				effs[id] = eff.getEAnim(DmgCap.SUCCESS);
 			}
 		}
 
@@ -427,104 +358,50 @@ public abstract class Entity extends AbEntity {
 			int dire = e.dire;
 			if (efft == 0)
 				effs[eftp] = null;
-			if (status[P_STOP][0] == 0) {
-				byte id = dire == -1 ? A_STOP : A_E_STOP;
-				effs[id] = null;
-			}
-			if (status[P_SLOW][0] == 0) {
-				byte id = dire == -1 ? A_SLOW : A_E_SLOW;
-				effs[id] = null;
-			}
+			if (status[P_STOP][0] == 0)
+				effs[A_STOP] = null;
+			if (status[P_SLOW][0] == 0)
+				effs[A_SLOW] = null;
 			if (status[P_WEAK][0] == 0 || status[P_WEAK][1] == 100) {
-				byte id;
-
-				if (status[P_WEAK][1] <= 100) {
-					id = dire == -1 ? A_DOWN : A_E_DOWN;
-				} else {
-					id = dire == -1 ? A_WEAK_UP : A_E_WEAK_UP;
-				}
+				byte id = status[P_WEAK][1] <= 100 ? A_DOWN : A_WEAK_UP;
 
 				status[P_WEAK][1] = 100;
 				effs[id] = null;
 			}
 			if (status[P_LETHARGY][0] == 0) {
-				status[P_LETHARGY][2] = -1;
-				//TODO - Lethargy animation
+				status[P_LETHARGY][2] = -1; //TODO - Lethargy strengthen animatgion
+				effs[A_LETHARGY] = null;
 			}
-			if (status[P_CURSE][0] == 0) {
-				byte id = dire == -1 ? A_CURSE : A_E_CURSE;
-				effs[id] = null;
-			}
-			if (status[P_IMUATK][0] == 0 && status[P_BSTHUNT][0] == 0) {
+			if (status[P_CURSE][0] == 0)
+				effs[A_CURSE] = null;
+			if (status[P_IMUATK][0] == 0 && status[P_BSTHUNT][0] == 0)
 				effs[A_IMUATK] = null;
-			}
-			if (status[P_POISON][0] == 0) {
-				for(int i = 0; i < A_POIS.length; i++) {
+			if (status[P_POISON][0] == 0)
+				for(int i = 0; i < A_POIS.length; i++)
 					effs[A_POIS[i]] = null;
-				}
-			}
-			if (status[P_SEAL][0] == 0) {
-				effs[dire == -1 ? A_SEAL : A_E_SEAL] = null;
-			}
-			if (status[P_LETHAL][1] == 0) {
-				byte id = dire == -1 ? A_SHIELD : A_E_SHIELD;
-				effs[id] = null;
-			} else
-				status[P_LETHAL][1]--;
-			if (status[P_WAVE][0] == 0) {
-				byte id = dire == -1 ? A_WAVE_INVALID : A_E_WAVE_INVALID;
-				effs[id] = null;
-			} else
-				status[P_WAVE][0]--;
-			if (status[P_STRONG][0] == 0) {
-				byte id = dire == -1 ? A_UP : A_E_UP;
-				effs[id] = null;
-			}
-			if (status[P_BREAK][0] == 0) {
-				byte id = dire == -1 ? A_B : A_E_B;
-				effs[id] = null;
-			} else
-				status[P_BREAK][0]--;
+			if (status[P_SEAL][0] == 0)
+				effs[A_SEAL] = null;
 
-			if (status[P_ARMOR][0] == 0) {
-				byte id = dire == -1 ? A_ARMOR : A_E_ARMOR;
-				effs[id] = null;
-			}
-
-			if (status[P_SPEED][0] == 0) {
-				byte id = dire == -1 ? A_SPEED : A_E_SPEED;
-				effs[id] = null;
-			}
-
-			byte healId = e.dire == -1 ? A_HEAL : A_E_HEAL;
-
-			if(effs[healId] != null && effs[healId].done()) {
-				effs[healId] = null;
-			}
-
-			if(effs[A_COUNTER] != null && effs[A_COUNTER].done()) {
+			if (effs[A_SHIELD] != null && effs[A_SHIELD].done())
+				effs[A_SHIELD] = null;
+			if (effs[A_WAVE_INVALID] != null && effs[A_WAVE_INVALID].done())
+				effs[A_WAVE_INVALID] = null;
+			if (status[P_STRONG][0] == 0)
+				effs[A_UP] = null;
+			if (effs[A_B] != null && effs[A_B].done())
+				effs[A_B] = null;
+			if (status[P_ARMOR][0] == 0)
+				effs[A_ARMOR] = null;
+			if (status[P_SPEED][0] == 0)
+				effs[A_SPEED] = null;
+			if(effs[A_HEAL] != null && effs[A_HEAL].done())
+				effs[A_HEAL] = null;
+			if(effs[A_COUNTER] != null && effs[A_COUNTER].done())
 				effs[A_COUNTER] = null;
-			}
-
-			if(effs[A_E_COUNTER] != null && effs[A_E_COUNTER].done()) {
-				effs[A_E_COUNTER] = null;
-			}
-
-			if(effs[A_DMGCUT] != null && effs[A_DMGCUT].done()) {
-				effs[A_E_DMGCUT] = null;
-			}
-
-			if(effs[A_E_DMGCUT] != null && effs[A_E_DMGCUT].done()) {
-				effs[A_E_DMGCUT] = null;
-			}
-
-			if(effs[A_DMGCAP] != null && effs[A_DMGCAP].done()) {
+			if(effs[A_DMGCUT] != null && effs[A_DMGCUT].done())
+				effs[A_DMGCUT] = null;
+			if(effs[A_DMGCAP] != null && effs[A_DMGCAP].done())
 				effs[A_DMGCAP] = null;
-			}
-
-			if(effs[A_E_DMGCAP] != null && effs[A_E_DMGCAP].done()) {
-				effs[A_E_DMGCAP] = null;
-			}
 
 			efft--;
 		}
@@ -1859,8 +1736,7 @@ public abstract class Entity extends AbEntity {
 				if (status[P_LETHARGY][2] == -1 || (t && status[P_LETHARGY][1] * data.getTBA() > status[P_LETHARGY][1] + data.getTBA()) ||
 						(!t && status[P_LETHARGY][1] * data.getTBA() < status[P_LETHARGY][1] + data.getTBA()))
 					status[P_LETHARGY][2] = t ? 1 : 0;
-
-				//anim.getEff(P_LETHARGY);
+				anim.getEff(P_LETHARGY);
 			} else
 				anim.getEff(INV);
 		}

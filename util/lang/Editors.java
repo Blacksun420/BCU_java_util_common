@@ -221,6 +221,8 @@ public class Editors {
 			ProcItem item = getProcItem();
 			if (item instanceof Proc.IMUAD)
 				setComponentVisibility(this, item.exists(), 2);
+			else if (item instanceof Proc.AURA)
+				setComponentVisibility(this, item.exists(), 4);
 			else if (!(item instanceof Proc.IMU)) {
 				ArrayList<Integer> visFields = new ArrayList<>();
 				EditorSupplier edi = UserProfile.getStatic("Editor_Supplier", () -> null);
@@ -326,6 +328,8 @@ public class Editors {
 			if (t.prob == 0)
 				t.mult = t.time = 0;
 			else {
+				if (t.type.percentage)
+					t.prob = Math.max(t.prob, -100);
 				t.time = Math.max(t.time, 1);
 			}
 		}));

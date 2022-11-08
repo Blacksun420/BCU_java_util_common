@@ -915,6 +915,11 @@ public class Data {
 			return JsonEncoder.encode(this).toString();
 		}
 
+		/**
+		 * Used to parse procs into pack data
+		 * @return The encoded proc as json object
+		 */
+		@SuppressWarnings("unused")
 		public JsonObject serProc() {
 			JsonObject obj = new JsonObject();
 
@@ -934,6 +939,12 @@ public class Data {
 			return obj;
 		}
 
+		/**
+		 * Used to generate procs from the pack's json data
+		 * @param elem Json Component containing the proc's data
+		 * @return The decoded proc
+		 */
+		@SuppressWarnings("unused")
 		public static Proc genProc(JsonElement elem) {
 			Proc proc = Proc.blank();
 
@@ -1419,78 +1430,41 @@ public class Data {
 	public static final byte C_M_MAX = 9;
 	public static final byte C_RESP = 11;
 	public static final byte C_MEAR = 12;
-	public static final byte C_XP = 13;// abandoned
 	public static final byte C_TOT = 25;
 
 	// Effects Anim index
-	public static final byte A_KB = 29;
-	public static final byte A_CRIT = 28;
-	public static final byte A_SHOCKWAVE = 27;
-	public static final byte A_ZOMBIE = 26;
-	public static final byte A_EFF_INV = 18;
-	public static final byte A_EFF_DEF = 19;// unused
-	public static final byte A_Z_STRONG = 20;
-	public static final byte A_B = 21;
-	public static final byte A_E_B = 22;
-	public static final byte A_W = 23;
-	public static final byte A_W_C = 24;
-	public static final byte A_CURSE = 25;
 	public static final byte A_DOWN = 0;
-	public static final byte A_UP = 2;
-	public static final byte A_SLOW = 4;
-	public static final byte A_STOP = 6;
-	public static final byte A_SHIELD = 8;
-	public static final byte A_FARATTACK = 10;
-	public static final byte A_WAVE_INVALID = 12;
-	public static final byte A_WAVE_STOP = 14;
-	public static final byte A_WAVEGUARD = 16;// unused
-	public static final byte A_E_DOWN = 1;
-	public static final byte A_E_UP = 3;
-	public static final byte A_E_SLOW = 5;
-	public static final byte A_E_STOP = 7;
-	public static final byte A_E_SHIELD = 9;
-	public static final byte A_E_FARATTACK = 11;
-	public static final byte A_E_WAVE_INVALID = 13;
-	public static final byte A_E_WAVE_STOP = 15;
-	public static final byte A_E_WAVEGUARD = 17;// unused
-	public static final byte A_SNIPER = 30;
-	public static final byte A_U_ZOMBIE = 31;
-	public static final byte A_SEAL = 32;
-	public static final byte A_E_SEAL = 33;
-	public static final byte A_POI0 = 34;
-	public static final byte A_POI1 = 35;
-	public static final byte A_POI2 = 36;
-	public static final byte A_POI3 = 37;
-	public static final byte A_POI4 = 38;
-	public static final byte A_POI5 = 39;
-	public static final byte A_POI6 = 40;
-	public static final byte A_POI7 = 41;
-	public static final byte A_SATK = 42;
-	public static final byte A_IMUATK = 43;
-	public static final byte A_POISON = 44;
-	public static final byte A_VOLC = 45;
-	public static final byte A_E_VOLC = 46;
-	public static final byte A_E_CURSE = 47;
-	public static final byte A_WAVE = 48;
-	public static final byte A_E_WAVE = 49;
-	public static final byte A_ARMOR = 50;
-	public static final byte A_E_ARMOR = 51;
-	public static final byte A_SPEED = 52;
-	public static final byte A_E_SPEED = 53;
-	public static final byte A_WEAK_UP = 54;
-	public static final byte A_E_WEAK_UP = 55;
-	public static final byte A_HEAL = 56;
-	public static final byte A_E_HEAL = 57;
-	public static final byte A_DEMON_SHIELD = 58;
-	public static final byte A_E_DEMON_SHIELD = 59;
-	public static final byte A_COUNTER = 60;
-	public static final byte A_E_COUNTER = 61;
-	public static final byte A_DMGCUT = 62;
-	public static final byte A_E_DMGCUT = 63;
-	public static final byte A_DMGCAP = 64;
-	public static final byte A_E_DMGCAP = 65;
+	public static final byte A_UP = 1;
+	public static final byte A_SLOW = 2;
+	public static final byte A_STOP = 3;
+	public static final byte A_CURSE = 4;
+	public static final byte A_SHIELD = 5;
+	public static final byte A_FARATTACK = 6;
+	public static final byte A_WAVE_INVALID = 7;
+	public static final byte A_WAVE_STOP = 8;
+	public static final byte A_EFF_INV = 9;
+	public static final byte A_B = 10;
+	public static final byte A_SEAL = 11;
+	public static final byte A_POI0 = 12;
+	public static final byte A_POI1 = 13;
+	public static final byte A_POI2 = 14;
+	public static final byte A_POI3 = 15;
+	public static final byte A_POI4 = 16;
+	public static final byte A_POI5 = 17;
+	public static final byte A_POI6 = 18;
+	public static final byte A_POI7 = 19;
+	public static final byte A_IMUATK = 20;
+	public static final byte A_ARMOR = 21;
+	public static final byte A_SPEED = 22;
+	public static final byte A_WEAK_UP = 23;
+	public static final byte A_HEAL = 24;
+	public static final byte A_DEMON_SHIELD = 25;
+	public static final byte A_COUNTER = 26;
+	public static final byte A_DMGCUT = 27;
+	public static final byte A_DMGCAP = 28;
+	public static final byte A_LETHARGY = 29;
 	public static final byte[] A_POIS = { A_POI0, A_POI1, A_POI2, A_POI3, A_POI4, A_POI5, A_POI6, A_POI7 };
-	public static final byte A_TOT = 66;
+	public static final byte A_TOT = 30;
 
 	// atk type index used in filter page
 	public static final byte ATK_SINGLE = 0;

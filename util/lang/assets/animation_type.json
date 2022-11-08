@@ -76,5 +76,9 @@
     "DmgCap": {
         "FAIL" : "fail",
         "SUCCESS" : "success"
+    },
+    "LethargyEff": {
+        "DOWN" : "weaken",
+        "UP" : "strengthen"
     }
 }
