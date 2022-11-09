@@ -80,5 +80,15 @@
     "LethargyEff": {
         "DOWN" : "weaken",
         "UP" : "strengthen"
+    },
+    "RemShieldEff": {
+        "NEAR": "near",
+        "FAR": "far"
+    },
+    "AuraEff": {
+        "ENEDOWN": "Weaken Enemy",
+        "ENEUP": "Strengthen Enemy",
+        "UNIDOWN": "Weaken Ally",
+        "UNIUP": "Strengthen Ally"
     }
 }

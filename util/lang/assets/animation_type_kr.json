@@ -82,5 +82,9 @@
   "LethargyEff": {
     "DOWN" : "weaken",
     "UP" : "strengthen"
+  },
+  "RemShieldEff": {
+    "NEAR": "near",
+    "FAR": "far"
   }
 }

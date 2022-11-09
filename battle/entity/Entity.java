@@ -161,7 +161,7 @@ public abstract class Entity extends AbEntity {
 			}
 
 			for(int i = 0; i < effs.length; i++) {
-				if(i == A_B || i == A_DEMON_SHIELD || i == A_COUNTER || i == A_DMGCUT || i == A_DMGCAP)
+				if(i == A_B || i == A_DEMON_SHIELD || i == A_COUNTER || i == A_DMGCUT || i == A_DMGCAP || i == A_REMSHIELD)
 					continue;
 
 				if ((i == A_SLOW && status[P_STOP][0] != 0) || (i == A_UP && status[P_WEAK][0] != 0) || (i == A_CURSE && status[P_SEAL][0] != 0))
@@ -182,7 +182,7 @@ public abstract class Entity extends AbEntity {
 			x = p.x;
 
 			for(int i = 0; i < effs.length; i++) {
-				if(i == A_B || i == A_DEMON_SHIELD || i == A_COUNTER || i == A_DMGCUT || i == A_DMGCAP) {
+				if(i == A_B || i == A_DEMON_SHIELD || i == A_COUNTER || i == A_DMGCUT || i == A_DMGCAP || i == A_REMSHIELD) {
 					EAnimD<?> eae = effs[i];
 
 					if(eae == null)
@@ -347,6 +347,24 @@ public abstract class Entity extends AbEntity {
 				} case DMGCAP_SUCCESS: {
 					effs[A_DMGCAP] = (dire == -1 ? effas().A_DMGCAP : effas().A_E_DMGCAP).getEAnim(DmgCap.SUCCESS);
 					break;
+				} case REMSHIELD_NEAR: {
+					effs[A_REMSHIELD] = (dire == -1 ? effas().A_REMSHIELD : effas().A_E_REMSHIELD).getEAnim(RemShieldEff.NEAR);
+					break;
+				} case REMSHIELD_FAR: {
+					effs[A_REMSHIELD] = (dire == -1 ? effas().A_REMSHIELD : effas().A_E_REMSHIELD).getEAnim(RemShieldEff.FAR);
+					break;
+				} case P_WEAKAURA: {
+					effs[A_WEAKAURA] = (dire == -1 ? effas().A_AURA : effas().A_E_AURA).getEAnim(AuraEff.ENEDOWN);
+					break;
+				} case A_WEAKAURASTR: {
+					effs[A_WEAKAURA] = (dire == -1 ? effas().A_AURA : effas().A_E_AURA).getEAnim(AuraEff.ENEUP);
+					break;
+				} case P_STRONGAURA: {
+					effs[A_STRONGAURA] = (dire == -1 ? effas().A_AURA : effas().A_E_AURA).getEAnim(AuraEff.UNIUP);
+					break;
+				} case A_STRAURAWEAK: {
+					effs[A_STRONGAURA] = (dire == -1 ? effas().A_AURA : effas().A_E_AURA).getEAnim(AuraEff.UNIDOWN);
+					break;
 				}
 			}
 		}
@@ -369,7 +387,7 @@ public abstract class Entity extends AbEntity {
 				effs[id] = null;
 			}
 			if (status[P_LETHARGY][0] == 0) {
-				status[P_LETHARGY][2] = -1; //TODO - Lethargy strengthen animatgion
+				status[P_LETHARGY][2] = -1;
 				effs[A_LETHARGY] = null;
 			}
 			if (status[P_CURSE][0] == 0)
@@ -1075,25 +1093,37 @@ public abstract class Entity extends AbEntity {
 	}
 
 	public static class AuraManager extends BattleObj {
+		AnimManager anim;
 		int defTBA;
 		float faura, daura, saura, taura;
+		float[] aff = new float[2];
 		Stack<Float> atkAuras = new Stack<>();
 		Stack<Float> defAuras = new Stack<>();
 		Stack<Float> spdAuras = new Stack<>();
 		Stack<Float> tbaAuras = new Stack<>();
 
-		public AuraManager(int TBA) {
+		public AuraManager(AnimManager anim, int TBA) {
+			this.anim = anim;
 			defTBA = TBA;
+			aff[0] = aff[1] = 1;
 		}
 		public void setAuras(Proc.AURA aura, boolean weak) {
-			if (aura.amult != 0)
+			if (aura.amult != 0) {
 				atkAuras.push((weak ? aura.amult : 100 + aura.amult) / 100f);
-			if (aura.dmult != 0)
+				aff[weak ? 0 : 1] *= atkAuras.peek();
+			}
+			if (aura.dmult != 0) {
 				defAuras.push((weak ? 100 + aura.dmult : aura.dmult) / 100f);
-			if (aura.smult != 0)
+				aff[weak ? 0 : 1] *= defAuras.peek();
+			}
+			if (aura.smult != 0) {
 				spdAuras.push((weak ? aura.smult : 100 + aura.smult) / 100f);
-			if (aura.tmult != 0)
+				aff[weak ? 0 : 1] *= spdAuras.peek();
+			}
+			if (aura.tmult != 0) {
 				tbaAuras.push((weak ? 100 + aura.tmult : aura.tmult) / 100f);
+				aff[weak ? 0 : 1] *= tbaAuras.peek();
+			}
 		}
 		public void updateAuras() {
 			faura = daura = saura = taura = 1;
@@ -1106,6 +1136,17 @@ public abstract class Entity extends AbEntity {
 			while (tbaAuras.size() != 0)
 				taura *= tbaAuras.pop();
 			taura--;
+
+			if (aff[0] != 1 && anim.effs[A_WEAKAURA] == null)
+				anim.getEff(aff[0] < 1 ? P_WEAKAURA : A_WEAKAURASTR);
+			else if (aff[0] == 1)
+				anim.effs[A_WEAKAURA] = null;
+
+			if (aff[1] != 1 && anim.effs[A_STRONGAURA] == null)
+				anim.getEff(aff[1] > 1 ? P_STRONGAURA : A_STRAURAWEAK);
+			else if (aff[1] == 1)
+				anim.effs[A_STRONGAURA] = null;
+			aff[0] = aff[1] = 1;
 		}
 		public float getAtkAura() {
 			return faura;
@@ -1310,7 +1351,7 @@ public abstract class Entity extends AbEntity {
 		anim = new AnimManager(this, ea);
 		atkm = new AtkManager(this);
 		shieldMagnification = hpMagnif;
-		auras = new AuraManager(de.getTBA());
+		auras = new AuraManager(anim, de.getTBA());
 		ini(hpMagnif);
 	}
 
@@ -1325,7 +1366,7 @@ public abstract class Entity extends AbEntity {
 		anim = new AnimManager(this, ea);
 		atkm = new AtkManager(this);
 		shieldMagnification = lvMagnif;
-		auras = new AuraManager(de.getTBA());
+		auras = new AuraManager(anim, de.getTBA());
 		ini(lvMagnif);
 	}
 
@@ -1468,12 +1509,12 @@ public abstract class Entity extends AbEntity {
 				if (remote.type.procs)
 					proc = false;
 
+				anim.getEff(stRange <= data.getRange() ? REMSHIELD_NEAR : REMSHIELD_FAR);
 				if (remote.block != 0) {
 					atk.r.add(remote);
 					if (remote.block > 0)
 						anim.getEff(STPWAVE);
-				} else if (remote.reduction > 0)
-					anim.getEff(dmgcap.type.nullify ? DMGCAP_SUCCESS : DMGCAP_FAIL);
+				}
 
 				if (remote.reduction == 100) {
 					if (!proc)

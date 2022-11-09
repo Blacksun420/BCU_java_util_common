@@ -1404,6 +1404,10 @@ public class Data {
 	public static final byte SHIELD_BREAKER = -11;
 	public static final byte DMGCAP_FAIL = -12;
 	public static final byte DMGCAP_SUCCESS = -13;
+	public static final byte REMSHIELD_NEAR = -14;
+	public static final byte REMSHIELD_FAR = -15;
+	public static final byte A_WEAKAURASTR = -16;
+	public static final byte A_STRAURAWEAK = -17;
 
 	// Combo index
 	public static final byte C_ATK = 0;
@@ -1453,6 +1457,7 @@ public class Data {
 	public static final byte A_POI5 = 17;
 	public static final byte A_POI6 = 18;
 	public static final byte A_POI7 = 19;
+	public static final byte[] A_POIS = { A_POI0, A_POI1, A_POI2, A_POI3, A_POI4, A_POI5, A_POI6, A_POI7 };
 	public static final byte A_IMUATK = 20;
 	public static final byte A_ARMOR = 21;
 	public static final byte A_SPEED = 22;
@@ -1463,8 +1468,10 @@ public class Data {
 	public static final byte A_DMGCUT = 27;
 	public static final byte A_DMGCAP = 28;
 	public static final byte A_LETHARGY = 29;
-	public static final byte[] A_POIS = { A_POI0, A_POI1, A_POI2, A_POI3, A_POI4, A_POI5, A_POI6, A_POI7 };
-	public static final byte A_TOT = 30;
+	public static final byte A_REMSHIELD = 30;
+	public static final byte A_WEAKAURA = 31;
+	public static final byte A_STRONGAURA = 32;
+	public static final byte A_TOT = 33;
 
 	// atk type index used in filter page
 	public static final byte ATK_SINGLE = 0;

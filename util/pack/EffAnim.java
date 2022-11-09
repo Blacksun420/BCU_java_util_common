@@ -14,6 +14,116 @@ import java.util.function.Function;
 
 public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAnim<T>, T> {
 
+	public interface EffType<T extends Enum<T> & EffType<T>> extends AnimI.AnimType<EffAnim<T>, T> {
+		String path();
+	}
+
+	public enum KBEff implements EffType<KBEff> {
+		KB("_hb"), SW("_sw"), ASS("_ass");
+
+		private final String path;
+
+		KBEff(String str) {
+			path = str;
+		}
+
+		@Override
+		public String path() {
+			return path;
+		}
+
+	}
+
+	public enum SniperEff implements EffType<SniperEff> {
+		IDLE("00"), ATK("01");
+
+		private final String path;
+
+		SniperEff(String str) {
+			path = str;
+		}
+
+		@Override
+		public String path() {
+			return path;
+		}
+	}
+
+	public enum SpeedEff implements EffType<SpeedEff> {
+		UP("up"), DOWN("down");
+
+		private final String path;
+
+		SpeedEff(String str) {
+			path = str;
+		}
+
+		@Override
+		public String path() {
+			return path;
+		}
+	}
+
+	public enum VolcEff implements EffType<VolcEff> {
+		START("00"), DURING("01"), END("02");
+
+		private final String path;
+
+		VolcEff(String str) {
+			path = str;
+		}
+
+		@Override
+		public String path() {
+			return path;
+		}
+	}
+
+	public enum WarpEff implements EffType<WarpEff> {
+		ENTER("_entrance"), EXIT("_exit");
+
+		private final String path;
+
+		WarpEff(String str) {
+			path = str;
+		}
+
+		@Override
+		public String path() {
+			return path;
+		}
+	}
+
+	public enum WeakUpEff implements EffType<WeakUpEff> {
+		UP("up");
+
+		private final String path;
+
+		WeakUpEff(String str) {
+			path = str;
+		}
+
+		@Override
+		public String path() {
+			return path;
+		}
+	}
+
+	public enum ZombieEff implements EffType<ZombieEff> {
+		REVIVE("_revive"), DOWN("_down"), BACK("_back");
+
+		private final String path;
+
+		ZombieEff(String str) {
+			path = str;
+		}
+
+		@Override
+		public String path() {
+			return path;
+		}
+	}
+
 	public enum ArmorEff implements EffType<ArmorEff> {
 		BUFF("buff"), DEBUFF("debuff");
 
@@ -95,6 +205,36 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 		private final String path;
 
 		LethargyEff(String str) {
+			path = str;
+		}
+
+		@Override
+		public String path() {
+			return path;
+		}
+	}
+
+	public enum RemShieldEff implements EffType<RemShieldEff> {
+		NEAR("0"), FAR("1");
+
+		private final String path;
+
+		RemShieldEff(String str) {
+			path = str;
+		}
+
+		@Override
+		public String path() {
+			return path;
+		}
+	}
+
+	public enum AuraEff implements EffType<AuraEff> {
+		ENEDOWN("-ew"), ENEUP("-es"), UNIDOWN("-aw"), UNIUP("-as");
+
+		private final String path;
+
+		AuraEff(String str) {
 			path = str;
 		}
 
@@ -254,6 +394,14 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 		public EffAnim<LethargyEff> A_LETHARGY;
 		@Order(75)
 		public EffAnim<LethargyEff> A_E_LETHARGY;
+		@Order(76)
+		public EffAnim<RemShieldEff> A_REMSHIELD;
+		@Order(77)
+		public EffAnim<RemShieldEff> A_E_REMSHIELD;
+		@Order(78)
+		public EffAnim<AuraEff> A_AURA;
+		@Order(79)
+		public EffAnim<AuraEff> A_E_AURA;
 
 		public EffAnim<?>[] values() {
 			Field[] fld = FieldOrder.getDeclaredFields(EffAnimStore.class);
@@ -269,116 +417,6 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 			err(() -> FieldOrder.getDeclaredFields(EffAnimStore.class)[i].set(this, eff));
 		}
 
-	}
-
-	public interface EffType<T extends Enum<T> & EffType<T>> extends AnimI.AnimType<EffAnim<T>, T> {
-		String path();
-	}
-
-	public enum KBEff implements EffType<KBEff> {
-		KB("_hb"), SW("_sw"), ASS("_ass");
-
-		private final String path;
-
-		KBEff(String str) {
-			path = str;
-		}
-
-		@Override
-		public String path() {
-			return path;
-		}
-
-	}
-
-	public enum SniperEff implements EffType<SniperEff> {
-		IDLE("00"), ATK("01");
-
-		private final String path;
-
-		SniperEff(String str) {
-			path = str;
-		}
-
-		@Override
-		public String path() {
-			return path;
-		}
-	}
-
-	public enum SpeedEff implements EffType<SpeedEff> {
-		UP("up"), DOWN("down");
-
-		private final String path;
-
-		SpeedEff(String str) {
-			path = str;
-		}
-
-		@Override
-		public String path() {
-			return path;
-		}
-	}
-
-	public enum VolcEff implements EffType<VolcEff> {
-		START("00"), DURING("01"), END("02");
-
-		private final String path;
-
-		VolcEff(String str) {
-			path = str;
-		}
-
-		@Override
-		public String path() {
-			return path;
-		}
-	}
-
-	public enum WarpEff implements EffType<WarpEff> {
-		ENTER("_entrance"), EXIT("_exit");
-
-		private final String path;
-
-		WarpEff(String str) {
-			path = str;
-		}
-
-		@Override
-		public String path() {
-			return path;
-		}
-	}
-
-	public enum WeakUpEff implements EffType<WeakUpEff> {
-		UP("up");
-
-		private final String path;
-
-		WeakUpEff(String str) {
-			path = str;
-		}
-
-		@Override
-		public String path() {
-			return path;
-		}
-	}
-
-	public enum ZombieEff implements EffType<ZombieEff> {
-		REVIVE("_revive"), DOWN("_down"), BACK("_back");
-
-		private final String path;
-
-		ZombieEff(String str) {
-			path = str;
-		}
-
-		@Override
-		public String path() {
-			return path;
-		}
 	}
 
 	public static void read() {
@@ -476,6 +514,20 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 		effas.A_LETHARGY = new EffAnim<>(path, vlt, iclt, LethargyEff.values());
 		effas.A_E_LETHARGY = new EffAnim<>(path, vlt, iclt, LethargyEff.values());
 		effas.A_E_LETHARGY.rev = true;
+
+		path = "./org/battle/skill_remoteshield/skill_remoteshield";
+		VImg vrs = new VImg(path + ".png");
+		ImgCut icrs = ImgCut.newIns(path + ".imgcut");
+		effas.A_REMSHIELD = new EffAnim<>(path, vrs, icrs, RemShieldEff.values());
+		effas.A_E_REMSHIELD = new EffAnim<>(path, vrs, icrs, RemShieldEff.values());
+		effas.A_E_REMSHIELD.rev = true;
+
+		path = "./org/battle/skill_aura/skill_aura";
+		VImg vau = new VImg(path + ".png");
+		ImgCut icau = ImgCut.newIns(path + ".imgcut");
+		effas.A_AURA = new EffAnim<>(path, vau, icau, AuraEff.values());
+		effas.A_E_AURA = new EffAnim<>(path, vau, icau, AuraEff.values());
+		effas.A_E_AURA.rev = true;
 	}
 
 	private static void excColor(FakeImage fimg, Function<int[], Integer> f) {
