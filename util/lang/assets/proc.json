@@ -1366,8 +1366,7 @@
             "[(dmult!=0){receive (_abs(dmult))% [(dmult>0){more}(dmult<0){less}] damage per hit}]",
             "[(amult!=0|dmult!=0){[(smult!=0&tmult!=0){, }(smult==0^tmult==0){ and }]}]",
             "[(smult!=0){their speed [(smult>100){increased}(smult<100){decreased}] to (smult)%}]",
-            "[(amult!=0|dmult!=0|smult!=0&tmult!=0){ and }]",
-            "[(tmult!=0){their TBA [(amult>0){increased}(amult<0){decreased}] by (_abs(amult))%}]."],
+            "[(tmult!=0){[(amult!=0|dmult!=0|smult!=0){ and }]their TBA [(amult>0){increased}(amult<0){decreased}] by (_abs(amult))%}]."],
         "class": {
             "amult": {
                 "name": "ATK Mult.",
@@ -1404,13 +1403,12 @@
         "full_name": "Empowering Aura",
         "tooltip": "Increases morale for all units in the given range",
         "format": ["[(type.trait){All }]Units within (min_dis) ~ (max_dis) from this entity will have ",
-            "[(amult!=0){their attack [(amult>0){increased}(amult<0){decreased}] by (_abs(dmult))%, }]",
+            "[(amult!=0){their attack [(amult>0){increased}(amult<0){decreased}] by (_abs(amult))%}]",
             "[(amult!=0){[(dmult!=0&smult!=0|dmult!=0&smult!=0|smult!=0&tmult!=0){, }(dmult==0^smult==0|dmult==0^tmult==0|smult==0^tmult==0){ and }]}]",
-            "[(dmult!=0){receive (dmult)% damage from attacks, }]",
+            "[(dmult!=0){receive (dmult)% damage from attacks}]",
             "[(amult!=0|dmult!=0){[(smult!=0&tmult!=0){, }(smult==0^tmult==0){ and }]}]",
-            "[(smult!=0){their speed [(smult>0){increased}(smult<0){decreased}] by (smult)%, }]",
-            "[(amult!=0|dmult!=0|smult!=0&tmult!=0){ and }]",
-            "[(tmult!=0){and their TBA [(amult>0){increased}(amult<0){decreased}] by (_abs(amult))%, }]"],
+            "[(smult!=0){their speed [(smult>0){increased}(smult<0){decreased}] by (smult)%}]",
+            "[(tmult!=0){[(amult!=0|dmult!=0|smult!=0){ and }]their TBA [(amult>0){increased}(amult<0){decreased}] by (_abs(amult))%}]."],
         "class": {
             "amult": {
                 "name": "ATK Mult.",
