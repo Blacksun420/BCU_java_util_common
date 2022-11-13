@@ -24,6 +24,7 @@ import common.system.files.VFile;
 import common.system.files.VFileRoot;
 import common.util.Data;
 import common.util.Res;
+import common.util.anim.AnimCE;
 import common.util.anim.AnimUD;
 import common.util.lang.MultiLangData;
 import common.util.pack.*;
@@ -242,7 +243,7 @@ public abstract class PackData implements IndexContainer {
 	@JsonClass(noTag = NoTag.LOAD)
 	public static class PackDesc {
 		public String BCU_VERSION;
-		public int FORK_VERSION; // The same as BCU_VERSION, but for this fork exclusively
+		public int FORK_VERSION = 0; // The same as BCU_VERSION, but for this fork exclusively
 		public String id;
 		public String author;
 
@@ -266,7 +267,7 @@ public abstract class PackData implements IndexContainer {
 
 		public PackDesc(String id) {
 			BCU_VERSION = AssetLoader.CORE_VER;
-			FORK_VERSION = 0; //0 by default to differ Fork packs and non-fork packs
+			FORK_VERSION = AssetLoader.FORK_VER; //0 by default to differ Fork packs and non-fork packs
 			this.id = id;
 			this.dependency = new ArrayList<>();
 		}
@@ -461,6 +462,13 @@ public abstract class PackData implements IndexContainer {
 			}
 		}
 
+		public void animChanged(AnimCE anim, int del) {
+			for (Enemy e : enemies) {
+				if (e.anim == anim) {
+					e.de.animChanged(del);
+				}
+			}
+		}
 	}
 
 	@ContGetter

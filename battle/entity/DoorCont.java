@@ -39,7 +39,7 @@ public class DoorCont extends EAnimCont {
         super.update();
         if (getAnim().ind() > 9) {
             if (getAnim().ind() < 18) {
-                if (!ent.getAnim().anim().getEAnim(AnimU.UType.ENTER).unusable()) {
+                if (!ent.getAnim().anim().getEAnim(AnimU.TYPEDEF[AnimU.ENTRY]).unusable()) {
                     ent.getAnim().update(false);
                 }
             } else if (!entLeft) {

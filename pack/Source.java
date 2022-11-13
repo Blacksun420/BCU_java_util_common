@@ -58,7 +58,6 @@ public abstract class Source {
 	public interface SourceLoader {
 
 		FileData loadFile(BasePath base, ResourceLocation id, String str);
-
 	}
 
 	@JsonClass
@@ -134,8 +133,6 @@ public abstract class Source {
 
 		public static final String IC = "imgcut.txt";
 		public static final String MM = "mamodel.txt";
-		public static final String[] MA_ENTITY = { "maanim_walk.txt", "maanim_idle.txt", "maanim_attack.txt", "maanim_kb.txt",
-				"maanim_burrow_down.txt", "maanim_burrow_move.txt", "maanim_burrow_up.txt", "maanim_entry.txt" };
 		public static final String[] MA_SOUL = { "maanim_soul.txt" };
 		public static final String[] MA_BACKGROUND = { "maanim_foreground.txt", "maanim_background.txt" };
 		public static final String SP = "sprite.png";
@@ -150,13 +147,13 @@ public abstract class Source {
 			this.loader = loader == null ? Workspace::loadAnimFile : loader;
 		}
 
-		private String[] getBaseMA() {
+		private AnimU.UType[] getBaseUT() {
 			if (id.base.equals(BasePath.ANIM))
-				return MA_ENTITY;
+				return AnimU.TYPEDEF;
 			else if (id.base.equals(BasePath.SOUL))
-				return MA_SOUL;
+				return AnimU.SOUL;
 			else
-				return MA_BACKGROUND;
+				return AnimU.BGEFFECT;
 		}
 
 		@Override
@@ -174,10 +171,19 @@ public abstract class Source {
 
 		@Override
 		public MaAnim[] getMA() {
-			MaAnim[] ans = new MaAnim[getBaseMA().length];
-			for (int i = 0; i < getBaseMA().length; i++)
-				ans[i] = MaAnim.newIns(loader.loadFile(id.base, id, getBaseMA()[i]));
-			return ans;
+			ArrayList<MaAnim> ans = new ArrayList<>();
+			for (int i = 0; i < getBaseUT().length; i++)
+				ans.add(MaAnim.newIns(loader.loadFile(id.base, id, "maanim_" + getBaseUT()[i].toString() + ".txt")));
+
+			int i = 1;
+			FileData extra = loader.loadFile(id.base, id, "maanim_attack1.txt");
+			while (extra != null) {
+				ans.add(i + 2, MaAnim.newIns(extra));
+				i++;
+				extra = loader.loadFile(id.base, id, "maanim_attack" + i + ".txt");
+			}
+
+			return ans.toArray(new MaAnim[0]);
 		}
 
 		@Override
@@ -243,8 +249,8 @@ public abstract class Source {
 				write("imgcut.txt", anim.imgcut::write);
 				write("mamodel.txt", anim.mamodel::write);
 				if (id.base.equals(BasePath.ANIM)) {
-					for (int i = 0; i < SourceAnimLoader.MA_ENTITY.length; i++)
-						write(SourceAnimLoader.MA_ENTITY[i], anim.anims[i]::write);
+					for (int i = 0; i < anim.anims.length; i++)
+						write("maanim_" + anim.types[i].toString() + ".txt", anim.anims[i]::write);
 				} else if (id.base.equals(BasePath.SOUL))
 					write(SourceAnimLoader.MA_SOUL[0], anim.anims[0]::write);
 				else {
@@ -540,11 +546,6 @@ public abstract class Source {
 			}
 		}
 
-		@Override
-		public InputStream streamFile(String path) throws IOException {
-			return new FileInputStream(getFile(path));
-		}
-
 		public OutputStream writeFile(String path) throws IOException {
 			File f = getFile(path);
 			Context.check(f);
@@ -619,11 +620,6 @@ public abstract class Source {
 			return new VImg(vf);
 		}
 
-		@Override
-		public InputStream streamFile(String path) {
-			return zip.readFile(path);
-		}
-
 		public Workspace unzip(String password, Consumer<Double> prog) throws Exception {
 			if (!zip.match(PackLoader.getMD5(password.getBytes(StandardCharsets.UTF_8), 16)))
 				return null;
@@ -696,10 +692,4 @@ public abstract class Source {
 	 */
 	//TODO: might be able to use BasePath for path
 	public abstract VImg readImage(String path, int ind);
-
-	/**
-	 * used for streaming music. Do not use it for images and small text files
-	 */
-	public abstract InputStream streamFile(String path) throws Exception;
-
 }

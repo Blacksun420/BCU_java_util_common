@@ -5,7 +5,7 @@ import common.system.P;
 import common.system.fake.FakeGraphics;
 
 @SuppressWarnings("ForLoopReplaceableByForEach")
-public class EAnimD<T extends Enum<T> & AnimI.AnimType<?, T>> extends EAnimI {
+public class EAnimD<T extends AnimI.AnimType<?, T>> extends EAnimI {
 
 	public T type;
 

@@ -10,12 +10,17 @@ import common.util.unit.Trait;
 import java.util.ArrayList;
 
 public interface MaskAtk extends BattleStatic {
-
 	default int getAltAbi() {
 		return 0;
 	}
 
 	int getAtk();
+
+	int getPre();
+
+	default boolean canProc() {
+		return true;
+	}
 
 	default int getDire() {
 		return 1;
@@ -38,6 +43,8 @@ public interface MaskAtk extends BattleStatic {
 	default int getTarget() {
 		return Data.TCH_N;
 	}
+
+	boolean isLD();
 
 	boolean isOmni();
 

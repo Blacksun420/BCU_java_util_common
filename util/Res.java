@@ -232,7 +232,8 @@ public class Res extends ImgCore {
 		aux.icon[1][P_STRONGAURA] = new VImg("./org/page/icons/AuraStrong.png");
 		aux.icon[1][P_LETHARGY] = new VImg("./org/page/icons/Lethargy.png");
 		aux.icon[1][P_IMULETHARGY] = new VImg("./org/page/icons/ImuLethargy.png");
-		aux.icon[1][P_REMOTESHIELD] = new VImg("./org/page/icons/RemoteShield.png"); //temp
+		aux.icon[1][P_REMOTESHIELD] = new VImg("./org/page/icons/RemoteShield.png");
+		aux.icon[1][P_AI] = new VImg("./org/page/icons/Strategize.png");
 
 		aux.icon[2][ATK_SINGLE] = new VImg(parts[217]);
 		aux.icon[2][ATK_AREA] = new VImg(parts[211]);

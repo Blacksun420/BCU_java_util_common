@@ -5,6 +5,7 @@ import common.CommonStatic;
 import common.battle.data.*;
 import common.io.json.JsonClass;
 import common.io.json.JsonClass.*;
+import common.io.json.JsonDecoder;
 import common.io.json.JsonDecoder.OnInjected;
 import common.io.json.JsonField;
 import common.pack.Identifier;
@@ -77,7 +78,7 @@ public class Form extends Animable<AnimU<?>, AnimU.UType> implements BasedCopabl
 		anim = new AnimUD(str, nam, "edi" + nam + ".png", "uni" + nam + "00.png");
 		anim.getUni().setCut(CommonStatic.getBCAssets().unicut);
 		String[] strs = data.split("//")[0].trim().split(",");
-		du = new DataUnit(this, unit, strs);
+		du = new DataUnit(this, strs);
 		MaModel model = anim.loader.getMM();
 		((DataUnit) du).limit = CommonStatic.dataFormMinPos(model);
 	}
@@ -90,14 +91,14 @@ public class Form extends Animable<AnimU<?>, AnimU.UType> implements BasedCopabl
 		anim = new AnimUD(str, nam, "edi" + nam + duo(fid) + ".png", "uni" + nam + duo(fid) + ".png");
 		anim.getUni().setCut(CommonStatic.getBCAssets().unicut);
 		String[] strs = data.split("//")[0].trim().split(",");
-		du = new DataUnit(this, unit, strs);
+		du = new DataUnit(this, strs);
 		MaModel model = anim.loader.getMM();
 		((DataUnit) du).limit = CommonStatic.dataFormMinPos(model);
 	}
 
 	@Override
 	public Form copy(AbUnit b) {
-		CustomUnit cu = new CustomUnit();
+		CustomUnit cu = new CustomUnit(anim);
 		cu.importData(du);
 		return new Form((Unit) b, fid, names.toString(), anim, cu);
 	}
@@ -149,7 +150,13 @@ public class Form extends Animable<AnimU<?>, AnimU.UType> implements BasedCopabl
 		if((unit != null || uid != null)) {
 			Unit u = unit == null ? (Unit)uid.get() : unit;
 			PackData.UserPack pack = (PackData.UserPack) u.getCont();
-			AtkDataModel[] atks = form.getAllAtks();
+			if (pack.desc.FORK_VERSION < 2) {
+				JsonObject jdu = jobj.getAsJsonObject("du").getAsJsonObject("atks");
+				//AtkDataModel[] oldAtks = JsonDecoder.decodePool(jdu, AtkDataModel[].class);
+				form.hits.set(0, form.atks);
+			}
+
+			AtkDataModel[] atks = form.getAllAtkModels();
 
 			Proc proc = form.getProc();
 			if (UserProfile.isOlderPack(pack, "0.6.6.0")) {
@@ -163,7 +170,7 @@ public class Form extends Animable<AnimU<?>, AnimU.UType> implements BasedCopabl
 									if (UserProfile.isOlderPack(pack, "0.5.1.0"))
 										type = Data.reorderTrait(type);
 									//Finish 0.5.1.0 check
-									form.tba += form.getPost() + 1;
+									form.tba += form.getPost(0) + 1;
 								} //Finish 0.5.2.0 check
 								MaModel model = anim.loader.getMM();
 								form.limit = CommonStatic.customFormMinPos(model);

@@ -75,7 +75,7 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 		else if (m == 5)
 			pos.y = args[5] + v;
 		else if (m == 6)
-			piv.x = args[6] + v;
+			piv.x = (args[6] + v) * (flipped && fa == null ? -1 : 1);
 		else if (m == 7)
 			piv.y = args[7] + v;
 		else if (m == 8)
@@ -193,8 +193,10 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 
 	public void revert() {
 		flipped = !flipped;
-		if (fa == null)
+		if (fa == null) {
 			sca.x *= -1;
+			piv.x *= -1;
+		}
 		angle *= -1;
 	}
 

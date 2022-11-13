@@ -233,7 +233,7 @@ public class JsonDecoder {
 			return arr;
 		}
 		if (!elem.isJsonArray())
-			throw new JsonException(Type.TYPE_MISMATCH, elem, "this element is not array");
+			throw new JsonException(Type.TYPE_MISMATCH, elem, "Element + " + elem + " on " + cls + " at " + ccls + " in " + par + " is not array");
 		JsonArray jarr = elem.getAsJsonArray();
 		int n = jarr.size();
 		Object arr = getArray(ccls, n, par);
@@ -426,4 +426,23 @@ public class JsonDecoder {
 		return tarjcls.bypass() ? par : this;
 	}
 
+	public static class localDecoder {
+		private final JsonObject jobj;
+		private final Object obj;
+		private final Class<?> tarcls;
+		private final JsonClass tarjcls;
+		private Class<?> curcls;
+		private JsonClass curjcls;
+		private Field curfld;
+		private int index = 0; //TODO
+
+		private localDecoder(JsonObject json, Class<?> cls, Object pre) throws Exception {
+			jobj = json;
+			obj = pre;
+			tarcls = cls;
+			tarjcls = cls.getAnnotation(JsonClass.class);
+			//current = getInvoker();
+			//decode(tarcls);
+		}
+	}
 }

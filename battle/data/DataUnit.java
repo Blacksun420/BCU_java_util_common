@@ -5,7 +5,6 @@ import common.pack.Identifier;
 import common.util.pack.Soul;
 import common.util.unit.Form;
 import common.util.unit.Trait;
-import common.util.unit.Unit;
 
 import java.util.ArrayList;
 
@@ -18,7 +17,7 @@ public class DataUnit extends DefaultData implements MaskUnit, Cloneable {
 
 	public PCoin pcoin = null;
 
-	public DataUnit(Form f, Unit u, String[] data) {
+	public DataUnit(Form f, String[] data) {
 		form = f;
 		int[] ints = new int[data.length];
 		for (int i = 0; i < data.length; i++)
@@ -26,7 +25,7 @@ public class DataUnit extends DefaultData implements MaskUnit, Cloneable {
 		hp = ints[0];
 		hb = ints[1];
 		speed = ints[2];
-		atk = ints[3];
+		atk[0] = ints[3];
 		tba = ints[4];
 		range = ints[5];
 		price = ints[6];
@@ -36,7 +35,7 @@ public class DataUnit extends DefaultData implements MaskUnit, Cloneable {
 		if (ints[10] == 1)
 			t |= TB_RED;
 		isrange = ints[12] == 1;
-		pre = ints[13];
+		pre[0] = ints[13];
 		front = ints[14];
 		back = ints[15];
 		if (ints[16] == 1)
@@ -117,13 +116,18 @@ public class DataUnit extends DefaultData implements MaskUnit, Cloneable {
 				a |= AB_IMUSW;
 			if (ints[58] == 2)
 				a |= AB_GLASS;
-			atk1 = ints[59];
-			atk2 = ints[60];
-			pre1 = ints[61];
-			pre2 = ints[62];
-			abi0 = ints[63];
-			abi1 = ints[64];
-			abi2 = ints[65];
+			if (ints[59] != 0)
+				if (ints[60] != 0) {
+					atk = new int[]{atk[0], ints[59], ints[60]};
+					pre = new int[]{pre[0], ints[61], ints[62]};
+					abis = new boolean[]{ints[63] == 1, ints[64] == 1, ints[65] == 1};
+				} else {
+					atk = new int[]{atk[0], ints[59]};
+					pre = new int[]{pre[0], ints[61]};
+					abis = new boolean[]{ints[63] == 1, ints[64] == 1};
+				}
+			else
+				abis[0] = ints[63] == 1;
 			death = Identifier.parseInt(ints[67], Soul.class);
 			proc.BREAK.prob = ints[70];
 			if (ints[75] == 1)
@@ -161,15 +165,15 @@ public class DataUnit extends DefaultData implements MaskUnit, Cloneable {
 				a |= AB_CKILL;
 				touch |= TCH_CORPSE;
 			}
-			if(getAtkCount() > 1) {
+			if(getAtkCount(0) > 1) {
 				int lds0 = lds[0];
 				int ldr0 = ldr[0];
-				lds = new int[getAtkCount()];
-				ldr = new int[getAtkCount()];
+				lds = new int[getAtkCount(0)];
+				ldr = new int[getAtkCount(0)];
 				lds[0] = lds0;
 				ldr[0] = ldr0;
 
-				for(int i = 1; i < getAtkCount(); i++) {
+				for(int i = 1; i < getAtkCount(0); i++) {
 					if(ints[99 + (i - 1) * 3] == 1) {
 						lds[i] = ints[99 + (i - 1) * 3 + 1];
 						ldr[i] = ints[99 + (i - 1) * 3 + 2];
@@ -191,7 +195,7 @@ public class DataUnit extends DefaultData implements MaskUnit, Cloneable {
 		traits = new ArrayList<>(Trait.convertType(t));
 		abi = a;
 
-		datks = new DataAtk[getAtkCount()];
+		datks = new DataAtk[getAtkCount(0)];
 
 		for (int i = 0; i < datks.length; i++) {
 			datks[i] = new DataAtk(this, i);
@@ -241,8 +245,8 @@ public class DataUnit extends DefaultData implements MaskUnit, Cloneable {
 		DataUnit ans = (DataUnit) err(super::clone);
 		ans.traits = new ArrayList<>(this.traits);
 		ans.proc = proc.clone();
-		ans.datks = new DataAtk[ans.getAtkCount()];
-		for (int i = 0; i < ans.getAtkCount(); i++) {
+		ans.datks = new DataAtk[ans.getAtkCount(0)];
+		for (int i = 0; i < ans.getAtkCount(0); i++) {
 			ans.datks[i] = new DataAtk(ans, i);
 		}
 		return ans;

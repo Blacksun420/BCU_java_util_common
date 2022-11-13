@@ -1,7 +1,7 @@
 package common.battle.attack;
 
 import common.battle.BasisLU;
-import common.battle.data.DataUnit;
+import common.battle.data.MaskAtk;
 import common.battle.data.PCoin;
 import common.battle.entity.EEnemy;
 import common.battle.entity.EUnit;
@@ -15,23 +15,10 @@ import org.jcodec.common.tools.MathUtil;
 public class AtkModelUnit extends AtkModelEntity {
 
 	private final BasisLU bas;
-	private final Proc[] buffed;
 
 	protected AtkModelUnit(Entity ent, double d0, double d1, PCoin pcoin, Level lv) {
 		super(ent, d0, d1, pcoin, lv);
 		bas = ent.basis.b;
-		buffed = new Proc[data.getAtkCount()];
-		for (int i = 0; i < buffed.length; i++) {
-			if(data.getAtkModel(i).getProc() == null)
-				buffed[i] = Proc.blank();
-			else
-				buffed[i] = data.getAtkModel(i).getProc().clone();
-			buffed[i].STOP.time = (buffed[i].STOP.time * (100 + bas.getInc(C_STOP))) / 100;
-			buffed[i].SLOW.time = (buffed[i].SLOW.time * (100 + bas.getInc(C_SLOW))) / 100;
-			buffed[i].WEAK.time = (buffed[i].WEAK.time * (100 + bas.getInc(C_WEAK))) / 100;
-			if (buffed[i].CRIT.prob > 0)
-				buffed[i].CRIT.prob += bas.getInc(C_CRIT);
-		}
 	}
 
 	@Override
@@ -124,31 +111,47 @@ public class AtkModelUnit extends AtkModelEntity {
 	}
 
 	@Override
-	protected int getAttack(int ind, Proc proc) {
+	public int getEffAtk(MaskAtk matk) {
+		int dmg = (int) (Math.round(matk.getAtk() * d0) * d1);
+		if (e.status[P_WEAK][0] > 0)
+			dmg = dmg * e.status[P_WEAK][1] / 100;
+		if (e.status[P_STRONG][0] != 0)
+			dmg += dmg * (e.status[P_STRONG][0] + bas.getInc(C_STRONG)) / 100;
+		dmg *= e.auras.getAtkAura();
 
-		int atk = atks[ind];
-		if (abis[ind] == 1) {
-			setProc(ind, proc);
+		return dmg;
+	}
+
+	@Override
+	protected int getAttack(int ind, Proc proc) {
+		int atk = getEffAtk(ind);
+
+		if (getMAtk(ind).getProc() != sealed && getMAtk(ind).canProc()) {
+			setProc(ind, proc, 0);
 			proc.KB.dis = proc.KB.dis * (100 + bas.getInc(C_KB)) / 100;
+			proc.STOP.time = (proc.STOP.time * (100 + bas.getInc(C_STOP))) / 100;
+			proc.SLOW.time = (proc.SLOW.time * (100 + bas.getInc(C_SLOW))) / 100;
+			proc.WEAK.time = (proc.WEAK.time * (100 + bas.getInc(C_WEAK))) / 100;
+		} else {
+			if (getMAtk(ind).getProc().MOVEWAVE.perform(b.r)) //Movewave procs regardless of seal state
+				proc.MOVEWAVE.set(getMAtk(ind).getProc().MOVEWAVE);
+
+			if (!getMAtk(ind).canProc())
+				for (int j : BCShareable) proc.getArr(j).set(e.getProc().getArr(j));
 		}
-		if (e.data instanceof DataUnit)
-			for (int j : BCShareable) proc.getArr(j).set(e.getProc().getArr(j));
 		proc.getArr(P_BSTHUNT).set(e.getProc().getArr(P_BSTHUNT));
 
 		extraAtk(ind);
-		if (e.status[P_WEAK][0] > 0)
-			atk = atk * e.status[P_WEAK][1] / 100;
-		if (e.status[P_STRONG][0] != 0)
-			atk += atk * (e.status[P_STRONG][0] + bas.getInc(C_STRONG)) / 100;
-		atk *= e.auras.getAtkAura();
 		return atk;
 	}
 
 	@Override
-	public Proc getProc(int ind) {
-		if (e.status[P_SEAL][0] > 0 || ind >= buffed.length)
-			return super.getProc(ind);
-		return buffed[ind];
+	public Proc getProc(MaskAtk matk) {
+		Proc p = super.getProc(matk);
+		if (p.CRIT.prob == 0 || bas.getInc(C_CRIT) == 0)
+			return p;
+		Proc pp = p.clone();
+		pp.CRIT.prob += bas.getInc(C_CRIT);
+		return pp;
 	}
-
 }

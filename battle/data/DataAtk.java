@@ -15,16 +15,24 @@ public class DataAtk implements MaskAtk {
 
 	@Override
 	public int getAtk() {
-		switch (index) {
-		case 0:
-			return data.atk;
-		case 1:
-			return data.atk1;
-		case 2:
-			return data.atk2;
-		default:
-			return 0;
-		}
+		return data.atk[index];
+	}
+
+	@Override
+	public int getPre() {
+		if (index > 0)
+			return data.pre[index] - data.pre[index - 1];
+		return data.pre[0];
+	}
+
+	@Override
+	public boolean canProc() {
+		return data.abis[index];
+	}
+
+	@Override
+	public boolean isLD() {
+		return data.ldr[index] > 0;
 	}
 
 	@Override
@@ -41,7 +49,9 @@ public class DataAtk implements MaskAtk {
 
 	@Override
 	public Proc getProc() {
-		return data.proc;
+		if (data.abis[index])
+			return data.proc;
+		return Proc.blank();
 	}
 
 	@Override

@@ -93,9 +93,11 @@ public class AnimCE extends AnimCI {
 		imgcut = new ImgCut();
 		mamodel = new MaModel();
 		if (loader.getName().base.equals(Source.BasePath.ANIM))
-			anims = new MaAnim[8];
-		else
+			anims = new MaAnim[AnimU.TYPEDEF.length];
+		else if (loader.getName().base.equals(Source.BasePath.SOUL))
 			anims = new MaAnim[1];
+		else
+			anims = new MaAnim[2];
 		for (int i = 0; i < anims.length; i++)
 			anims[i] = new MaAnim();
 		parts = imgcut.cut(getNum());
@@ -308,7 +310,7 @@ public class AnimCE extends AnimCI {
 
 	public void autosave() {
 		if (loaded && !isSaved())
-			new SourceAnimSaver(new ResourceLocation("_autosave", id.id), this).saveData();
+			new SourceAnimSaver(new ResourceLocation("_autosave", id.id, id.base), this).saveData();
 	}
 
 	public void save() {
@@ -382,18 +384,16 @@ public class AnimCE extends AnimCI {
 		mamodel = ori.mamodel.clone();
 		if (mamodel.confs.length < 1)
 			mamodel.confs = new int[2][6];
-		if (isAnim) {
-			anims = new MaAnim[8];
-			for (int i = 0; i < 8; i++)
-				if (i < ori.anims.length)
-					anims[i] = ori.anims[i].clone();
-				else
-					anims[i] = new MaAnim();
-		} else {
-			anims = new MaAnim[] { ori.anims.length > 0 ? ori.anims[0].clone() : new MaAnim() };
-		}
+
+		anims = new MaAnim[Math.max(ori.types.length, TYPEDEF.length)];
+		for (int i = 0; i < ori.types.length; i++)
+			if (i < ori.anims.length)
+				anims[i] = ori.anims[i].clone();
+			else
+				anims[i] = new MaAnim();
+
 		loader.setNum(ori.getNum().cloneImage());
-		types = isAnim ? TYPE8 : SOUL;
+		types = isAnim ? ori.types[0] == TYPEDEF[0] ? (UType[])ori.types : TYPEDEF : types.length == 2 ? BGEFFECT : SOUL;
 		parts = imgcut.cut(ori.getNum());
 		if (ori instanceof AnimU<?>) {
 			AnimU<?> au = (AnimU<?>) ori;

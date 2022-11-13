@@ -38,8 +38,8 @@ public class CustomBGEffect extends Animable<AnimU<?>, AnimU.UType> implements B
         this.id = id;
         name = "BGEffect " + id;
         anim = abg;
-        ebg[0] = anim.getEAnim(AnimU.UType.BACKGROUND);
-        ebg[1] = anim.getEAnim(AnimU.UType.FOREGROUND);
+        ebg[0] = anim.getEAnim(AnimU.BGEFFECT[0]);
+        ebg[1] = anim.getEAnim(AnimU.BGEFFECT[1]);
         loaded = true;
     }
 
@@ -47,8 +47,8 @@ public class CustomBGEffect extends Animable<AnimU<?>, AnimU.UType> implements B
     public void check() {
         if (!loaded) {
             anim.anim.load();
-            ebg[0] = anim.getEAnim(AnimU.UType.BACKGROUND);
-            ebg[1] = anim.getEAnim(AnimU.UType.FOREGROUND);
+            ebg[0] = anim.getEAnim(AnimU.BGEFFECT[0]);
+            ebg[1] = anim.getEAnim(AnimU.BGEFFECT[1]);
             loaded = true;
         }
     }

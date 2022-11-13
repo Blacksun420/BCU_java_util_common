@@ -126,7 +126,7 @@ public class Unit extends Data implements AbUnit {
 			ResourceLocation rl = new ResourceLocation(ResourceLocation.LOCAL, str, Source.BasePath.ANIM);
 			Workspace.validate(rl);
 			AnimCE ac = new AnimCE(rl, u.forms[i].anim);
-			CustomUnit cu = new CustomUnit();
+			CustomUnit cu = new CustomUnit(ac);
 			cu.importData(u.forms[i].du);
 			forms[i] = new Form(this, i, str, ac, cu);
 		}

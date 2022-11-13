@@ -74,9 +74,9 @@ public class EForm extends Data {
 	}
 
 	public EAnimU getEntryAnim() {
-		EAnimU anim = f.getEAnim(AnimU.UType.ENTER);
+		EAnimU anim = f.getEAnim(AnimU.TYPEDEF[AnimU.ENTRY]);
 		if (anim.unusable())
-			anim = f.getEAnim(AnimU.UType.WALK);
+			anim = f.getEAnim(AnimU.TYPEDEF[AnimU.WALK]);
 
 		anim.setTime(0);
 		return anim;

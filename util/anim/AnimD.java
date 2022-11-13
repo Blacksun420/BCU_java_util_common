@@ -2,15 +2,13 @@ package common.util.anim;
 
 import common.system.fake.FakeImage;
 
-public abstract class AnimD<A extends AnimD<A, T>, T extends Enum<T> & AnimI.AnimType<A, T>> extends AnimI<A, T> {
+public abstract class AnimD<A extends AnimD<A, T>, T extends AnimI.AnimType<A, T>> extends AnimI<A, T> {
 
 	public ImgCut imgcut;
 	public MaModel mamodel;
 	public T[] types;
 	public MaAnim[] anims;
 	public FakeImage[] parts;
-
-	public boolean mismatch;
 
 	protected final String str;
 	protected boolean loaded = false;
@@ -52,7 +50,7 @@ public abstract class AnimD<A extends AnimD<A, T>, T extends Enum<T> & AnimI.Ani
 	public abstract void load();
 
 	@Override
-	public final String[] names() {
+	public String[] names() {
 		check();
 		return translate(types);
 	}

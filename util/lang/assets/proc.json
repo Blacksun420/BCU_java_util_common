@@ -1484,5 +1484,17 @@
                 "tooltip": null
             }
         }
+    },
+    "AI": {
+        "abbr_name": "AI",
+        "full_name": "Strategist",
+        "tooltip": "Allows the unit to keep away from enemy attacks and fight smarter",
+        "format": ["Strategist (WIP)"],
+        "class": {
+            "type.idk": {
+                "name": "WIP",
+                "tooltip": "WIP"
+            }
+        }
     }
 }

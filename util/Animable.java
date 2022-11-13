@@ -7,7 +7,7 @@ import common.io.json.JsonField;
 import common.pack.Source.ResourceLocation;
 
 @JsonClass
-public abstract class Animable<A extends AnimI<A, T>, T extends Enum<T> & AnimI.AnimType<A, T>> extends ImgCore {
+public abstract class Animable<A extends AnimI<A, T>, T extends AnimI.AnimType<A, T>> extends ImgCore {
 
 	@JsonField(alias = ResourceLocation.class)
 	public A anim;

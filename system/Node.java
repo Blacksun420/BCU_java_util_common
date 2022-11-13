@@ -1,6 +1,5 @@
 package common.system;
 
-import common.util.unit.Enemy;
 import common.util.unit.Form;
 import common.util.unit.Unit;
 

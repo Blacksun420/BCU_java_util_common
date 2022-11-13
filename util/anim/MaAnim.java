@@ -120,7 +120,7 @@ public class MaAnim extends Data implements BattleStatic {
 			int fir = parts[i].fir;
 			int lmax = smax - fir;
 			boolean prot = rotate || loop == -1;
-			int frame = 0;
+			int frame;
 			if (prot) {
 				int mf = loop == -1 ? smax : max + 1;
 				frame = mf == 0 ? 0 : (f + parts[i].off) % mf;

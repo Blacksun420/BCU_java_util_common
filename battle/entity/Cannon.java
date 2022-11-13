@@ -10,7 +10,7 @@ import common.system.P;
 import common.system.fake.FakeGraphics;
 import common.system.fake.FakeTransform;
 import common.util.Data;
-import common.util.anim.AnimU.UType;
+import common.util.anim.AnimU;
 import common.util.anim.EAnimD;
 import common.util.anim.EAnimU;
 import common.util.pack.NyCastle.NyType;
@@ -163,7 +163,7 @@ public class Cannon extends AtkModelAb {
 		if (preTime == -1 && id == 2) {
 			// wall canon
 			Form f = Identifier.parseInt(339, Unit.class).get().getForms()[0];
-			EAnimU enter = f.getEAnim(UType.ENTER);
+			EAnimU enter = f.getEAnim(AnimU.TYPEDEF[AnimU.ENTRY]);
 			enter.setTime(0);
 			wall = new EUnit(b, f.du, enter, 1);
 			b.le.add(wall);

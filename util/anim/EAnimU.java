@@ -19,13 +19,30 @@ public class EAnimU extends EAnimD<AnimU.UType> {
 		return (AnimU<?>) a;
 	}
 
+	@Override
+	public void changeAnim(AnimU.UType t, boolean skip) {
+		boolean flip = flipped;
+		flip(false);
+		f = -1;
+		ma = anim().getMaAnim(t);
+		type = t;
+
+		flip(flip && type == AnimU.TYPEDEF[AnimU.WALK]);
+		if (skip)
+			setTime(0);
+	}
+
 	public void draw(FakeGraphics g, P ori, double siz, boolean flip) {
+		flip(flip && type == AnimU.TYPEDEF[AnimU.WALK]);
+		draw(g, ori, siz);
+	}
+
+	private void flip(boolean flip) {
 		if (flip != flipped) {
 			for (EPart e : order)
 				e.revert();
 			flipped = flip;
 		}
-		draw(g, ori, siz);
 	}
 	@Override
 	public void draw(FakeGraphics g, P ori, double siz) {
@@ -62,7 +79,6 @@ public class EAnimU extends EAnimD<AnimU.UType> {
 		g.setTransform(at);
 		g.delete(at);
 	}
-
 	/**
 	 * Similar to default paraTo, but allows to select the model part to connect to
 	 * Used solely for Everywhere Door. Not null-safe, use regular one for that

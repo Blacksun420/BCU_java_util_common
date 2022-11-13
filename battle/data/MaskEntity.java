@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 public interface MaskEntity extends BattleStatic {
 
-	int allAtk();
+	int allAtk(int atk);
 
 	int getAbi();
 
@@ -23,17 +23,29 @@ public interface MaskEntity extends BattleStatic {
 	/**
 	 * get the attack animation length
 	 */
-	default int getAnimLen() {
-		return getPack().anim.getAtkLen();
+	default int getAnimLen(int atk) {
+		return getPack().anim.getAtkLen(atk);
 	}
 
-	int getAtkCount();
+	int getAtkCount(int atk);
 
 	int getAtkLoop();
 
-	MaskAtk getAtkModel(int ind);
+	MaskAtk getAtkModel(int atk, int ind);
 
-	MaskAtk[] getAtks();
+	MaskAtk[] getAtks(int atk);
+
+	default int getAtkTypeCount() {
+		return 1;
+	}
+
+	default MaskAtk[][] getAllAtks() {
+		return new MaskAtk[][]{getAtks(0)};
+	}
+
+	default int getShare(int atk) {
+		return 1;
+	}
 
 	default AtkDataModel[] getSpAtks() {
 		return new AtkDataModel[0];
@@ -50,14 +62,14 @@ public interface MaskEntity extends BattleStatic {
 	/**
 	 * get the attack period
 	 */
-	int getItv();
+	int getItv(int atk);
 
 	/**
 	 * get the Enemy/Form this data represents
 	 */
 	Animable<AnimU<?>, UType> getPack();
 
-	int getPost();
+	int getPost(int atk);
 
 	Proc getProc();
 
@@ -110,20 +122,14 @@ public interface MaskEntity extends BattleStatic {
 
 	boolean isLD();
 
-	default boolean isLD(int ind) {
-		return isLD();
-	}
-
 	boolean isOmni();
 
-	default boolean isOmni(int ind) {
-		return isOmni();
-	}
-
-	boolean isRange();
-
-	int[][] rawAtkData();
+	boolean isRange(int atk);
 
 	int touchBase();
+
+	default void animChanged(int del) {
+
+	}
 
 }

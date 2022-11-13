@@ -5,10 +5,10 @@ import common.system.fake.FakeImage;
 import common.util.Animable;
 import common.util.BattleStatic;
 
-public abstract class AnimI<A extends AnimI<A, T>, T extends Enum<T> & AnimI.AnimType<A, T>> extends Animable<A, T>
+public abstract class AnimI<A extends AnimI<A, T>, T extends AnimI.AnimType<A, T>> extends Animable<A, T>
 		implements BattleStatic {
 
-	public interface AnimType<A extends AnimI<A, T>, T extends Enum<T> & AnimType<A, T>> {
+	public interface AnimType<A extends AnimI<A, T>, T extends AnimType<A, T>> {
 
 	}
 
@@ -33,5 +33,4 @@ public abstract class AnimI<A extends AnimI<A, T>, T extends Enum<T> & AnimI.Ani
 	public abstract FakeImage parts(int img);
 
 	public abstract T[] types();
-
 }

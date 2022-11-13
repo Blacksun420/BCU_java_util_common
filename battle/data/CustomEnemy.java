@@ -5,11 +5,10 @@ import common.io.json.JsonClass;
 import common.io.json.JsonField;
 import common.pack.Identifier;
 import common.pack.UserProfile;
-import common.util.pack.Soul;
+import common.util.anim.AnimU;
 import common.util.unit.AbEnemy;
 import common.util.unit.Enemy;
 
-import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -24,20 +23,25 @@ public class CustomEnemy extends CustomEntity implements MaskEnemy {
 	public double limit;
 
 	public CustomEnemy() {
-		rep = new AtkDataModel(this);
-		atks = new AtkDataModel[1];
-		atks[0] = new AtkDataModel(this);
-		width = 320;
-		speed = 8;
+		super();
 		hp = 10000;
-		hb = 1;
-		traits = new ArrayList<>();
+		drop = 100;
 		traits.add(UserProfile.getBCData().traits.get(TRAIT_RED));
-		death = new Identifier<>(Identifier.DEF, Soul.class, 0);
+	}
+
+	public CustomEnemy(AnimU<?> ene) {
+		this();
+		share = new int[ene.anim.getAtkCount()];
+		share[0] = 1;
+		for (int i = hits.size(); i < ene.anim.getAtkCount(); i++) {
+			hits.add(new AtkDataModel[1]);
+			hits.get(i)[0] = new AtkDataModel(this);
+			share[i] = 1;
+		}
 	}
 
 	public CustomEnemy copy(Enemy e) {
-		CustomEnemy ce = new CustomEnemy();
+		CustomEnemy ce = new CustomEnemy(e.anim);
 		ce.importData(this);
 		ce.pack = e;
 
@@ -66,9 +70,10 @@ public class CustomEnemy extends CustomEntity implements MaskEnemy {
 			if (rep.proc.SUMMON.prob > 0 && (rep.proc.SUMMON.id == null || AbEnemy.class.isAssignableFrom(rep.proc.SUMMON.id.cls)))
 				ans.add(Identifier.getOr(rep.proc.SUMMON.id, AbEnemy.class));
 		} else
-			for (AtkDataModel adm : atks)
-				if (adm.proc.SUMMON.prob > 0 && (adm.proc.SUMMON.id == null || AbEnemy.class.isAssignableFrom(adm.proc.SUMMON.id.cls)))
-					ans.add(Identifier.getOr(adm.proc.SUMMON.id, AbEnemy.class));
+			for (AtkDataModel[] adms : hits)
+				for (AtkDataModel adm : adms)
+					if (adm.proc.SUMMON.prob > 0 && (adm.proc.SUMMON.id == null || AbEnemy.class.isAssignableFrom(adm.proc.SUMMON.id.cls)))
+						ans.add(Identifier.getOr(adm.proc.SUMMON.id, AbEnemy.class));
 		return ans;
 	}
 

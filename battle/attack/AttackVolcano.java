@@ -45,13 +45,7 @@ public class AttackVolcano extends AttackAb {
 		}
 
 		if(attacker != null) {
-			if(attacker.status[P_WEAK][0] != 0) {
-				atk = matk.getAtk() * attacker.status[P_WEAK][1] / 100;
-			}
-
-			if(attacker.status[P_STRONG][0] != 0) {
-				atk = matk.getAtk() * attacker.status[P_STRONG][0] / 100;
-			}
+			atk = ((AtkModelEntity)model).getEffAtk(matk);
 		}
 
 		for (AbEntity e : capt) {

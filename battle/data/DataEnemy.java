@@ -29,7 +29,7 @@ public class DataEnemy extends DefaultData implements MaskEnemy {
 		hp = ints[0];
 		hb = ints[1];
 		speed = ints[2];
-		atk = ints[3];
+		atk[0] = ints[3];
 		tba = ints[4];
 		range = ints[5];
 		earn = ints[6];
@@ -39,7 +39,7 @@ public class DataEnemy extends DefaultData implements MaskEnemy {
 			//Red
 			traits.add(BCTraits.get(TRAIT_RED));
 		isrange = ints[11] == 1;
-		pre = ints[12];
+		pre[0] = ints[12];
 		if (ints[13] == 1)
 			//Floating
 			traits.add(BCTraits.get(TRAIT_FLOAT));
@@ -116,13 +116,18 @@ public class DataEnemy extends DefaultData implements MaskEnemy {
 		death = Identifier.parseInt(ints[54], Soul.class);
 		if(ints[54] == -1 && ints[63] == 1)
 			death = Identifier.parseInt(9, Soul.class);
-		atk1 = ints[55];
-		atk2 = ints[56];
-		pre1 = ints[57];
-		pre2 = ints[58];
-		abi0 = ints[59];
-		abi1 = ints[60];
-		abi2 = ints[61];
+		if (ints[55] != 0)
+			if (ints[56] != 0) {
+				atk = new int[]{atk[0], ints[55], ints[56]};
+				pre = new int[]{pre[0], ints[57], ints[58]};
+				abis = new boolean[]{ints[59] == 1, ints[60] == 1, ints[61] == 1};
+			} else {
+				atk = new int[]{atk[0], ints[55]};
+				pre = new int[]{pre[0], ints[57]};
+				abis = new boolean[]{ints[59] == 1, ints[60] == 1};
+			}
+		else
+			abis[0] = ints[59] == 1;
 		proc.BARRIER.health = ints[64];
 		proc.WARP.prob = ints[65];
 		proc.WARP.time = ints[66];
@@ -162,15 +167,15 @@ public class DataEnemy extends DefaultData implements MaskEnemy {
 			traits.add(BCTraits.get(TRAIT_BARON));
 
 		try {
-			if (getAtkCount() > 1) {
+			if (getAtkCount(0) > 1) {
 				int lds0 = lds[0];
 				int ldr0 = ldr[0];
-				lds = new int[getAtkCount()];
-				ldr = new int[getAtkCount()];
+				lds = new int[getAtkCount(0)];
+				ldr = new int[getAtkCount(0)];
 				lds[0] = lds0;
 				ldr[0] = ldr0;
 
-				for (int i = 1; i < getAtkCount(); i++) {
+				for (int i = 1; i < getAtkCount(0); i++) {
 					if (ints[95 + (i - 1) * 3] == 1) {
 						lds[i] = ints[95 + (i - 1) * 3 + 1];
 						ldr[i] = ints[95 + (i - 1) * 3 + 2];
@@ -189,7 +194,7 @@ public class DataEnemy extends DefaultData implements MaskEnemy {
 
 		abi = a;
 
-		datks = new DataAtk[getAtkCount()];
+		datks = new DataAtk[getAtkCount(0)];
 
 		for (int i = 0; i < datks.length; i++) {
 			datks[i] = new DataAtk(this, i);

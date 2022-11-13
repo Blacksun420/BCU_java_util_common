@@ -46,7 +46,6 @@ public class EneRand extends Data implements AbEnemy {
 			return ae;
 		}
 		return selector(sb);
-
 	}
 
 	private EREnt selector(StageBasis sb) {

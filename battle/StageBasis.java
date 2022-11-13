@@ -521,7 +521,7 @@ public class StageBasis extends BattleObj {
 				EEnemy e = est.allow();
 				if (e != null) {
 					e.added(1, (e.mark >= 1 ? boss_spawn : 700.0) + (st.len - 800 - ebase.pos) * e.door / 100);
-					if (e.door > 0 && !e.getAnim().anim().getEAnim(AnimU.UType.WALK).unusable()) {
+					if (e.door > 0 && !e.getAnim().anim().getEAnim(AnimU.TYPEDEF[AnimU.WALK]).unusable()) {
 						lea.add(new DoorCont(this, e));
 						lea.sort(Comparator.comparingInt(ea -> ea.layer));
 					} else {

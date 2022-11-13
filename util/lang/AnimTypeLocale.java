@@ -1,24 +1,23 @@
 package common.util.lang;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import common.CommonStatic;
+import common.io.assets.Admin.StaticPermitted;
+import common.util.anim.AnimI;
+import common.util.anim.AnimU;
+import common.util.pack.Background;
+import common.util.pack.EffAnim;
+import common.util.pack.NyCastle;
+import common.util.pack.WaveAnim;
+
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import common.CommonStatic;
-import common.util.pack.Background;
-import common.util.pack.EffAnim;
-import common.util.pack.NyCastle;
-import common.util.pack.WaveAnim;
-import common.io.assets.Admin.StaticPermitted;
-import common.util.anim.AnimI;
-import common.util.anim.AnimU.UType;
 
 public class AnimTypeLocale {
 
@@ -28,7 +27,7 @@ public class AnimTypeLocale {
 	static {
 		Collections.addAll(TYPES, Background.BGWvType.values());
 		Collections.addAll(TYPES, NyCastle.NyType.values());
-		Collections.addAll(TYPES, UType.values());
+		Collections.addAll(TYPES, AnimU.TYPEDEF);
 		Collections.addAll(TYPES, WaveAnim.WaveType.values());
 		Collections.addAll(TYPES, EffAnim.ArmorEff.values());
 		Collections.addAll(TYPES, EffAnim.BarrierEff.values());
@@ -66,7 +65,7 @@ public class AnimTypeLocale {
 		JsonElement je = JsonParser.parseReader(new InputStreamReader(f, StandardCharsets.UTF_8));
 		for (AnimI.AnimType<?, ?> type : TYPES) {
 			JsonObject obj = je.getAsJsonObject().get(type.getClass().getSimpleName()).getAsJsonObject();
-			String val = obj.get(type.toString()).getAsString();
+			String val = obj.get(type.toString().toUpperCase()).getAsString();
 			MultiLangCont.getStatic().ANIMNAME.put(loc, type, val);
 		}
 	}

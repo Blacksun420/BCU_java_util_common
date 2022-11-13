@@ -18,16 +18,14 @@ public class ContVolcano extends ContAb {
 	private final int aliveTime;
 
 	private int t = 0;
-	private final int ind;
 	private final boolean[] performed = new boolean[4]; // [0,1] - check if curse/seal rng has passed, [2,3] - check if unit process needs to be updated
 
-	protected ContVolcano(AttackVolcano v, double p, int lay, int alive, int ind) {
+	protected ContVolcano(AttackVolcano v, double p, int lay, int alive) {
 		super(v.model.b, p, lay);
 		anim = (v.dire == 1 ? effas().A_E_VOLC : effas().A_VOLC).getEAnim(VolcEff.START);
 		this.v = v;
 		aliveTime = alive;
 		defProc = v.getProc().clone();
-		this.ind = ind;
 		CommonStatic.setSE(SE_VOLC_START);
 
 		performed[0] = performed[2] = v.attacker.status[P_CURSE][0] == 0;
@@ -59,7 +57,7 @@ public class ContVolcano extends ContAb {
 		v.capture();
 		for (AbEntity e : v.capt)
 			if (e instanceof Entity) {
-				int volcs = ((Entity)e).getProc().IMUVOLC.block;
+				int volcs = e.getProc().IMUVOLC.block;
 				if (volcs != 0) {
 					if (volcs > 0)
 						((Entity) e).anim.getEff(STPWAVE);
@@ -97,9 +95,9 @@ public class ContVolcano extends ContAb {
 		} else if (v.attacker.status[P_SEAL][0] == 0 && !performed[3]) {
 			AtkModelEntity aam = (AtkModelEntity) v.model;
 			for (String s : sealp)
-				if (!v.proc.get(s).exists() && (defProc.get(s).exists() || (!performed[1] && aam.getProc(ind).get(s).perform(aam.b.r)))) {
-					defProc.get(s).set(aam.getProc(ind).get(s));
-					v.proc.get(s).set(aam.getProc(ind).get(s));
+				if (!v.proc.get(s).exists() && (defProc.get(s).exists() || (!performed[1] && aam.getProc(v.matk).get(s).perform(aam.b.r)))) {
+					defProc.get(s).set(aam.getProc(v.matk).get(s));
+					v.proc.get(s).set(aam.getProc(v.matk).get(s));
 				}
 			performed[1] = performed[3] = true;
 		}
@@ -111,9 +109,9 @@ public class ContVolcano extends ContAb {
 		} else if (v.attacker.status[P_CURSE][0] == 0 && v.attacker.status[P_SEAL][0] == 0 && !performed[2]) {
 			AtkModelEntity aam = (AtkModelEntity) v.model;
 			for (String s : cursep)
-				if (!v.proc.get(s).exists() && (defProc.get(s).exists() || (!performed[0] && aam.getProc(ind).get(s).perform(aam.b.r)))) {
-					defProc.get(s).set(aam.getProc(ind).get(s));
-					v.proc.get(s).set(aam.getProc(ind).get(s));
+				if (!v.proc.get(s).exists() && (defProc.get(s).exists() || (!performed[0] && aam.getProc(v.matk).get(s).perform(aam.b.r)))) {
+					defProc.get(s).set(aam.getProc(v.matk).get(s));
+					v.proc.get(s).set(aam.getProc(v.matk).get(s));
 				}
 			performed[0] = performed[2] = true;
 		}

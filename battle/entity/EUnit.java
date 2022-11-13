@@ -193,10 +193,17 @@ public class EUnit extends Entity {
 	}
 
 	@Override
-	protected boolean updateMove(double maxl, double extmov) {
+	protected double updateMove(double extmov) {
 		if (status[P_SLOW][0] == 0)
 			extmov += data.getSpeed() * basis.b.getInc(C_SPE) / 200.0;
-		return super.updateMove(maxl, extmov);
+		return super.updateMove(extmov);
+	}
+
+	@Override
+	protected double getMov(double extmov) {
+		if (status[P_SLOW][0] == 0)
+			extmov += data.getSpeed() * basis.b.getInc(C_SPE) / 200.0;
+		return super.getMov(extmov);
 	}
 
 	private int getOrbAtk(ArrayList<Trait> trait, MaskAtk matk) {

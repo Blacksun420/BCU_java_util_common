@@ -5,14 +5,19 @@ public abstract class DefaultData extends DataEntity {
 
 	public Proc proc;
 	protected int[] lds = new int[1], ldr = new int[1];
-	protected int atk, atk1, atk2, pre, pre1, pre2, abi0 = 1, abi1, abi2, tba;
+	protected int[] atk = new int[1], pre = new int[1];
+	protected boolean[] abis = new boolean[1];
+	protected int tba;
 	protected DataAtk[] datks;
 
 	public boolean isrange;
 
 	@Override
-	public int allAtk() {
-		return atk + atk1 + atk2;
+	public int allAtk(int ignore) {
+		int ans = 0;
+		for (int i = 0; i < atk.length; i++)
+			ans += atk[i];
+		return ans;
 	}
 
 	@Override
@@ -21,30 +26,30 @@ public abstract class DefaultData extends DataEntity {
 	}
 
 	@Override
-	public int getAtkCount() {
-		return atk1 == 0 ? 1 : atk2 == 0 ? 2 : 3;
+	public int getAtkCount(int ignore) {
+		return atk.length;
 	}
 
 	@Override
-	public MaskAtk getAtkModel(int ind) {
-		if (ind >= getAtkCount() || datks == null || ind >= datks.length)
+	public MaskAtk getAtkModel(int ignore, int ind) {
+		if (ind >= getAtkCount(0) || datks == null || ind >= datks.length)
 			return null;
 		return datks[ind];
 	}
 
 	@Override
-	public MaskAtk[] getAtks() {
+	public MaskAtk[] getAtks(int ignore) {
 		return datks;
 	}
 
 	@Override
-	public int getItv() {
-		return getLongPre() + Math.max(getTBA() - 1, getPost());
+	public int getItv(int ignore) {
+		return getLongPre() + Math.max(getTBA() - 1, getPost(0));
 	}
 
 	@Override
-	public int getPost() {
-		return getAnimLen() - getLongPre();
+	public int getPost(int ignore) {
+		return getAnimLen(0) - getLongPre();
 	}
 
 	@Override
@@ -83,30 +88,8 @@ public abstract class DefaultData extends DataEntity {
 	}
 
 	@Override
-	public boolean isRange() {
+	public boolean isRange(int ignore) {
 		return isrange;
-	}
-
-	@Override
-	public int[][] rawAtkData() {
-		int[][] data = new int[getAtkCount()][4];
-		data[0][0] = atk;
-		data[0][1] = pre;
-		data[0][2] = abi0;
-		data[0][3] = 1;
-		if (atk1 == 0)
-			return data;
-		data[1][0] = atk1;
-		data[1][1] = pre1 - pre;
-		data[1][2] = abi1;
-		data[1][3] = 1;
-		if (atk2 == 0)
-			return data;
-		data[2][0] = atk2;
-		data[2][1] = pre2 - pre1;
-		data[2][2] = abi2;
-		data[2][3] = 1;
-		return data;
 	}
 
 	@Override
@@ -115,16 +98,12 @@ public abstract class DefaultData extends DataEntity {
 	}
 
 	protected int getLongPre() {
-		if (pre2 > 0)
-			return pre2;
-		if (pre1 > 0)
-			return pre1;
-		return pre;
+		return pre[pre.length - 1];
 	}
 
 	public boolean isCommon() {
-		for (int[] atkDatum : rawAtkData()) {
-			if (atkDatum[2] != 1)
+		for (boolean abi : abis) {
+			if (!abi)
 				return false;
 		}
 		return true;

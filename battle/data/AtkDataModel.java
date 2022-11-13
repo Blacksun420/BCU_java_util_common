@@ -60,16 +60,12 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 	protected AtkDataModel(CustomEntity ene, MaskEntity me, int i) {
 		ce = ene;
 		str = ce.getAvailable("copied");
-		int[][] dat = me.rawAtkData();
-		MaskAtk am = me.getAtkModel(i);
-		if (dat[i][2] == 1)
-			proc = am.getProc().clone();
-		else
-			proc = Proc.blank();
+		MaskAtk am = me.getAtkModel(0, i);
+		proc = am.getProc().clone();
 		ld0 = am.getShortPoint();
 		ld1 = am.getLongPoint();
-		pre = dat[i][1];
-		atk = dat[i][0];
+		pre = am.getPre();
+		atk = am.getAtk();
 		range = am.isRange();
 		dire = am.getDire();
 		count = am.loopCount();
@@ -96,6 +92,11 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 	@Override
 	public int getAtk() {
 		return atk;
+	}
+
+	@Override
+	public int getPre() {
+		return pre;
 	}
 
 	@Override
@@ -148,12 +149,9 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 		return str;
 	}
 
-	protected int[] getAtkData() {
-		return new int[] { atk, pre, 1, dire };
-	}
-
-	protected boolean isLD() {
-		return ld0 > 0 || ld1 < 0;
+	@Override
+	public boolean isLD() {
+		return (ld0 > 0 || ld1 < 0) && !isOmni();
 	}
 
 	@Override

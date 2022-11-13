@@ -1,9 +1,10 @@
 package common.util.anim;
 
 import common.io.assets.Admin.StaticPermitted;
-import common.pack.Source.BasePath;
 import common.system.VImg;
 import common.system.fake.FakeImage;
+
+import java.util.Arrays;
 
 public abstract class AnimU<T extends AnimU.ImageKeeper> extends AnimD<AnimU<?>, AnimU.UType> {
 
@@ -21,8 +22,6 @@ public abstract class AnimU<T extends AnimU.ImageKeeper> extends AnimD<AnimU<?>,
 
 		MaModel getMM();
 
-		BasePath getBasePath();
-
 		FakeImage getNum();
 
 		VImg getUni();
@@ -31,38 +30,38 @@ public abstract class AnimU<T extends AnimU.ImageKeeper> extends AnimD<AnimU<?>,
 
 	}
 
-	public enum UType implements AnimI.AnimType<AnimU<?>, UType>, EditableType {
-		WALK(false), IDLE(false), ATK(true), HB(false), ENTER(true), BURROW_DOWN(true), BURROW_MOVE(false),
-		BURROW_UP(true), SOUL(true), FOREGROUND(false), BACKGROUND(false);
-
+	public static class UType implements AnimI.AnimType<AnimU<?>, UType>, EditableType {
+		private String name;
 		private final boolean rotate;
 
-		UType(boolean rotate) {
+		UType(String name, boolean rotate) {
+			this.name = name;
 			this.rotate = rotate;
 		}
 
+		public void changeName(String str) {
+			name = str;
+		}
 		@Override
 		public boolean rotate() {
 			return rotate;
 		}
+		@Override
+		public String toString() {
+			return name;
+		}
 	}
 
+	public static final int WALK = 0, IDLE = 1, HB = 3, BURROW_DOWN = 4, UNDERGROUND = 5, BURROW_UP = 6, ENTRY = 7, RETREAT = 8;
 	@StaticPermitted
-	public static final UType[] TYPE4 = { UType.WALK, UType.IDLE, UType.ATK, UType.HB };
-	@StaticPermitted
-	public static final UType[] TYPE5 = { UType.WALK, UType.IDLE, UType.ATK, UType.HB, UType.ENTER };
-	@StaticPermitted
-	public static final UType[] TYPE7 = { UType.WALK, UType.IDLE, UType.ATK, UType.HB, UType.BURROW_DOWN,
-			UType.BURROW_MOVE, UType.BURROW_UP };
-	@StaticPermitted
-	public static final UType[] TYPE8 = { UType.WALK, UType.IDLE, UType.ATK, UType.HB, UType.BURROW_DOWN,
-			UType.BURROW_MOVE, UType.BURROW_UP, UType.ENTER };
+	public static final UType[] TYPEDEF = { new UType("walk", false), new UType("idle", false), new UType("attack", true),
+			new UType("kb", false), new UType("burrow_down", true), new UType("burrow_move", false), new UType("burrow_up", true),
+			new UType("entry", true), new UType("retreat", false) };
 
 	@StaticPermitted
-	public static final UType[] SOUL = { UType.SOUL };
-
+	public static final UType[] SOUL = { new UType("soul", true) };
 	@StaticPermitted
-	public static final UType[] BGEFFECT = { UType.FOREGROUND, UType.BACKGROUND };
+	public static final UType[] BGEFFECT = { new UType("background", false), new UType("foreground", false) };
 
 	protected boolean partial = false;
 	public final T loader;
@@ -77,9 +76,57 @@ public abstract class AnimU<T extends AnimU.ImageKeeper> extends AnimD<AnimU<?>,
 		loader = load;
 	}
 
-	public int getAtkLen() {
+	public int getAtkCount() {
+		if (types.length < TYPEDEF.length)
+			return 0;
+		return types.length - TYPEDEF.length + 1;
+	}
+
+	public int getAtkLen(int atk) {
 		partial();
-		return anims[2].len + 1;
+		return anims[2 + atk].len + 1;
+	}
+
+	public void addAttack() {
+		int ind = 2 + getAtkCount();
+		MaAnim[] newMaAnim = new MaAnim[anims.length + 1];
+		UType[] newUType = new UType[newMaAnim.length];
+
+		for (int i = 0; i < newMaAnim.length; i++) {
+			if (i == ind)
+				i++;
+			if (i < ind) {
+				newMaAnim[i] = anims[i];
+				newUType[i] = types[i];
+			} else {
+				newMaAnim[i] = anims[i - 1];
+				newUType[i] = types[i - 1];
+			}
+		}
+		anims = newMaAnim;
+		types = newUType;
+		anims[ind] = new MaAnim();
+		types[ind] = new UType("attack" + (ind - 2), true);
+	}
+
+	public void remAttack(int atk) {
+		MaAnim[] newMaAnim = new MaAnim[anims.length - 1];
+		UType[] newUType = new UType[newMaAnim.length];
+
+		for (int i = 0; i < newMaAnim.length; i++) {
+			if (i < atk) {
+				newMaAnim[i] = anims[i];
+				newUType[i] = types[i];
+			} else {
+				newMaAnim[i] = anims[i + 1];
+				newUType[i] = types[i + 1];
+			}
+		}
+		newUType[2] = TYPEDEF[2];
+		for (int i = 3; i < newUType.length - 6; i++)
+			newUType[i].changeName("attack" + (i - 2));
+		anims = newMaAnim;
+		types = newUType;
 	}
 
 	@Override
@@ -118,6 +165,16 @@ public abstract class AnimU<T extends AnimU.ImageKeeper> extends AnimD<AnimU<?>,
 	}
 
 	@Override
+	public final String[] names() {
+		check();
+		String[] str = translate(types);
+		for (int i = 3; i < str.length - 6; i++) {
+			str[i] = str[2] + " " + (i - 2);
+		}
+		return str;
+	}
+
+	@Override
 	public void unload() {
 		loader.unload();
 		super.unload();
@@ -129,8 +186,19 @@ public abstract class AnimU<T extends AnimU.ImageKeeper> extends AnimD<AnimU<?>,
 			imgcut = loader.getIC();
 			mamodel = loader.getMM();
 			anims = loader.getMA();
-			BasePath bp = loader.getBasePath();
-			types = bp == BasePath.SOUL ? SOUL : bp == BasePath.BGEffect ? BGEFFECT : anims.length == 4 ? TYPE4 : anims.length == 5 ? TYPE5 : anims.length == 7 ? TYPE7 : TYPE8;
+			types = new UType[anims.length];
+			if (types.length <= TYPEDEF.length) {
+				types = types.length == 1 ? SOUL : types.length == 2 ? BGEFFECT : types.length == TYPEDEF.length ? TYPEDEF : Arrays.copyOf(TYPEDEF, types.length);
+			} else {
+				for (int i = 0; i < types.length; i++) {
+					if (i < 3)
+						types[i] = TYPEDEF[i];
+					else if (i >=  anims.length - 6)
+						types[i] = TYPEDEF[i - (anims.length - TYPEDEF.length)];
+					else
+						types[i] = new UType("attack" + (i - 2), true);
+				}
+			}
 		}
 	}
 

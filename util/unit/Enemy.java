@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import common.CommonStatic;
 import common.battle.StageBasis;
 import common.battle.data.*;
+import common.io.json.JsonDecoder;
 import common.util.stage.MapColc;
 import common.util.stage.Stage;
 import common.util.stage.StageMap;
@@ -122,9 +123,9 @@ public class Enemy extends Animable<AnimU<?>, UType> implements AbEnemy {
 	}
 
 	public EAnimU getEntryAnim() {
-		EAnimU anim = getEAnim(AnimU.UType.ENTER);
+		EAnimU anim = getEAnim(AnimU.TYPEDEF[AnimU.ENTRY]);
 		if (anim.unusable())
-			anim = getEAnim(AnimU.UType.WALK);
+			anim = getEAnim(AnimU.TYPEDEF[AnimU.WALK]);
 
 		anim.setTime(0);
 		return anim;
@@ -157,7 +158,12 @@ public class Enemy extends Animable<AnimU<?>, UType> implements AbEnemy {
 
 		PackData.UserPack pack = (PackData.UserPack) getCont();
 		Proc proc = enemy.getProc();
-		AtkDataModel[] atks = enemy.getAllAtks();
+		if (pack.desc.FORK_VERSION < 2) {
+			JsonObject jdu = jobj.getAsJsonObject("de").getAsJsonObject("atks");
+			//AtkDataModel[] oldAtks = JsonDecoder.decodePool(jdu, AtkDataModel[].class);
+			enemy.hits.set(0, enemy.atks);
+		}
+		AtkDataModel[] atks = enemy.getAllAtkModels();
 
 		if (UserProfile.isOlderPack(pack, "0.6.6.0")) {
 			if (UserProfile.isOlderPack(pack, "0.6.5.0")) {
@@ -172,7 +178,7 @@ public class Enemy extends Animable<AnimU<?>, UType> implements AbEnemy {
 									if (UserProfile.isOlderPack(pack, "0.5.1.0"))
 										type = Data.reorderTrait(type);
 									//Finish 5.1.0 check
-									enemy.tba += enemy.getPost() + 1;
+									enemy.tba += enemy.getPost(0) + 1;
 								} //Finish 5.2.0 check
 								MaModel model = anim.loader.getMM();
 								enemy.limit = CommonStatic.customEnemyMinPos(model);

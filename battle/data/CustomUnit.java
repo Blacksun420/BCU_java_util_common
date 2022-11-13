@@ -2,12 +2,9 @@ package common.battle.data;
 
 import common.io.json.JsonClass;
 import common.io.json.JsonField;
-import common.pack.Identifier;
 import common.util.Data;
-import common.util.pack.Soul;
+import common.util.anim.AnimU;
 import common.util.unit.Form;
-
-import java.util.ArrayList;
 
 @JsonClass
 public class CustomUnit extends CustomEntity implements MaskUnit, Cloneable {
@@ -16,24 +13,27 @@ public class CustomUnit extends CustomEntity implements MaskUnit, Cloneable {
 
 	@JsonField
 	public int price, resp, back, front, limit;
-
 	@JsonField(gen = JsonField.GenType.GEN)
 	public PCoin pcoin = null;
 
 	public CustomUnit() {
-		rep = new AtkDataModel(this);
-		atks = new AtkDataModel[1];
-		atks[0] = new AtkDataModel(this);
-		width = 320;
-		speed = 8;
+		super();
 		hp = 1000;
-		hb = 1;
-		traits = new ArrayList<>();
 		price = 50;
 		resp = 60;
 		back = 0;
 		front = 9;
-		death = new Identifier<>(Identifier.DEF, Soul.class, 0);
+	}
+
+	public CustomUnit(AnimU<?> uni) {
+		this();
+		share = new int[uni.anim.getAtkCount()];
+		share[0] = 1;
+		for (int i = hits.size(); i < share.length; i++) {
+			hits.add(new AtkDataModel[1]);
+			hits.get(i)[0] = new AtkDataModel(this);
+			share[i] = 1;
+		}
 	}
 
 	@Override

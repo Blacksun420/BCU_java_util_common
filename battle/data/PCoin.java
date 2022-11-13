@@ -143,7 +143,24 @@ public class PCoin extends Data {
 					else if (type[1] == P_ATKBASE)
 						tar.set(0, 300);
 				} else if (!((CustomEntity)du).common && !(type[1] == P_STRONG && modifs[0] != 0)) {
-					for (AtkDataModel atk : ((CustomEntity)ans).atks) {
+					for (AtkDataModel[] atkss : ((CustomEntity)ans).hits) {
+						for (AtkDataModel atk : atkss) {
+							ProcItem atks = atk.proc.getArr(type[1]);
+
+							if (type[1] == P_VOLC) {
+								atks.set(0, modifs[0]);
+								atks.set(1, Math.min(modifs[1], modifs[2]));
+								atks.set(2, Math.max(modifs[1], modifs[2]));
+								atks.set(3, modifs[3]);
+							} else
+								for (int j = 0; j < 4; j++)
+									if (modifs[j] > 0)
+										atks.set(j, atks.get(j) + modifs[j]);
+						}
+					}
+					for (AtkDataModel atk : ans.getSpAtks()) {
+						if (atk == null)
+							continue;
 						ProcItem atks = atk.proc.getArr(type[1]);
 
 						if (type[1] == P_VOLC) {

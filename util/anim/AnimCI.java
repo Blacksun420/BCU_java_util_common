@@ -41,17 +41,23 @@ public class AnimCI extends AnimU<AnimCI.AnimCIKeeper> {
 
 		@Override
 		public MaAnim[] getMA() {
-			return loader.getMA();
+			MaAnim[] mas = loader.getMA();
+			if (getName().base == Source.BasePath.ANIM && mas.length < AnimU.TYPEDEF.length) {
+				MaAnim[] fixed = new MaAnim[AnimU.TYPEDEF.length];
+				for (int i = 0; i < fixed.length; i++) {
+					if (i < mas.length)
+						fixed[i] = mas[i];
+					else
+						fixed[i] = new MaAnim();
+				}
+				return fixed;
+			}
+			return mas;
 		}
 
 		@Override
 		public MaModel getMM() {
 			return loader.getMM();
-		}
-
-		@Override
-		public Source.BasePath getBasePath() {
-			return loader.getName().base;
 		}
 
 		public ResourceLocation getName() {

@@ -505,6 +505,25 @@ public class Data {
 			public TYPE type = new TYPE();
 		}
 
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class AI extends ProcItem {
+			@JsonClass(noTag = NoTag.LOAD)
+			public static class TYPE extends IntType {
+				@Order(0)
+				public boolean calcblindspot;
+				@Order(1)
+				public boolean assist;
+				@Order(2)
+				public boolean calcstrongest; //For atk restructure
+				@Order(2)
+				public boolean retreat;
+			}
+			@Order(0)
+			public TYPE type = new TYPE();
+			@Order(1)
+			public int retreatSpeed;
+		}
+
 		public static abstract class IntType implements Cloneable, BattleStatic {
 
 			@Documented
@@ -852,18 +871,20 @@ public class Data {
 		public final BSTHUNT BSTHUNT = new BSTHUNT();
 		@Order(55)
 		public final PM WORKERLV = new PM();
-		@Order(55)
-		public final CDSETTER CDSETTER = new CDSETTER();
 		@Order(56)
-		public final AURA WEAKAURA = new AURA();
+		public final CDSETTER CDSETTER = new CDSETTER();
 		@Order(57)
+		public final AURA WEAKAURA = new AURA();
+		@Order(58)
 		public final AURA STRONGAURA = new AURA();
-		@Order(58)
-		public final LETHARGY LETHARGY = new LETHARGY();
-		@Order(58)
-		public final IMUAD IMULETHARGY = new IMUAD();
 		@Order(59)
+		public final LETHARGY LETHARGY = new LETHARGY();
+		@Order(60)
+		public final IMUAD IMULETHARGY = new IMUAD();
+		@Order(61)
 		public final REMOTESHIELD REMOTESHIELD = new REMOTESHIELD();
+		@Order(62)
+		public final AI AI = new AI();
 
 		@Override
 		public Proc clone() {
@@ -1227,7 +1248,8 @@ public class Data {
 	public static final int P_LETHARGY = 59;
 	public static final int P_IMULETHARGY = 60;
 	public static final int P_REMOTESHIELD = 61;
-	public static final byte PROC_TOT = 62;// 53
+	public static final int P_AI = 62;
+	public static final byte PROC_TOT = 63;// 53
 	public static final byte PROC_WIDTH = 3;
 
 	public static final boolean[] procSharable = {
@@ -1292,7 +1314,8 @@ public class Data {
 			true, //Strengthen Aura
 			false, //Lethargy
 			true, //Imu.Lethargy
-			true //Remote shield
+			true, //Remote shield
+			true //AI
 	};
 
 	/**
