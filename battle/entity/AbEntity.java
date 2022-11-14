@@ -1,6 +1,7 @@
 package common.battle.entity;
 
 import common.battle.attack.AttackAb;
+import common.battle.data.MaskAtk;
 import common.util.BattleObj;
 import common.util.unit.Trait;
 
@@ -41,6 +42,8 @@ public abstract class AbEntity extends BattleObj {
 	public Proc getProc() {
 		return Proc.blank();
 	}
+
+	public abstract float calcDamageMult(int dmg, Entity e, MaskAtk matk);
 
 	public abstract void damaged(AttackAb atk);
 

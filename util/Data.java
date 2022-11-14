@@ -510,13 +510,13 @@ public class Data {
 			@JsonClass(noTag = NoTag.LOAD)
 			public static class TYPE extends IntType {
 				@Order(0)
-				public boolean calcblindspot;
-				@Order(1)
 				public boolean assist;
-				@Order(2)
-				public boolean calcstrongest; //For atk restructure
+				@Order(1)
+				public boolean calcstrongest;
 				@Order(2)
 				public boolean retreat;
+				@Order(3)
+				public boolean calcblindspot;
 			}
 			@Order(0)
 			public TYPE type = new TYPE();

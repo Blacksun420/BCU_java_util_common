@@ -223,7 +223,7 @@ public class Editors {
 				setComponentVisibility(this, item.exists(), 2);
 			else if (item instanceof Proc.AURA)
 				setComponentVisibility(this, item.exists(), 4);
-			else if (!(item instanceof Proc.IMU)) {
+			else if (!(item instanceof Proc.IMU || item instanceof Proc.AI)) {
 				ArrayList<Integer> visFields = new ArrayList<>();
 				EditorSupplier edi = UserProfile.getStatic("Editor_Supplier", () -> null);
 				for (int i = 1; i < list.length; i++) {
@@ -710,6 +710,12 @@ public class Editors {
 			} else {
 				t.prob = t.time = 0;
 			}
+		}));
+
+		map().put("AI", new EditControl<>(Proc.AI.class, (t) -> {
+			setComponentVisibility("AI", t.type.retreat, 4);
+			if (!t.type.retreat)
+				t.retreatSpeed = 0;
 		}));
 	}
 

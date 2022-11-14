@@ -4,16 +4,14 @@ import common.battle.data.CustomEntity;
 import common.battle.data.MaskAtk;
 import common.battle.data.MaskEntity;
 import common.battle.data.PCoin;
-import common.battle.entity.EAnimCont;
-import common.battle.entity.EEnemy;
-import common.battle.entity.EUnit;
-import common.battle.entity.Entity;
+import common.battle.entity.*;
 import common.util.Data;
 import common.util.Data.Proc.SUMMON;
 import common.util.pack.EffAnim.DefEff;
 import common.util.unit.Level;
 
 import java.util.Comparator;
+import java.util.List;
 
 public abstract class AtkModelEntity extends AtkModelAb {
 
@@ -140,6 +138,19 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		return getEffAtk(getMAtk(ind));
 	}
 
+	public int predictDamage(int ind) {
+		int total = 0;
+		MaskAtk[] atks = data.getAtks(ind);
+		for (MaskAtk atk : atks) {
+			int dmg = getEffAtk(atk);
+			double[] ranges = inRange(atk);
+			List<AbEntity> ents = e.basis.inRange(e.getTouch(), atk.getDire() * getDire(), ranges[0], ranges[1], false);
+			for (AbEntity ent : ents)
+				total += atk.getDire() == 1 ? Math.min(e.health, dmg * ent.calcDamageMult(dmg, e, atk)) : Math.max(e.maxH - e.health, -dmg * ent.calcDamageMult(dmg, e, atk));
+		}
+		return total;
+	}
+
 	/**
 	 * generate attack entity
 	 */
@@ -192,20 +203,27 @@ public abstract class AtkModelEntity extends AtkModelAb {
 	}
 
 	/**
-	 * get the attack box for nth attack
+	 * get the attack box for maskAtk
 	 */
-	public double[] inRange(int ind) {
+	public double[] inRange(MaskAtk atk) {
 		int dire = e.dire;
 		double d0, d1;
 		d0 = d1 = e.pos;
-		if (!getMAtk(ind).isLD() && !getMAtk(ind).isOmni()) {
+		if (!atk.isLD() && !atk.isOmni()) {
 			d0 += data.getRange() * dire;
 			d1 -= data.getWidth() * dire;
 		} else {
-			d0 += getMAtk(ind).getShortPoint() * dire;
-			d1 += getMAtk(ind).getLongPoint() * dire;
+			d0 += atk.getShortPoint() * dire;
+			d1 += atk.getLongPoint() * dire;
 		}
 		return new double[] { d0, d1 };
+	}
+
+	/**
+	 * get the attack box for nth attack
+	 */
+	public double[] inRange(int ind) {
+		return inRange(getMAtk(ind));
 	}
 
 	@Override
@@ -327,10 +345,11 @@ public abstract class AtkModelEntity extends AtkModelAb {
 	}
 
 	public boolean isSupport() {
-		//WIP
-		for (int i = 0; i < data.getAtkCount(atkType); i++)
-			if (getEffAtk(i) < 0)
+		//TODO
+		for (int i = 0; i < data.getAtkCount(atkType); i++) {
+			if (getEffAtk(i) <= 0)
 				return true;
+		}
 		return false;
 	}
 

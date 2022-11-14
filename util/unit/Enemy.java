@@ -5,6 +5,7 @@ import common.CommonStatic;
 import common.battle.StageBasis;
 import common.battle.data.*;
 import common.io.json.JsonDecoder;
+import common.io.json.localDecoder;
 import common.util.stage.MapColc;
 import common.util.stage.Stage;
 import common.util.stage.StageMap;
@@ -160,8 +161,9 @@ public class Enemy extends Animable<AnimU<?>, UType> implements AbEnemy {
 		Proc proc = enemy.getProc();
 		if (pack.desc.FORK_VERSION < 2) {
 			JsonObject jdu = jobj.getAsJsonObject("de").getAsJsonObject("atks");
-			//AtkDataModel[] oldAtks = JsonDecoder.decodePool(jdu, AtkDataModel[].class);
-			enemy.hits.set(0, enemy.atks);
+			localDecoder loc = new localDecoder(jdu, AtkDataModel[].class, enemy, "old atk data").setGen(true).setPool(true);
+			AtkDataModel[] oldAtks = loc.decode();
+			enemy.hits.set(0, oldAtks);
 		}
 		AtkDataModel[] atks = enemy.getAllAtkModels();
 
@@ -222,11 +224,6 @@ public class Enemy extends Animable<AnimU<?>, UType> implements AbEnemy {
 
 		//Updates stuff to match this fork without core version issues
 		if (pack.desc.FORK_VERSION < 1) {
-			for (AtkDataModel ma : atks) {
-				if ((ma.specialTrait && ma.dire == 1) || (!ma.specialTrait && ma.dire == -1))
-					ma.traits.addAll(enemy.traits);
-				ma.specialTrait = false;
-			}
 			if ((enemy.abi & 32) > 0)
 				proc.IMUWAVE.block = 100;
 			enemy.abi = Data.reorderAbi(enemy.abi, 2);

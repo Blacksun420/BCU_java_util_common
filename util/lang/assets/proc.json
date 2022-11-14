@@ -1489,11 +1489,27 @@
         "abbr_name": "AI",
         "full_name": "Strategist",
         "tooltip": "Allows the unit to keep away from enemy attacks and fight smarter",
-        "format": ["Strategist (WIP)"],
+        "format": ["Strategist (_left)WIP(_right)"],
         "class": {
-            "type.idk": {
-                "name": "WIP",
-                "tooltip": "WIP"
+            "type.assist": {
+                "name": "Improved Support",
+                "tooltip": "Used for units that buff or heal allies. WIP"
+            },
+            "type.calcstrongest": {
+                "name": "Check Strongest Attack",
+                "tooltip": "If this unit has more than one attack pattern, choose an attack based on which will deal the most effective damage instead of randomly"
+            },
+            "type.retreat": {
+                "name": "Retreat",
+                "tooltip": "Move back if this unit is near an unit that is about to attack"
+            },
+            "type.calcblindspot": {
+                "name": "Blindspot Check",
+                "tooltip": "Unit will not attack if there's no enemies within the width of it's standing range and blindspot. If retreat is activated, this moves back an unit enters it's blindspot as well"
+            },
+            "retreatSpeed": {
+                "name": "Retreat Speed",
+                "tooltip": "Speed used to move back if retreat is activated"
             }
         }
     }

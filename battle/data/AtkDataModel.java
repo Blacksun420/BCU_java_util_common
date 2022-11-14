@@ -1,5 +1,6 @@
 package common.battle.data;
 
+import com.google.gson.JsonObject;
 import common.io.json.JsonClass;
 import common.io.json.JsonClass.NoTag;
 import common.io.json.JsonClass.RType;
@@ -165,9 +166,14 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 	}
 
 	@JsonDecoder.OnInjected
-	public void onInjected() {
+	public void onInjected(JsonObject jobj) {
 		if (proc == null)
 			proc = Proc.blank();
+		if (jobj.has("specialTrait")) {
+			boolean spTrait = jobj.get("specialTrait").getAsBoolean();
+			if ((ce instanceof CustomUnit && spTrait && dire == -1) || (ce instanceof CustomEnemy && ((spTrait && dire == 1) || (!spTrait && dire == -1))))
+				traits.addAll(ce.traits);
+		}
 	}
 
 }

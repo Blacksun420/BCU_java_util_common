@@ -425,24 +425,4 @@ public class JsonDecoder {
 	private JsonDecoder getInvoker() {
 		return tarjcls.bypass() ? par : this;
 	}
-
-	public static class localDecoder {
-		private final JsonObject jobj;
-		private final Object obj;
-		private final Class<?> tarcls;
-		private final JsonClass tarjcls;
-		private Class<?> curcls;
-		private JsonClass curjcls;
-		private Field curfld;
-		private int index = 0; //TODO
-
-		private localDecoder(JsonObject json, Class<?> cls, Object pre) throws Exception {
-			jobj = json;
-			obj = pre;
-			tarcls = cls;
-			tarjcls = cls.getAnnotation(JsonClass.class);
-			//current = getInvoker();
-			//decode(tarcls);
-		}
-	}
 }

@@ -1,6 +1,5 @@
 package common.battle.data;
 
-import com.google.gson.JsonElement;
 import common.io.json.JsonClass;
 import common.io.json.JsonClass.NoTag;
 import common.io.json.JsonDecoder;
@@ -21,13 +20,9 @@ public abstract class CustomEntity extends DataEntity {
 	@JsonField(gen = GenType.GEN)
 	public AtkDataModel rep, rev, res, cntr, bur, resu, revi, entr;
 
-	//@JsonField(gen = GenType.GEN) TODO
+	//@JsonField(gen = GenType.GEN, usePool = true) TODO
 	//public AtkDataModel[] revs, ress, burs, resus, revis, entrs;
 
-	@JsonField(gen = GenType.GEN)
-	public AtkDataModel[] atks;
-
-	//@JsonField(gen = GenType.GEN, usePool = true)
 	@JsonField(generic = AtkDataModel[].class, gen = GenType.GEN)
 	public ArrayList<AtkDataModel[]> hits = new ArrayList<>();
 	@JsonField(gen = GenType.GEN)
@@ -138,7 +133,7 @@ public abstract class CustomEntity extends DataEntity {
 		System.arraycopy(hits.get(0), 0, allAtks, 1, hits.get(0).length);
 		for (int i = 1; i < hits.size(); i++) {
 			allAtks = Arrays.copyOf(allAtks, allAtks.length + hits.get(i).length);
-			System.arraycopy(hits.get(i), 0, allAtks, allAtks.length - hits.get(i).length, hits.get(i).length);
+			System.arraycopy(hits.get(i), 0, allAtks, allAtks.length - hits.get(i).length - l, hits.get(i).length);
 		}
 		final int len = allAtks.length - l;
 		l = 0;

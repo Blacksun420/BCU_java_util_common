@@ -419,7 +419,6 @@ public abstract class Entity extends AbEntity {
 				effs[A_DMGCUT] = null;
 			if(effs[A_DMGCAP] != null && effs[A_DMGCAP].done())
 				effs[A_DMGCAP] = null;
-
 			efft--;
 		}
 
@@ -437,12 +436,9 @@ public abstract class Entity extends AbEntity {
 						if(e.anim.corpse.type == ZombieEff.REVIVE && e.data.getRevive() != null && e.data.getRevive().pre >= e.anim.corpse.len()) {
 							e.basis.getAttack(e.aam.getSpAttack(REVI));
 						}
-
 						e.anim.corpse = null;
-
 						status[P_REVIVE][1] = 0;
 					}
-
 					setAnim(AnimU.TYPEDEF[AnimU.HB], true);
 				}
 			else
@@ -462,7 +458,6 @@ public abstract class Entity extends AbEntity {
 				back = effas().A_KB.getEAnim(KBEff.ASS);
 			if (t != INT_WARP)
 				e.kbTime += 1;
-
 			// Z-kill icon
 			if (e.health <= 0 && e.zx.tempZK && e.traits.contains(BCTraits.get(TRAIT_ZOMBIE))) {
 				EAnimD<DefEff> eae = effas().A_Z_STRONG.getEAnim(DefEff.DEF);
@@ -619,15 +614,28 @@ public abstract class Entity extends AbEntity {
 
 		private void setUp() {
 			if (e.data.getAtkTypeCount() > 1) {
-				int totShare = 0;
-				for (int i = 0; i < e.data.getAtkTypeCount(); i++)
-					totShare += e.data.getShare(i);
-				int r = (int) (e.basis.r.nextDouble() * totShare);
-				for (int i = 0; i < e.data.getAtkTypeCount(); i++) {
-					r -= e.data.getShare(i);
-					if (r < 0) {
-						e.aam.atkType = i;
-						break;
+				if (e.getProc().AI.type.calcstrongest) {
+					int[] total = new int[e.data.getAtkTypeCount()];
+					for (int i = 0; i < total.length; i++) {
+						total[i] += e.aam.predictDamage(i);
+					}
+					for (int i = 0; i < total.length; i++)
+						if (total[i] > total[e.aam.atkType])
+							e.aam.atkType = i;
+
+					if (total[e.aam.atkType] == 0)
+						return;
+				} else {
+					int totShare = 0;
+					for (int i = 0; i < e.data.getAtkTypeCount(); i++)
+						totShare += e.data.getShare(i);
+					int r = (int) (e.basis.r.nextDouble() * totShare);
+					for (int i = 0; i < e.data.getAtkTypeCount(); i++) {
+						r -= e.data.getShare(i);
+						if (r < 0) {
+							e.aam.atkType = i;
+							break;
+						}
 					}
 				}
 				setAtk();
@@ -2267,7 +2275,7 @@ public abstract class Entity extends AbEntity {
 			boolean binatk = touchEnemy && atkm.loop != 0 && nstop && tba + atkm.atkTime <= 0;
 
 			if (getProc().AI.type.assist)
-				binatk = aam.isSupport();
+				binatk = aam.isSupport(); //TODO
 			// if it can attack, setup attack state
 			if (!acted && binatk && !(isBase && health <= 0))
 				atkm.setUp();
@@ -2339,6 +2347,48 @@ public abstract class Entity extends AbEntity {
 	 * determine the amount of damage received from this attack
 	 */
 	protected abstract int getDamage(AttackAb atk, int ans);
+
+	@Override
+	public float calcDamageMult(int dmg, Entity e, MaskAtk matk) {
+		if ((e.getAbi() & AB_ONLY) > 0 && !targetable(e))
+			return 0;
+		float ans = 1;
+		if (status[P_CURSE][0] == 0 && (matk.getDire() == -1 || receive(-1)) || ctargetable(matk.getATKTraits(), e)) {
+			ans *= (100 - getProc().IMUATK.prob) / 100f;
+			Proc.DMGCUT dmgcut = getProc().DMGCUT;
+			if (dmgcut.prob > 0 && dmg < status[P_DMGCUT][0] && dmg > 0) {
+				if (dmgcut.prob == 100) {
+					if (dmgcut.reduction == 100)
+						return 0;
+					ans *= (100 - dmgcut.reduction) / 100f;
+				} else
+					ans *= (100 - (1f * dmgcut.reduction / dmgcut.prob)) / 100f;
+			}
+			Proc.DMGCAP dmgcap = getProc().DMGCAP;
+			if (dmgcap.prob > 0 && dmg > status[P_DMGCAP][0]) {
+				if (dmgcap.type.nullify) {
+					return 0;
+				} else
+					ans = 1f * dmg / status[P_DMGCAP][0];
+			}
+		}
+		Proc.REMOTESHIELD remote = getProc().REMOTESHIELD;
+		double stRange = Math.abs(e.pos - pos);
+		if (remote.prob > 0 && remote.reduction + remote.block != 0 && ((!remote.type.traitCon && status[P_CURSE][0] == 0) || ctargetable(matk.getATKTraits(), e))
+			&& stRange >= remote.minrange && stRange <= remote.maxrange) {
+			if (remote.reduction == 100 || remote.block == 100) {
+				if (remote.prob == 100)
+					return 0;
+				ans *= (100 - remote.prob) / 100f;
+			} else if (remote.prob == 100)
+				ans *= (100 - remote.reduction) * (100 - remote.block) / 100f;
+			else
+				ans *= (100 - (1f * remote.reduction / remote.prob)) * (100 - (1f * remote.block / remote.prob)) / 100f;
+		}
+		if (isBase)
+			ans *= 1 + matk.getProc().ATKBASE.mult / 100.0;
+		return ans;
+	}
 
 	/**
 	 * called when entity starts final hb, no revive, no lethal strike

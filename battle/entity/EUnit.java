@@ -104,6 +104,64 @@ public class EUnit extends Entity {
 	}
 
 	@Override
+	public float calcDamageMult(int dmg, Entity e, MaskAtk matk) {
+		float ans = super.calcDamageMult(dmg, e, matk);
+		if (ans == 0)
+			return 0;
+		if (status[P_BARRIER][0] != 0) {
+			if (matk.getProc().BREAK.prob > 0) {
+				ans *= matk.getProc().BREAK.prob / 100f;
+				if (dmg >= status[P_BARRIER][0]) {
+					return ans * status[P_BARRIER][0] / dmg;
+				}
+			} else if (dmg >= status[P_BARRIER][0]) {
+				return 1f * status[P_BARRIER][0] / dmg;
+			} else {
+				return 0;
+			}
+		}
+		if (e instanceof EEnemy) {
+			ArrayList<Trait> sharedTraits = new ArrayList<>(matk.getATKTraits());
+			sharedTraits.retainAll(traits);
+			boolean isAntiTraited = targetTraited(matk.getATKTraits());
+			for (Trait t : traits) {
+				if (t.BCTrait || sharedTraits.contains(t))
+					continue;
+				if ((t.targetType && isAntiTraited) || t.others.contains(((MaskUnit)e.data).getPack()))
+					sharedTraits.add(t);
+			}
+
+			if (!sharedTraits.isEmpty()) {
+				if (status[P_CURSE][0] == 0) {
+					if ((getAbi() & AB_GOOD) != 0)
+						ans *= 1.5;
+					if ((getAbi() & AB_MASSIVE) != 0)
+						ans *= 3;
+					if ((getAbi() & AB_MASSIVES) != 0)
+						ans *= 5;
+				}
+				if (e.status[P_CURSE][0] == 0) {
+					if ((e.getAbi() & AB_GOOD) > 0)
+						ans /= 2;
+					if ((e.getAbi() & AB_RESIST) > 0)
+						ans /= 4;
+					if ((e.getAbi() & AB_RESISTS) > 0)
+						ans /= 6;
+				}
+			}
+			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_WITCH)) && (e.getAbi() & AB_WKILL) > 0)
+				ans *= basis.b.t().getWKDef();
+			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_EVA)) && (e.getAbi() & AB_EKILL) > 0)
+				ans *= basis.b.t().getEKDef();
+			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_BARON)) && (e.getAbi() & AB_BAKILL) > 0)
+				ans *= 0.7;
+			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_BEAST)) && matk.getProc().BSTHUNT.type.active)
+				ans *= 0.6;
+		}
+		return ans;
+	}
+
+	@Override
 	public void damaged(AttackAb atk) {
 		if (atk.trait.contains(BCTraits.get(TRAIT_BEAST))) {
 			Proc.BSTHUNT beastDodge = getProc().BSTHUNT;

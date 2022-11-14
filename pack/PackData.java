@@ -248,8 +248,8 @@ public abstract class PackData implements IndexContainer {
 		public String author;
 
 		@JsonField(io = JsonField.IOType.R)
-		public String name;
-		@JsonField(generic = MultiLangData.class)
+		public String name = "";
+		@JsonField(generic = MultiLangData.class, gen = GenType.FILL)
 		public MultiLangData names = new MultiLangData();
 
 		public String desc;
@@ -301,7 +301,7 @@ public abstract class PackData implements IndexContainer {
 	}
 
 	@JsonClass(read = RType.FILL)
-	public static class UserPack extends PackData {
+	public static class UserPack extends PackData implements Comparable<UserPack> {
 
 		@JsonField
 		@Order(0)
@@ -468,6 +468,11 @@ public abstract class PackData implements IndexContainer {
 					e.de.animChanged(del);
 				}
 			}
+		}
+
+		@Override
+		public int compareTo(UserPack pk) {
+			return toString().compareTo(pk.toString());
 		}
 	}
 

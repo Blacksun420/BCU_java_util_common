@@ -4,10 +4,13 @@ import com.google.gson.JsonObject;
 import common.CommonStatic;
 import common.battle.data.*;
 import common.io.json.JsonClass;
-import common.io.json.JsonClass.*;
+import common.io.json.JsonClass.JCConstructor;
+import common.io.json.JsonClass.JCGeneric;
+import common.io.json.JsonClass.RType;
 import common.io.json.JsonDecoder;
 import common.io.json.JsonDecoder.OnInjected;
 import common.io.json.JsonField;
+import common.io.json.localDecoder;
 import common.pack.Identifier;
 import common.pack.PackData;
 import common.pack.UserProfile;
@@ -152,8 +155,9 @@ public class Form extends Animable<AnimU<?>, AnimU.UType> implements BasedCopabl
 			PackData.UserPack pack = (PackData.UserPack) u.getCont();
 			if (pack.desc.FORK_VERSION < 2) {
 				JsonObject jdu = jobj.getAsJsonObject("du").getAsJsonObject("atks");
-				//AtkDataModel[] oldAtks = JsonDecoder.decodePool(jdu, AtkDataModel[].class);
-				form.hits.set(0, form.atks);
+				localDecoder loc = new localDecoder(jdu, AtkDataModel[].class, form, "old atk data").setGen(true).setPool(true);
+				AtkDataModel[] oldAtks = loc.decode();
+				form.hits.set(0, oldAtks);
 			}
 
 			AtkDataModel[] atks = form.getAllAtkModels();
@@ -215,12 +219,6 @@ public class Form extends Animable<AnimU<?>, AnimU.UType> implements BasedCopabl
 
 			//Updates stuff to match this fork without core version issues
 			if (pack.desc.FORK_VERSION < 1) {
-				for (AtkDataModel ma : atks) {
-					if (ma.specialTrait && ma.dire == -1)
-						ma.traits.addAll(form.traits);
-					ma.specialTrait = false;
-				} //TODO - Use jsonobject method to remove SpecialTrait
-
 				if ((form.abi & 32) > 0)
 					proc.IMUWAVE.block = 100;
 				form.abi = Data.reorderAbi(form.abi, 2);

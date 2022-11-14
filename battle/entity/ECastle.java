@@ -5,6 +5,7 @@ import common.battle.BasisLU;
 import common.battle.StageBasis;
 import common.battle.attack.AttackAb;
 import common.battle.attack.AttackVolcano;
+import common.battle.data.MaskAtk;
 import common.util.anim.EAnimD;
 import common.util.pack.EffAnim.DefEff;
 import common.util.unit.Trait;
@@ -30,6 +31,19 @@ public class ECastle extends AbEntity {
 	public ECastle(StageBasis xb, BasisLU b) {
 		super(b.t().getBaseHealth());
 		sb = xb;
+	}
+
+	@Override
+	public float calcDamageMult(int dmg, Entity e, MaskAtk matk) {
+		float ans = 1 + (matk.getProc().ATKBASE.mult / 100f);
+		Proc.PM satk = matk.getProc().SATK;
+		if (satk.mult > 0) {
+			ans *= 1 + ((100 + satk.mult) * 0.01 / (satk.prob / 100f));
+		}
+		if (matk.getProc().CRIT.mult > 0) {
+			ans *= 1 + (0.01 * matk.getProc().CRIT.mult / (matk.getProc().CRIT.prob / 100f));
+		}
+		return ans;
 	}
 
 	@Override

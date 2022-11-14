@@ -31,6 +31,7 @@ public class UserProfile {
 	private static final String REG_POOL = "_pools";
 	private static final String REG_STATIC = "_statics";
 	protected static final String CURRENT_PACK = "_current_pack";
+	private static Consumer<String> reading;
 
 	@StaticPermitted(StaticPermitted.Type.ENV)
 	private static UserProfile profile = null;
@@ -173,7 +174,8 @@ public class UserProfile {
 		return p;
 	}
 
-	public static void loadPacks(Consumer<Double> prog) {
+	public static void loadPacks(Consumer<Double> prog, Consumer<String> r) {
+		reading = r;
 		UserProfile profile = profile();
 
 		if (profile.pending == null) {
@@ -212,10 +214,11 @@ public class UserProfile {
 						profile.pending.put(pack.desc.id, pack);
 				}
 		Set<UserPack> queue = new HashSet<>(profile.pending.values());
-		int tot = queue.size();
+		int tot = queue.size(), loaded = 0;
 		while (queue.removeIf(profile::add))
-			prog.accept((1.0 * (tot - queue.size())) / tot);
+			prog.accept(1.0 * ++loaded / tot);
 
+		reading = null;
 		profile.pending = null;
 		profile.packlist.addAll(profile.failed);
 
@@ -398,6 +401,10 @@ public class UserProfile {
 
 		if (!canAdd(deps))
 			return false;
+
+		if (reading != null) {
+			reading.accept("Reading " + (pack.desc.names.toString().equals("") ? pack.desc.name.equals("") ? pack.desc.id : pack.desc.name : pack.desc.names.toString()) + " data...");
+		}
 		if (!CommonStatic.ctx.noticeErr(pack::load, ErrType.WARN, "failed to load pack " + pack.desc, () -> setStatic(CURRENT_PACK, null))) {
 			failed.add(pack);
 			return true;

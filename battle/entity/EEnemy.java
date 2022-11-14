@@ -4,6 +4,7 @@ import common.battle.StageBasis;
 import common.battle.attack.AtkModelUnit;
 import common.battle.attack.AttackAb;
 import common.battle.attack.AttackWave;
+import common.battle.data.MaskAtk;
 import common.battle.data.MaskEnemy;
 import common.battle.data.MaskUnit;
 import common.pack.UserProfile;
@@ -39,6 +40,64 @@ public class EEnemy extends Entity {
 			double mul = basis.b.t().getDropMulti() * (1 + (status[P_BOUNTY][0] / 100.0));
 			basis.money += mul * ((MaskEnemy) data).getDrop();
 		}
+	}
+
+	@Override
+	public float calcDamageMult(int dmg, Entity e, MaskAtk matk) {
+		float ans = super.calcDamageMult(dmg, e, matk);
+		if (ans == 0)
+			return 0;
+		if (status[P_BARRIER][0] != 0) {
+			if (matk.getProc().BREAK.prob > 0) {
+				ans *= matk.getProc().BREAK.prob / 100f;
+				if (dmg >= status[P_BARRIER][0]) {
+					return ans * status[P_BARRIER][0] / dmg;
+				}
+			} else if (dmg >= status[P_BARRIER][0]) {
+				return 1f * status[P_BARRIER][0] / dmg;
+			} else {
+				return 0;
+			}
+		}
+		if (e instanceof EUnit) {
+			ArrayList<Trait> sharedTraits = new ArrayList<>(matk.getATKTraits());
+			sharedTraits.retainAll(traits);
+			boolean isAntiTraited = targetTraited(matk.getATKTraits());
+			for (Trait t : traits) {
+				if (t.BCTrait || sharedTraits.contains(t))
+					continue;
+				if ((t.targetType && isAntiTraited) || t.others.contains(((MaskUnit)e.data).getPack()))
+					sharedTraits.add(t);
+			}
+
+			if (!sharedTraits.isEmpty()) {
+				if (e.status[P_CURSE][0] == 0) {
+					if ((e.getAbi() & AB_GOOD) != 0)
+						ans *= 1.5;
+					if ((e.getAbi() & AB_MASSIVE) != 0)
+						ans *= 3;
+					if ((e.getAbi() & AB_MASSIVES) != 0)
+						ans *= 5;
+				}
+				if (status[P_CURSE][0] == 0) {
+					if ((getAbi() & AB_GOOD) > 0)
+						ans /= 2;
+					if ((getAbi() & AB_RESIST) > 0)
+						ans /= 4;
+					if ((getAbi() & AB_RESISTS) > 0)
+						ans /= 6;
+				}
+			}
+			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_WITCH)) && (e.getAbi() & AB_WKILL) > 0)
+				ans *= basis.b.t().getWKAtk();
+			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_EVA)) && (e.getAbi() & AB_EKILL) > 0)
+				ans *= basis.b.t().getEKAtk();
+			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_BARON)) && (e.getAbi() & AB_BAKILL) > 0)
+				ans *= 1.6;
+			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_BEAST)) && matk.getProc().BSTHUNT.type.active)
+				ans *= 2.5;
+		}
+		return ans;
 	}
 
 	@Override
