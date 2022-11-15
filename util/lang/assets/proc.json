@@ -79,7 +79,7 @@
         "abbr_name": "wave",
         "full_name": "Wave",
         "tooltip": null,
-        "format": "(prob)% chance to create a Lv.(lv) wave attack",
+        "format": "(prob)% chance to create a Lv.(lv) wave attack[(type.hitless){, even if this attack misses}]",
         "class": {
             "prob": {
                 "name": "chance",
@@ -88,6 +88,10 @@
             "lv": {
                 "name": "level",
                 "tooltip": null
+            },
+            "type.hitless": {
+                "name": "Miss Trigger",
+                "tooltip": "Wave will spawn even if this attack misses"
             }
         }
     },
@@ -879,7 +883,7 @@
         "abbr_name": "surge",
         "full_name": "Surge",
         "tooltip": null,
-        "format": "(prob)% chance to make a Lv (time/20) surge attack (_left)Lasts (_dispTime(time)), created within (dis_0) ~ (dis_1) range(_right)",
+        "format": "(prob)% chance to make a Lv (time/20) surge attack[(type.hitless){, even if this attack misses}] (_left)Lasts (_dispTime(time)), created within (dis_0) ~ (dis_1) range(_right)",
         "class": {
             "prob": {
                 "name": "chance",
@@ -896,6 +900,10 @@
             "time": {
                 "name": "duration",
                 "tooltip": null
+            },
+            "type.hitless": {
+                "name": "Miss Trigger",
+                "tooltip": "Wave will spawn even if this attack misses"
             }
         }
     },
@@ -1039,7 +1047,7 @@
         "abbr_name" : "mini-wave",
         "full_name" : "Mini-Wave",
         "tooltip" : "Creates small wave which moves twice faster than normal wave with dynamic damage multiplication parameter",
-        "format" : "(prob)% chance to create a lv.(lv) mini-wave [(multi!=20){(_left)Gives target (multi)% of activator's damage(_right)}]",
+        "format" : "(prob)% chance to create a lv.(lv) mini-wave[(type.hitless){, even if this attack misses}] [(multi!=20){(_left)Gives target (multi)% of activator's damage(_right)}]",
         "class" : {
             "prob" : {
                 "name" : "chance",
@@ -1052,6 +1060,10 @@
             "multi" : {
                 "name" : "multi",
                 "tooltip" : "Percentage of activator's damage.<br>If multi is 20, it will have 20% of activator's damage. Negative values are allowed"
+            },
+            "type.hitless": {
+                "name": "Miss Trigger",
+                "tooltip": "Wave will spawn even if this attack misses"
             }
         }
     },

@@ -25,6 +25,7 @@ import common.util.pack.bgeffect.BackgroundEffect;
 
 import java.awt.image.BufferedImage;
 import java.util.Queue;
+import java.util.function.Consumer;
 
 @IndexCont(PackData.class)
 @JsonClass.JCGeneric(Identifier.class)
@@ -37,7 +38,7 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 
 	public static final int BG = 0, TOP = 20, shift = 65; // in pix
 
-	public static void read() {
+	public static void read(Consumer<Double> prog) {
 		BCAuxAssets aux = CommonStatic.getBCAssets();
 		String path = "./org/battle/bg/";
 		for (VFile vf : VFile.get("./org/battle/bg").list()) {
@@ -51,6 +52,7 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 
 		String q;
 
+		int loaded = 0, tot = qs.size();
 		while((q = qs.poll()) != null) {
 			int[] ints = CommonStatic.parseIntsN(q);
 
@@ -175,6 +177,7 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 							{68, 75, 77}
 					};
 			}
+			prog.accept(1.0 * ++loaded / tot);
 		}
 
 		for(int i = 0; i < UserProfile.getBCData().bgs.size(); i++) {

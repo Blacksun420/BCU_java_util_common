@@ -32,11 +32,15 @@ public class DataAtk implements MaskAtk {
 
 	@Override
 	public boolean isLD() {
+		if (index >= data.ldr.length)
+			return data.ldr[0] > 0;
 		return data.ldr[index] > 0;
 	}
 
 	@Override
 	public boolean isOmni() {
+		if (index >= data.ldr.length)
+			return data.ldr[0] < 0;
 		return data.ldr[index] < 0;
 	}
 

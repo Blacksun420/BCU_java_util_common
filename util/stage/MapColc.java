@@ -29,7 +29,7 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 		 * get a BC stage
 		 */
 		public static StageMap getMap(int mid) {
-			Map<String, MapColc> map = UserProfile.getRegister(REG_MAPCOLC, MapColc.class);
+			Map<String, MapColc> map = UserProfile.getRegister(REG_MAPCOLC);
 			MapColc mc = map.get(Data.hex(mid / 1000));
 			if (mc == null)
 				return null;
@@ -37,12 +37,12 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 		}
 
 		public static DefMapColc getMap(String id) {
-			return (DefMapColc) UserProfile.getRegister(REG_MAPCOLC, MapColc.class)
-					.get(Data.hex(UserProfile.getRegister(REG_IDMAP, Integer.class).get(id)));
+			return (DefMapColc) UserProfile.getRegister(REG_MAPCOLC)
+					.get(Data.hex(UserProfile.getRegister(REG_IDMAP, int.class).get(id)));
 		}
 
 		public static void read() {
-			Map<String, Integer> idmap = UserProfile.getRegister(REG_IDMAP, Integer.class);
+			Map<String, Integer> idmap = UserProfile.getRegister(REG_IDMAP);
 			idmap.put("E", 4);
 			idmap.put("N", 0);
 			idmap.put("S", 1);
@@ -233,7 +233,7 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 
 		private DefMapColc() {
 			id = 3;
-			UserProfile.getRegister(REG_MAPCOLC, MapColc.class).put(Data.hex(id), this);
+			UserProfile.getRegister(REG_MAPCOLC).put(Data.hex(id), this);
 			name = "CH";
 			String abbr = "./org/stage/CH/stageNormal/stageNormal";
 			for(int j = 0; j < 3; j++) {
@@ -351,7 +351,7 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 		private DefMapColc(String st, int ID, List<VFile> stage, VFile map) {
 			name = st;
 			id = ID;
-			UserProfile.getRegister(REG_MAPCOLC, MapColc.class).put(Data.hex(id), this);
+			UserProfile.getRegister(REG_MAPCOLC).put(Data.hex(id), this);
 			for (VFile m : map.list()) {
 				String str = m.getName();
 				int len = str.length();
@@ -407,7 +407,7 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 
 		public PackMapColc(UserPack pack) {
 			this.pack = pack;
-			UserProfile.getRegister(REG_MAPCOLC, MapColc.class).put(pack.getSID(), this);
+			UserProfile.getRegister(REG_MAPCOLC).put(pack.getSID(), this);
 		}
 
 		@Override

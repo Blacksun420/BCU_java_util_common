@@ -68,7 +68,6 @@ public class CommonStatic {
 
 		// EffAnim
 		public final EffAnimStore effas = new EffAnimStore();
-
 		public final int[][] values = new int[Data.C_TOT][5];
 		public int[][] filter;
 
@@ -190,6 +189,7 @@ public class CommonStatic {
 		void setBGM(Identifier<Music> mus);
 
 		String getBtnName(int m, String s);
+		void loadProgress(double d, String s);
 	}
 
 	public static class Lang {

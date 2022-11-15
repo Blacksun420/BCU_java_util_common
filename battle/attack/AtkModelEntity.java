@@ -123,6 +123,9 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		return -1;
 	}
 
+	public int getEffAtk(int ind) {
+		return getEffAtk(getMAtk(ind));
+	}
 	public int getEffAtk(MaskAtk matk) {
 		int dmg = (int) (Math.round(matk.getAtk() * d0) * d1);
 		if (e.status[P_WEAK][0] > 0)
@@ -134,19 +137,39 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		return dmg;
 	}
 
-	public int getEffAtk(int ind) {
-		return getEffAtk(getMAtk(ind));
-	}
-
 	public int predictDamage(int ind) {
 		int total = 0;
 		MaskAtk[] atks = data.getAtks(ind);
 		for (MaskAtk atk : atks) {
-			int dmg = getEffAtk(atk);
+			int dmg = getEffAtk(atk) * atk.getDire();
 			double[] ranges = inRange(atk);
-			List<AbEntity> ents = e.basis.inRange(e.getTouch(), atk.getDire() * getDire(), ranges[0], ranges[1], false);
+			List<AbEntity> ents = e.basis.inRange(atk.getTarget(), atk.getDire() * getDire(), ranges[0], ranges[1], false);
 			for (AbEntity ent : ents)
-				total += atk.getDire() == 1 ? Math.min(e.health, dmg * ent.calcDamageMult(dmg, e, atk)) : Math.max(e.maxH - e.health, -dmg * ent.calcDamageMult(dmg, e, atk));
+				total += Math.min(e.health * atk.getDire(), dmg * ent.calcDamageMult(dmg, e, atk));
+		}
+		return total;
+	}
+
+	public int isSupport(int ind) {
+		int total = 0;
+		MaskAtk[] atks = data.getAtks(ind);
+		for (int i = 0; i < data.getAtkCount(atkType); i++) {
+			if (atks[i].getDire() != -1)
+				continue;
+			int dmg = -getEffAtk(atks[i]);
+			double[] ranges = inRange(atks[i]);
+			List<AbEntity> ents = e.basis.inRange(atks[i].getTarget(), -getDire(), ranges[0], ranges[1], false);
+			for (AbEntity ent : ents) {
+				total += Math.min(ent.maxH - (ent.maxH - ent.health), dmg);
+				if (!(ent instanceof Entity))
+					continue;
+				Entity entity = (Entity) ent;
+				if (atks[i].getProc().WEAK.mult != 0)
+					total += entity.getAtk() * (atks[i].getProc().WEAK.mult / 100.0) - entity.getAtk();
+				if (atks[i].getProc().ARMOR.mult != 0)
+					total += ent.health * -atks[i].getProc().ARMOR.mult;
+				//TODO - poison, haste, lethargy
+			}
 		}
 		return total;
 	}
@@ -246,7 +269,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		double d0, d1;
 		d0 = d1 = e.pos;
 		d0 += data.getRange() * dire;
-		if (data.isLD() && !data.isOmni() && e.getProc().AI.type.calcblindspot)
+		if (data.isLD() && e.getProc().AI.type.calcblindspot)
 			d1 += getBlindSpot() * dire;
 		else
 			d1 -= data.getWidth() * dire;
@@ -333,7 +356,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 
 	public double getBlindSpot() {
 		double blindspot = data.getWidth() * e.dire;
-		if (data.isLD() && !data.isOmni()) {
+		if (data.isLD()) {
 			blindspot = Integer.MAX_VALUE;
 			for (int i = 0; i < data.getAtkCount(0); i++)
 				blindspot = Math.min(getMAtk(i).getShortPoint(), blindspot);
@@ -342,15 +365,6 @@ public abstract class AtkModelEntity extends AtkModelAb {
 				blindspot = data.getWidth() * e.dire;
 		}
 		return blindspot;
-	}
-
-	public boolean isSupport() {
-		//TODO
-		for (int i = 0; i < data.getAtkCount(atkType); i++) {
-			if (getEffAtk(i) <= 0)
-				return true;
-		}
-		return false;
 	}
 
 	protected abstract void summon(SUMMON sprc, Entity ent, Object acs, int resist);

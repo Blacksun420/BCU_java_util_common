@@ -69,7 +69,7 @@ public abstract class CastleList extends FixIndexMap<CastleImg> implements Index
 	private static final String REG_DEF_CASTLE = "def_castle";
 
 	public static Set<CastleList> defset() {
-		return UserProfile.getPool(REG_DEF_CASTLE, CastleList.class);
+		return UserProfile.getPool(REG_DEF_CASTLE);
 	}
 
 	public static Collection<CastleList> from(Stage sta) {
@@ -90,7 +90,7 @@ public abstract class CastleList extends FixIndexMap<CastleImg> implements Index
 	}
 
 	public static Map<String, CastleList> map() {
-		return UserProfile.getRegister(REG_CASTLE, CastleList.class);
+		return UserProfile.getRegister(REG_CASTLE);
 	}
 
 	private CastleList() {

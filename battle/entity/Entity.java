@@ -640,7 +640,10 @@ public abstract class Entity extends AbEntity {
 				}
 				setAtk();
 			}
+			setUpAtk();
+		}
 
+		public void setUpAtk() {
 			atkTime = e.data.getAnimLen(e.aam.atkType);
 			preID = 0;
 			preTime = pres[0] - 1;
@@ -662,7 +665,7 @@ public abstract class Entity extends AbEntity {
 					int atk0 = preID;
 					while (++preID < multi && pres[preID] == 0)
 						;
-					tempAtk = (int) (atk0 + e.basis.r.nextDouble() * (preID - atk0));
+					tempAtk = preID - 1 != atk0 ? (int) (atk0 + e.basis.r.nextDouble() * (preID - atk0)) : atk0;
 					e.basis.getAttack(e.aam.getAttack(tempAtk));
 					if (preID < multi) {
 						preTime = pres[preID];
@@ -2243,18 +2246,35 @@ public abstract class Entity extends AbEntity {
 		canBurrow |= atkm.loop < data.getAtkLoop() - 1;
 
 		// do move check if available, move if possible
+		int tba = getEffectiveTBA();
 		if (kbTime == 0 && !acted && atkm.atkTime == 0 && status[P_REVIVE][1] == 0 && anim.anim.type != AnimU.TYPEDEF[AnimU.ENTRY]) {
 			checkTouch();
 
 			if (!touch && nstop && health > 0) {
-				double mov = updateMove(0);
-				if (mov != 0) {
-					if (mov > 0 || getAnim().anim().getEAnim(AnimU.TYPEDEF[AnimU.RETREAT]).unusable())
-						anim.setAnim(AnimU.TYPEDEF[AnimU.WALK], true);
-					else
-						anim.setAnim(AnimU.TYPEDEF[AnimU.RETREAT], true);
-				} else
-					anim.setAnim(AnimU.TYPEDEF[AnimU.IDLE], true);
+				boolean walk = true;
+				if (!acted && atkm.loop != 0 && !isBase && getProc().AI.type.assist && tba + atkm.atkTime <= 0) {
+					int[] supportPwr = new int[data.getAtkTypeCount()];
+					for (int i = 0; i < supportPwr.length; i++) {
+						supportPwr[i] = aam.isSupport(i);
+						if (supportPwr[i] > supportPwr[aam.atkType])
+							aam.atkType = i;
+					}
+					if (supportPwr[aam.atkType] > 0) {
+						atkm.setAtk();
+						atkm.setUpAtk();
+						walk = false;
+					}
+				}
+				if (walk) {
+					double mov = updateMove(0);
+					if (mov != 0) {
+						if (mov > 0 || getAnim().anim().getEAnim(AnimU.TYPEDEF[AnimU.RETREAT]).unusable())
+							anim.setAnim(AnimU.TYPEDEF[AnimU.WALK], true);
+						else
+							anim.setAnim(AnimU.TYPEDEF[AnimU.RETREAT], true);
+					} else
+						anim.setAnim(AnimU.TYPEDEF[AnimU.IDLE], true);
+				}
 			}
 		} else if (anim.anim.type == AnimU.TYPEDEF[AnimU.ENTRY] && data.getEntry() != null && anim.anim.f == data.getEntry().pre)
 			basis.getAttack(aam.getSpAttack(ENTR));
@@ -2270,14 +2290,9 @@ public abstract class Entity extends AbEntity {
 			updateBurrow();
 
 		// update wait and attack state
-		int tba = getEffectiveTBA();
 		if (kbTime == 0 && anim.anim.type != AnimU.TYPEDEF[AnimU.ENTRY]) {
-			boolean binatk = touchEnemy && atkm.loop != 0 && nstop && tba + atkm.atkTime <= 0;
-
-			if (getProc().AI.type.assist)
-				binatk = aam.isSupport(); //TODO
 			// if it can attack, setup attack state
-			if (!acted && binatk && !(isBase && health <= 0))
+			if (!acted && touchEnemy && atkm.loop != 0 && nstop && tba + atkm.atkTime <= 0 && !(isBase && health <= 0))
 				atkm.setUp();
 
 			// update waiting state
@@ -2421,7 +2436,16 @@ public abstract class Entity extends AbEntity {
 	protected double getMov(double extmov) {
 		if (cantGoMore())
 			return 0;
+		double mov = getSpeed(extmov);
 
+		if (mov > 0 && getProc().AI.type.retreat)
+			mov = AIMove(mov);
+
+		negSpeed = mov < 0;
+		return mov;
+	}
+
+	public double getSpeed(double extmov) {
 		double mov = status[P_SLOW][0] > 0 ? 0.25 : data.getSpeed() * 0.5;
 		if (status[P_SPEED][0] > 0 && status[P_SLOW][0] <= 0) {
 			if (status[P_SPEED][2] == 0) {
@@ -2434,11 +2458,6 @@ public abstract class Entity extends AbEntity {
 		}
 		mov += extmov;
 		mov *= auras.getSpdAura();
-
-		if (mov > 0 && getProc().AI.type.retreat)
-			mov = AIMove(mov);
-
-		negSpeed = mov < 0;
 		return mov;
 	}
 
@@ -2654,20 +2673,19 @@ public abstract class Entity extends AbEntity {
 		touch = true;
 		double[] ds = aam.touchRange();
 		List<AbEntity> le = basis.inRange(getTouch(), dire, ds[0], ds[1], false);
-		boolean blds;
-		if (data.isLD() || data.isOmni()) {
-			double bpos = basis.getBase(dire).pos;
-			blds = (bpos - pos) * dire > data.touchBase();
-			if (blds)
-				le.remove(basis.getBase(dire));
-			if (dire == -1 && pos <= bpos && !le.contains(basis.getBase(dire)))
+
+		double bpos = basis.getBase(dire).pos;
+		boolean blds = data.touchBase() != 0 && (bpos - pos) * dire > data.touchBase();
+		if (blds)
+			le.remove(basis.getBase(dire));
+		if (!le.contains(basis.getBase(dire))) {
+			if (dire == -1 && pos <= bpos)
 				le.add(basis.getBase(dire));
-			else if(dire == 1 && pos >= bpos && !le.contains(basis.getBase(dire)))
+			else if(dire == 1 && pos * dire >= bpos)
 				le.add(basis.getBase(dire));
 			blds &= le.size() == 0;
-		} else {
-			blds = le.size() == 0;
 		}
+
 		if (blds)
 			touch = false;
 		touchEnemy = touch;

@@ -33,7 +33,7 @@ import java.util.Map;
 public class Replay extends Data {
 
 	public static Map<String, Replay> getMap() {
-		return UserProfile.getRegister("Replay_local", Replay.class);
+		return UserProfile.getRegister("Replay_local");
 	}
 
 	public static void read() {

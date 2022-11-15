@@ -72,7 +72,7 @@ public abstract class PackData implements IndexContainer {
 			progress.accept("loading effects");
 			EffAnim.read();
 			progress.accept("loading backgrounds");
-			Background.read();
+			Background.read(bar);
 			BackgroundEffect.read();
 			progress.accept("loading cat castles");
 			NyCastle.read();

@@ -137,12 +137,12 @@ public class UpdateCheck {
 	public static final String URL_FONT = "https://github.com/battlecatsultimate/bcu-assets/raw/master/fonts/stage_font.otf";
 
 	public static void addRequiredAssets(String... str) {
-		Collections.addAll(UserProfile.getPool(REG_REQLIB, String.class), str);
+		Collections.addAll(UserProfile.getPool(REG_REQLIB), str);
 	}
 
 	public static List<Downloader> checkAsset(UpdateJson json, String... type) throws Exception {
 		Set<String> local = AssetLoader.previewAssets();
-		Set<String> req = new HashSet<>(UserProfile.getPool(REG_REQLIB, String.class));
+		Set<String> req = new HashSet<>(UserProfile.getPool(REG_REQLIB));
 		if(local != null) {
 			req.removeIf(id -> local.contains("asset_" + id));
 		}

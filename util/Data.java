@@ -91,20 +91,34 @@ public class Data {
 		}
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class WAVE extends ProcItem {
+			@JsonClass(noTag = NoTag.LOAD)
+			public static class TYPE extends IntType {
+				@Order(0)
+				public boolean hitless;
+			}
 			@Order(0)
 			public int prob;
 			@Order(1)
 			public int lv;
+			@Order(2)
+			public TYPE type = new TYPE();
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class MINIWAVE extends ProcItem {
+			@JsonClass(noTag = NoTag.LOAD)
+			public static class TYPE extends IntType {
+				@Order(0)
+				public boolean hitless;
+			}
 			@Order(0)
 			public int prob;
 			@Order(1)
 			public int lv;
 			@Order(2)
 			public int multi;
+			@Order(3)
+			public TYPE type = new TYPE();
 		}
 
 		@JsonClass(noTag = NoTag.LOAD) //Used for procs that lack the block reformat
@@ -123,6 +137,11 @@ public class Data {
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class VOLC extends ProcItem {
+			@JsonClass(noTag = NoTag.LOAD)
+			public static class TYPE extends IntType {
+				@Order(0)
+				public boolean hitless;
+			}
 			@Order(0)
 			public int prob;
 			@Order(1)
@@ -131,6 +150,8 @@ public class Data {
 			public int dis_1;
 			@Order(3)
 			public int time;
+			@Order(3)
+			public TYPE type = new TYPE();
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -343,7 +364,6 @@ public class Data {
 
 			@JsonClass(noTag = NoTag.LOAD)
 			public static class TYPE extends IntType {
-
 				@BitCount(2)
 				@Order(0)
 				public int anim_type;
@@ -359,7 +379,6 @@ public class Data {
 				public boolean on_hit;
 				@Order(6)
 				public boolean on_kill;
-
 			}
 
 			@Order(0)
@@ -409,7 +428,6 @@ public class Data {
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class COUNTER extends ProcItem {
-
 			@JsonClass(noTag = NoTag.LOAD)
 			public static class TYPE extends IntType {
 				@BitCount(2)

@@ -752,7 +752,7 @@ public class Editors {
 
 	@SuppressWarnings("rawtypes")
 	private static Map<String, EditControl> map() {
-		return UserProfile.getRegister("Editor_EditControl", EditControl.class);
+		return UserProfile.getRegister("Editor_EditControl");
 	}
 
 }

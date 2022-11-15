@@ -104,7 +104,7 @@ public class AttackSimple extends AttackAb {
 			attacked.add(e);
 		}
 		r.clear();
-		if (capt.size() > 0 && proc.WAVE.exists()) {
+		if (proc.WAVE.exists() && (capt.size() > 0 || proc.WAVE.type.hitless)) {
 			int dire = model.getDire();
 			int wid = dire == 1 ? W_E_WID : W_U_WID;
 			int addp = (dire == 1 ? W_E_INI : W_U_INI) + wid / 2;
@@ -118,7 +118,7 @@ public class AttackSimple extends AttackAb {
 			}
 		}
 
-		if(capt.size() > 0 && proc.MINIWAVE.exists()) {
+		if(proc.MINIWAVE.exists() && (capt.size() > 0 || proc.MINIWAVE.type.hitless)) {
 			int dire = model.getDire();
 			int wid = dire == 1 ? W_E_WID : W_U_WID;
 			int addp = (dire == 1 ? W_E_INI : W_U_INI) + wid / 2;
@@ -131,7 +131,7 @@ public class AttackSimple extends AttackAb {
 			}
 		}
 
-		if (capt.size() > 0 && proc.VOLC.exists()) {
+		if (proc.VOLC.exists() && (capt.size() > 0 || proc.VOLC.type.hitless)) {
 			int dire = model.getDire();
 			VOLC volc = proc.VOLC;
 			int addp = volc.dis_0 + (int) (model.b.r.nextDouble() * (volc.dis_1 - volc.dis_0));

@@ -2,6 +2,9 @@ package common.util.anim;
 
 import common.CommonStatic;
 import common.CommonStatic.EditLink;
+import common.util.pack.Soul;
+import common.util.pack.bgeffect.BackgroundEffect;
+import common.util.pack.bgeffect.CustomBGEffect;
 import common.util.unit.Enemy;
 import common.util.unit.Form;
 import common.util.unit.Unit;
@@ -26,7 +29,7 @@ import java.util.*;
 @JsonClass.JCGeneric(ResourceLocation.class)
 public class AnimCE extends AnimCI {
 
-	private class History {
+	private static class History {
 
 		protected final OutStream data;
 
@@ -50,7 +53,7 @@ public class AnimCE extends AnimCI {
 	}
 
 	public static Map<String, AnimCE> map() {
-		return UserProfile.getRegister(REG_LOCAL_ANIM, AnimCE.class);
+		return UserProfile.getRegister(REG_LOCAL_ANIM);
 	}
 
 	private boolean saved = true;
@@ -107,14 +110,26 @@ public class AnimCE extends AnimCI {
 	}
 
 	public boolean deletable() {
-		for (UserPack p : UserProfile.getUserPacks()) {
-			for (Enemy e : p.enemies.getList())
-				if (e.anim == this)
-					return false;
-			for (Unit u : p.units.getList())
-				for (Form f : u.forms)
-					if (f.anim == this)
+		if (types == AnimU.SOUL) {
+			for (UserPack p : UserProfile.getUserPacks())
+				for (Soul s : p.souls.getList())
+					if (s.anim == this)
 						return false;
+		} else if (types == AnimU.BGEFFECT) {
+			for (UserPack p : UserProfile.getUserPacks())
+				for (BackgroundEffect bge : p.bgEffects.getList())
+					if (bge instanceof CustomBGEffect && ((CustomBGEffect) bge).anim == this)
+						return false;
+		} else {
+			for (UserPack p : UserProfile.getUserPacks()) {
+				for (Enemy e : p.enemies.getList())
+					if (e.anim == this)
+						return false;
+				for (Unit u : p.units.getList())
+					for (Form f : u.forms)
+						if (f.anim == this)
+							return false;
+			}
 		}
 		return true;
 	}

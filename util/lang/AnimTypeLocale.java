@@ -28,6 +28,8 @@ public class AnimTypeLocale {
 		Collections.addAll(TYPES, Background.BGWvType.values());
 		Collections.addAll(TYPES, NyCastle.NyType.values());
 		Collections.addAll(TYPES, AnimU.TYPEDEF);
+		Collections.addAll(TYPES, AnimU.SOUL);
+		Collections.addAll(TYPES, AnimU.BGEFFECT);
 		Collections.addAll(TYPES, WaveAnim.WaveType.values());
 		Collections.addAll(TYPES, EffAnim.ArmorEff.values());
 		Collections.addAll(TYPES, EffAnim.BarrierEff.values());
