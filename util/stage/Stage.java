@@ -1,6 +1,8 @@
 package common.util.stage;
 
+import com.google.gson.JsonObject;
 import common.CommonStatic;
+import common.io.json.JsonDecoder;
 import common.util.stage.info.DefStageInfo;
 import common.util.stage.info.StageInfo;
 import common.io.assets.Admin.StaticPermitted;
@@ -49,8 +51,6 @@ public class Stage extends Data
 	@JsonClass.JCIdentifier
 	public final Identifier<Stage> id;
 
-	@JsonField(io = JsonField.IOType.R)
-	public String name = "";
 	@JsonField(generic = MultiLangData.class)
 	public MultiLangData names = new MultiLangData();
 
@@ -268,7 +268,6 @@ public class Stage extends Data
 
 		PackDesc desc = us.desc;
 		Set<String> set = dep.getPacks();
-		System.out.println("Stage: " + set);// FIXME
 		set.remove(Identifier.DEF);
 		set.remove(pack);
 		for (String str : desc.dependency)
@@ -321,5 +320,11 @@ public class Stage extends Data
 			if (st != this && st.names.toString().equals(str))
 				return false;
 		return true;
+	}
+
+	@JsonDecoder.OnInjected
+	public void onInjected(JsonObject jobj) {
+		if (jobj.has("name"))
+			names.put(jobj.get("name").getAsString());
 	}
 }

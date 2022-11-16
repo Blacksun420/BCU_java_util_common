@@ -1,12 +1,9 @@
 package common.util.stage;
 
 import common.CommonStatic;
-import common.util.stage.info.CustomStageInfo;
-import common.util.stage.info.DefStageInfo;
 import common.io.assets.Admin.StaticPermitted;
 import common.io.json.JsonClass;
 import common.io.json.JsonClass.RType;
-import common.io.json.JsonDecoder.OnInjected;
 import common.io.json.JsonField;
 import common.pack.FixIndexList.FixIndexMap;
 import common.pack.IndexContainer;
@@ -15,6 +12,8 @@ import common.pack.UserProfile;
 import common.system.files.VFile;
 import common.util.Data;
 import common.util.lang.MultiLangCont;
+import common.util.stage.info.CustomStageInfo;
+import common.util.stage.info.DefStageInfo;
 
 import java.util.*;
 
@@ -97,7 +96,7 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 				sm.stars = new int[len];
 				for (int i = 0; i < len; i++)
 					sm.stars[i] = Integer.parseInt(strs[2 + i]);
-				sm.name += strs[10];
+				sm.names.put(sm.names + strs[10]);
 				sm.starMask = Integer.parseInt(strs[12]);
 
 				if(sm.info != null) {
@@ -240,32 +239,32 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 				if(j == 0) {
 					for (int i = 0; i < 3; i++) {
 						int I = i;
-						add(i, id -> new StageMap(id, abbr + "0_" + I + "_Z.csv", 1)).name = "EoC " + (i + 1) + " Zombie";
+						add(i, id -> new StageMap(id, abbr + "0_" + I + "_Z.csv", 1)).names.put("EoC " + (i + 1) + " Zombie");
 					}
 				} else if(j == 1) {
 					for (int i = 0; i < 3; i++) {
 						int I = i;
-						add(3 + i, id -> new StageMap(id, abbr + "1_" + I + ".csv", 2)).name = "ItF " + (i + 1);
+						add(3 + i, id -> new StageMap(id, abbr + "1_" + I + ".csv", 2)).names.put("ItF " + (i + 1));
 					}
 				} else {
 					for (int i = 0; i < 3; i++) {
 						int I = i;
-						add(6 + i, id -> new StageMap(id, abbr + "2_" + I + ".csv", 3)).name = "CotC " + (i + 1);
+						add(6 + i, id -> new StageMap(id, abbr + "2_" + I + ".csv", 3)).names.put("CotC " + (i + 1));
 					}
 				}
 			}
 
-			add(9, id -> new StageMap(id, abbr + "0.csv", 1)).name = "EoC 1-3";
-			add(10, id -> new StageMap(id, abbr + "1_0_Z.csv", 2)).name = "ItF 1 Zombie";
-			add(11, id -> new StageMap(id, abbr + "2_2_Invasion.csv", 2)).name = "CotC 3 Invasion";
-			add(12, id -> new StageMap(id, abbr + "1_1_Z.csv", 2)).name = "ItF 2 Zombie";
-			add(13, id -> new StageMap(id, abbr + "1_2_Z.csv", 2)).name = "ItF 3 Zombie";
+			add(9, id -> new StageMap(id, abbr + "0.csv", 1)).names.put("EoC 1-3");
+			add(10, id -> new StageMap(id, abbr + "1_0_Z.csv", 2)).names.put("ItF 1 Zombie");
+			add(11, id -> new StageMap(id, abbr + "2_2_Invasion.csv", 2)).names.put("CotC 3 Invasion");
+			add(12, id -> new StageMap(id, abbr + "1_1_Z.csv", 2)).names.put("ItF 2 Zombie");
+			add(13, id -> new StageMap(id, abbr + "1_2_Z.csv", 2)).names.put("ItF 3 Zombie");
 
 			String akuOutbreak = "./org/stage/DM/";
 
 			add(14, id -> new StageMap(id, akuOutbreak+"MSDDM/MapStageDataDM_000.csv", 0));
 
-			add(15, id -> new StageMap(id, abbr + "2_0_Z.csv", 3)).name = "CotC 1 Zombie";
+			add(15, id -> new StageMap(id, abbr + "2_0_Z.csv", 3)).names.put("CotC 1 Zombie");
 
 			VFile stz = VFile.get("./org/stage/CH/stageZ/");
 			for (VFile vf : stz.list()) {
@@ -421,17 +420,6 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 			if (str.isEmpty())
 				return pack.desc.id;
 			return str;
-		}
-
-		@OnInjected
-		public void onInjected() {
-			//TODO - JsonObject method to get name variables
-			if (UserProfile.isOlderPack(pack, "0.6.4.0"))
-				for (StageMap sm : maps) {
-					sm.names.put(sm.name);
-					for (Stage st : sm.list)
-						st.names.put(st.name);
-				}
 		}
 	}
 

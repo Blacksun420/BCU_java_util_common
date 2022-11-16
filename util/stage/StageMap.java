@@ -1,6 +1,8 @@
 package common.util.stage;
 
+import com.google.gson.JsonObject;
 import common.CommonStatic;
+import common.io.json.JsonDecoder;
 import common.util.stage.info.DefStageInfo;
 import common.io.json.JsonClass;
 import common.io.json.JsonClass.JCConstructor;
@@ -34,11 +36,6 @@ public class StageMap extends Data implements BasedCopable<StageMap, MapColc>,
 		public int waitTime = -1, clearLimit = -1, resetMode = -1;
 
 		public boolean hiddenUponClear = false;
-
-		public StageMapInfo(StageMap map) {
-			sm = map;
-			qs = null;
-		}
 
 		private StageMapInfo(StageMap map, FileData ad) {
 			sm = map;
@@ -83,8 +80,6 @@ public class StageMap extends Data implements BasedCopable<StageMap, MapColc>,
 	@JsonField(generic = Stage.class)
 	public final FixIndexMap<Stage> list = new FixIndexMap<>(Stage.class);
 
-	@JsonField(io = JsonField.IOType.R)
-	public String name = "";
 	@JsonField(generic = MultiLangData.class)
 	public MultiLangData names = new MultiLangData();
 
@@ -160,5 +155,11 @@ public class StageMap extends Data implements BasedCopable<StageMap, MapColc>,
 		if (stName.length() == 0)
 			return id + " (" + list.size() + ")";
 		return stName;
+	}
+
+	@JsonDecoder.OnInjected
+	public void onInjected(JsonObject jobj) {
+		if (jobj.has("name"))
+			names.put(jobj.get("name").getAsString());
 	}
 }
