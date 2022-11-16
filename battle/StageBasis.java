@@ -368,6 +368,9 @@ public class StageBasis extends BattleObj {
 				act_mon();
 			money = maxMoney;
 			cannon = maxCannon;
+
+			lw.clear();
+			tlw.clear();
 			for (Entity e : le)
 				if (e.dire == 1) {
 					e.pos = ebase.pos;
