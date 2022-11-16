@@ -159,13 +159,9 @@ public class AnimCE extends AnimCI {
 
 	@Override
 	public void load() {
-		try {
-			super.load();
-			history("initial");
-		} catch (Exception e) {
-			e.printStackTrace();
-			CommonStatic.def.save(false, true);
-		}
+		super.load();
+		history("initial");
+
 		validate();
 	}
 

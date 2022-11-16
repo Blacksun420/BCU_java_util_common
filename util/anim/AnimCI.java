@@ -126,16 +126,12 @@ public class AnimCI extends AnimU<AnimCI.AnimCIKeeper> {
 
 	@Override
 	public void load() {
-		try {
-			super.load();
-			if (getEdi() != null)
-				getEdi().check();
-			if (getUni() != null)
-				getUni().check();
-		} catch (Exception e) {
-			e.printStackTrace();
-			CommonStatic.def.save(false, true);
-		}
+		super.load();
+		if (getEdi() != null)
+			getEdi().check();
+		if (getUni() != null)
+			getUni().check();
+
 		validate();
 	}
 
