@@ -83,6 +83,28 @@ public class localDecoder {
     private final String name; //Only used for errors
     private int index = 0;
 
+    /**
+     * Creates a local, null-safe decoder to decode variables without annotations. Use any of the set functions before decoding to set up the "annotation"
+     * @param json The jsonobject to decode
+     * @param cls The class the decoded object belongs to
+     * @param obj Object that acts as the parent for this object
+     */
+    public localDecoder(JsonElement json, Class<?> cls, Object obj) {
+        par = null;
+        jobj = json == null || json.isJsonNull() ? null : json.getAsJsonObject();
+        tarcls = cls;
+        tarjcls = null;
+        name = "";
+        this.obj = obj;
+    }
+
+    /**
+     * Creates a local decoder to decode variables without annotations. Use any of the set functions before decoding to set up the "annotation"
+     * @param json The jsonobject to decode
+     * @param cls The class the decoded object belongs to
+     * @param obj Object that acts as the parent for this object
+     * @param name For debugging purposes
+     */
     public localDecoder(JsonObject json, Class<?> cls, Object obj, String name) {
         par = null;
         jobj = json;
@@ -181,8 +203,8 @@ public class localDecoder {
         }
     }
 
-    public Object decode(JsonElement elem, Class<?> cls) throws Exception {
-        if (elem.isJsonNull())
+    private Object decode(JsonElement elem, Class<?> cls) throws Exception {
+        if (elem == null || elem.isJsonNull())
             return null;
         if (JsonElement.class.isAssignableFrom(cls))
             return elem;
