@@ -52,13 +52,14 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		this.d1 = d1;
 
 		MaskAtk[][] matks = data.getAllAtks();
-		act = new int[matks.length + 1][];
+		MaskAtk[][] satks = data.getSpAtks(false);
+		act = new int[matks.length + satks.length][];
 		for (int i = 0; i < matks.length; i++) {
 			act[i] = new int[matks[i].length];
 			for (int j = 0; j < act[i].length; j++)
 				act[i][j] = data.getAtkModel(i, j).loopCount();
 		}
-		setExtraAtks(data.getSpAtks());
+		setExtraAtks(satks);
 	}
 
 	protected AtkModelEntity(Entity ent, double d0, double d1, PCoin pc, Level lv) {
@@ -72,21 +73,23 @@ public abstract class AtkModelEntity extends AtkModelAb {
 			this.d1 = Math.round(d1 * (1 + ent.basis.b.getInc(Data.C_ATK) * 0.01));
 
 		MaskAtk[][] matks = data.getAllAtks();
-		act = new int[matks.length + 1][];
+		MaskAtk[][] satks = data.getSpAtks(false);
+		act = new int[matks.length + satks.length][];
 		for (int i = 0; i < matks.length; i++) {
 			act[i] = new int[matks[i].length];
 			for (int j = 0; j < act[i].length; j++)
 				act[i][j] = data.getAtkModel(i, j).loopCount();
 		}
-		setExtraAtks(data.getSpAtks());
+		setExtraAtks(satks);
 	}
 
-	public void setExtraAtks(MaskAtk[] matks) {
-		act[act.length - 1] = new int[matks.length];
-		for(int i = 0; i < matks.length; i++)
-			if(data.getSpAtks()[i] != null) {
-				act[act.length - 1][i] = data.getSpAtks()[i].loopCount();
-			}
+	public void setExtraAtks(MaskAtk[][] satks) {
+		for(int i = 0; i < satks.length; i++) {
+			int ind = act.length - satks.length + i;
+			act[ind] = new int[satks[i].length];
+			for (int j = 0; j < act[ind].length; j++)
+				act[ind][j] = satks[i][j].loopCount();
+		}
 	}
 
 	@Override
@@ -167,8 +170,31 @@ public abstract class AtkModelEntity extends AtkModelAb {
 				if (atks[i].getProc().WEAK.mult != 0)
 					total += entity.getAtk() * (atks[i].getProc().WEAK.mult / 100.0) - entity.getAtk();
 				if (atks[i].getProc().ARMOR.mult != 0)
-					total += ent.health * -atks[i].getProc().ARMOR.mult;
-				//TODO - poison, haste, lethargy
+					total += ent.health * -atks[i].getProc().ARMOR.mult * (atks[i].getProc().ARMOR.prob / 100.0);
+				Proc.SPEED spd = atks[i].getProc().SPEED;
+				if (spd.prob != 0) {
+					if (spd.type == 0)
+						total += spd.speed * (spd.prob / 100.0);
+					else if (spd.type == 1)
+						total += spd.speed * ((Entity) ent).getSpeed(0) * (spd.prob / 100.0);
+					else
+						total += spd.speed - ((Entity) ent).getSpeed(0) * (spd.prob / 100.0);
+				}
+				Proc.LETHARGY leth = atks[i].getProc().LETHARGY;
+				if (leth.prob != 0) {
+					if (leth.type.percentage)
+						total += -leth.mult * ((Entity) ent).data.getTBA() * (spd.prob / 100.0);
+					else
+						total += -leth.mult * (spd.prob / 100.0);
+				}
+				Proc.POISON pois = atks[i].getProc().POISON;
+				if (pois.prob > 0) {
+					int type = pois.type.damage_type;
+					long mul = type == 0 ? 100 : type == 1 ? e.maxH : type == 2 ? e.health : (e.maxH - e.health);
+					long dmgp = mul * pois.damage / 100;
+
+					total += -dmgp * (pois.time / pois.itv) * (pois.prob / 100.0);
+				}
 			}
 		}
 		return total;
@@ -182,21 +208,25 @@ public abstract class AtkModelEntity extends AtkModelAb {
 			return null;
 		act[atkType][ind]--;
 		Proc proc = Proc.blank();
-		int atk = getAttack(ind, proc);
-		double[] ints = inRange(ind);
 		MaskAtk matk = getMAtk(ind);
-		return new AttackSimple(e, this, atk, e.traits, getAbi(), proc, ints[0], ints[1], getMAtk(ind), e.layer, matk.isLD() || matk.isOmni());
+		int atk = getAttack(matk, proc);
+		double[] ints = inRange(matk);
+		return new AttackSimple(e, this, atk, e.traits, getAbi(), proc, ints[0], ints[1], matk, e.layer, matk.isLD() || matk.isOmni());
 	}
 
 	/**
 	 * generate attack entity for a special attack
 	 */
-	public final AttackAb getSpAttack(int ind) {
-		int oldAtk = atkType;
-		atkType = act.length - 1;
-		AttackAb newAtk = getAttack(ind);
-		atkType = oldAtk;
-		return newAtk;
+	public final AttackAb getSpAttack(int atkind, int ind) {
+		int actind = data.getAtkTypeCount() + atkind;
+		if (act[actind][ind] == 0)
+			return null;
+		act[actind][ind]--;
+		Proc proc = Proc.blank();
+		MaskAtk matk = data.getSpAtks(atkind)[ind];
+		int atk = getAttack(matk, proc);
+		double[] ints = inRange(matk);
+		return new AttackSimple(e, this, atk, e.traits, getAbi(), proc, ints[0], ints[1], matk, e.layer, matk.isLD() || matk.isOmni());
 	}
 
 	/**
@@ -204,7 +234,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 	 */
 	public void getDeathSurge() {
 		Proc p = Proc.blank();
-		int atk = getAttack(0, p);
+		int atk = getAttack(data.getAtkModel(0, 0), p);
 		AttackSimple as = new AttackSimple(e, this, atk, e.traits, getAbi(), p, 0, 0, e.data.getAtkModel(0, 0), 0, false);
 		Proc.VOLC ds = e.getProc().DEATHSURGE;
 		int addp = ds.dis_0 + (int) (b.r.nextDouble() * (ds.dis_1 - ds.dis_0));
@@ -276,33 +306,33 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		return new double[] { d0, d1 };
 	}
 
-	protected void extraAtk(int ind) {
-		if (getMAtk(ind).getMove() != 0)
-			e.pos += getMAtk(ind).getMove() * e.dire;
-		if (getMAtk(ind).getAltAbi() != 0)
-			e.altAbi(getMAtk(ind).getAltAbi());
+	protected void extraAtk(MaskAtk matk) {
+		if (matk.getMove() != 0)
+			e.pos += matk.getMove() * e.dire;
+		if (matk.getAltAbi() != 0)
+			e.altAbi(matk.getAltAbi());
 
-		if (getProc(ind).TIME.prob != 0 && (getProc(ind).TIME.prob == 100 || b.r.nextDouble() * 100 < getProc(ind).TIME.prob)) {
-			if (getProc(ind).TIME.intensity > 0) {
-				b.temp_s_stop = Math.max(b.temp_s_stop, getProc(ind).TIME.time);
-				b.temp_inten = getProc(ind).TIME.intensity;
+		if (getProc(matk).TIME.prob != 0 && (getProc(matk).TIME.prob == 100 || b.r.nextDouble() * 100 < getProc(matk).TIME.prob)) {
+			if (getProc(matk).TIME.intensity > 0) {
+				b.temp_s_stop = Math.max(b.temp_s_stop, getProc(matk).TIME.time);
+				b.temp_inten = getProc(matk).TIME.intensity;
 			} else {
-				b.sn_temp_stop = Math.max(b.sn_temp_stop, getProc(ind).TIME.time);
-				b.temp_n_inten = (float)Math.abs(getProc(ind).TIME.intensity) / b.sn_temp_stop;
+				b.sn_temp_stop = Math.max(b.sn_temp_stop, getProc(matk).TIME.time);
+				b.temp_n_inten = (float)Math.abs(getProc(matk).TIME.intensity) / b.sn_temp_stop;
 			}
 		}
-		Proc.THEME t = getProc(ind).THEME;
+		Proc.THEME t = getProc(matk).THEME;
 		if (t.prob != 0 && (t.prob == 100 || b.r.nextDouble() * 100 < t.prob))
 			b.changeTheme(t);
-		Proc.PM w = getProc(ind).WORKERLV;
+		Proc.PM w = getProc(matk).WORKERLV;
 		if (w.prob != 0 && (w.prob == 100 || b.r.nextDouble() * 100 < w.prob))
 			b.changeWorkerLv(w.mult);
-		Proc.CDSETTER c = getProc(ind).CDSETTER;
+		Proc.CDSETTER c = getProc(matk).CDSETTER;
 		if (c.prob != 0 && (c.prob == 100 || b.r.nextDouble() * 100 < c.prob))
 			b.changeUnitCooldown(c.amount, c.slot, c.type);
 	}
 
-	protected abstract int getAttack(int ind, Proc proc);
+	protected abstract int getAttack(MaskAtk ind, Proc proc);
 
 	public final MaskAtk getMAtk(int ind) {
 		return data.getAtkModel(atkType, ind);
@@ -323,19 +353,19 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		return getProc(getMAtk(ind));
 	}
 
-	protected void setProc(int ind, Proc proc, int startOff) {
+	protected void setProc(MaskAtk matk, Proc proc, int startOff) {
 
 		for (int i = startOff; i < par.length; i++)
-			if (getProc(ind).get(par[i]).perform(b.r))
-				proc.get(par[i]).set(getProc(ind).get(par[i]));
+			if (getProc(matk).get(par[i]).perform(b.r))
+				proc.get(par[i]).set(getProc(matk).get(par[i]));
 
 		if (data instanceof CustomEntity)
-			for (int b : BCShareable) proc.getArr(b).set(getProc(ind).getArr(b));
-		if (getProc(ind).SUMMON.perform(b.r)) {
-			SUMMON sprc = getProc(ind).SUMMON;
+			for (int b : BCShareable) proc.getArr(b).set(getProc(matk).getArr(b));
+		if (getProc(matk).SUMMON.perform(b.r)) {
+			SUMMON sprc = getProc(matk).SUMMON;
 			SUMMON.TYPE conf = sprc.type;
 			if (!conf.on_hit && !conf.on_kill)
-				summon(sprc, e, data.getAtkModel(atkType, ind),0);
+				summon(sprc, e, matk,0);
 			else
 				proc.SUMMON.set(sprc);
 		}

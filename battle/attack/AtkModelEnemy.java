@@ -1,5 +1,6 @@
 package common.battle.attack;
 
+import common.battle.data.MaskAtk;
 import common.battle.entity.EEnemy;
 import common.battle.entity.EUnit;
 import common.battle.entity.EntCont;
@@ -113,19 +114,19 @@ public class AtkModelEnemy extends AtkModelEntity {
 	}
 
 	@Override
-	protected int getAttack(int ind, Proc proc) {
-		int atk = getEffAtk(ind);
-		if (getMAtk(ind).getProc() != sealed && getMAtk(ind).canProc())
-			setProc(ind, proc, e.status[P_CURSE][0] > 0 ? cursedProcs : 0);
+	protected int getAttack(MaskAtk matk, Proc proc) {
+		int atk = getEffAtk(matk);
+		if (matk.getProc() != sealed && matk.canProc())
+			setProc(matk, proc, e.status[P_CURSE][0] > 0 ? cursedProcs : 0);
 		else {
-			if (getMAtk(ind).getProc().MOVEWAVE.perform(b.r)) //Movewave procs regardless of seal state
-				proc.MOVEWAVE.set(getMAtk(ind).getProc().MOVEWAVE);
+			if (matk.getProc().MOVEWAVE.perform(b.r)) //Movewave procs regardless of seal state
+				proc.MOVEWAVE.set(matk.getProc().MOVEWAVE);
 
-			if (!getMAtk(ind).canProc())
+			if (!matk.canProc())
 				for (int j : BCShareable) proc.getArr(j).set(e.getProc().getArr(j));
 		}
 
-		extraAtk(ind);
+		extraAtk(matk);
 		return atk;
 	}
 }

@@ -123,25 +123,25 @@ public class AtkModelUnit extends AtkModelEntity {
 	}
 
 	@Override
-	protected int getAttack(int ind, Proc proc) {
-		int atk = getEffAtk(ind);
+	protected int getAttack(MaskAtk matk, Proc proc) {
+		int atk = getEffAtk(matk);
 
-		if (getMAtk(ind).getProc() != sealed && getMAtk(ind).canProc()) {
-			setProc(ind, proc, 0);
+		if (matk.getProc() != sealed && matk.canProc()) {
+			setProc(matk, proc, 0);
 			proc.KB.dis = proc.KB.dis * (100 + bas.getInc(C_KB)) / 100;
 			proc.STOP.time = (proc.STOP.time * (100 + bas.getInc(C_STOP))) / 100;
 			proc.SLOW.time = (proc.SLOW.time * (100 + bas.getInc(C_SLOW))) / 100;
 			proc.WEAK.time = (proc.WEAK.time * (100 + bas.getInc(C_WEAK))) / 100;
 		} else {
-			if (getMAtk(ind).getProc().MOVEWAVE.perform(b.r)) //Movewave procs regardless of seal state
-				proc.MOVEWAVE.set(getMAtk(ind).getProc().MOVEWAVE);
+			if (matk.getProc().MOVEWAVE.perform(b.r)) //Movewave procs regardless of seal state
+				proc.MOVEWAVE.set(matk.getProc().MOVEWAVE);
 
-			if (!getMAtk(ind).canProc())
+			if (!matk.canProc())
 				for (int j : BCShareable) proc.getArr(j).set(e.getProc().getArr(j));
 		}
 		proc.getArr(P_BSTHUNT).set(e.getProc().getArr(P_BSTHUNT));
 
-		extraAtk(ind);
+		extraAtk(matk);
 		return atk;
 	}
 
