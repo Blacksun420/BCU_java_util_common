@@ -537,13 +537,12 @@ public abstract class Source {
 
 		@Override
 		public VImg readImage(String path, int ind) {
-			VFile vf = VFile.getFile(getFile(path + "/" + Data.trio(ind) + ".png"));
+			return vimg(VFile.getFile(getFile(path + "/" + Data.trio(ind) + ".png")));
+		}
 
-			if(vf == null) {
-				return null;
-			} else {
-				return new VImg(vf);
-			}
+		@Override
+		public VImg readImage(String path) {
+			return vimg(VFile.getFile(getFile(path + ".png")));
 		}
 
 		public OutputStream writeFile(String path) throws IOException {
@@ -613,11 +612,13 @@ public abstract class Source {
 		@Override
 		public VImg readImage(String path, int ind) {
 			String fullPath = path.startsWith("./") ? path + "/" + Data.trio(ind) + ".png" : "./" + path + "/" + Data.trio(ind) + ".png";
-			VFile vf = zip.tree.find(fullPath);
+			return Source.vimg(zip.tree.find(fullPath));
+		}
 
-			if (vf == null)
-				return null;
-			return new VImg(vf);
+		@Override
+		public VImg readImage(String path) {
+			String fullPath = path.startsWith("./") ? path + ".png" : "./" + path + ".png";
+			return Source.vimg(zip.tree.find(fullPath));
 		}
 
 		public Workspace unzip(String password, Consumer<Double> prog) throws Exception {
@@ -690,6 +691,12 @@ public abstract class Source {
 	/**
 	 * read images from file. Use it
 	 */
-	//TODO: might be able to use BasePath for path
 	public abstract VImg readImage(String path, int ind);
+	public abstract VImg readImage(String path);
+
+	private static VImg vimg(VFile vf) {
+		if(vf == null)
+			return null;
+		return new VImg(vf);
+	}
 }

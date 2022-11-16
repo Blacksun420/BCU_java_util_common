@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import common.CommonStatic;
 import common.battle.Treasure;
+import common.battle.data.CustomEntity;
 import common.battle.data.DataEnemy;
 import common.battle.data.Orb;
 import common.battle.data.PCoin;
@@ -19,6 +20,7 @@ import common.io.json.JsonField;
 import common.io.json.JsonField.GenType;
 import common.pack.FixIndexList.FixIndexMap;
 import common.pack.Source.Workspace;
+import common.system.VImg;
 import common.system.files.FDFile;
 import common.system.files.VFile;
 import common.system.files.VFileRoot;
@@ -253,8 +255,9 @@ public abstract class PackData implements IndexContainer {
 		public MultiLangData names = new MultiLangData();
 
 		public String desc;
-		public String time;
-		public byte version;
+
+		@JsonField(block = true)
+		public VImg icon, banner;
 		public boolean allowAnim = false;
 		public byte[] parentPassword;
 		@JsonField(generic = String.class)
@@ -284,8 +287,6 @@ public abstract class PackData implements IndexContainer {
 			desc.author = author;
 			desc.names.put(names.toString());
 			desc.desc = this.desc;
-			desc.time = time;
-			desc.version = version;
 			desc.allowAnim = allowAnim;
 			desc.parentPassword = parentPassword == null ? null : parentPassword.clone();
 
@@ -465,7 +466,7 @@ public abstract class PackData implements IndexContainer {
 		public void animChanged(AnimCE anim, int del) {
 			for (Enemy e : enemies) {
 				if (e.anim == anim) {
-					e.de.animChanged(del);
+					((CustomEntity)e.de).animChanged(del);
 				}
 			}
 		}
@@ -473,6 +474,12 @@ public abstract class PackData implements IndexContainer {
 		@Override
 		public int compareTo(UserPack pk) {
 			return toString().compareTo(pk.toString());
+		}
+
+		@JsonDecoder.OnInjected
+		public void onInjected() {
+			desc.icon = source.readImage("icon");
+			desc.banner = source.readImage("banner");
 		}
 	}
 
