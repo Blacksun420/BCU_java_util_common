@@ -158,21 +158,20 @@ public class PCoin extends Data {
 										atks.set(j, atks.get(j) + modifs[j]);
 						}
 					}
-					for (AtkDataModel atk : ans.getSpAtks()) {
-						if (atk == null)
-							continue;
-						ProcItem atks = atk.proc.getArr(type[1]);
+					for (AtkDataModel[] atks : ans.getSpAtks(true))
+						for (AtkDataModel atk : atks) {
+							ProcItem atkp = atk.proc.getArr(type[1]);
 
-						if (type[1] == P_VOLC) {
-							atks.set(0, modifs[0]);
-							atks.set(1, Math.min(modifs[1], modifs[2]));
-							atks.set(2, Math.max(modifs[1], modifs[2]));
-							atks.set(3, modifs[3]);
-						} else
-							for (int j = 0; j < 4; j++)
-								if (modifs[j] > 0)
-									atks.set(j, atks.get(j) + modifs[j]);
-					}
+							if (type[1] == P_VOLC) {
+								atkp.set(0, modifs[0]);
+								atkp.set(1, Math.min(modifs[1], modifs[2]));
+								atkp.set(2, Math.max(modifs[1], modifs[2]));
+								atkp.set(3, modifs[3]);
+							} else
+								for (int j = 0; j < 4; j++)
+									if (modifs[j] > 0)
+										atkp.set(j, atkp.get(j) + modifs[j]);
+						}
 				}
 			} else if (type[0] == PC_AB || type[0] == PC_BASE) {
 				if (du instanceof DataUnit)

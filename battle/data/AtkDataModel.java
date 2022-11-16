@@ -20,12 +20,12 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 	@JsonField(block = true)
 	public final CustomEntity ce;
 	public String str = "";
+	@JsonField(block = true)
+	public String dispStr;
 	public int atk, pre = 1, ld0, ld1, targ = TCH_N, count = -1, dire = 1, alt = 0, move = 0;
 	public boolean range = true;
-	@JsonField(io = JsonField.IOType.R)
-	public boolean specialTrait = false; //Special trait makes attacks that ignore traits consider traits, and attacks that don't do
 	@JsonField(generic = Trait.class, alias = Identifier.class)
-	public ArrayList<Trait> traits = new ArrayList<>(); //Gives attacks their own typings. SpecialTrait but better lol
+	public ArrayList<Trait> traits = new ArrayList<>(); //Gives attacks their own typings
 
 	@JsonField
 	public Identifier<Music> audio, audio1;
@@ -35,13 +35,13 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 
 	public AtkDataModel(CustomEntity ent) {
 		ce = ent;
-		str = ce.getAvailable(str);
+		checkAvail();
 		proc = Proc.blank();
 	}
 
 	protected AtkDataModel(CustomEntity ene, AtkDataModel adm) {
 		ce = ene;
-		str = ce.getAvailable(adm.str);
+		checkAvail(adm.str);
 		atk = adm.atk;
 		pre = adm.pre;
 		ld0 = adm.ld0;
@@ -60,7 +60,7 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 
 	protected AtkDataModel(CustomEntity ene, MaskEntity me, int i) {
 		ce = ene;
-		str = ce.getAvailable("copied");
+		checkAvail("copied");
 		MaskAtk am = me.getAtkModel(0, i);
 		proc = am.getProc().clone();
 		ld0 = am.getShortPoint();
@@ -147,7 +147,44 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 
 	@Override
 	public String toString() {
-		return str;
+		int[] ind = indexOf();
+		if (ind.length == 0)
+			return str;
+		String name = (ind[1] + 1) + " - " + str;
+		int pre = 0;
+		for (int i = 0; i <= ind[1]; i++) {
+			pre += ce.getAtks(ind[0])[i].getPre();
+			if (pre >= ce.getAnimLen(ind[0])) {
+				name += " (out of range)";
+				break;
+			}
+		}
+		return name;
+	}
+
+	public void checkAvail() {
+		checkAvail(str);
+	}
+
+	public void checkAvail(String str) {
+		if (ce.hits == null || ce.hits.size() == 0)
+			return;
+		int[] atkInd = indexOf();
+		if (atkInd.length == 0)
+			return;
+
+		for (AtkDataModel adm : ce.hits.get(atkInd[0]))
+			if (adm.str.equals(str))
+				str += "'";
+		this.str = str;
+	}
+
+	public int[] indexOf() {
+		for (int j = 0;j < ce.hits.size(); j++)
+			for (int i = 0; i < ce.getAtks(j).length; i++)
+				if (ce.getAtks(j)[i] == this)
+					return new int[]{j, i};
+		return new int[0];
 	}
 
 	@Override

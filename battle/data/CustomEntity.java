@@ -18,10 +18,10 @@ import java.util.List;
 public abstract class CustomEntity extends DataEntity {
 
 	@JsonField(gen = GenType.GEN)
-	public AtkDataModel rep, rev, res, cntr, bur, resu, revi, entr;
-
-	//@JsonField(gen = GenType.GEN, usePool = true) TODO
-	//public AtkDataModel[] revs, ress, burs, resus, revis, entrs;
+	public AtkDataModel rep, cntr;
+	@JsonField(gen = GenType.GEN, usePool = true)
+	public AtkDataModel[] revs = new AtkDataModel[0], ress = new AtkDataModel[0], burs = new AtkDataModel[0],
+			resus = new AtkDataModel[0], revis = new AtkDataModel[0], entrs = new AtkDataModel[0];
 
 	@JsonField(generic = AtkDataModel[].class, gen = GenType.GEN)
 	public ArrayList<AtkDataModel[]> hits = new ArrayList<>();
@@ -102,7 +102,7 @@ public abstract class CustomEntity extends DataEntity {
 	@Override
 	public MaskAtk getAtkModel(int atk, int ind) {
 		if (atk >= hits.size() || ind >= hits.get(atk).length)
-			return getSpAtks()[ind];
+			return getSpAtks(atk - hits.size())[ind];
 		return hits.get(atk)[ind];
 	}
 
@@ -122,32 +122,33 @@ public abstract class CustomEntity extends DataEntity {
 	}
 
 	public AtkDataModel[] getAllAtkModels() { //Used only on OnInjected for non-shareable procs
-		int l = 0;
-		AtkDataModel[] sp = getSpAtks();
-		for (int i = 0; i < sp.length; i++)
-			if (sp[i] != null)
-				l++;
-
-		AtkDataModel[] allAtks = new AtkDataModel[hits.get(0).length + 1 + l];
+		AtkDataModel[] allAtks = new AtkDataModel[hits.get(0).length + 1];
 		allAtks[0] = rep;
 		System.arraycopy(hits.get(0), 0, allAtks, 1, hits.get(0).length);
 		for (int i = 1; i < hits.size(); i++) {
 			allAtks = Arrays.copyOf(allAtks, allAtks.length + hits.get(i).length);
-			System.arraycopy(hits.get(i), 0, allAtks, allAtks.length - hits.get(i).length - l, hits.get(i).length);
+			System.arraycopy(hits.get(i), 0, allAtks, allAtks.length - hits.get(i).length, hits.get(i).length);
 		}
-		final int len = allAtks.length - l;
-		l = 0;
-		for (int i = 0; i < sp.length; i++)
-			if (sp[i] != null)
-				allAtks[i + len - l] = sp[i];
-			else
-				l++;
+		AtkDataModel[][] sps = getSpAtks(true);
+		for (AtkDataModel[] sp : sps) {
+			if (sp.length == 0)
+				continue;
+			allAtks = Arrays.copyOf(allAtks, allAtks.length + sp.length);
+			System.arraycopy(sp, 0, allAtks, allAtks.length - sp.length, sp.length);
+		}
 		return allAtks;
 	}
 
 	@Override
-	public AtkDataModel[] getSpAtks() {
-		return new AtkDataModel[]{rev, res, cntr, bur, resu, revi, entr};
+	public AtkDataModel[][] getSpAtks(boolean addCounter) {
+		if (addCounter && cntr != null)
+			return new AtkDataModel[][]{revs, ress, new AtkDataModel[]{cntr}, burs, resus, revis, entrs};
+		return new AtkDataModel[][]{revs, ress, burs, resus, revis, entrs};
+	}
+
+	@Override
+	public AtkDataModel[] getSpAtks(int ind) {
+		return  getSpAtks(false)[ind];
 	}
 
 	@Override
@@ -155,26 +156,26 @@ public abstract class CustomEntity extends DataEntity {
 		return share[atk];
 	}
 
-	public String getAvailable(String str) {
-		while (contains(str))
-			str += "'";
-
-		return str;
-	}
-
 	@Override
 	public int getItv(int atk) {
 		int longPre = 0;
 		for (AtkDataModel adm : hits.get(atk))
 			longPre += adm.pre;
-		return longPre + Math.max(getTBA() - 1, getPost(atk));
+		return longPre + Math.max(getTBA() - 1, getPost(false, atk));
 	}
 
 	@Override
-	public int getPost(int atk) {
-		int ans = getAnimLen(atk);
-		for (AtkDataModel adm : hits.get(atk))
-			ans -= adm.pre;
+	public int getPost(boolean sp, int atk) {
+		int ans;
+		if (sp) {
+			ans = 0;
+			for (AtkDataModel adm : getSpAtks(atk))
+				ans -= adm.pre;
+		} else {
+			ans = getAnimLen(atk);
+			for (AtkDataModel adm : hits.get(atk))
+				ans -= adm.pre;
+		}
 		return ans;
 	}
 
@@ -189,36 +190,36 @@ public abstract class CustomEntity extends DataEntity {
 	}
 
 	@Override
-	public AtkDataModel getResurrection() {
-		return res;
+	public AtkDataModel[] getRevenge() {
+		return revs;
 	}
 
 	@Override
-	public AtkDataModel getRevenge() {
-		return rev;
+	public AtkDataModel[] getResurrection() {
+		return ress;
 	}
 
 	@Override
 	public AtkDataModel getCounter() { return cntr; }
 
 	@Override
-	public AtkDataModel getGouge() {
-		return bur;
+	public AtkDataModel[] getGouge() {
+		return burs;
 	}
 
 	@Override
-	public AtkDataModel getResurface() {
-		return resu;
+	public AtkDataModel[] getResurface() {
+		return resus;
 	}
 
 	@Override
-	public AtkDataModel getRevive() {
-		return revi;
+	public AtkDataModel[] getRevive() {
+		return revis;
 	}
 
 	@Override
-	public AtkDataModel getEntry() {
-		return entr;
+	public AtkDataModel[] getEntry() {
+		return entrs;
 	}
 
 	@Override
@@ -272,8 +273,8 @@ public abstract class CustomEntity extends DataEntity {
 		boolean ans = false;
 		for (AtkDataModel adm : hits.get(0))
 			ans |= adm.isLD();
-		for (AtkDataModel adm : getSpAtks())
-			if (adm != null)
+		for (AtkDataModel[] adms : getSpAtks(true))
+			for (AtkDataModel adm : adms)
 				ans |= adm.isLD();
 
 		return ans;
@@ -284,8 +285,8 @@ public abstract class CustomEntity extends DataEntity {
 		boolean ans = false;
 		for (AtkDataModel adm : hits.get(0))
 			ans |= adm.isOmni();
-		for (AtkDataModel adm : getSpAtks())
-			if (adm != null)
+		for (AtkDataModel[] adms : getSpAtks(true))
+			for (AtkDataModel adm : adms)
 				ans |= adm.isOmni();
 
 		return ans;
@@ -302,16 +303,6 @@ public abstract class CustomEntity extends DataEntity {
 	@Override
 	public int touchBase() {
 		return base == 0 ? range : base;
-	}
-
-	private boolean contains(String str) {
-		if (hits == null || hits.size() == 0)
-			return false;
-		for (AtkDataModel[] adms : hits)
-			for (AtkDataModel adm : adms)
-				if (adm != null && adm.str.equals(str))
-					return true;
-		return false;
 	}
 
 	private void importData$1(CustomEntity ce) {
@@ -336,7 +327,6 @@ public abstract class CustomEntity extends DataEntity {
 		}
 	}
 
-	@Override
 	public void animChanged(int del) {
 		if (del == -1) {
 			hits.add(new AtkDataModel[1]);

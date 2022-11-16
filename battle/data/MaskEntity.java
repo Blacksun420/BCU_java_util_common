@@ -47,7 +47,11 @@ public interface MaskEntity extends BattleStatic {
 		return 1;
 	}
 
-	default AtkDataModel[] getSpAtks() {
+	default AtkDataModel[][] getSpAtks(boolean addCounter) {
+		return new AtkDataModel[0][];
+	}
+
+	default AtkDataModel[] getSpAtks(int ind) {
 		return new AtkDataModel[0];
 	}
 
@@ -69,7 +73,7 @@ public interface MaskEntity extends BattleStatic {
 	 */
 	Animable<AnimU<?>, UType> getPack();
 
-	int getPost(int atk);
+	int getPost(boolean sp, int atk);
 
 	Proc getProc();
 
@@ -77,32 +81,32 @@ public interface MaskEntity extends BattleStatic {
 
 	MaskAtk getRepAtk();
 
-	default AtkDataModel getResurrection() {
-		return null;
+	default AtkDataModel[] getRevenge() {
+		return new AtkDataModel[0];
 	}
 
-	default AtkDataModel getRevenge() {
-		return null;
+	default AtkDataModel[] getResurrection() {
+		return new AtkDataModel[0];
 	}
 
 	default AtkDataModel getCounter() {
 		return null;
 	}
 
-	default AtkDataModel getGouge() {
-		return null;
+	default AtkDataModel[] getGouge() {
+		return new AtkDataModel[0];
 	}
 
-	default AtkDataModel getResurface() {
-		return null;
+	default AtkDataModel[] getResurface() {
+		return new AtkDataModel[0];
 	}
 
-	default AtkDataModel getRevive() {
-		return null;
+	default AtkDataModel[] getRevive() {
+		return new AtkDataModel[0];
 	}
 
-	default AtkDataModel getEntry() {
-		return null;
+	default AtkDataModel[] getEntry() {
+		return new AtkDataModel[0];
 	}
 
 	int getSpeed();
@@ -127,9 +131,4 @@ public interface MaskEntity extends BattleStatic {
 	boolean isRange(int atk);
 
 	int touchBase();
-
-	default void animChanged(int del) {
-
-	}
-
 }

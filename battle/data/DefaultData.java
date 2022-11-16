@@ -44,11 +44,11 @@ public abstract class DefaultData extends DataEntity {
 
 	@Override
 	public int getItv(int ignore) {
-		return getLongPre() + Math.max(getTBA() - 1, getPost(0));
+		return getLongPre() + Math.max(getTBA() - 1, getPost(false, 0));
 	}
 
 	@Override
-	public int getPost(int ignore) {
+	public int getPost(boolean ignore, int ignore2) {
 		return getAnimLen(0) - getLongPre();
 	}
 
