@@ -37,7 +37,7 @@ public abstract class Entity extends AbEntity {
 	 * Obtains BC's traits
 	 */
 	protected static final List<Trait> BCTraits = UserProfile.getBCData().traits.getList();
-	private static final int REV = 0, RES = 1, CNTR = 2, BUR = 3, RESU = 4, REVI = 5, ENTR = 6;
+	private static final int REV = 0, RES = 1, BUR = 2, RESU = 3, REVI = 4, ENTR = 5; //Counter doesn't access SPATKS
 
 	public static class AnimManager extends BattleObj {
 
@@ -433,8 +433,10 @@ public abstract class Entity extends AbEntity {
 					e.anim.corpse = (e.dire == -1 ? effas().A_U_ZOMBIE : effas().A_ZOMBIE).getEAnim(ZombieEff.BACK);
 				} else {
 					if (e.anim.corpse != null) {
-						if(e.anim.corpse.type == ZombieEff.REVIVE && e.data.getRevive() != null && e.data.getRevive().pre >= e.anim.corpse.len()) {
-							e.basis.getAttack(e.aam.getSpAttack(REVI));
+						if(e.anim.corpse.type == ZombieEff.REVIVE)
+							for (int i = 0; i < e.data.getRevive().length; i++)
+								if (e.data.getRevive()[i].pre >= e.anim.corpse.len()) {
+									e.basis.getAttack(e.aam.getSpAttack(REVI, i));
 						}
 						e.anim.corpse = null;
 						status[P_REVIVE][1] = 0;
@@ -503,7 +505,7 @@ public abstract class Entity extends AbEntity {
 		}
 
 		private void cont() {
-			if (anim.type.toString().contains("attack")) //TODO restructure
+			if (anim.type.toString().contains("attack"))
 				setAnim(AnimU.TYPEDEF[AnimU.WALK], false);
 			else if (anim.type == AnimU.TYPEDEF[AnimU.HB]) {
 				e.interrupt(0, 0.0);
@@ -533,15 +535,15 @@ public abstract class Entity extends AbEntity {
 				if (deathSurge && soul.len() - dead == 21) // 21 is guessed delay compared to BC
 					e.aam.getDeathSurge();
 
-				if (e.data.getResurrection() != null) {
-					AtkDataModel adm = e.data.getResurrection();
+				for (int i = 0; i < e.data.getResurrection().length; i++) {
+					AtkDataModel adm = e.data.getResurrection()[i];
 
 					if ((soul == null && !e.dead) || (soul != null && adm.pre == soul.len() - dead))
-						e.basis.getAttack(e.aam.getSpAttack(RES));
+						e.basis.getAttack(e.aam.getSpAttack(RES, i));
 
 					if (soul != null && dead == 0 && adm.pre >= soul.len() && !e.dead) {
 						System.out.println("##");
-						e.basis.getAttack(e.aam.getSpAttack(RES));
+						e.basis.getAttack(e.aam.getSpAttack(RES, i));
 					}
 				}
 			}
@@ -663,8 +665,8 @@ public abstract class Entity extends AbEntity {
 			if (preTime >= 0) {
 				if (preTime == 0) {
 					int atk0 = preID;
-					while (++preID < multi && pres[preID] == 0)
-						;
+					while (++preID < multi && pres[preID] == 0);
+
 					tempAtk = preID - 1 != atk0 ? (int) (atk0 + e.basis.r.nextDouble() * (preID - atk0)) : atk0;
 					e.basis.getAttack(e.aam.getAttack(tempAtk));
 					if (preID < multi) {
@@ -801,8 +803,10 @@ public abstract class Entity extends AbEntity {
 					e.anim.getEff(SHIELD_REGEN);
 				}
 
-				if(kbType == INT_HB && e.data.getRevenge() != null && e.data.getRevenge().pre >= KB_TIME[INT_HB]) {
-					e.basis.getAttack(e.aam.getSpAttack(REV));
+				if(kbType == INT_HB) {
+					for (int i = 0; i < e.data.getRevenge().length; i++)
+						if (e.data.getRevenge()[i].pre >= KB_TIME[INT_HB])
+							e.basis.getAttack(e.aam.getSpAttack(REV, i));
 				}
 
 				if (e.health <= 0)
@@ -839,8 +843,9 @@ public abstract class Entity extends AbEntity {
 					}
 				}
 				if (kbType == INT_HB && e.data.getRevenge() != null) {
-					if (KB_TIME[INT_HB] - e.kbTime == e.data.getRevenge().pre)
-						e.basis.getAttack(e.aam.getSpAttack(REV));
+					for (int i = 0; i < e.data.getRevenge().length; i++)
+						if (KB_TIME[INT_HB] - e.kbTime == e.data.getRevenge()[i].pre)
+							e.basis.getAttack(e.aam.getSpAttack(REV, i));
 				}
 			}
 		}
@@ -1105,16 +1110,20 @@ public abstract class Entity extends AbEntity {
 				if(e.kbTime == 0) {
 					status[P_REVIVE][1]--;
 
-					if(anim.corpse != null && anim.corpse.type == ZombieEff.REVIVE && e.data.getRevive() != null && anim.corpse.len() - status[P_REVIVE][1] == e.data.getRevive().pre) {
-						e.basis.getAttack(e.aam.getSpAttack(REVI));
+					if(anim.corpse != null && anim.corpse.type == ZombieEff.REVIVE)
+						for (int i = 0; i < e.data.getRevive().length; i++)
+							if (anim.corpse.len() - status[P_REVIVE][1] == e.data.getRevive()[i].pre) {
+								e.basis.getAttack(e.aam.getSpAttack(REVI, i));
 					}
 
 					if (anim.corpse != null)
 						anim.corpse.update(false);
 				}
 				if (status[P_REVIVE][1] == 0) {
-					if(anim.corpse != null && e.anim.corpse.type == ZombieEff.REVIVE && e.data.getRevive() != null && e.data.getRevive().pre >= e.anim.corpse.len()) {
-						e.basis.getAttack(e.aam.getSpAttack(REVI));
+					if(anim.corpse != null && e.anim.corpse.type == ZombieEff.REVIVE)
+						for (int i = 0; i < e.data.getRevive().length; i++)
+							if (e.data.getRevive()[i].pre >= e.anim.corpse.len()) {
+								e.basis.getAttack(e.aam.getSpAttack(REVI, i));
 					}
 
 					anim.corpse = null;
@@ -2276,8 +2285,10 @@ public abstract class Entity extends AbEntity {
 						anim.setAnim(AnimU.TYPEDEF[AnimU.IDLE], true);
 				}
 			}
-		} else if (anim.anim.type == AnimU.TYPEDEF[AnimU.ENTRY] && data.getEntry() != null && anim.anim.f == data.getEntry().pre)
-			basis.getAttack(aam.getSpAttack(ENTR));
+		} else if (anim.anim.type == AnimU.TYPEDEF[AnimU.ENTRY])
+			for (int i = 0; i < data.getEntry().length; i++)
+				if (anim.anim.f == data.getEntry()[i].pre)
+					basis.getAttack(aam.getSpAttack(ENTR, i));
 
 		// update revive status, mark acted
 		zx.updateRevive();
@@ -2600,8 +2611,9 @@ public abstract class Entity extends AbEntity {
 			acted = true;
 			// burrow down
 			status[P_BURROW][2]--;
-			if (data.getGouge() != null && anim.anim.len() - status[P_BURROW][2] == data.getGouge().pre)
-				basis.getAttack(aam.getSpAttack(BUR));
+			for (int i = 0; i < data.getGouge().length; i++)
+				if (data.getGouge() != null && anim.anim.len() - status[P_BURROW][2] == data.getGouge()[i].pre)
+					basis.getAttack(aam.getSpAttack(BUR, i));
 			if (status[P_BURROW][2] == 0) {
 				kbTime = -3;
 				anim.setAnim(AnimU.TYPEDEF[AnimU.UNDERGROUND], true);
@@ -2623,8 +2635,9 @@ public abstract class Entity extends AbEntity {
 			// burrow up
 			acted = true;
 			status[P_BURROW][2]--;
-			if (data.getResurface() != null && anim.anim.len() - status[P_BURROW][2] == data.getResurface().pre)
-				basis.getAttack(aam.getSpAttack(RESU));
+			for (int i = 0; i < data.getResurface().length; i++)
+				if (data.getResurface() != null && anim.anim.len() - status[P_BURROW][2] == data.getResurface()[i].pre)
+					basis.getAttack(aam.getSpAttack(RESU, i));
 			if (status[P_BURROW][2] <= 0)
 				kbTime = 0;
 		}
