@@ -1519,7 +1519,7 @@ public class Data {
 	public static final byte ATK_AREA = 1;
 	public static final byte ATK_LD = 2;
 	public static final byte ATK_OMNI = 4;
-	public static final byte ATK_TOT = 8;
+	public static final byte ATK_TOT = 12;
 
 	// base and canon level
 	public static final byte BASE_H = 0;
