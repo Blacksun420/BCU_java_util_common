@@ -158,13 +158,35 @@ public class Enemy extends Animable<AnimU<?>, UType> implements AbEnemy {
 		enemy.pack = this;
 
 		PackData.UserPack pack = (PackData.UserPack) getCont();
-		Proc proc = enemy.getProc();
-		if (pack.desc.FORK_VERSION < 2) {
-			JsonObject jdu = jobj.getAsJsonObject("de").getAsJsonObject("atks");
-			localDecoder loc = new localDecoder(jdu, AtkDataModel[].class, enemy, "old atk data").setGen(true).setPool(true);
-			AtkDataModel[] oldAtks = loc.decode();
-			enemy.hits.set(0, oldAtks);
+
+		if (pack.desc.FORK_VERSION < 3) {
+			JsonObject jdu = jobj.getAsJsonObject("de");
+			if (pack.desc.FORK_VERSION < 2) {
+				AtkDataModel[] oldAtks = new localDecoder(jdu.getAsJsonObject("atks"), AtkDataModel[].class, enemy).setGen(true).setPool(true).decode();
+				enemy.hits.set(0, oldAtks);
+			}
+
+			AtkDataModel oldSpAtk = new localDecoder(jdu.get("rev"), AtkDataModel.class, enemy).setGen(true).decode();
+			if (oldSpAtk != null)
+				enemy.revs = new AtkDataModel[]{oldSpAtk};
+			oldSpAtk = new localDecoder(jdu.get("res"), AtkDataModel.class, enemy).setGen(true).decode();
+			if (oldSpAtk != null)
+				enemy.ress = new AtkDataModel[]{oldSpAtk};
+			oldSpAtk = new localDecoder(jdu.get("bur"), AtkDataModel.class, enemy).setGen(true).decode();
+			if (oldSpAtk != null)
+				enemy.burs = new AtkDataModel[]{oldSpAtk};
+			oldSpAtk = new localDecoder(jdu.get("resu"), AtkDataModel.class, enemy).setGen(true).decode();
+			if (oldSpAtk != null)
+				enemy.resus = new AtkDataModel[]{oldSpAtk};
+			oldSpAtk = new localDecoder(jdu.get("revi"), AtkDataModel.class, enemy).setGen(true).decode();
+			if (oldSpAtk != null)
+				enemy.revis = new AtkDataModel[]{oldSpAtk};
+			oldSpAtk = new localDecoder(jdu.get("entr"), AtkDataModel.class, enemy).setGen(true).decode();
+			if (oldSpAtk != null)
+				enemy.entrs = new AtkDataModel[]{oldSpAtk};
 		}
+
+		Proc proc = enemy.getProc();
 		AtkDataModel[] atks = enemy.getAllAtkModels();
 
 		if (UserProfile.isOlderPack(pack, "0.6.6.0")) {
@@ -180,7 +202,7 @@ public class Enemy extends Animable<AnimU<?>, UType> implements AbEnemy {
 									if (UserProfile.isOlderPack(pack, "0.5.1.0"))
 										type = Data.reorderTrait(type);
 									//Finish 5.1.0 check
-									enemy.tba += enemy.getPost(0) + 1;
+									enemy.tba += enemy.getPost(false, 0) + 1;
 								} //Finish 5.2.0 check
 								MaModel model = anim.loader.getMM();
 								enemy.limit = CommonStatic.customEnemyMinPos(model);
