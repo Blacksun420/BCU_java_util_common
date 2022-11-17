@@ -29,10 +29,9 @@ import common.util.stage.StageMap;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Random;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.function.Consumer;
 
 public abstract class Source {
@@ -494,6 +493,8 @@ public abstract class Source {
 			} else {
 				desc.parentPassword = null;
 			}
+			DateFormat df = new SimpleDateFormat("dd MM, yyyy; HH:mm:ss");
+			desc.creationDate = df.format(new Date());
 
 			PackLoader.writePack(dst, src, desc, password, prog);
 			Context.renameTo(dst, tar);

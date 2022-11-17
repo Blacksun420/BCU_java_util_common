@@ -183,6 +183,11 @@ public class StageBasis extends BattleObj {
 	}
 
 	public void changeWorkerLv(int lv) {
+		if (lv > 0)
+			CommonStatic.setSE(53);
+		else
+			CommonStatic.setSE(107);
+
 		work_lv = Math.max(1, work_lv + lv);
 		work_lv = Math.min(8, work_lv);
 
@@ -200,6 +205,11 @@ public class StageBasis extends BattleObj {
 		if (slot == -1 || b.lu.efs[Math.floorDiv(slot, 5)][slot % 5] == null)
 			slot = (int) (r.nextDouble() * totUni); //Pick random unit if chosen one isn't there
 		int i = slot >= 5 ? 1 : 0;
+
+		if (amount < 0)
+			CommonStatic.setSE(18);
+		else
+			CommonStatic.setSE(147);
 
 		if (type == 0) {
 			elu.cool[i][slot % 5] += amount;

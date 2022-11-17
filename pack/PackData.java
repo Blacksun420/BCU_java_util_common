@@ -255,6 +255,8 @@ public abstract class PackData implements IndexContainer {
 		public MultiLangData names = new MultiLangData();
 
 		public String desc;
+		public String creationDate;
+		public double version = 1.0;
 
 		public boolean allowAnim = false;
 		public byte[] parentPassword;
@@ -456,6 +458,8 @@ public abstract class PackData implements IndexContainer {
 				}
 			}
 
+			icon = source.readImage("icon");
+			banner = source.readImage("banner");
 			//Since it succeeded to load all data, update Core version of this workspace pack
 			if(editable) {
 				desc.BCU_VERSION = AssetLoader.CORE_VER;
@@ -474,12 +478,6 @@ public abstract class PackData implements IndexContainer {
 		@Override
 		public int compareTo(UserPack pk) {
 			return toString().compareTo(pk.toString());
-		}
-
-		@JsonDecoder.OnInjected
-		public void onInjected() {
-			icon = source.readImage("icon");
-			banner = source.readImage("banner");
 		}
 	}
 
