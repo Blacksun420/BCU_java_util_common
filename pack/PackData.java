@@ -256,8 +256,6 @@ public abstract class PackData implements IndexContainer {
 
 		public String desc;
 
-		@JsonField(block = true)
-		public VImg icon, banner;
 		public boolean allowAnim = false;
 		public byte[] parentPassword;
 		@JsonField(generic = String.class)
@@ -323,6 +321,8 @@ public abstract class PackData implements IndexContainer {
 		public boolean loaded = false;
 
 		private JsonElement elem;
+		@JsonField(block = true)
+		public VImg icon, banner;
 
 		/**
 		 * for old reading method only
@@ -478,8 +478,8 @@ public abstract class PackData implements IndexContainer {
 
 		@JsonDecoder.OnInjected
 		public void onInjected() {
-			desc.icon = source.readImage("icon");
-			desc.banner = source.readImage("banner");
+			icon = source.readImage("icon");
+			banner = source.readImage("banner");
 		}
 	}
 
