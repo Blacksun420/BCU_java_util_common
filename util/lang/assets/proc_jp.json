@@ -77,7 +77,7 @@
     "abbr_name": "波動",
     "full_name": "波動",
     "tooltip": null,
-    "format": "(prob)%の確率でLv.(lv)の波動",
+    "format": "(prob)%の確率でLv.(lv)の波動[(type.hitless){, even if this attack misses}]",
     "class": {
       "prob": {
         "name": "確率",
@@ -86,6 +86,10 @@
       "lv": {
         "name": "Lv",
         "tooltip": null
+      },
+      "type.hitless": {
+        "name": "Miss Trigger",
+        "tooltip": "Wave will spawn even if this attack misses"
       }
     }
   },
@@ -819,7 +823,7 @@
     "abbr_name": "烈波",
     "full_name": "烈波",
     "tooltip": null,
-    "format": "(prob)%の確率で(dis_0)~(dis_1)の距離に(_dispTime(time))の間烈波を生成する",
+    "format": "(prob)%の確率で(dis_0)~(dis_1)の距離に(_dispTime(time))の間烈波を生成する[(type.hitless){, even if this attack misses}]",
     "class": {
       "prob": {
         "name": "確率",
@@ -836,6 +840,10 @@
       "time": {
         "name": "発生期間",
         "tooltip": null
+      },
+      "type.hitless": {
+        "name": "Miss Trigger",
+        "tooltip": "Wave will spawn even if this attack misses"
       }
     }
   },
@@ -941,7 +949,7 @@
     "abbr_name": "小波動",
     "full_name": "小波動",
     "tooltip": "通常の波動の2倍の速さで動く小型の波動を作成し、ダメージの増量パラメータを調整できる。",
-    "format": "(prob)%の確率でLv(lv)の小波動を発生させる (_left)与えるダメージは攻撃力の(multi)%に等しい(_right)",
+    "format": "(prob)%の確率でLv(lv)の小波動を発生させる (_left)与えるダメージは攻撃力の(multi)%に等しい(_right)[(type.hitless){, even if this attack misses}]",
     "class": {
       "prob": {
         "name": "確率",
@@ -954,6 +962,10 @@
       "multi": {
         "name": "倍率",
         "tooltip": "倍率が20の場合、攻撃力の20%のダメージを与えます。負の値も可能です。"
+      },
+      "type.hitless": {
+        "name": "Miss Trigger",
+        "tooltip": "Wave will spawn even if this attack misses"
       }
     }
   },
@@ -1423,6 +1435,37 @@
       "type.waves": {
         "name": "Target waves",
         "tooltip": null
+      }
+    }
+  },
+  "AI": {
+    "abbr_name": "AI",
+    "full_name": "Strategist",
+    "tooltip": "Allows the unit to keep away from enemy attacks and fight smarter",
+    "format": ["Strategist[(type.assist){ (_left)Improved Support(_right)}]",
+      "[(type.calcstrongest){ (_left)Unit will seek the most effective attack to use(_right)}]",
+      "[(type.retreat){ (_left)When in danger, unit will retreat with (retreatSpeed)% of it's walking speed(_right)}]",
+      "[(type.calcblindspot){ (_left)Unit will not count entities on it's blindspot for attack detection or other effectiveness calculations(_right)}]"],
+    "class": {
+      "type.assist": {
+        "name": "Improved Support",
+        "tooltip": "Used for units that buff or heal allies."
+      },
+      "type.calcstrongest": {
+        "name": "Check Strongest Attack",
+        "tooltip": "If this unit has more than one attack pattern, choose an attack based on which will deal the most effective damage instead of randomly"
+      },
+      "type.retreat": {
+        "name": "Retreat",
+        "tooltip": "Move back if this unit is near an unit that is about to attack"
+      },
+      "type.calcblindspot": {
+        "name": "Blindspot Check",
+        "tooltip": "Unit will not attack if there's no enemies within the width of it's standing range and blindspot. If retreat is activated, this moves back an unit enters it's blindspot as well"
+      },
+      "retreatSpeed": {
+        "name": "Retreat Speed",
+        "tooltip": "Speed used to move back if retreat is activated"
       }
     }
   }

@@ -1501,11 +1501,14 @@
         "abbr_name": "AI",
         "full_name": "Strategist",
         "tooltip": "Allows the unit to keep away from enemy attacks and fight smarter",
-        "format": ["Strategist (_left)WIP(_right)"],
+        "format": ["Strategist[(type.assist){ (_left)Improved Support(_right)}]",
+            "[(type.calcstrongest){ (_left)Unit will seek the most effective attack to use(_right)}]",
+            "[(type.retreat){ (_left)When in danger, unit will retreat with (retreatSpeed)% of it's walking speed(_right)}]",
+            "[(type.calcblindspot){ (_left)Unit will not count entities on it's blindspot for attack detection or other effectiveness calculations(_right)}]"],
         "class": {
             "type.assist": {
                 "name": "Improved Support",
-                "tooltip": "Used for units that buff or heal allies. WIP"
+                "tooltip": "Used for units that buff or heal allies."
             },
             "type.calcstrongest": {
                 "name": "Check Strongest Attack",

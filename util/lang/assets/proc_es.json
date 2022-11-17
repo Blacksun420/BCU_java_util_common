@@ -79,7 +79,7 @@
         "abbr_name": "oleada",
         "full_name": "Oleada",
         "tooltip": null,
-        "format": "Probabilidad del (prob)% de crear una oleada de Nv.(lv)",
+        "format": "Probabilidad del (prob)% de crear una oleada de Nv.(lv)[(type.hitless){, even if this attack misses}]",
         "class": {
             "prob": {
                 "name": "probabilidad",
@@ -88,6 +88,10 @@
             "lv": {
                 "name": "nivel",
                 "tooltip": null
+            },
+            "type.hitless": {
+                "name": "Miss Trigger",
+                "tooltip": "Wave will spawn even if this attack misses"
             }
         }
     },
@@ -823,7 +827,7 @@
         "abbr_name": "réplica",
         "full_name": "Réplica",
         "tooltip": null,
-        "format": "Probabilidad del (prob)% de crear una réplica por (_dispTime(time)) (_left)Creada desde una distancia de (dis_0) a (dis_1)(_right)",
+        "format": "Probabilidad del (prob)% de crear una réplica por (_dispTime(time)) (_left)Creada desde una distancia de (dis_0) a (dis_1)(_right)[(type.hitless){, even if this attack misses}]",
         "class": {
             "prob": {
                 "name": "probabilidad",
@@ -840,6 +844,10 @@
             "time": {
                 "name": "duración",
                 "tooltip": null
+            },
+            "type.hitless": {
+                "name": "Miss Trigger",
+                "tooltip": "Wave will spawn even if this attack misses"
             }
         }
     },
@@ -976,7 +984,7 @@
         "abbr_name" : "minioleada",
         "full_name" : "Minioleada",
         "tooltip" : "Crea una oleada pequeña que se mueve al doble de velocidad de la normal con un parámetro dinámico de multiplicación de daño",
-        "format" : "Probabilidad del (prob)% de crear una minioleada de Nv.(lv) [(multi!=20){(_left)Le inflige al objetivo un (multi)% del ataque del activador(_right)}]",
+        "format" : "Probabilidad del (prob)% de crear una minioleada de Nv.(lv) [(multi!=20){(_left)Le inflige al objetivo un (multi)% del ataque del activador(_right)}][(type.hitless){, even if this attack misses}]",
         "class" : {
             "prob" : {
                 "name" : "probabilidad",
@@ -989,6 +997,10 @@
             "multi" : {
                 "name" : "multi",
                 "tooltip" : "Porcentaje de ataque del activador.<br>Si multi es 20, tendrá el 20% del ataque del activador. Los valores negativos están permitidos."
+            },
+            "type.hitless": {
+                "name": "Miss Trigger",
+                "tooltip": "Wave will spawn even if this attack misses"
             }
         }
     },
@@ -1415,6 +1427,85 @@
             "type.waves": {
                 "name": "Target waves",
                 "tooltip": null
+            }
+        }
+    },
+    "LETHARGY": {
+        "abbr_name": "Lethargy",
+        "full_name": "Lethargy",
+        "tooltip": null,
+        "format": "(prob)% chance to [(mult>0){increase}(mult<0){decrease}] target's TBA by (_abs(mult))[(type.percentage){%}] for (_dispTime(time))",
+        "class": {
+            "prob": {
+                "name": "chance",
+                "tooltip": null
+            },
+            "time": {
+                "name": "duration",
+                "tooltip": null
+            },
+            "mult": {
+                "name": "multiplier",
+                "tooltip": "What amount will the original TBA of the target will be increased to"
+            },
+            "type.percentage": {
+                "name": "Percentage",
+                "tooltip": "Simply adds when false, and increases the TBA by percentage when true"
+            }
+        }
+    },
+    "IMULETHARGY": {
+        "abbr_name": "imu. Lethargy",
+        "full_name": "Immune/Resistant to Lethargy",
+        "tooltip": null,
+        "format": ["[(mult!=0&block!=100){[(mult==100){Immune}(mult<100&mult>0){Resistant}(mult<0){Weak}] to Lethargy",
+            "[(mult<100&mult>0){ (_left)Decreases duration by (mult)%(_right)}(mult<0){ (_left)Increases duration by (_abs(mult))%(_right)}]",
+            "[(block!=0&block<100){ & }]}][(block!=0){Lethargy [(block==100){blocker}(block<100&block>0){absorber}(block<0){increaser}]",
+            "[(block<100&block>0){ (_left)Decreases duration by (block)%(_right)}(block<0){ (_left)Increases duration by (_abs(block))%(_right)}]}]",
+            "[(smartImu!=0){. Only affects attack [(smartImu>0){debuffs}(smartImu<0){buffs}]}]"],
+        "class": {
+            "mult": {
+                "name": "percent",
+                "tooltip": null
+            },
+            "block": {
+                "name": "Blocker",
+                "tooltip": "Set from 1 to 99 to reduce duration amongst all units. Set to 100 to completely block Lethargy"
+            },
+            "smartImu": {
+                "name": "Ignore",
+                "tooltip": "0 = Resist buffs and debuffs, 1 = Only resistant to debuffs, -1 = Only resistant to buffs"
+            }
+        }
+    },
+    "AI": {
+        "abbr_name": "AI",
+        "full_name": "Strategist",
+        "tooltip": "Allows the unit to keep away from enemy attacks and fight smarter",
+        "format": ["Strategist[(type.assist){ (_left)Improved Support(_right)}]",
+            "[(type.calcstrongest){ (_left)Unit will seek the most effective attack to use(_right)}]",
+            "[(type.retreat){ (_left)When in danger, unit will retreat with (retreatSpeed)% of it's walking speed(_right)}]",
+            "[(type.calcblindspot){ (_left)Unit will not count entities on it's blindspot for attack detection or other effectiveness calculations(_right)}]"],
+        "class": {
+            "type.assist": {
+                "name": "Improved Support",
+                "tooltip": "Used for units that buff or heal allies."
+            },
+            "type.calcstrongest": {
+                "name": "Check Strongest Attack",
+                "tooltip": "If this unit has more than one attack pattern, choose an attack based on which will deal the most effective damage instead of randomly"
+            },
+            "type.retreat": {
+                "name": "Retreat",
+                "tooltip": "Move back if this unit is near an unit that is about to attack"
+            },
+            "type.calcblindspot": {
+                "name": "Blindspot Check",
+                "tooltip": "Unit will not attack if there's no enemies within the width of it's standing range and blindspot. If retreat is activated, this moves back an unit enters it's blindspot as well"
+            },
+            "retreatSpeed": {
+                "name": "Retreat Speed",
+                "tooltip": "Speed used to move back if retreat is activated"
             }
         }
     }

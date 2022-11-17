@@ -78,7 +78,7 @@
     "WAVE": {
         "abbr_name": "파동",
         "full_name": "파동",
-        "tooltip": "타겟 앞에 파동을 생성하여 멀리있는 타겟까지 공격할 수 있습니다",
+        "tooltip": "타겟 앞에 파동을 생성하여 멀리있는 타겟까지 공격할 수 있습니다[(type.hitless){, even if this attack misses}]",
         "format": "(prob)% 확률로 레벨 (lv) 파동",
         "class": {
             "prob": {
@@ -88,6 +88,10 @@
             "lv": {
                 "name": "레벨",
                 "tooltip": "생성될 파동의 개수를 정합니다. 레벨이 높을수록 많은 파동이 생성됩니다"
+            },
+            "type.hitless": {
+                "name": "Miss Trigger",
+                "tooltip": "Wave will spawn even if this attack misses"
             }
         }
     },
@@ -728,7 +732,7 @@
         "abbr_name": "열파 공격",
         "full_name": "열파 공격",
         "tooltip": "한 자리에서 계속 일정 간격으로 공격하는 열파를 만들어냅니다",
-        "format": "(prob)% 확률로 Lv. (time/20) 열파 공격 (_left) (_dispTime(time)) 동안 발동되며 (dis_0) ~ (dis_1) 사이에서 랜덤으로 생성(_right)",
+        "format": "(prob)% 확률로 Lv. (time/20) 열파 공격 (_left) (_dispTime(time)) 동안 발동되며 (dis_0) ~ (dis_1) 사이에서 랜덤으로 생성(_right)[(type.hitless){, even if this attack misses}]",
         "class": {
             "prob": {
                 "name": "확률",
@@ -745,6 +749,10 @@
             "time": {
                 "name": "시간",
                 "tooltip": "능력이 얼마동안 발동될지 정합니다"
+            },
+            "type.hitless": {
+                "name": "Miss Trigger",
+                "tooltip": "Wave will spawn even if this attack misses"
             }
         }
     },
@@ -828,12 +836,11 @@
             }
         }
     },
-
     "MINIWAVE" : {
         "abbr_name" : "소파동",
         "full_name" : "소파동",
         "tooltip" : "파동과 비슷하지만 더 빨리 움직이고 파동보다 적은 데미지를 가하는 소형 파동입니다",
-        "format" : "(prob)% 확률로 레벨 (lv) 소파동 (_left)타겟에게 발동자 데미지의 (multi)% 만큼 공격(_right)",
+        "format" : "(prob)% 확률로 레벨 (lv) 소파동 (_left)타겟에게 발동자 데미지의 (multi)% 만큼 공격(_right)[(type.hitless){, even if this attack misses}]",
         "class" : {
             "prob" : {
                 "name" : "확률",
@@ -846,6 +853,10 @@
             "multi" : {
                 "name" : "데미지",
                 "tooltip" : "발동자 데미지의 퍼센트로 작동합니다. 만약 값이 20 이면, 발동자 데미지의 20% 만큼 타겟에게 공격합니다. 음수도 허용됩니다"
+            },
+            "type.hitless": {
+                "name": "Miss Trigger",
+                "tooltip": "Wave will spawn even if this attack misses"
             }
         }
     },
@@ -1381,6 +1392,85 @@
             "type.waves": {
                 "name": "Target waves",
                 "tooltip": null
+            }
+        }
+    },
+    "LETHARGY": {
+        "abbr_name": "Lethargy",
+        "full_name": "Lethargy",
+        "tooltip": null,
+        "format": "(prob)% chance to [(mult>0){increase}(mult<0){decrease}] target's TBA by (_abs(mult))[(type.percentage){%}] for (_dispTime(time))",
+        "class": {
+            "prob": {
+                "name": "chance",
+                "tooltip": null
+            },
+            "time": {
+                "name": "duration",
+                "tooltip": null
+            },
+            "mult": {
+                "name": "multiplier",
+                "tooltip": "What amount will the original TBA of the target will be increased to"
+            },
+            "type.percentage": {
+                "name": "Percentage",
+                "tooltip": "Simply adds when false, and increases the TBA by percentage when true"
+            }
+        }
+    },
+    "IMULETHARGY": {
+        "abbr_name": "imu. Lethargy",
+        "full_name": "Immune/Resistant to Lethargy",
+        "tooltip": null,
+        "format": ["[(mult!=0&block!=100){[(mult==100){Immune}(mult<100&mult>0){Resistant}(mult<0){Weak}] to Lethargy",
+            "[(mult<100&mult>0){ (_left)Decreases duration by (mult)%(_right)}(mult<0){ (_left)Increases duration by (_abs(mult))%(_right)}]",
+            "[(block!=0&block<100){ & }]}][(block!=0){Lethargy [(block==100){blocker}(block<100&block>0){absorber}(block<0){increaser}]",
+            "[(block<100&block>0){ (_left)Decreases duration by (block)%(_right)}(block<0){ (_left)Increases duration by (_abs(block))%(_right)}]}]",
+            "[(smartImu!=0){. Only affects attack [(smartImu>0){debuffs}(smartImu<0){buffs}]}]"],
+        "class": {
+            "mult": {
+                "name": "percent",
+                "tooltip": null
+            },
+            "block": {
+                "name": "Blocker",
+                "tooltip": "Set from 1 to 99 to reduce duration amongst all units. Set to 100 to completely block Lethargy"
+            },
+            "smartImu": {
+                "name": "Ignore",
+                "tooltip": "0 = Resist buffs and debuffs, 1 = Only resistant to debuffs, -1 = Only resistant to buffs"
+            }
+        }
+    },
+    "AI": {
+        "abbr_name": "AI",
+        "full_name": "Strategist",
+        "tooltip": "Allows the unit to keep away from enemy attacks and fight smarter",
+        "format": ["Strategist[(type.assist){ (_left)Improved Support(_right)}]",
+            "[(type.calcstrongest){ (_left)Unit will seek the most effective attack to use(_right)}]",
+            "[(type.retreat){ (_left)When in danger, unit will retreat with (retreatSpeed)% of it's walking speed(_right)}]",
+            "[(type.calcblindspot){ (_left)Unit will not count entities on it's blindspot for attack detection or other effectiveness calculations(_right)}]"],
+        "class": {
+            "type.assist": {
+                "name": "Improved Support",
+                "tooltip": "Used for units that buff or heal allies."
+            },
+            "type.calcstrongest": {
+                "name": "Check Strongest Attack",
+                "tooltip": "If this unit has more than one attack pattern, choose an attack based on which will deal the most effective damage instead of randomly"
+            },
+            "type.retreat": {
+                "name": "Retreat",
+                "tooltip": "Move back if this unit is near an unit that is about to attack"
+            },
+            "type.calcblindspot": {
+                "name": "Blindspot Check",
+                "tooltip": "Unit will not attack if there's no enemies within the width of it's standing range and blindspot. If retreat is activated, this moves back an unit enters it's blindspot as well"
+            },
+            "retreatSpeed": {
+                "name": "Retreat Speed",
+                "tooltip": "Speed used to move back if retreat is activated"
             }
         }
     }
