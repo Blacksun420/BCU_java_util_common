@@ -128,8 +128,8 @@ public interface BackgroundEffect extends IndexContainer.Indexable<PackData, Bac
             for(int i = 0; i < UserProfile.getBCData().bgs.size(); i++) {
                 Background bg = UserProfile.getBCData().bgs.get(i);
 
-                if(bg.reference != -1) {
-                    Background ref = assets.bgs.findByID(bg.reference);
+                if(bg.reference != null) {
+                    Background ref = bg.reference.get(); //assets.bgs.findByID(bg.reference);
 
                     if(ref == null)
                         continue;
