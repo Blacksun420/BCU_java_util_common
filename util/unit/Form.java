@@ -7,7 +7,6 @@ import common.io.json.JsonClass;
 import common.io.json.JsonClass.JCConstructor;
 import common.io.json.JsonClass.JCGeneric;
 import common.io.json.JsonClass.RType;
-import common.io.json.JsonDecoder;
 import common.io.json.JsonDecoder.OnInjected;
 import common.io.json.JsonField;
 import common.io.json.localDecoder;
@@ -243,7 +242,7 @@ public class Form extends Animable<AnimU<?>, AnimU.UType> implements BasedCopabl
 				form.abi = Data.reorderAbi(form.abi, 2);
 				for (AtkDataModel atk : atks)
 					if (atk.getProc().SUMMON.prob > 0) {
-						if (!Unit.class.isAssignableFrom(atk.getProc().SUMMON.id.cls))
+						if (atk.getProc().SUMMON.id != null && !Unit.class.isAssignableFrom(atk.getProc().SUMMON.id.cls))
 							atk.getProc().SUMMON.type.fix_buff = true;
 						atk.getProc().SUMMON.amount = 1;
 					}

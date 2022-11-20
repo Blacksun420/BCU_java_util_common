@@ -3,16 +3,15 @@ package common.util.unit;
 import com.google.gson.JsonObject;
 import common.CommonStatic;
 import common.battle.StageBasis;
-import common.battle.data.*;
-import common.io.json.JsonDecoder;
-import common.io.json.localDecoder;
-import common.util.stage.MapColc;
-import common.util.stage.Stage;
-import common.util.stage.StageMap;
+import common.battle.data.AtkDataModel;
+import common.battle.data.CustomEnemy;
+import common.battle.data.DataEnemy;
+import common.battle.data.MaskEnemy;
 import common.battle.entity.EEnemy;
 import common.io.json.JsonClass;
 import common.io.json.JsonDecoder.OnInjected;
 import common.io.json.JsonField;
+import common.io.json.localDecoder;
 import common.pack.Identifier;
 import common.pack.PackData;
 import common.pack.UserProfile;
@@ -27,8 +26,14 @@ import common.util.anim.EAnimU;
 import common.util.anim.MaModel;
 import common.util.lang.MultiLangCont;
 import common.util.lang.MultiLangData;
+import common.util.stage.MapColc;
+import common.util.stage.Stage;
+import common.util.stage.StageMap;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 @JsonClass.JCGeneric(Identifier.class)
 @JsonClass
@@ -249,15 +254,15 @@ public class Enemy extends Animable<AnimU<?>, UType> implements AbEnemy {
 			if ((enemy.abi & 32) > 0)
 				proc.IMUWAVE.block = 100;
 			enemy.abi = Data.reorderAbi(enemy.abi, 2);
-			for (MaskAtk ma : atks)
+			for (AtkDataModel ma : atks)
 				if (ma.getProc().SUMMON.prob > 0) {
-					if (!AbEnemy.class.isAssignableFrom(ma.getProc().SUMMON.id.cls))
+					if (ma.getProc().SUMMON.id != null && !AbEnemy.class.isAssignableFrom(ma.getProc().SUMMON.id.cls))
 						ma.getProc().SUMMON.type.fix_buff = true;
 					ma.getProc().SUMMON.amount = 1;
 				}
 		} //Finish FORK_VERSION 1 checks
 
-		for (MaskAtk ma : atks)
+		for (AtkDataModel ma : atks)
 			if (ma.getProc().SUMMON.prob > 0 && (ma.getProc().SUMMON.id == null || !AbEnemy.class.isAssignableFrom(ma.getProc().SUMMON.id.cls)))
 				ma.getProc().SUMMON.form = 1; //There for imports
 	}
