@@ -22,15 +22,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-@JsonClass.JCGeneric(BackgroundEffect.BGIdentifier.class)
+@JsonClass.JCGeneric(Identifier.class)
 @SuppressWarnings("ForLoopReplaceableByForEach")
-public class JsonBGEffect implements BackgroundEffect {
-    private final Identifier<BackgroundEffect> id;
+public class JsonBGEffect extends BackgroundEffect {
     private final int jid;
     private final List<BGEffectHandler> handlers = new ArrayList<>();
 
     public JsonBGEffect(Identifier<BackgroundEffect> identifier, int bgID) throws IOException {
-        id = identifier;
+        super(identifier);
         jid = bgID;
         String jsonName = "bg"+ Data.trio(jid)+".json";
 
@@ -115,11 +114,6 @@ public class JsonBGEffect implements BackgroundEffect {
         for(int i = 0; i < handlers.size(); i++) {
             handlers.get(i).release();
         }
-    }
-
-    @Override
-    public Identifier<BackgroundEffect> getID() {
-        return id;
     }
 
     @Override

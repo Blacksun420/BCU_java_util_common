@@ -15,10 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-@JsonClass.JCGeneric(BackgroundEffect.BGIdentifier.class)
+@JsonClass.JCGeneric(Identifier.class)
 @SuppressWarnings("ForLoopReplaceableByForEach")
-public class RockBGEffect implements BackgroundEffect {
-    private final Identifier<BackgroundEffect> id;
+public class RockBGEffect extends BackgroundEffect {
     private FakeImage rock;
     private FakeImage segment;
 
@@ -37,7 +36,7 @@ public class RockBGEffect implements BackgroundEffect {
     boolean vibrate = false;
 
     public RockBGEffect(Identifier<BackgroundEffect> id) {
-        this.id = id;
+        super(id);
     }
 
     @Override
@@ -222,11 +221,6 @@ public class RockBGEffect implements BackgroundEffect {
             size.add(siz);
             opacity.add(255);
         }
-    }
-
-    @Override
-    public Identifier<BackgroundEffect> getID() {
-        return id;
     }
 
     @Override

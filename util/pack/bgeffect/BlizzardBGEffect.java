@@ -14,10 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-@JsonClass.JCGeneric(BackgroundEffect.BGIdentifier.class)
+@JsonClass.JCGeneric(Identifier.class)
 @SuppressWarnings("ForLoopReplaceableByForEach")
-public class BlizzardBGEffect implements BackgroundEffect {
-    private final Identifier<BackgroundEffect> id;
+public class BlizzardBGEffect extends BackgroundEffect {
     private final FakeImage blizzard;
     private final int bw;
     private final int bh;
@@ -33,7 +32,7 @@ public class BlizzardBGEffect implements BackgroundEffect {
     private final List<Integer> capture = new ArrayList<>();
 
     public BlizzardBGEffect(Identifier<BackgroundEffect> id, FakeImage blizzard) {
-        this.id = id;
+        super(id);
         this.blizzard = blizzard;
 
         bw = this.blizzard.getWidth();
@@ -155,10 +154,5 @@ public class BlizzardBGEffect implements BackgroundEffect {
     @Override
     public String toString() {
         return CommonStatic.def.getBtnName(0, "bgeff" + id.id);
-    }
-
-    @Override
-    public Identifier<BackgroundEffect> getID() {
-        return id;
     }
 }

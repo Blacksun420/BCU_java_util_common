@@ -13,10 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-@JsonClass.JCGeneric(BackgroundEffect.BGIdentifier.class)
+@JsonClass.JCGeneric(Identifier.class)
 @SuppressWarnings("ForLoopReplaceableByForEach")
-public class SnowBGEffect implements BackgroundEffect{
-    private final Identifier<BackgroundEffect> id;
+public class SnowBGEffect extends BackgroundEffect {
     private final double maxSlope = Math.tan(Math.toRadians(75));
     private final FakeImage snow;
 
@@ -32,7 +31,7 @@ public class SnowBGEffect implements BackgroundEffect{
     private final List<Integer> capture = new ArrayList<>();
 
     public SnowBGEffect(Identifier<BackgroundEffect> i, FakeImage snow) {
-        id = i;
+        super(i);
         this.snow = snow;
 
         this.sw = (int) (snow.getWidth() * 1.8);
@@ -130,10 +129,5 @@ public class SnowBGEffect implements BackgroundEffect{
     @Override
     public String toString() {
         return CommonStatic.def.getBtnName(0, "bgeff" + id.id);
-    }
-
-    @Override
-    public Identifier<BackgroundEffect> getID() {
-        return id;
     }
 }

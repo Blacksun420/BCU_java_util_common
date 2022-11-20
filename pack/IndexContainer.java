@@ -114,7 +114,7 @@ public interface IndexContainer {
 
 	default <T extends R, R extends Indexable<?, R>> Identifier<R> getNextID(Class<T> cls) {
 		int id = getList(cls, (r, l) -> l.nextInd(), 0);
-		return new Identifier<R>(getSID(), cls, id);
+		return new Identifier<>(getSID(), cls, id);
 	}
 
 	String getSID();

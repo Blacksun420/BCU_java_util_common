@@ -114,21 +114,21 @@
     }
   },
   "LETHARGY": {
-    "abbr_name": "Lethargy",
-    "full_name": "Lethargy",
+    "abbr_name": "無気力",
+    "full_name": "無気力",
     "tooltip": null,
-    "format": "(prob)% chance to [(mult>0){increase}(mult<0){decrease}] target's TBA by (_abs(mult))[(type.percentage){%}] for (_dispTime(time))",
+    "format": "(prob)%の確率で(_dispTime(time))の間TBAを[(type.percentage){(_abs(mult)%)}(!type.percentage){(_dispTime(time))}]でに増加る",
     "class": {
       "prob": {
-        "name": "chance",
+        "name": "確率",
         "tooltip": null
       },
       "time": {
-        "name": "duration",
+        "name": "継続期間",
         "tooltip": null
       },
       "mult": {
-        "name": "multiplier",
+        "name": "倍率",
         "tooltip": "What amount will the original TBA of the target will be increased to"
       },
       "type.percentage": {
@@ -1278,7 +1278,7 @@
     "format": "(prob)% chance to [(mult>0){increase}(mult<0){decrease}] Worker Cat's level by (mult)",
     "class": {
       "prob": {
-        "name": "Chance",
+        "name": "確率",
         "tooltip": null
       },
       "mult": {
@@ -1296,7 +1296,7 @@
       "[(type==2){to}(type!=2){by}] (amount)[(type!=1){f}(type==1){%}]"],
     "class": {
       "prob": {
-        "name": "Chance",
+        "name": "確率",
         "tooltip": null
       },
       "amount": {
@@ -1405,7 +1405,7 @@
       " attack's procs}].}][(type.waves){Wave/Surge attacks will be affected by this too.}]"],
     "class": {
       "prob": {
-        "name": "chance",
+        "name": "確率",
         "tooltip": null
       },
       "minrange": {

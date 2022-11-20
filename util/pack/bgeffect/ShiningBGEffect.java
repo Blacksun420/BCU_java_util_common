@@ -14,10 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-@JsonClass.JCGeneric(BackgroundEffect.BGIdentifier.class)
+@JsonClass.JCGeneric(Identifier.class)
 @SuppressWarnings("ForLoopReplaceableByForEach")
-public class ShiningBGEffect implements BackgroundEffect {
-    private final Identifier<BackgroundEffect> id;
+public class ShiningBGEffect extends BackgroundEffect {
     private final FakeImage shine;
 
     private final int sw;
@@ -30,7 +29,7 @@ public class ShiningBGEffect implements BackgroundEffect {
     private final List<Integer> capture = new ArrayList<>();
 
     public ShiningBGEffect(Identifier<BackgroundEffect> id) {
-        this.id = id;
+        super(id);
         Background bg = UserProfile.getBCData().bgs.get(55);
 
         bg.load();
@@ -110,11 +109,6 @@ public class ShiningBGEffect implements BackgroundEffect {
             shinePosition.add(P.newP(r.nextInt(w + battleOffset), r.nextInt(BGHeight * 3 - BGHeight)));
             time.add((byte) (r.nextInt(Data.BG_EFFECT_SHINING_TIME)));
         }
-    }
-
-    @Override
-    public Identifier<BackgroundEffect> getID() {
-        return id;
     }
 
     @Override

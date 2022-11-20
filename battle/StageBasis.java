@@ -523,7 +523,7 @@ public class StageBasis extends BattleObj {
 		}
 
 		if (s_stop == 0) {
-			if(bg.bgEffect != null)
+			if(bgEffect != null)
 				bgEffect.update(st.len, battleHeight, midH);
 
 			ubase.preUpdate();

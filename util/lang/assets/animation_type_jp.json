@@ -13,7 +13,8 @@
     "ENTRY": "到着",
     "ATTACK": "攻撃",
     "WALK": "移動",
-    "RETREAT": "retreat",
+    "SOUL": "魂",
+    "RETREAT": "撤退",
     "FOREGROUND": "foreground",
     "BACKGROUND": "background"
   },
@@ -59,9 +60,6 @@
     "REVIVE": "復活",
     "BACK": "ふっとばす"
   },
-  "SoulType": {
-    "DEF": "デフォルト"
-  },
   "SniperEff": {
     "IDLE": "待機",
     "ATK": "攻撃"
@@ -87,5 +85,11 @@
   "RemShieldEff": {
     "NEAR": "近い",
     "FAR": "遠い"
+  },
+  "AuraEff": {
+    "ENEDOWN": "Weaken Enemy",
+    "ENEUP": "Strengthen Enemy",
+    "UNIDOWN": "Weaken Ally",
+    "UNIUP": "Strengthen Ally"
   }
 }

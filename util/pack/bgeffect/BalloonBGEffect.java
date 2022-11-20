@@ -14,12 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-@JsonClass.JCGeneric(BackgroundEffect.BGIdentifier.class)
+@JsonClass.JCGeneric(Identifier.class)
 @SuppressWarnings("ForLoopReplaceableByForEach")
-public class BalloonBGEffect implements BackgroundEffect {
+public class BalloonBGEffect extends BackgroundEffect {
 
-    @JsonClass.JCIdentifier
-    private final Identifier<BackgroundEffect> id;
     private FakeImage balloon;
     private FakeImage bigBalloon;
 
@@ -31,7 +29,7 @@ public class BalloonBGEffect implements BackgroundEffect {
     private final List<Integer> capture = new ArrayList<>();
 
     public BalloonBGEffect(Identifier<BackgroundEffect> id) {
-        this.id = id;
+        super(id);
     }
 
     @Override
@@ -145,10 +143,5 @@ public class BalloonBGEffect implements BackgroundEffect {
     @Override
     public String toString() {
         return CommonStatic.def.getBtnName(0, "bgeff" + id.id);
-    }
-
-    @Override
-    public Identifier<BackgroundEffect> getID() {
-        return id;
     }
 }

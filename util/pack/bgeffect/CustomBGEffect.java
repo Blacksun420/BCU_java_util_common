@@ -3,23 +3,22 @@ package common.util.pack.bgeffect;
 import common.io.json.JsonClass;
 import common.io.json.JsonField;
 import common.pack.Identifier;
+import common.pack.Source;
 import common.system.BattleRange;
 import common.system.P;
 import common.system.fake.FakeGraphics;
 import common.system.fake.FakeTransform;
-import common.util.Animable;
 import common.util.Data;
-import common.util.anim.*;
+import common.util.anim.AnimCE;
+import common.util.anim.AnimU;
+import common.util.anim.EAnimU;
 import common.util.pack.Background;
 
-@JsonClass.JCGeneric(BackgroundEffect.BGIdentifier.class)
+@JsonClass.JCGeneric(Identifier.class)
 @JsonClass
-public class CustomBGEffect extends Animable<AnimU<?>, AnimU.UType> implements BackgroundEffect {
+public class CustomBGEffect extends BackgroundEffect {
 
     private static final P origin = new P(0, 0);
-    @JsonClass.JCIdentifier
-    @JsonField
-    public Identifier<BackgroundEffect> id;
     @JsonField
     public String name;
     @JsonField
@@ -27,15 +26,17 @@ public class CustomBGEffect extends Animable<AnimU<?>, AnimU.UType> implements B
     private boolean loaded = false;
 
     public final EAnimU[] ebg = new EAnimU[2];
+    @JsonField(alias = Source.ResourceLocation.class)
+    public AnimCE anim;
 
 
     @JsonClass.JCConstructor
     public CustomBGEffect() {
-        id = null;
+        super(null);
     }
 
     public CustomBGEffect(Identifier<BackgroundEffect> id, AnimCE abg) {
-        this.id = id;
+        super(id);
         name = "BGEffect " + id;
         anim = abg;
         ebg[0] = anim.getEAnim(AnimU.BGEFFECT[0]);
@@ -101,13 +102,8 @@ public class CustomBGEffect extends Animable<AnimU<?>, AnimU.UType> implements B
      * @param siz Size of battle
      * @return Converted pixel
      */
-    private static int convertP(double p, double siz) {
+    protected static int convertP(double p, double siz) {
         return (int) (p * BattleRange.battleRatio * siz);
-    }
-
-    @Override
-    public Identifier<BackgroundEffect> getID() {
-        return id;
     }
 
     @Override
@@ -120,10 +116,5 @@ public class CustomBGEffect extends Animable<AnimU<?>, AnimU.UType> implements B
     @Override
     public String getName() {
         return name;
-    }
-
-    @Override
-    public EAnimI getEAnim(AnimU.UType ut) {
-        return anim.getEAnim(ut);
     }
 }

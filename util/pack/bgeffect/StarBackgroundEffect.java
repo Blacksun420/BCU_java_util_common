@@ -13,9 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-@JsonClass.JCGeneric(BackgroundEffect.BGIdentifier.class)
+@JsonClass.JCGeneric(Identifier.class)
 @SuppressWarnings("ForLoopReplaceableByForEach")
-public class StarBackgroundEffect implements BackgroundEffect {
+public class StarBackgroundEffect extends BackgroundEffect {
     private static final int[][] starColors = {
             {233, 248, 255},
             {199, 249, 218},
@@ -23,7 +23,6 @@ public class StarBackgroundEffect implements BackgroundEffect {
             {167, 169, 255}
     };
 
-    private final Identifier<BackgroundEffect> id;
     private final List<Integer> opacities = new ArrayList<>();
     private final List<P> positions = new ArrayList<>();
     private final List<Byte> colors = new ArrayList<>();
@@ -37,7 +36,7 @@ public class StarBackgroundEffect implements BackgroundEffect {
     private int number;
 
     public StarBackgroundEffect(Identifier<BackgroundEffect> id) {
-        this.id = id;
+        super(id);
     }
 
     @Override
@@ -133,11 +132,6 @@ public class StarBackgroundEffect implements BackgroundEffect {
             colors.add((byte) (r.nextInt(starColors.length - 1)));
             times.add(time);
         }
-    }
-
-    @Override
-    public Identifier<BackgroundEffect> getID() {
-        return id;
     }
 
     @Override

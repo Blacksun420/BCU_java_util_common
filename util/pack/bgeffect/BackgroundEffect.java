@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import common.CommonStatic;
 import common.io.json.JsonClass;
 import common.io.json.JsonDecoder;
+import common.io.json.JsonField;
 import common.pack.*;
 import common.system.P;
 import common.system.fake.FakeGraphics;
@@ -18,46 +19,26 @@ import java.util.Collection;
 import java.util.List;
 
 @IndexContainer.IndexCont(PackData.class)
-@JsonClass.JCGeneric(BackgroundEffect.BGIdentifier.class)
+@JsonClass.JCGeneric(Identifier.class)
 @JsonClass(read = JsonClass.RType.MANUAL, generator = "construct")
-public interface BackgroundEffect extends IndexContainer.Indexable<PackData, BackgroundEffect> {
+public abstract class BackgroundEffect extends Data implements IndexContainer.Indexable<PackData, BackgroundEffect> {
     //Only MixedBGEffect and CustomBGEffect need Custom dependence. The rest only matter for defPack.
-    int BGHeight = 512;
-    int battleOffset = (int) (400 / CommonStatic.BattleConst.ratio);
-    List<Integer> jsonList = new ArrayList<>();
-
-    @JsonClass(noTag = JsonClass.NoTag.LOAD)
-    class BGIdentifier {
-        public Identifier<BackgroundEffect> id;
-
-        @JsonClass.JCConstructor
-        public BGIdentifier() {
-            id = null;
-        }
-
-        @JsonClass.JCConstructor
-        public BGIdentifier(BackgroundEffect bge) {
-            id = bge.getID();
-        }
-
-        @JsonClass.JCGetter
-        public BackgroundEffect getter() {
-            return id.get();
-        }
-    }
+    public static final int BGHeight = 512;
+    public static final int battleOffset = (int) (400 / CommonStatic.BattleConst.ratio);
+    public static final List<Integer> jsonList = new ArrayList<>();
 
     /**
      * Used for manual constructor. Do not delete
      * @param elem Json Data
      * @return Object decoded to its proper class
      */
-    static Object construct(JsonElement elem) {
+    public static Object construct(JsonElement elem) {
         if (elem.getAsJsonObject().has("spacer"))
             return JsonDecoder.decode(elem, CustomBGEffect.class);
         return JsonDecoder.decode(elem, MixedBGEffect.class);
     }
 
-    static void read() {
+    public static void read() {
         PackData.DefPack assets = UserProfile.getBCData();
 
         assets.bgEffects.add(new StarBackgroundEffect(assets.getNextID(BackgroundEffect.class)));
@@ -89,8 +70,8 @@ public interface BackgroundEffect extends IndexContainer.Indexable<PackData, Bac
 
         assets.bgEffects.add(new SnowBGEffect(assets.getNextID(BackgroundEffect.class), snowImage));
 
-        assets.bgEffects.add(new MixedBGEffect(assets.getNextID(BackgroundEffect.class),
-                UserProfile.getBCData().bgEffects.get(Data.BG_EFFECT_STAR), UserProfile.getBCData().bgEffects.get(Data.BG_EFFECT_SNOW)));
+        assets.bgEffects.add(new MixedBGEffect(assets.getNextID(BackgroundEffect.class), 5,
+                assets.bgEffects.get(Data.BG_EFFECT_STAR), assets.bgEffects.get(Data.BG_EFFECT_SNOW)));
 
         assets.bgEffects.add(new BlizzardBGEffect(assets.getNextID(BackgroundEffect.class), secondBubbleImage));
 
@@ -122,11 +103,11 @@ public interface BackgroundEffect extends IndexContainer.Indexable<PackData, Bac
             for (Integer id : jsonList) {
                 JsonBGEffect jbg = new JsonBGEffect(assets.getNextID(BackgroundEffect.class), id);
                 assets.bgEffects.add(jbg);
-                UserProfile.getBCData().bgs.getRaw(id).bgEffect = jbg.getID();
+                assets.bgs.getRaw(id).bgEffect = jbg.getID();
             }
 
-            for(int i = 0; i < UserProfile.getBCData().bgs.size(); i++) {
-                Background bg = UserProfile.getBCData().bgs.get(i);
+            for(int i = 0; i < assets.bgs.size(); i++) {
+                Background bg = assets.bgs.get(i);
 
                 if(bg.reference != null) {
                     Background ref = bg.reference.get(); //assets.bgs.findByID(bg.reference);
@@ -136,26 +117,30 @@ public interface BackgroundEffect extends IndexContainer.Indexable<PackData, Bac
 
                     if(bg.bgEffect == null)
                         bg.bgEffect = ref.bgEffect;
-                    else if(ref.bgEffect != null) {
+                    else if(ref.bgEffect != null)
                         if (bg.bgEffect.cls == MixedBGEffect.class)
                             ((MixedBGEffect) bg.bgEffect.get()).effects.add(ref.bgEffect.get());
-                        else
-                            bg.bgEffect = new MixedBGEffect(assets.getNextID(BackgroundEffect.class), bg.bgEffect.get(), ref.bgEffect.get()).getID();
-                    }
+                        else {
+                            MixedBGEffect temp = new MixedBGEffect(assets.getNextID(BackgroundEffect.class), bg.id.id, bg.bgEffect.get(), ref.bgEffect.get());
+                            assets.bgEffects.add(temp);
+                            bg.bgEffect = temp.getID();
+                        }
                 }
             }
-            for(int i = 0; i < UserProfile.getBCData().bgs.size(); i++) {
-                Background bg = UserProfile.getBCData().bgs.get(i);
-                if (bg.bgEffect != null && bg.bgEffect.cls == MixedBGEffect.class)
-                    assets.bgEffects.add(bg.bgEffect.get());
-            }
         }, Context.ErrType.FATAL, "Failed to read bg effect data");
+    }
+
+    @JsonClass.JCIdentifier
+    @JsonField
+    protected final Identifier<BackgroundEffect> id;
+    protected BackgroundEffect(Identifier<BackgroundEffect> id) {
+        this.id = id;
     }
 
     /**
      * Load image or any data here
      */
-    void check();
+    public abstract void check();
 
     /**
      * Effects which will be drawn behind entities
@@ -164,7 +149,7 @@ public interface BackgroundEffect extends IndexContainer.Indexable<PackData, Bac
      * @param siz size of battle
      * @param midH how battle will be shifted along y-axis
      */
-    void preDraw(FakeGraphics g, P rect, final double siz, final double midH);
+    public abstract void preDraw(FakeGraphics g, P rect, final double siz, final double midH);
 
     /**
      * Effects which will be drawn in front of entities
@@ -173,28 +158,28 @@ public interface BackgroundEffect extends IndexContainer.Indexable<PackData, Bac
      * @param siz size of battle
      * @param midH how battle will be shifted along y-axis
      */
-    void postDraw(FakeGraphics g, P rect, final double siz, final double midH);
+    public abstract void postDraw(FakeGraphics g, P rect, final double siz, final double midH);
 
     /**
      * Used for Background preview only. Draws everything at once with no battle scaling
      */
-    void draw(FakeGraphics g, double x, double y, double siz, int groundH, int skyH);
+    public abstract void draw(FakeGraphics g, double x, double y, double siz, int groundH, int skyH);
 
     /**
      * Update data here
      * @param w Width of battlefield as P
      * @param h Height of battlefield as Px
      */
-    void update(int w, double h, double midH);
+    public abstract void update(int w, double h, double midH);
 
     /**
      * Initialize data here
      * @param w Width of battlefield as P
      * @param h Height of battlefield as Px
      */
-    void initialize(int w, double h, double midH, Background bg);
+    public abstract void initialize(int w, double h, double midH, Background bg);
 
-    default void release() {
+    public void release() {
 
     }
 
@@ -213,9 +198,11 @@ public interface BackgroundEffect extends IndexContainer.Indexable<PackData, Bac
     }
 
     @Override
-    Identifier<BackgroundEffect> getID();
+    public Identifier<BackgroundEffect> getID() {
+        return id;
+    }
 
-    default String getName() {
+    public String getName() {
         return "";
     }
 }

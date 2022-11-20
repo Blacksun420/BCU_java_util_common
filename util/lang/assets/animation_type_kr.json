@@ -13,6 +13,7 @@
     "ENTRY": "입장",
     "ATTACK": "공격",
     "WALK": "이동",
+    "SOUL": "soul",
     "RETREAT": "retreat",
     "FOREGROUND": "foreground",
     "BACKGROUND": "background"
@@ -59,9 +60,6 @@
     "REVIVE": "부활",
     "BACK" : "밀쳐남"
   },
-  "SoulType": {
-    "DEF": "기본"
-  },
   "SniperEff": {
     "IDLE": "대기",
     "ATK": "공격"
@@ -87,5 +85,11 @@
   "RemShieldEff": {
     "NEAR": "near",
     "FAR": "far"
+  },
+  "AuraEff": {
+    "ENEDOWN": "Weaken Enemy",
+    "ENEUP": "Strengthen Enemy",
+    "UNIDOWN": "Weaken Ally",
+    "UNIUP": "Strengthen Ally"
   }
 }

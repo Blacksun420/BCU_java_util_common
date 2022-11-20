@@ -14,10 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-@JsonClass.JCGeneric(BackgroundEffect.BGIdentifier.class)
+@JsonClass.JCGeneric(Identifier.class)
 @SuppressWarnings("ForLoopReplaceableByForEach")
-public class RainBGEffect implements BackgroundEffect {
-    private final Identifier<BackgroundEffect> id;
+public class RainBGEffect extends BackgroundEffect {
     private final FakeImage rain;
     private final FakeImage splash;
 
@@ -31,7 +30,7 @@ public class RainBGEffect implements BackgroundEffect {
     private final Random r = new Random();
 
     public RainBGEffect(Identifier<BackgroundEffect> i, FakeImage rain, FakeImage splash) {
-        id = i;
+        super(i);
         this.rain = rain;
         this.splash = splash;
 
@@ -140,11 +139,6 @@ public class RainBGEffect implements BackgroundEffect {
     @Override
     public void initialize(int w, double h, double midH, Background bg) {
 
-    }
-
-    @Override
-    public Identifier<BackgroundEffect> getID() {
-        return id;
     }
 
     @Override

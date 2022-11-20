@@ -13,32 +13,34 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@JsonClass.JCGeneric(BackgroundEffect.BGIdentifier.class)
+@JsonClass.JCGeneric(Identifier.class)
 @JsonClass
 @SuppressWarnings("ForLoopReplaceableByForEach")
-public class MixedBGEffect implements BackgroundEffect {
+public class MixedBGEffect extends BackgroundEffect {
 
-    @JsonClass.JCIdentifier
-    @JsonField
-    public Identifier<BackgroundEffect> id;
     @JsonField
     public String name;
-    @JsonField(generic = BackgroundEffect.class, alias = BGIdentifier.class)
+    @JsonField(generic = BackgroundEffect.class, alias = Identifier.class)
     public final ArrayList<BackgroundEffect> effects = new ArrayList<>();
+
+    public final int bid;
 
     @JsonClass.JCConstructor
     public MixedBGEffect() {
-        id = null;
+        super(null);
+        bid = -1;
     }
 
-    public MixedBGEffect(Identifier<BackgroundEffect> id, BackgroundEffect... effects) {
-        this.id = id;
+    public MixedBGEffect(Identifier<BackgroundEffect> id, int bid, BackgroundEffect... effects) {
+        super(id);
+        this.bid = bid;
         name = "BGEffect " + id;
         this.effects.addAll(Arrays.asList(effects));
     }
 
     public MixedBGEffect(Identifier<BackgroundEffect> id, List<BackgroundEffect> effects) {
-        this.id = id;
+        super(id);
+        bid = -1;
         name = "BGEffect " + id;
         this.effects.addAll(effects);
     }
@@ -78,11 +80,6 @@ public class MixedBGEffect implements BackgroundEffect {
     }
 
     @Override
-    public Identifier<BackgroundEffect> getID() {
-        return id;
-    }
-
-    @Override
     public void release() {
         for(int i = 0; i < effects.size(); i++)
             effects.get(i).release();
@@ -91,13 +88,14 @@ public class MixedBGEffect implements BackgroundEffect {
     @Override
     public String toString() {
         if (id.pack.equals(Identifier.DEF)) {
-            if (id.id == Data.BG_EFFECT_SNOWSTAR)
+            if (bid == Data.BG_EFFECT_SNOWSTAR)
                 return CommonStatic.def.getBtnName(0, "bgeff5");
 
-            String temp = CommonStatic.def.getBtnName(0, "bgjson" + BackgroundEffect.jsonList.get(id.id - 10));
 
-            if (temp.equals("bgjson" + BackgroundEffect.jsonList.get(id.id - 10)))
-                temp = CommonStatic.def.getBtnName(0, "bgeffdum").replace("_", "" + BackgroundEffect.jsonList.get(id.id - 10));
+            String temp = CommonStatic.def.getBtnName(0, "bgjson" + bid);
+
+            if (temp.equals("bgjson" + bid))
+                temp = CommonStatic.def.getBtnName(0, "bgeffdum").replace("_", "" + bid);
             return temp;
         }
         if (getName().length() == 0)
