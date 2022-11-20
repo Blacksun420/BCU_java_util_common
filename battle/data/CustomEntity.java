@@ -251,6 +251,7 @@ public abstract class CustomEntity extends DataEntity {
 		touch = de.getTouch();
 		death = de.getDeathAnim();
 		will = de.getWill();
+		cloneAttacks();
 		if (de instanceof CustomEntity) {
 			importData$1((CustomEntity) de);
 			return;
@@ -261,11 +262,19 @@ public abstract class CustomEntity extends DataEntity {
 		rep = new AtkDataModel(this);
 		rep.proc = de.getRepAtk().getProc().clone();
 		int m = de.getAtkCount(0);
+		hits.set(0, new AtkDataModel[m]);
 		for (int i = 0; i < m; i++) {
 			hits.get(0)[i] = new AtkDataModel(this, de, i);
 			for (int j : BCShareable)
 				hits.get(0)[i].proc.getArr(j).set(de.getProc().getArr(j));
 		}
+	}
+
+	private void cloneAttacks() {
+		ArrayList<AtkDataModel[]> hits2 = new ArrayList<>(hits.size());
+		for (AtkDataModel[] hit : hits)
+			hits2.add(hit.clone());
+		hits = hits2;
 	}
 
 	@Override
@@ -310,10 +319,10 @@ public abstract class CustomEntity extends DataEntity {
 		common = ce.common;
 		rep = new AtkDataModel(this, ce.rep);
 
-		List<AtkDataModel> temp = new ArrayList<>();
-		List<AtkDataModel> tnew = new ArrayList<>();
 		for (int j = 0; j < ce.hits.size(); j++) {
 			int[] inds = new int[ce.hits.get(j).length];
+			List<AtkDataModel> temp = new ArrayList<>(inds.length);
+			List<AtkDataModel> tnew = new ArrayList<>(inds.length);
 			for (int i = 0; i < inds.length; i++) {
 				if (!temp.contains(ce.hits.get(j)[i])) {
 					temp.add(ce.hits.get(j)[i]);
