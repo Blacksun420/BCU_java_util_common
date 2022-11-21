@@ -1,13 +1,6 @@
 package common.util.anim;
 
-import common.CommonStatic;
 import common.CommonStatic.EditLink;
-import common.util.pack.Soul;
-import common.util.pack.bgeffect.BackgroundEffect;
-import common.util.pack.bgeffect.CustomBGEffect;
-import common.util.unit.Enemy;
-import common.util.unit.Form;
-import common.util.unit.Unit;
 import common.io.InStream;
 import common.io.OutStream;
 import common.io.json.JsonClass;
@@ -22,6 +15,12 @@ import common.system.VImg;
 import common.system.fake.FakeImage;
 import common.util.AnimGroup;
 import common.util.Animable;
+import common.util.pack.Soul;
+import common.util.pack.bgeffect.BackgroundEffect;
+import common.util.pack.bgeffect.CustomBGEffect;
+import common.util.unit.Enemy;
+import common.util.unit.Form;
+import common.util.unit.Unit;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -397,14 +396,14 @@ public class AnimCE extends AnimCI {
 			mamodel.confs = new int[2][6];
 
 		anims = new MaAnim[Math.max(ori.types.length, TYPEDEF.length)];
-		for (int i = 0; i < ori.types.length; i++)
+		for (int i = 0; i < anims.length; i++)
 			if (i < ori.anims.length)
 				anims[i] = ori.anims[i].clone();
 			else
 				anims[i] = new MaAnim();
 
 		loader.setNum(ori.getNum().cloneImage());
-		types = isAnim ? ori.types[0] == TYPEDEF[0] ? (UType[])ori.types : TYPEDEF : types.length == 2 ? BGEFFECT : SOUL;
+		types = isAnim ? ori.types.length > TYPEDEF.length ? (UType[])ori.types : TYPEDEF : types.length == 2 ? BGEFFECT : SOUL;
 		parts = imgcut.cut(ori.getNum());
 		if (ori instanceof AnimU<?>) {
 			AnimU<?> au = (AnimU<?>) ori;
