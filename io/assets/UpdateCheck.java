@@ -129,6 +129,8 @@ public class UpdateCheck {
 				"110700", "110703", "110800", "110900");
 	}
 
+	public static final String REPO = "Blacksun420";
+	public static final String UPSTREAM = "battlecatsultimate";
 	public static final String URL_UPDATE = "https://raw.githubusercontent.com/battlecatsultimate/bcu-page/master/api/updateInfo.json";
 	public static final String URL_LIB = "https://github.com/battlecatsultimate/bcu-assets/raw/master/BCU_lib/";
 	public static final String URL_MUSIC = "https://github.com/battlecatsultimate/bcu-assets/raw/master/music/";
@@ -182,10 +184,16 @@ public class UpdateCheck {
 		return () -> {
 			JsonElement je0 = WebFileIO.directRead(URL_LANG_CHECK);
 			ContentJson[] cont = JsonDecoder.decode(je0, ContentJson[].class);
+			JsonElement je1 = WebFileIO.directRead(URL_LANG_CHECK.replace(UPSTREAM, REPO));
+			ContentJson[] fcont = JsonDecoder.decode(je1, ContentJson[].class);
+
 			Map<String, ContentJson> map = new HashMap<>();
 			List<Downloader> list = new ArrayList<>();
 			for (ContentJson c : cont)
 				map.put(c.name, c);
+			for (ContentJson c : fcont)
+				map.put(c.name, c);
+
 			for (String str : files) {
 				ContentJson cj = map.get(str.replace('/', '-'));
 				if (cj == null)
@@ -234,7 +242,7 @@ public class UpdateCheck {
 		return ans;
 	}
 
-	public static List<Downloader> checkPCLibs(UpdateJson json) throws Exception {
+	public static List<Downloader> checkPCLibs(UpdateJson json) {
 		File lib = new File("./BCU_lib");
 		List<Downloader> libs = new ArrayList<>();
 		if (json != null) {
