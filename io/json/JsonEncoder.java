@@ -68,13 +68,8 @@ public class JsonEncoder {
 				if (jcgw != null && f.getType() == alias)
 					return encode(f.get(obj), par);
 			}
-			try {
-				Constructor<?> con = alias.getConstructor(cls);
-				return encode(con.newInstance(obj), par);
-			} catch (NoSuchMethodException nse) {
-				Constructor<?> con = alias.getConstructor(cls.getInterfaces());
-				return encode(con.newInstance(obj), par);
-			}
+			Constructor<?> con = alias.getConstructor(cls);
+			return encode(con.newInstance(obj), par);
 		}
 		if (par != null && par.curjfld != null) {
 			JsonField jfield = par.curjfld;

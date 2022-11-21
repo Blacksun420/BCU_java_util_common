@@ -29,7 +29,6 @@ public class CustomBGEffect extends BackgroundEffect {
     @JsonField(alias = Source.ResourceLocation.class)
     public AnimCE anim;
 
-
     @JsonClass.JCConstructor
     public CustomBGEffect() {
         super(null);

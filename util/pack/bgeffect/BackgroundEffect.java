@@ -132,7 +132,7 @@ public abstract class BackgroundEffect extends Data implements IndexContainer.In
 
     @JsonClass.JCIdentifier
     @JsonField
-    protected final Identifier<BackgroundEffect> id;
+    public final Identifier<BackgroundEffect> id;
     protected BackgroundEffect(Identifier<BackgroundEffect> id) {
         this.id = id;
     }
