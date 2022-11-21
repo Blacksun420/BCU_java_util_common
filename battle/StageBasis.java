@@ -414,12 +414,8 @@ public class StageBasis extends BattleObj {
 	}
 
 	protected boolean act_spawn(int i, int j, boolean boo) {
-		if (buttonDelay > 0)
+		if (buttonDelay > 0 || ubase.health == 0 || unitRespawnTime > 0)
 			return false;
-
-		if (ubase.health == 0) {
-			return false;
-		}
 
 		if(buttonDelayOn && boo && selectedUnit[0] == -1) {
 			if(elu.price[i][j] != -1 || b.lu.fs[i][j] == null) {
@@ -433,9 +429,6 @@ public class StageBasis extends BattleObj {
 				return true;
 			}
 		}
-
-		if (unitRespawnTime > 0)
-			return false;
 
 		if (elu.cool[i][j] > 0) {
 			if(boo) {
