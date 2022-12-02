@@ -120,17 +120,16 @@ public class AssetLoader {
 			File folder = CommonStatic.ctx.getAssetFile("./assets/");
 			Map<String, Map<String, File>> map = new TreeMap<>();
 			for (File f : folder.listFiles()) {
-				if(f.getName().endsWith("custom.asset.bcuzip")) {
-					Map<String, File> sub = map.computeIfAbsent("custom", k -> new TreeMap<>());
-
-					sub.put("custom", f);
-
+				if (!f.getName().endsWith(".asset.bcuzip"))
 					continue;
-				}
 
-				if (f.getName().endsWith(".asset.bcuzip")) {
-					String pre = f.getName().substring(0, 2);
-					String name = f.getName().substring(0, 6);
+				String fileName = f.getName().substring(0, f.getName().indexOf('.'));
+				if(!CommonStatic.isInteger(fileName)) {
+					Map<String, File> sub = map.computeIfAbsent("custom", k -> new TreeMap<>());
+					sub.put(fileName, f);
+				} else {
+					String pre = fileName.substring(0, 2);
+					String name = fileName.substring(0, 6);
 					Map<String, File> sub = map.computeIfAbsent(pre, k -> new TreeMap<>());
 					sub.put(name, f);
 				}
@@ -139,11 +138,10 @@ public class AssetLoader {
 			for (Entry<String, Map<String, File>> emain : map.entrySet()) {
 				String targetName;
 
-				if(emain.getKey().equals("custom")) {
-					targetName = "./assets/"+emain.getKey()+".assets.bcuzips";
-				} else {
+				if(emain.getKey().equals("custom"))
+					targetName = "./assets/" + emain.getKey() + ".assets.bcuzips";
+				else
 					targetName = "./assets/" + emain.getKey() + "xxxx.assets.bcuzips";
-				}
 
 				File target = CommonStatic.ctx.getAssetFile(targetName);
 				File dst = CommonStatic.ctx.getAssetFile("./assets/.assets.bcuzips.temp");
@@ -196,10 +194,8 @@ public class AssetLoader {
 					fis.close();
 					for (AssetEntry ent : header.list)
 						ans.add(ent.desc.id);
-				}
-				if (f.getName().endsWith(".asset.bcuzip")) {
+				} else if (f.getName().endsWith(".asset.bcuzip"))
 					ans.add(PackLoader.readPack((fd) -> false, f).desc.id);
-				}
 			}
 			return ans;
 		} catch (Exception e) {

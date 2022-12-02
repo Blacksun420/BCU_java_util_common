@@ -3,8 +3,6 @@ package common.battle;
 import com.google.common.primitives.Ints;
 import common.CommonStatic;
 import common.battle.data.Orb;
-import common.io.InStream;
-import common.io.OutStream;
 import common.io.json.JsonClass;
 import common.io.json.JsonClass.RType;
 import common.io.json.JsonField;
@@ -16,7 +14,10 @@ import common.util.Data;
 import common.util.unit.Level;
 import common.util.unit.Trait;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Queue;
 
 @SuppressWarnings("ForLoopReplaceableByForEach")
 @JsonClass(read = RType.FILL)
@@ -146,14 +147,6 @@ public class Treasure extends Data {
 	protected Treasure(Basis bas) {
 		b = bas;
 		zread$000000();
-	}
-
-	/**
-	 * read Treasure from data
-	 */
-	protected Treasure(Basis bas, int ver, InStream is) {
-		b = bas;
-		zread(ver, is);
 	}
 
 	/**
@@ -450,95 +443,17 @@ public class Treasure extends Data {
 		return (int) Math.round(output * 100);
 	}
 
-	/**
-	 * save data to file
-	 */
-	protected void write(OutStream os) {
-		os.writeString("0.4.0");
-		os.writeIntB(tech);
-		os.writeIntB(trea);
-		os.writeInt(alien);
-		os.writeInt(star);
-		os.writeIntB(fruit);
-		os.writeIntB(gods);
-		os.writeIntB(bslv);
-	}
-
-	/**
-	 * read date from file, support multiple versions
-	 */
-	private void zread(int val, InStream is) {
-		zread$000000();
-
-		if (val >= 305)
-			val = getVer(is.nextString());
-
-		if (val >= 400)
-			zread$000400(is);
-		else if (val >= 305)
-			zread$000305(is);
-		else if (val >= 304)
-			zread$000304(is);
-		else if (val >= 301)
-			zread$000301(is);
-		else if (val >= 203)
-			zread$000203(is);
-	}
-
 	private void zread$000000() {
 		System.arraycopy(MLV, 0, tech, 0, LV_TOT);
 		System.arraycopy(MT, 0, trea, 0, T_TOT);
 		fruit[T_RED] = fruit[T_BLACK] = fruit[T_FLOAT] = fruit[T_ANGEL] = 300;
 		fruit[T_METAL] = fruit[T_ZOMBIE] = fruit[T_ALIEN] = 300;
-		bslv[0] = 20;
+		bslv[0] = 30;
 		for (int i = 1; i < BASE_TOT; i++)
 			bslv[i] = curveData.get(i).max;
 		gods[0] = gods[1] = gods[2] = 100;
 		alien = 600;
 		star = 1500;
-	}
-
-	private void zread$000203(InStream is) {
-		for (int i = 0; i < 8; i++)
-			tech[i] = is.nextByte();
-		for (int i = 0; i < 9; i++)
-			trea[i] = is.nextShort();
-		alien = is.nextInt();
-		star = is.nextInt();
-		fruit = is.nextIntsB();
-		gods = is.nextIntsB();
-	}
-
-	private void zread$000301(InStream is) {
-		zread$000203(is);
-		for (int i = 0; i < 5; i++)
-			bslv[i] = is.nextByte();
-	}
-
-	private void zread$000304(InStream is) {
-		zread$000203(is);
-		for (int i = 0; i < 6; i++)
-			bslv[i] = is.nextByte();
-
-	}
-
-	private void zread$000305(InStream is) {
-		zread$000203(is);
-		int[] temp = is.nextIntsB();
-		System.arraycopy(temp, 0, bslv, 0, temp.length);
-	}
-
-	private void zread$000400(InStream is) {
-		int[] lv = is.nextIntsB();
-		int[] tr = is.nextIntsB();
-		System.arraycopy(lv, 0, tech, 0, Math.min(LV_TOT, lv.length));
-		System.arraycopy(tr, 0, trea, 0, Math.min(T_TOT, tr.length));
-		alien = is.nextInt();
-		star = is.nextInt();
-		fruit = is.nextIntsB();
-		gods = is.nextIntsB();
-		int[] bs = is.nextIntsB();
-		System.arraycopy(bs, 0, bslv, 0, bs.length);
 	}
 
 }
