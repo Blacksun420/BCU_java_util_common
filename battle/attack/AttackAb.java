@@ -4,18 +4,21 @@ import common.CommonStatic;
 import common.battle.data.MaskAtk;
 import common.battle.entity.AbEntity;
 import common.battle.entity.Entity;
+import common.pack.SortedPackSet;
 import common.util.BattleObj;
 import common.util.unit.Trait;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 
 public abstract class AttackAb extends BattleObj {
 
 	public final int abi;
 	public int atk;
-	public final ArrayList<Trait> trait;
+	public final SortedPackSet<Trait> trait;
 	public final AtkModelAb model;
 	public final AttackAb origin;
 	public final MaskAtk matk;
@@ -28,11 +31,11 @@ public abstract class AttackAb extends BattleObj {
 	public int touch = TCH_N, dire, canon = -2, waveType = 0;
 
 	protected final Proc proc;
-	public final List<Proc.REMOTESHIELD> r = new ArrayList<>();
+	public final Set<Proc.REMOTESHIELD> r = new HashSet<>();
 	protected final List<AbEntity> capt = new ArrayList<>();
 	protected double sta, end;
 
-	protected AttackAb(Entity attacker, AtkModelAb ent, int ATK, ArrayList<Trait> tr, int eab, Proc pro, double p0, double p1, MaskAtk matk, int layer, boolean isLongAtk, int time) {
+	protected AttackAb(Entity attacker, AtkModelAb ent, int ATK, SortedPackSet<Trait> tr, int eab, Proc pro, double p0, double p1, MaskAtk matk, int layer, boolean isLongAtk, int time) {
 		this.attacker = attacker;
 		dire = ent.getDire();
 		origin = this;

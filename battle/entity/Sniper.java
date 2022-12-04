@@ -6,14 +6,13 @@ import common.battle.StageBasis;
 import common.battle.attack.AtkModelAb;
 import common.battle.attack.AttackAb;
 import common.battle.attack.AttackSimple;
+import common.pack.SortedPackSet;
 import common.pack.UserProfile;
 import common.system.P;
 import common.system.fake.FakeGraphics;
 import common.util.anim.EAnimD;
 import common.util.pack.EffAnim.SniperEff;
 import common.util.unit.Trait;
-
-import java.util.ArrayList;
 
 public class Sniper extends AtkModelAb {
 
@@ -132,7 +131,7 @@ public class Sniper extends AtkModelAb {
 				int atk = b.b.t().getBaseHealth() / 20;
 				Proc proc = Proc.blank();
 				proc.SNIPER.prob = 1;
-				ArrayList<Trait> CTrait = new ArrayList<>();
+				SortedPackSet<Trait> CTrait = new SortedPackSet<>();
 				CTrait.add(UserProfile.getBCData().traits.get(TRAIT_TOT));
 				AttackAb a = new AttackSimple(null, this, atk, CTrait, 0, proc, 0, getPos(), false, null, -1, true, 1);
 				a.canon = -1;

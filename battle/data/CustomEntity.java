@@ -6,6 +6,7 @@ import common.io.json.JsonDecoder;
 import common.io.json.JsonField;
 import common.io.json.JsonField.GenType;
 import common.pack.Identifier;
+import common.pack.SortedPackSet;
 import common.util.Data;
 import common.util.pack.Soul;
 import common.util.unit.Trait;
@@ -239,7 +240,7 @@ public abstract class CustomEntity extends DataEntity {
 		range = de.getRange();
 		abi = de.getAbi();
 		loop = de.getAtkLoop();
-		traits = new ArrayList<>();
+		traits = new SortedPackSet<>();
 		for(Trait t : de.getTraits()) {
 			if(!t.BCTrait)
 				traits.add(t);
@@ -312,6 +313,11 @@ public abstract class CustomEntity extends DataEntity {
 	@Override
 	public int touchBase() {
 		return base == 0 ? range : base;
+	}
+
+	@Override
+	public boolean isCommon() {
+		return common;
 	}
 
 	private void importData$1(CustomEntity ce) {

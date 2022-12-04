@@ -6,6 +6,7 @@ import common.io.json.JsonDecoder.OnInjected;
 import common.io.json.JsonField;
 import common.pack.Context.ErrType;
 import common.pack.Identifier;
+import common.pack.SortedPackSet;
 import common.pack.UserProfile;
 import common.system.files.VFile;
 import common.util.Data;
@@ -32,7 +33,7 @@ public class PCoin extends Data {
 
 	private final MaskUnit du;
 	public MaskUnit full = null;
-	public ArrayList<Trait> trait = new ArrayList<>();
+	public SortedPackSet<Trait> trait = new SortedPackSet<>();
 
 	@JsonField(block = true)
 	public final ArrayList<Integer> max = new ArrayList<>();

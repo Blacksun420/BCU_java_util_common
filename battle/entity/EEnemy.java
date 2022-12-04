@@ -7,6 +7,7 @@ import common.battle.attack.AttackWave;
 import common.battle.data.MaskAtk;
 import common.battle.data.MaskEnemy;
 import common.battle.data.MaskUnit;
+import common.pack.SortedPackSet;
 import common.pack.UserProfile;
 import common.util.anim.EAnimU;
 import common.util.unit.Trait;
@@ -106,8 +107,7 @@ public class EEnemy extends Entity {
 			ans = (int) ((double) ans * atk.getProc().MINIWAVE.multi / 100.0);
 		}
 		if (atk.model instanceof AtkModelUnit) {
-			ArrayList<Trait> sharedTraits = new ArrayList<>(atk.trait);
-			sharedTraits.retainAll(traits);
+			SortedPackSet<Trait> sharedTraits = traits.inCommon(atk.trait);
 			boolean isAntiTraited = targetTraited(atk.trait);
 			for (Trait t : traits) {
 				if (t.BCTrait || sharedTraits.contains(t))

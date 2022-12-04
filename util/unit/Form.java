@@ -28,7 +28,7 @@ import java.util.ArrayList;
 
 @JCGeneric(AbForm.AbFormJson.class)
 @JsonClass(read = RType.FILL)
-public class Form extends Animable<AnimU<?>, AnimU.UType> implements BasedCopable<AbForm, AbUnit>, AbForm {
+public class Form extends Animable<AnimU<?>, AnimU.UType> implements BasedCopable<AbForm, AbUnit>, AbForm, Comparable<AbForm> {
 
 	public static String lvString(int[] lvs) {
 		StringBuilder str = new StringBuilder("Lv." + lvs[0] + ", {");
@@ -315,5 +315,12 @@ public class Form extends Animable<AnimU<?>, AnimU.UType> implements BasedCopabl
 		if (desp != null && desp[fid + 1].length() > 0)
 			return desp[fid + 1];
 		return description.toString();
+	}
+
+	public int compareTo(AbForm u) {
+		int i = getID().compareTo(u.getID());
+		if (i == 0)
+			return Integer.compare(fid, u.getFid());
+		return i;
 	}
 }

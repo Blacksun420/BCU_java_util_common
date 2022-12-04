@@ -5,6 +5,7 @@ import common.CommonStatic.BattleConst;
 import common.battle.StageBasis;
 import common.battle.attack.*;
 import common.pack.Identifier;
+import common.pack.SortedPackSet;
 import common.pack.UserProfile;
 import common.system.P;
 import common.system.fake.FakeGraphics;
@@ -18,7 +19,6 @@ import common.util.unit.Form;
 import common.util.unit.Trait;
 import common.util.unit.Unit;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 
 public class Cannon extends AtkModelAb {
@@ -175,7 +175,7 @@ public class Cannon extends AtkModelAb {
 			preTime--;
 			if (preTime == 0) {
 				Proc proc = Proc.blank();
-				ArrayList<Trait> CTrait = new ArrayList<>();
+				SortedPackSet<Trait> CTrait = new SortedPackSet<>(UserProfile.getBCData().traits.get(TRAIT_TOT));
 				CTrait.add(UserProfile.getBCData().traits.get(TRAIT_TOT));
 				if (id == 0) {
 					// basic canon
@@ -211,7 +211,7 @@ public class Cannon extends AtkModelAb {
 					duration = 1;
 					proc.CRIT.mult = -(int) (b.b.t().getCannonMagnification(id, Data.BASE_HEALTH_PERCENTAGE));
 					int rad = NYRAN[4] / 2;
-					b.getAttack(new AttackCanon(this, 1, new ArrayList<>(), 0, proc, pos - rad, pos + rad, duration));
+					b.getAttack(new AttackCanon(this, 1, new SortedPackSet<>(), 0, proc, pos - rad, pos + rad, duration));
 				} else if (id == 5) {
 					// zombie canon
 					proc.WAVE.lv = b.b.t().tech[LV_CRG] + 2;

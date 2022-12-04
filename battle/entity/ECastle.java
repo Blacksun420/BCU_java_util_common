@@ -6,11 +6,11 @@ import common.battle.StageBasis;
 import common.battle.attack.AttackAb;
 import common.battle.attack.AttackVolcano;
 import common.battle.data.MaskAtk;
+import common.pack.SortedPackSet;
 import common.util.anim.EAnimD;
 import common.util.pack.EffAnim.DefEff;
 import common.util.unit.Trait;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -108,7 +108,7 @@ public class ECastle extends AbEntity {
 	public boolean targetable(Entity ent) { return true; }
 
 	@Override
-	public boolean ctargetable(ArrayList<Trait> t, Entity attacker) { return true; }
+	public boolean ctargetable(SortedPackSet<Trait> t, Entity attacker) { return true; }
 
 	@Override
 	public int touchable() {

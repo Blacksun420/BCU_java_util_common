@@ -2,10 +2,9 @@ package common.battle.entity;
 
 import common.battle.attack.AttackAb;
 import common.battle.data.MaskAtk;
+import common.pack.SortedPackSet;
 import common.util.BattleObj;
 import common.util.unit.Trait;
-
-import java.util.ArrayList;
 
 public abstract class AbEntity extends BattleObj {
 
@@ -55,7 +54,7 @@ public abstract class AbEntity extends BattleObj {
 
 	public abstract boolean targetable(Entity ent);
 
-	public abstract boolean ctargetable(ArrayList<Trait> t, Entity attacker);
+	public abstract boolean ctargetable(SortedPackSet<Trait> t, Entity attacker);
 
 	public abstract int touchable();
 

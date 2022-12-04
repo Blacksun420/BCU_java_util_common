@@ -7,6 +7,7 @@ import common.battle.attack.AtkModelUnit;
 import common.battle.attack.AttackAb;
 import common.battle.attack.AttackWave;
 import common.battle.data.*;
+import common.pack.SortedPackSet;
 import common.pack.UserProfile;
 import common.util.BattleObj;
 import common.util.Data;
@@ -35,7 +36,7 @@ public class EUnit extends Entity {
 			return 0;
 		}
 
-		protected static double getOrbMassive(AttackAb atk, ArrayList<Trait> traits, Treasure t) {
+		protected static double getOrbMassive(AttackAb atk, SortedPackSet<Trait> traits, Treasure t) {
 			if(atk.origin.model instanceof AtkModelUnit) {
 				return ((EUnit) ((AtkModelUnit) atk.origin.model).e).getOrbMassive(atk.trait, traits, t);
 			}
@@ -43,7 +44,7 @@ public class EUnit extends Entity {
 			return ((EUnit) ((AtkModelUnit)atk.model).e).getOrbMassive(atk.trait, traits, t);
 		}
 
-		protected static double getOrbGood(AttackAb atk, ArrayList<Trait> traits, Treasure t) {
+		protected static double getOrbGood(AttackAb atk, SortedPackSet<Trait> traits, Treasure t) {
 			if(atk.origin.model instanceof AtkModelUnit) {
 				return ((EUnit) ((AtkModelUnit) atk.origin.model).e).getOrbGood(atk.trait, traits, t);
 			}
@@ -100,7 +101,7 @@ public class EUnit extends Entity {
 	@Override
 	public void update() {
 		super.update();
-		traits = status[P_CURSE][0] == 0 && status[P_SEAL][0] == 0 ? data.getTraits() : new ArrayList<>();
+		traits = status[P_CURSE][0] == 0 && status[P_SEAL][0] == 0 ? data.getTraits() : new SortedPackSet<>();
 	}
 
 	@Override
@@ -121,8 +122,7 @@ public class EUnit extends Entity {
 			}
 		}
 		if (e instanceof EEnemy) {
-			ArrayList<Trait> sharedTraits = new ArrayList<>(matk.getATKTraits());
-			sharedTraits.retainAll(traits);
+			SortedPackSet<Trait> sharedTraits = traits.inCommon(matk.getATKTraits());
 			boolean isAntiTraited = targetTraited(matk.getATKTraits());
 			for (Trait t : traits) {
 				if (t.BCTrait || sharedTraits.contains(t))
@@ -196,8 +196,7 @@ public class EUnit extends Entity {
 			ans = (int) ((double) ans * atk.getProc().MINIWAVE.multi / 100.0);
 		}
 		if (atk.model instanceof AtkModelEnemy) {
-			ArrayList<Trait> sharedTraits = new ArrayList<>(atk.trait);
-			sharedTraits.retainAll(traits);
+			SortedPackSet<Trait> sharedTraits = traits.inCommon(atk.trait);
 			boolean isAntiTraited = targetTraited(atk.trait);
 			for (Trait t : atk.trait) {
 				if (t.BCTrait || sharedTraits.contains(t))
@@ -264,7 +263,7 @@ public class EUnit extends Entity {
 		return super.getMov(extmov);
 	}
 
-	private int getOrbAtk(ArrayList<Trait> trait, MaskAtk matk) {
+	private int getOrbAtk(SortedPackSet<Trait> trait, MaskAtk matk) {
 		Orb orb = ((MaskUnit) data).getOrb();
 
 		if (orb == null || level.getOrbs() == null) {
@@ -287,7 +286,7 @@ public class EUnit extends Entity {
 		return ans;
 	}
 
-	private int getOrbRes(ArrayList<Trait> trait, int atk) {
+	private int getOrbRes(SortedPackSet<Trait> trait, int atk) {
 		Orb orb = ((MaskUnit) data).getOrb();
 
 		if (orb == null || level.getOrbs() == null)
@@ -309,7 +308,7 @@ public class EUnit extends Entity {
 		return ans;
 	}
 
-	private double getOrbMassive(ArrayList<Trait> eTraits, ArrayList<Trait> traits, Treasure t) {
+	private double getOrbMassive(SortedPackSet<Trait> eTraits, SortedPackSet<Trait> traits, Treasure t) {
 		double ini = 1;
 
 		if (!traits.isEmpty())
@@ -341,7 +340,7 @@ public class EUnit extends Entity {
 		return ini * com;
 	}
 
-	private double getOrbGood(ArrayList<Trait> eTraits, ArrayList<Trait> traits, Treasure t) {
+	private double getOrbGood(SortedPackSet<Trait> eTraits, SortedPackSet<Trait> traits, Treasure t) {
 		double ini = 1;
 
 		if (!traits.isEmpty())

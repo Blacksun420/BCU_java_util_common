@@ -1,13 +1,12 @@
 package common.battle.data;
 
 import common.pack.Identifier;
+import common.pack.SortedPackSet;
 import common.util.BattleStatic;
 import common.util.Data;
 import common.util.Data.Proc;
 import common.util.stage.Music;
 import common.util.unit.Trait;
-
-import java.util.ArrayList;
 
 public interface MaskAtk extends BattleStatic {
 	default int getAltAbi() {
@@ -32,8 +31,8 @@ public interface MaskAtk extends BattleStatic {
 		return 0;
 	}
 
-	default ArrayList<Trait> getATKTraits() {
-		return new ArrayList<>();
+	default SortedPackSet<Trait> getATKTraits() {
+		return new SortedPackSet<>();
 	};
 
 	Proc getProc();

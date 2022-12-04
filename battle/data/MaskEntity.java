@@ -1,6 +1,7 @@
 package common.battle.data;
 
 import common.pack.Identifier;
+import common.pack.SortedPackSet;
 import common.util.Animable;
 import common.util.BattleStatic;
 import common.util.Data;
@@ -9,8 +10,6 @@ import common.util.anim.AnimU;
 import common.util.anim.AnimU.UType;
 import common.util.pack.Soul;
 import common.util.unit.Trait;
-
-import java.util.ArrayList;
 
 public interface MaskEntity extends BattleStatic {
 
@@ -57,7 +56,7 @@ public interface MaskEntity extends BattleStatic {
 
 	Identifier<Soul> getDeathAnim();
 
-	ArrayList<Trait> getTraits();
+	SortedPackSet<Trait> getTraits();
 
 	int getHb();
 
@@ -131,4 +130,6 @@ public interface MaskEntity extends BattleStatic {
 	boolean isRange(int atk);
 
 	int touchBase();
+
+	boolean isCommon();
 }

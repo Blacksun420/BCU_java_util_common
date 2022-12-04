@@ -4,17 +4,17 @@ import common.io.json.JsonClass;
 import common.io.json.JsonDecoder;
 import common.io.json.JsonField;
 import common.pack.*;
+import common.pack.IndexContainer.Indexable;
 import common.system.VImg;
 import common.util.Data;
-import common.pack.IndexContainer.Indexable;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 @IndexContainer.IndexCont(PackData.class)
 @JsonClass.JCGeneric(Identifier.class)
 @JsonClass
-public class Trait extends Data implements Indexable<PackData, Trait> {
+public class Trait extends Data implements Indexable<PackData, Trait>, Comparable<Trait> {
     public static void addBCTraits() {
         //Reads traits from BC and implements it into the main pack
         PackData.DefPack data = UserProfile.getBCData();
@@ -41,7 +41,7 @@ public class Trait extends Data implements Indexable<PackData, Trait> {
     // Target type will be used to toggle whether Anti-Traited, Anti-Non Metal, or Anti-All units will target this trait or not
 
     @JsonField(generic = Form.class, alias = AbForm.AbFormJson.class)
-    public final ArrayList<Form> others = new ArrayList<>();
+    public final SortedPackSet<Form> others = new SortedPackSet<>();
     // This is used to make custom traits targeted by units whose stats can't be modified otherwise, such as BC units or units from Parented Packs
 
 
@@ -71,8 +71,8 @@ public class Trait extends Data implements Indexable<PackData, Trait> {
     }
 
     // Convert Bitmask Type format to new format
-    public static ArrayList<Trait> convertType(int type) {
-        ArrayList<Trait> traits = new ArrayList<>();
+    public static SortedPackSet<Trait> convertType(int type) {
+        SortedPackSet<Trait> traits = new SortedPackSet<>();
         PackData.DefPack data = UserProfile.getBCData();
         if ((type & TB_RED) != 0)
             traits.add(data.traits.get(TRAIT_RED));
@@ -111,4 +111,9 @@ public class Trait extends Data implements Indexable<PackData, Trait> {
 
     @JsonClass.JCGetter
     public static Trait getter(Identifier<?> id) { return (Trait) Identifier.get(id); }
+
+    @Override
+    public int compareTo(@NotNull Trait t) {
+        return id.compareTo(t.id);
+    }
 }

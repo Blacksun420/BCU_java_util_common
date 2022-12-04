@@ -7,6 +7,7 @@ import common.io.json.JsonClass.RType;
 import common.io.json.JsonDecoder;
 import common.io.json.JsonField;
 import common.pack.Identifier;
+import common.pack.SortedPackSet;
 import common.system.BasedCopable;
 import common.util.Data;
 import common.util.stage.Music;
@@ -25,7 +26,7 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 	public int atk, pre = 1, ld0, ld1, targ = TCH_N, count = -1, dire = 1, alt = 0, move = 0;
 	public boolean range = true;
 	@JsonField(generic = Trait.class, alias = Identifier.class)
-	public ArrayList<Trait> traits = new ArrayList<>(); //Gives attacks their own typings
+	public SortedPackSet<Trait> traits = new SortedPackSet<>(); //Gives attacks their own typings
 
 	@JsonField
 	public Identifier<Music> audio, audio1;
@@ -47,7 +48,7 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 		ld0 = adm.ld0;
 		ld1 = adm.ld1;
 		range = adm.range;
-		traits = new ArrayList<>(adm.traits);
+		traits = new SortedPackSet<>(adm.traits);
 		dire = adm.dire;
 		count = adm.count;
 		targ = adm.targ;
@@ -116,7 +117,7 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 	}
 
 	@Override
-	public ArrayList<Trait> getATKTraits() { return traits; }
+	public SortedPackSet<Trait> getATKTraits() { return traits; }
 
 	@Override
 	public Proc getProc() {

@@ -4,11 +4,10 @@ import common.io.json.JsonClass;
 import common.io.json.JsonClass.NoTag;
 import common.io.json.JsonField;
 import common.pack.Identifier;
+import common.pack.SortedPackSet;
 import common.util.Data;
 import common.util.pack.Soul;
 import common.util.unit.Trait;
-
-import java.util.ArrayList;
 
 @JsonClass(noTag = NoTag.LOAD)
 public abstract class DataEntity extends Data implements MaskEntity {
@@ -19,7 +18,7 @@ public abstract class DataEntity extends Data implements MaskEntity {
 
 	public Identifier<Soul> death;
 	@JsonField(generic = Trait.class, alias = Identifier.class)
-	public ArrayList<Trait> traits = new ArrayList<>();
+	public SortedPackSet<Trait> traits = new SortedPackSet<>();
 
 	@Override
 	public int getAbi() {
@@ -37,7 +36,7 @@ public abstract class DataEntity extends Data implements MaskEntity {
 	}
 
 	@Override
-	public ArrayList<Trait> getTraits() {
+	public SortedPackSet<Trait> getTraits() {
 		return traits;
 	}
 

@@ -8,6 +8,7 @@ import common.io.json.JsonClass.RType;
 import common.io.json.JsonField;
 import common.io.json.JsonField.GenType;
 import common.pack.FixIndexList.FixIndexMap;
+import common.pack.SortedPackSet;
 import common.pack.UserProfile;
 import common.system.files.VFile;
 import common.util.Data;
@@ -262,7 +263,7 @@ public class Treasure extends Data {
 	/**
 	 * get maximum fruit of certain trait bitmask
 	 */
-	public double getFruit(ArrayList<Trait> types) {
+	public double getFruit(SortedPackSet<Trait> types) {
 		double ans = 0;
 		FixIndexMap<Trait> BCTraits = UserProfile.getBCData().traits;
 		if (types.contains(BCTraits.get(Data.TRAIT_RED)))
@@ -285,7 +286,7 @@ public class Treasure extends Data {
 	/**
 	 * get damage reduce multiplication from strong against ability
 	 */
-	public double getGOODDEF(ArrayList<Trait> eTraits, ArrayList<Trait> traits, Orb orb, Level level) {
+	public double getGOODDEF(SortedPackSet<Trait> eTraits, SortedPackSet<Trait> traits, Orb orb, Level level) {
 		double ini = traits.isEmpty() ? 1 : 0.5 - 0.1 / 3 * getFruit(traits);
 
 		if(orb != null && level.getOrbs() != null) {
@@ -314,14 +315,14 @@ public class Treasure extends Data {
 	/**
 	 * get attack multiplication from super massive damage ability
 	 */
-	public double getMASSIVESATK(ArrayList<Trait> traits) {
+	public double getMASSIVESATK(SortedPackSet<Trait> traits) {
 		return 5 + 1.0 / 3 * getFruit(traits);
 	}
 
 	/**
 	 * get attack multiplication from massive damage ability
 	 */
-	public double getMASSIVEATK(ArrayList<Trait> traits) {
+	public double getMASSIVEATK(SortedPackSet<Trait> traits) {
 		double ini = 3 + 1.0 / 3 * getFruit(traits);
 		double combo = (1 - (b.getInc(C_MASSIVE) * 0.01));
 		return ini * combo;
@@ -330,7 +331,7 @@ public class Treasure extends Data {
 	/**
 	 * get attack multiplication from massive damage ability
 	 */
-	public double getGOODATK(ArrayList<Trait> traits) {
+	public double getGOODATK(SortedPackSet<Trait> traits) {
 		double ini = 1.5 + 0.3 / 3 * getFruit(traits);
 		double combo = 1 - (b.getInc(C_GOOD) * 0.01);
 		return ini * combo;
@@ -339,7 +340,7 @@ public class Treasure extends Data {
 	/**
 	 * get damage reduce multiplication from resistant ability
 	 */
-	public double getRESISTDEF(ArrayList<Trait> eTraits, ArrayList<Trait> traits, Orb orb, Level level) {
+	public double getRESISTDEF(SortedPackSet<Trait> eTraits, SortedPackSet<Trait> traits, Orb orb, Level level) {
 		double ini = traits.isEmpty() ? 1 : 0.25 - 0.05 / 3 * getFruit(traits);
 
 		if(orb != null && level.getOrbs() != null) {
@@ -367,7 +368,7 @@ public class Treasure extends Data {
 	/**
 	 * get damage reduce multiplication from super resistant ability
 	 */
-	public double getRESISTSDEF(ArrayList<Trait> traits) {
+	public double getRESISTSDEF(SortedPackSet<Trait> traits) {
 		return 1.0 / 6 - 1.0 / 126 * getFruit(traits);
 	}
 

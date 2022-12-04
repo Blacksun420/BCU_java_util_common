@@ -6,6 +6,7 @@ import common.battle.entity.AbEntity;
 import common.battle.entity.Entity;
 import common.battle.entity.Sniper;
 import common.pack.Identifier;
+import common.pack.SortedPackSet;
 import common.util.Data.Proc.MOVEWAVE;
 import common.util.Data.Proc.VOLC;
 import common.util.stage.Music;
@@ -21,13 +22,13 @@ public class AttackSimple extends AttackAb {
 	private final Set<AbEntity> attacked = new HashSet<>();
 	private final boolean range;
 
-	public AttackSimple(Entity attacker, AtkModelAb ent, int ATK, ArrayList<Trait> tr, int eab, Proc pro, double p0, double p1, boolean isr,
+	public AttackSimple(Entity attacker, AtkModelAb ent, int ATK, SortedPackSet<Trait> tr, int eab, Proc pro, double p0, double p1, boolean isr,
 						MaskAtk matk, int layer, boolean isLongAtk, int duration) {
 		super(attacker, ent, ATK, tr, eab, pro, p0, p1, matk, layer, isLongAtk, duration);
 		range = isr;
 	}
 
-	public AttackSimple(Entity attacker, AtkModelAb ent, int ATK, ArrayList<Trait> tr, int eab, Proc proc, double p0, double p1, MaskAtk mask, int layer, boolean isLongAtk) {
+	public AttackSimple(Entity attacker, AtkModelAb ent, int ATK, SortedPackSet<Trait> tr, int eab, Proc proc, double p0, double p1, MaskAtk mask, int layer, boolean isLongAtk) {
 		this(attacker, ent, ATK, tr, eab, proc, p0, p1, mask.isRange(), mask, layer, isLongAtk, 1);
 		touch = mask.getTarget();
 

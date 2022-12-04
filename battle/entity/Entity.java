@@ -6,6 +6,7 @@ import common.battle.StageBasis;
 import common.battle.attack.*;
 import common.battle.data.*;
 import common.pack.Identifier;
+import common.pack.SortedPackSet;
 import common.pack.UserProfile;
 import common.system.P;
 import common.system.fake.FakeGraphics;
@@ -1288,7 +1289,7 @@ public abstract class Entity extends AbEntity {
 	/**
 	 * trait of enemy, also target trait of unit, uses list
 	 */
-	public ArrayList<Trait> traits;
+	public SortedPackSet<Trait> traits;
 
 	/**
 	 * attack model
@@ -2139,7 +2140,7 @@ public abstract class Entity extends AbEntity {
 	 * @param attacker The Entity attacking.
 	 */
 	@Override
-	public boolean ctargetable(ArrayList<Trait> t, Entity attacker) {
+	public boolean ctargetable(SortedPackSet<Trait> t, Entity attacker) {
 		if (attacker != null) {
 			if (attacker.dire == -1 && attacker.traits.size() > 0) {
 				for (int i = 0; i < traits.size(); i++) {
@@ -2176,8 +2177,8 @@ public abstract class Entity extends AbEntity {
 	 * @param targets The list of traits the unit targets
 	 * @return true if the unit is anti-traited
 	 */
-	protected static boolean targetTraited(ArrayList<Trait> targets) {
-		List<Trait> temp = new ArrayList<>(BCTraits.subList(TRAIT_RED,TRAIT_WHITE));
+	protected static boolean targetTraited(SortedPackSet<Trait> targets) {
+		SortedPackSet<Trait> temp = new SortedPackSet<>(BCTraits.subList(TRAIT_RED,TRAIT_WHITE));
 		temp.remove(TRAIT_METAL);
 		return targets.containsAll(temp);
 	}
@@ -2562,11 +2563,10 @@ public abstract class Entity extends AbEntity {
 	/**
 	 * get the extra proc time due to fruits, for EEnemy only
 	 */
-	private double getFruit(ArrayList<Trait> trait, int dire, int e) {
+	private double getFruit(SortedPackSet<Trait> trait, int dire, int e) {
 		if (!receive(dire) || receive(e))
 			return 0;
-		ArrayList<Trait> sharedTraits = new ArrayList<>(trait);
-		sharedTraits.retainAll(traits);
+		SortedPackSet<Trait> sharedTraits = trait.inCommon(traits);
 		return basis.b.t().getFruit(sharedTraits);
 	}
 

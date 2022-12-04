@@ -13,13 +13,13 @@ import common.pack.IndexContainer.IndexCont;
 import common.pack.IndexContainer.Indexable;
 import common.pack.PackData;
 import common.pack.PackData.UserPack;
+import common.pack.SortedPackSet;
 import common.util.Data;
 import common.util.unit.AbForm;
 import common.util.unit.AbUnit;
 import common.util.unit.Form;
 import common.util.unit.Unit;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -36,7 +36,7 @@ public class CharaGroup extends Data implements Indexable<PackData, CharaGroup>,
 	public int type = 0;
 
 	@JsonField(generic = Form.class, alias = AbForm.AbFormJson.class)
-		public final ArrayList<Form> fset = new ArrayList<>();
+		public final SortedPackSet<Form> fset = new SortedPackSet<>();
 
 	@JsonClass.JCConstructor
 	public CharaGroup() {
