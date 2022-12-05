@@ -2,13 +2,11 @@ package common.battle.data;
 
 import common.pack.Identifier;
 import common.pack.SortedPackSet;
-import common.util.Animable;
 import common.util.BattleStatic;
 import common.util.Data;
 import common.util.Data.Proc;
-import common.util.anim.AnimU;
-import common.util.anim.AnimU.UType;
 import common.util.pack.Soul;
+import common.util.unit.Character;
 import common.util.unit.Trait;
 
 public interface MaskEntity extends BattleStatic {
@@ -70,7 +68,7 @@ public interface MaskEntity extends BattleStatic {
 	/**
 	 * get the Enemy/Form this data represents
 	 */
-	Animable<AnimU<?>, UType> getPack();
+	Character getPack();
 
 	int getPost(boolean sp, int atk);
 

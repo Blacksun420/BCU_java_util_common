@@ -26,5 +26,4 @@ public interface AbEnemy extends Comparable<AbEnemy>, Indexable<PackData, AbEnem
 	Identifier<AbEnemy> getID();
 
 	Set<Enemy> getPossible();
-
 }

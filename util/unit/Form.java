@@ -9,26 +9,21 @@ import common.io.json.JsonClass.JCGeneric;
 import common.io.json.JsonClass.RType;
 import common.io.json.JsonDecoder.OnInjected;
 import common.io.json.JsonField;
-import common.io.json.localDecoder;
 import common.pack.Identifier;
 import common.pack.PackData;
 import common.pack.UserProfile;
 import common.system.BasedCopable;
 import common.system.VImg;
-import common.util.Animable;
-import common.util.Data;
 import common.util.anim.AnimU;
 import common.util.anim.AnimUD;
-import common.util.anim.EAnimU;
 import common.util.anim.MaModel;
 import common.util.lang.MultiLangCont;
-import common.util.lang.MultiLangData;
 
 import java.util.ArrayList;
 
 @JCGeneric(AbForm.AbFormJson.class)
 @JsonClass(read = RType.FILL)
-public class Form extends Animable<AnimU<?>, AnimU.UType> implements BasedCopable<AbForm, AbUnit>, AbForm, Comparable<AbForm> {
+public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbForm, Comparable<AbForm> {
 
 	public static String lvString(int[] lvs) {
 		StringBuilder str = new StringBuilder("Lv." + lvs[0] + ", {");
@@ -45,12 +40,6 @@ public class Form extends Animable<AnimU<?>, AnimU.UType> implements BasedCopabl
 	@JsonField
 	public int fid;
 	public Orb orbs = null;
-
-	@JsonField(generic = MultiLangData.class)
-	public MultiLangData names = new MultiLangData();
-
-	@JsonField(generic = MultiLangData.class)
-	public MultiLangData description = new MultiLangData("<br><br><br>");
 
 	@JCConstructor
 	public Form(Unit u) {
@@ -121,22 +110,12 @@ public class Form extends Animable<AnimU<?>, AnimU.UType> implements BasedCopabl
 		return (int) (upc.getPrice() * (1 + sta * 0.5));
 	}
 
-	@Override
-	public EAnimU getEAnim(AnimU.UType t) {
-		return anim.getEAnim(t);
-	}
-
 	public MaskUnit maxu() {
 		PCoin pc = du.getPCoin();
 		if (pc != null) {
 			return pc.full;
 		}
 		return du;
-	}
-
-	@Override
-	public VImg getIcon() {
-		return anim.getEdi();
 	}
 
 	@Override
@@ -150,112 +129,37 @@ public class Form extends Animable<AnimU<?>, AnimU.UType> implements BasedCopabl
 		form.pack = this;
 
 		if((unit != null || uid != null)) {
-			Unit u = unit == null ? (Unit)uid.get() : unit;
+			Unit u = unit == null ? (Unit) uid.get() : unit;
 			PackData.UserPack pack = (PackData.UserPack) u.getCont();
-			if (pack.desc.FORK_VERSION < 3) {
+			if (pack.desc.FORK_VERSION < 4) {
 				JsonObject jdu = jobj.getAsJsonObject("du");
-				if (pack.desc.FORK_VERSION < 2) {
-					AtkDataModel[] oldAtks = new localDecoder(jdu.getAsJsonObject("atks"), AtkDataModel[].class, form).setGen(true).setPool(true).decode();
-					form.hits.set(0, oldAtks);
-				}
+				inject(pack, jdu, form);
+				AtkDataModel[] atks = form.getAllAtkModels();
 
-				AtkDataModel oldSpAtk = new localDecoder(jdu.get("rev"), AtkDataModel.class, form).setGen(true).decode();
-				if (oldSpAtk != null)
-					form.revs = new AtkDataModel[]{oldSpAtk};
-				oldSpAtk = new localDecoder(jdu.get("res"), AtkDataModel.class, form).setGen(true).decode();
-				if (oldSpAtk != null)
-					form.ress = new AtkDataModel[]{oldSpAtk};
-				oldSpAtk = new localDecoder(jdu.get("bur"), AtkDataModel.class, form).setGen(true).decode();
-				if (oldSpAtk != null)
-					form.burs = new AtkDataModel[]{oldSpAtk};
-				oldSpAtk = new localDecoder(jdu.get("resu"), AtkDataModel.class, form).setGen(true).decode();
-				if (oldSpAtk != null)
-					form.resus = new AtkDataModel[]{oldSpAtk};
-				oldSpAtk = new localDecoder(jdu.get("revi"), AtkDataModel.class, form).setGen(true).decode();
-				if (oldSpAtk != null)
-					form.revis = new AtkDataModel[]{oldSpAtk};
-				oldSpAtk = new localDecoder(jdu.get("entr"), AtkDataModel.class, form).setGen(true).decode();
-				if (oldSpAtk != null)
-					form.entrs = new AtkDataModel[]{oldSpAtk};
-			}
-
-			AtkDataModel[] atks = form.getAllAtkModels();
-			Proc proc = form.getProc();
-
-			//Updates stuff to match this fork without core version issues
-			if (pack.desc.FORK_VERSION < 1) {
-				if (UserProfile.isOlderPack(pack, "0.6.6.0")) {
-					if (UserProfile.isOlderPack(pack, "0.6.5.0")) {
-						if (UserProfile.isOlderPack(pack, "0.6.4.0")) {
-							if (UserProfile.isOlderPack(pack, "0.6.1.0")) {
-								if (UserProfile.isOlderPack(pack, "0.6.0.0")) {
-									JsonObject jdu = jobj.getAsJsonObject("du");
-									int type = jdu.get("type").getAsInt();
-									if (UserProfile.isOlderPack(pack, "0.5.2.0")) {
-										if (UserProfile.isOlderPack(pack, "0.5.1.0"))
-											type = Data.reorderTrait(type);
-										//Finish 0.5.1.0 check
-										if (form.tba != 0)
-											form.tba += form.getPost(false, 0) + 1;
-									} //Finish 0.5.2.0 check
-									MaModel model = anim.loader.getMM();
-									form.limit = CommonStatic.customFormMinPos(model);
-									proc.BARRIER.health = jdu.get("shield").getAsInt();
-									form.traits = Trait.convertType(type);
-									if ((form.abi & (1 << 18)) != 0) //Seal Immunity
-										proc.IMUSEAL.mult = 100;
-									if ((form.abi & (1 << 7)) != 0) //Moving atk Immunity
-										proc.IMUMOVING.mult = 100;
-									if ((form.abi & (1 << 12)) != 0) //Poison Immunity
-										proc.IMUPOI.mult = 100;
-									form.abi = Data.reorderAbi(form.abi, 0);
-								} //Finish 0.6.0.0 check
-								proc.DMGCUT.reduction = 100;
-								for (AtkDataModel atk : atks)
-									if (atk.getProc().POISON.prob > 0)
-										atk.getProc().POISON.type.ignoreMetal = true;
-							} //Finish 0.6.1.0 check
-							names.put(jobj.get("name").getAsString());
-							if (jobj.has("explanation"))
-								description.put(jobj.get("explanation").getAsString());
-						} //Finish 0.6.4.0 check
-						if ((form.abi & 16) > 0) //2x money
-							for (AtkDataModel atk : atks)
-								atk.getProc().BOUNTY.mult = 100;
-						if ((form.abi & 32) > 0) //base destroyer
-							for (AtkDataModel atk : atks)
-								atk.getProc().ATKBASE.mult = 300;
-						form.abi = Data.reorderAbi(form.abi, 1);
-					} //Finish 0.6.5.0 check
-					for (AtkDataModel atk : atks)
-						if (atk.getProc().TIME.prob > 0)
-							atk.getProc().TIME.intensity = atk.getProc().TIME.time;
-
+				if (pack.desc.FORK_VERSION < 1) {
+					if (UserProfile.isOlderPack(pack, "0.6.4.0")) {
+						if (UserProfile.isOlderPack(pack, "0.6.0.0"))
+							form.limit = CommonStatic.customFormMinPos(anim.loader.getMM());
+						//Finish 0.6.0.0 check
+						names.put(jobj.get("name").getAsString());
+						if (jobj.has("explanation"))
+							description.put(jobj.get("explanation").getAsString());
+					} //Finish 0.6.4.0 check
 					for (AtkDataModel atk : atks)
 						if (atk.getProc().SUMMON.prob > 0) {
-							atk.getProc().SUMMON.max_dis = atk.getProc().SUMMON.dis;
-							atk.getProc().SUMMON.min_layer = -1;
-							atk.getProc().SUMMON.max_layer = -1;
+							if (atk.getProc().SUMMON.id != null && !Unit.class.isAssignableFrom(atk.getProc().SUMMON.id.cls))
+								atk.getProc().SUMMON.type.fix_buff = true;
+							atk.getProc().SUMMON.amount = 1;
 						}
-				} //Finish 0.6.6.0 check
-				if ((form.abi & 32) > 0)
-					proc.IMUWAVE.block = 100;
-				form.abi = Data.reorderAbi(form.abi, 2);
-				for (AtkDataModel atk : atks)
-					if (atk.getProc().SUMMON.prob > 0) {
-						if (atk.getProc().SUMMON.id != null && !Unit.class.isAssignableFrom(atk.getProc().SUMMON.id.cls))
+					for (AtkDataModel atk : atks)
+						if (atk.getProc().SUMMON.prob > 0 && atk.getProc().SUMMON.form == 0) {
+							atk.getProc().SUMMON.form = 1;
+							atk.getProc().SUMMON.mult = 1;
 							atk.getProc().SUMMON.type.fix_buff = true;
-						atk.getProc().SUMMON.amount = 1;
-					}
-			} //Finish FORK_VERSION 1 checks
-
-			for (AtkDataModel atk : atks)
-				if (atk.getProc().SUMMON.prob > 0 && atk.getProc().SUMMON.form == 0) {
-					atk.getProc().SUMMON.form = 1;
-					atk.getProc().SUMMON.mult = 1;
-					atk.getProc().SUMMON.type.fix_buff = true;
-				}
+						}
+				} //Finish FORK_VERSION 1 checks
 			}
+		}
 		if (form.getPCoin() != null)
 			form.pcoin.update();
 	}
@@ -311,10 +215,10 @@ public class Form extends Animable<AnimU<?>, AnimU.UType> implements BasedCopabl
 		return base;
 	}
 
-	public String getExplaination() {
+	public String getExplanation() {
 		String[] desp = MultiLangCont.getDesc(this);
 		if (desp != null && desp[fid + 1].length() > 0)
-			return desp[fid + 1];
+			return desp[fid + 1].replace("<br>","\n");
 		return description.toString();
 	}
 

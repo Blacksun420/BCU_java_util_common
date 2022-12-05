@@ -7,12 +7,12 @@ import common.io.json.JsonField;
 import common.util.Data;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.LinkedHashMap;
+import java.util.TreeMap;
 
 @JsonClass(read = JsonClass.RType.FILL)
 public class MultiLangData extends Data {
     @JsonField(generic = {Integer.class, String.class})
-    private final LinkedHashMap<Integer, String> dat = new LinkedHashMap<>();
+    private final TreeMap<Integer, String> dat = new TreeMap<>();
 
     @JsonClass.JCConstructor
     public MultiLangData() {
@@ -30,6 +30,10 @@ public class MultiLangData extends Data {
     }
     public void remove() {
         dat.remove(lang());
+    }
+
+    public void replace(String olds, String news) {
+        dat.replaceAll((k, v) -> v.replace(olds, news));
     }
 
     @NotNull
@@ -90,5 +94,5 @@ public class MultiLangData extends Data {
             ans.dat.put(lang, dat.get(lang));
 
         return ans;
-    };
+    }
 }
