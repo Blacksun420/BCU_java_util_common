@@ -20,7 +20,6 @@ public class EEnemy extends Entity {
 	public final double mult, mula;
 
 	public float door;
-	public byte hit;
 
 	public EEnemy(StageBasis b, MaskEnemy de, EAnimU ea, double magnif, double atkMagnif, int d0, int d1, int m) {
 		super(b, de, ea, atkMagnif, magnif);
@@ -173,21 +172,6 @@ public class EEnemy extends Entity {
 	@Override
 	protected int traitType() {
 		return 1;
-	}
-
-	@Override
-	public void damaged(AttackAb atk) {
-		hit = 2;
-		super.damaged(atk);
-	}
-
-	@Override
-	public void update() {
-		if(hit > 0) {
-			hit--;
-		}
-
-		super.update();
 	}
 
 	@Override

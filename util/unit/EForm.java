@@ -45,7 +45,7 @@ public class EForm extends Data {
 			du = form.du;
 	}
 
-	public EUnit getEntity(StageBasis b, int[] index) {
+	public EUnit getEntity(StageBasis b, int[] index, boolean isBase) {
 		int lv = level.getLv();
 
 		if(b.st.isAkuStage())
@@ -54,7 +54,7 @@ public class EForm extends Data {
 		double d = f.unit.lv.getMult(level.getLv());
 		EAnimU anim = getEntryAnim();
 
-		EUnit result = new EUnit(b, du, anim, d, du.getFront(), du.getBack(), level, f.du.getPCoin(), index);
+		EUnit result = new EUnit(b, du, anim, d, du.getFront(), du.getBack(), level, f.du.getPCoin(), index, isBase);
 
 		level.setLv(lv);
 
@@ -64,13 +64,13 @@ public class EForm extends Data {
 	public EUnit invokeEntity(StageBasis b, int minLayer, int maxLayer, int[] index) {
 		double d = f.unit.lv.getMult(level.getLv());
 		EAnimU anim = getEntryAnim();
-		return new EUnit(b, du, anim, d, minLayer, maxLayer, level, f.du.getPCoin(), index);
+		return new EUnit(b, du, anim, d, minLayer, maxLayer, level, f.du.getPCoin(), index, false);
 	}
 
 	public EUnit invokeEntity(StageBasis b, int Lvl, int minLayer, int maxLayer) {
 		double d = f.unit.lv.getMult(Lvl);
 		EAnimU anim = getEntryAnim();
-		return new EUnit(b, du, anim, d, minLayer, maxLayer, level, f.du.getPCoin(), null);
+		return new EUnit(b, du, anim, d, minLayer, maxLayer, level, f.du.getPCoin(), null, false);
 	}
 
 	public EAnimU getEntryAnim() {

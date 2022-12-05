@@ -22,6 +22,11 @@ public abstract class AbEntity extends BattleObj {
 	 */
 	public double pos;
 
+	/**
+	 * Base shake
+	 */
+	public byte hit;
+
 	protected AbEntity(int h) {
 		if (h <= 0)
 			h = 1;

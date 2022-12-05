@@ -228,7 +228,7 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 		this.id = id;
 		img = vimg;
 		ic = 1;
-		top = true;
+		top = vimg.getImg().getHeight() == 1024;
 	}
 
 	public Background(Identifier<Background> id, VImg vimg, Identifier<Background> ref) {
@@ -236,7 +236,7 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 		reference = ref;
 		img = vimg;
 		ic = 1;
-		top = true;
+		top = vimg.getImg().getHeight() == 1024;
 	}
 
 	private Background(int[] ints) {

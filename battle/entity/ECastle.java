@@ -17,7 +17,6 @@ import java.util.Comparator;
 public class ECastle extends AbEntity {
 
 	private final StageBasis sb;
-	public int hit = 0;
 
 	public EAnimD<DefEff> smoke;
 	public int smokeLayer = -1;

@@ -203,11 +203,12 @@ public class Enemy extends Animable<AnimU<?>, UType> implements AbEnemy {
 							proc.BARRIER.health = jde.get("shield").getAsInt();
 							int type = jde.get("type").getAsInt();
 							if (UserProfile.isOlderPack(pack, "0.5.4.0")) {
-								if (UserProfile.isOlderPack(pack, "0.5.2.0") && enemy.tba != 0) {
+								if (UserProfile.isOlderPack(pack, "0.5.2.0")) {
 									if (UserProfile.isOlderPack(pack, "0.5.1.0"))
 										type = Data.reorderTrait(type);
 									//Finish 5.1.0 check
-									enemy.tba += enemy.getPost(false, 0) + 1;
+									if (enemy.tba != 0)
+										enemy.tba += enemy.getPost(false, 0) + 1;
 								} //Finish 5.2.0 check
 								MaModel model = anim.loader.getMM();
 								enemy.limit = CommonStatic.customEnemyMinPos(model);

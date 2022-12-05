@@ -1435,6 +1435,9 @@ public abstract class Entity extends AbEntity {
 		sealed.REVIVE.time = data.getProc().REVIVE.time;
 		sealed.REVIVE.health = data.getProc().REVIVE.health;
 		maxCurrentShield = currentShield = (int) (data.getProc().DEMONSHIELD.hp * hpMagnif);
+
+		if (((DataEntity)data).tba < 0)
+			waitTime = data.getTBA();
 	}
 
 	public void altAbi(int alt) {
@@ -1650,6 +1653,7 @@ public abstract class Entity extends AbEntity {
 
 		tokens.add(atk);
 		atk.playSound(isBase, basis.r.irDouble() < 0.5);
+		hit = 2;
 		damage += dmg;
 		zx.damaged(atk);
 		status[P_BOUNTY][0] = atk.getProc().BOUNTY.mult;
@@ -1928,6 +1932,7 @@ public abstract class Entity extends AbEntity {
 			} else
 				anim.getEff(INV);
 		}
+		System.out.println(atk.getProc().KB.prob);
 	}
 
 	private boolean checkAIImmunity(int val, int side, boolean invert) {
@@ -2247,6 +2252,9 @@ public abstract class Entity extends AbEntity {
 	 */
 	@Override
 	public void update() {
+		if(hit > 0)
+			hit--;
+
 		auras.updateAuras();
 		// update proc effects
 		updateProc();

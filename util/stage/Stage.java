@@ -25,6 +25,7 @@ import common.util.lang.MultiLangData;
 import common.util.pack.Background;
 import common.util.stage.SCDef.Line;
 import common.util.unit.Enemy;
+import common.util.unit.Form;
 
 import java.util.*;
 

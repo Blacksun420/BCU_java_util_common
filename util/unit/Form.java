@@ -191,11 +191,12 @@ public class Form extends Animable<AnimU<?>, AnimU.UType> implements BasedCopabl
 								if (UserProfile.isOlderPack(pack, "0.6.0.0")) {
 									JsonObject jdu = jobj.getAsJsonObject("du");
 									int type = jdu.get("type").getAsInt();
-									if (UserProfile.isOlderPack(pack, "0.5.2.0") && form.tba != 0) {
+									if (UserProfile.isOlderPack(pack, "0.5.2.0")) {
 										if (UserProfile.isOlderPack(pack, "0.5.1.0"))
 											type = Data.reorderTrait(type);
 										//Finish 0.5.1.0 check
-										form.tba += form.getPost(false, 0) + 1;
+										if (form.tba != 0)
+											form.tba += form.getPost(false, 0) + 1;
 									} //Finish 0.5.2.0 check
 									MaModel model = anim.loader.getMM();
 									form.limit = CommonStatic.customFormMinPos(model);

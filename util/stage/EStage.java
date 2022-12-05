@@ -3,10 +3,13 @@ package common.util.stage;
 import common.CommonStatic;
 import common.battle.StageBasis;
 import common.battle.entity.EEnemy;
+import common.battle.entity.EUnit;
 import common.pack.Identifier;
 import common.pack.UserProfile;
 import common.util.BattleObj;
+import common.util.stage.info.CustomStageInfo;
 import common.util.unit.AbEnemy;
+import common.util.unit.EForm;
 
 public class EStage extends BattleObj {
 
@@ -126,6 +129,24 @@ public class EStage extends BattleObj {
 
 			AbEnemy e = Identifier.getOr(enemy, AbEnemy.class);
 			return e.getEntity(sb, this, multi, mulatk, data.layer_0, data.layer_1, data.boss >= 1 ? -2 : -1);
+		}
+		return null;
+	}
+
+	public EUnit ubase(StageBasis sb) {
+		if (s.info instanceof CustomStageInfo && ((CustomStageInfo)s.info).ubase != null) {
+			CustomStageInfo csi = (CustomStageInfo)s.info;
+			int[] slot = null;
+			for (int i = 0; i < 2; i++)
+				for (int j = 0; j < 5; j++) {
+					if (sb.b.lu.fs[i][j] == null)
+						break;
+					if (sb.b.lu.fs[i][j] == csi.ubase) {
+						slot = new int[]{i, j};
+						break;
+					}
+				}
+			return new EForm(csi.ubase, csi.lv).getEntity(sb, slot, true);
 		}
 		return null;
 	}

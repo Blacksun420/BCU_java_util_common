@@ -12,7 +12,7 @@ import common.util.unit.Trait;
 @JsonClass(noTag = NoTag.LOAD)
 public abstract class DataEntity extends Data implements MaskEntity {
 
-	public int hp, hb, speed, range;
+	public int hp, hb, speed, range, tba;
 	public int abi, width;
 	public int loop = -1, will;
 

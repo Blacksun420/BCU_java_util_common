@@ -29,7 +29,7 @@ public abstract class CustomEntity extends DataEntity {
 	@JsonField(gen = GenType.GEN)
 	public int[] share;
 
-	public int tba, base, touch = TCH_N;
+	public int base, touch = TCH_N;
 	public boolean common = true;
 
 	/**
@@ -225,7 +225,7 @@ public abstract class CustomEntity extends DataEntity {
 
 	@Override
 	public int getTBA() {
-		return tba;
+		return Math.abs(tba);
 	}
 
 	@Override
@@ -252,6 +252,7 @@ public abstract class CustomEntity extends DataEntity {
 		touch = de.getTouch();
 		death = de.getDeathAnim();
 		will = de.getWill();
+		common = de.isCommon();
 		cloneAttacks();
 		if (de instanceof CustomEntity) {
 			importData$1((CustomEntity) de);
@@ -259,7 +260,6 @@ public abstract class CustomEntity extends DataEntity {
 		}
 
 		base = de.touchBase();
-		common = ((DefaultData)de).isCommon();
 		rep = new AtkDataModel(this);
 		rep.proc = de.getRepAtk().getProc().clone();
 		int m = de.getAtkCount(0);
@@ -322,7 +322,6 @@ public abstract class CustomEntity extends DataEntity {
 
 	private void importData$1(CustomEntity ce) {
 		base = ce.base;
-		common = ce.common;
 		rep = new AtkDataModel(this, ce.rep);
 
 		for (int j = 0; j < ce.hits.size(); j++) {

@@ -7,7 +7,6 @@ public abstract class DefaultData extends DataEntity {
 	protected int[] lds = new int[1], ldr = new int[1];
 	protected int[] atk = new int[1], pre = new int[1];
 	protected boolean[] abis = new boolean[]{true};
-	protected int tba;
 	protected DataAtk[] datks;
 
 	public boolean isrange;

@@ -93,6 +93,11 @@ public class Level implements BattleStatic {
 			lvs = lv;
 	}
 
+	public void setLvs(int... lv) {
+		for (int i = 0; i < Math.min(lv.length, lvs.size()); i++)
+			lvs.set(i, lv[i]);
+	}
+
 	public void setOrbs(int[][] orb) {
 		if (orb == null) {
 			orbs = null;

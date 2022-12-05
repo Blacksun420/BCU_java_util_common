@@ -15,8 +15,6 @@ import common.util.anim.EAnimU;
 import common.util.unit.Level;
 import common.util.unit.Trait;
 
-import java.util.ArrayList;
-
 @SuppressWarnings("ForLoopReplaceableByForEach")
 public class EUnit extends Entity {
 
@@ -58,12 +56,13 @@ public class EUnit extends Entity {
 
 	protected final Level level;
 
-	public EUnit(StageBasis b, MaskUnit de, EAnimU ea, double d0, int layer0, int layer1, Level level, PCoin pc, int[] index) {
+	public EUnit(StageBasis b, MaskUnit de, EAnimU ea, double d0, int layer0, int layer1, Level level, PCoin pc, int[] index, boolean isBase) {
 		super(b, de, ea, d0, b.b.t().getAtkMulti(), b.b.t().getDefMulti(), pc, level);
 		layer = layer0 == layer1 ? layer0 : layer0 + (int) (b.r.nextDouble() * (layer1 - layer0 + 1));
 		traits = de.getTraits();
 		lvl = level.getLv();
 		this.index = index;
+		this.isBase = isBase;
 
 		this.level = level;
 	}
@@ -231,6 +230,8 @@ public class EUnit extends Entity {
 			if (atk.trait.contains(UserProfile.getBCData().traits.get(Data.TRAIT_BEAST)) && getProc().BSTHUNT.type.active)
 				ans *= 0.6; //Not sure
 		}
+		if (isBase)
+			ans *= 1 + atk.getProc().ATKBASE.mult / 100.0;
 		ans = critCalc((getAbi() & AB_METALIC) != 0, ans, atk);
 
 		// Perform orb

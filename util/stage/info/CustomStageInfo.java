@@ -6,6 +6,9 @@ import common.io.json.JsonField;
 import common.pack.Identifier;
 import common.util.stage.MapColc.PackMapColc;
 import common.util.stage.Stage;
+import common.util.unit.Form;
+import common.util.unit.Level;
+import utilpc.UtilPC;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -30,6 +33,10 @@ public class CustomStageInfo implements StageInfo {
     @JsonField(generic = Float.class)
     public final ArrayList<Float> chances = new ArrayList<>();
     public short totalChance;
+    @JsonField(alias = Form.AbFormJson.class)
+    public Form ubase;
+    @JsonField
+    public Level lv;
 
     @JsonClass.JCConstructor
     public CustomStageInfo() {
@@ -44,17 +51,20 @@ public class CustomStageInfo implements StageInfo {
 
     @Override
     public String getHTML() {
-        if (stages.size() == 0)
-            return null;
-        StringBuilder ans = new StringBuilder("<html><table><tr><th>List of Followup Stages:</th></tr>");
-        for (int i = 0; i < stages.size(); i++)
-            ans.append("<tr><td>")
-                    .append(stages.get(i).getCont().toString())
-                    .append(" - ")
-                    .append(stages.get(i).toString())
-                    .append("</td><td>")
-                    .append(df.format(chances.get(i)))
-                    .append("%</td></tr>");
+        StringBuilder ans = new StringBuilder();
+        if (stages.size() > 0) {
+            ans.append("<html><table><tr><th>List of Followup Stages:</th></tr>");
+            for (int i = 0; i < stages.size(); i++)
+                ans.append("<tr><td>")
+                        .append(stages.get(i).getCont().toString())
+                        .append(" - ")
+                        .append(stages.get(i).toString())
+                        .append("</td><td>")
+                        .append(df.format(chances.get(i)))
+                        .append("%</td></tr>");
+        }
+        if (ubase != null)
+            ans.append("Unit Base: ").append(ubase).append(" (").append(UtilPC.lvText(ubase, lv.getLvs())[1]).append(")");
 
         return ans.toString();
     }
@@ -85,7 +95,7 @@ public class CustomStageInfo implements StageInfo {
     public void remove(int ind) {
         if (ind == -1 || ind >= stages.size())
             return;
-        if (stages.size() == 1) {
+        if (stages.size() == 1 && ubase == null) {
             destroy();
         } else {
             stages.remove(ind);
@@ -120,6 +130,7 @@ public class CustomStageInfo implements StageInfo {
     public void destroy() {
         stages.clear();
         chances.clear();
+        ubase = null;
         ((PackMapColc)st.getCont().getCont()).si.remove(this);
         st.info = null;
     }

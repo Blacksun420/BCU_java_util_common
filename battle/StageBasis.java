@@ -108,8 +108,10 @@ public class StageBasis extends BattleObj {
 			ebase = new ECastle(this);
 			ebase.added(1, 800);
 		}
-		ubase = new ECastle(this, bas);
+		EUnit eu = est.ubase(this);
+		ubase = eu != null ? eu : new ECastle(this, bas);
 		ubase.added(-1, st.len - 800);
+
 		int sttime = 3;
 		if (st.getCont().getCont() == DefMapColc.getMap("CH")) {
 			if (st.getCont().id.id == 9)
@@ -460,7 +462,7 @@ public class StageBasis extends BattleObj {
 			}
 			CommonStatic.setSE(SE_SPEND_SUC);
 			elu.get(i, j);
-			EUnit eu = f.getEntity(this, new int[] {i, j});
+			EUnit eu = f.getEntity(this, new int[] {i, j}, false);
 			eu.added(-1, st.len - 700);
 			le.add(eu);
 			le.sort(Comparator.comparingInt(e -> e.layer));
@@ -515,12 +517,14 @@ public class StageBasis extends BattleObj {
 			ebase.update();
 		}
 
+		if (s_stop == 0 || (ubase.getAbi() & AB_TIMEI) != 0) {
+			ubase.preUpdate();
+			ubase.update();
+		}
+
 		if (s_stop == 0) {
 			if(bgEffect != null)
 				bgEffect.update(st.len, battleHeight, midH);
-
-			ubase.preUpdate();
-			ubase.update();
 
 			int allow = st.max - entityCount(1);
 			if (respawnTime <= 0 && active && allow > 0) {
@@ -612,6 +616,15 @@ public class StageBasis extends BattleObj {
 			if (!lethal && ebase instanceof ECastle && ebase.health <= 0 && est.hasBoss()) {
 				lethal = true;
 				ebase.health = 1;
+			}
+		}
+
+		if(s_stop == 0 || (ubase.getAbi() & AB_TIMEI) != 0) {
+			ubase.postUpdate();
+
+			if (!lethal && ubase instanceof ECastle && ubase.health <= 0 && est.hasBoss()) {
+				lethal = true;
+				ubase.health = 1;
 			}
 		}
 
