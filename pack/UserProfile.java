@@ -271,12 +271,11 @@ public class UserProfile {
 	}
 
 	public static void checkMissingParents(UserPack pk) {
-		List<String> missingDependencies = new ArrayList<>();
-		for (String dep : pk.desc.dependency)
-			if (!profile.packmap.containsKey(dep))
-				missingDependencies.add(dep);
-		if (missingDependencies.size() > 0)
-			CommonStatic.ctx.printErr(ErrType.WARN, pk.desc.names.toString() + " (" + pk.desc.id + ") requires parent packs you don't have, which are: " + missingDependencies);
+		ArrayList<String> deps = pk.preGetDependencies();
+		deps.removeIf(profile.packmap::containsKey);
+		if (deps.size() > 0)
+			CommonStatic.ctx.printErr(ErrType.WARN, pk.desc.names.toString() + " (" + pk.desc.id + ")"
+					+ " requires parent packs you don't have, which are: " + deps);
 	}
 
 	public static UserProfile profile() {
