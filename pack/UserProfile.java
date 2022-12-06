@@ -201,9 +201,8 @@ public class UserProfile {
 		profile.pending = null;
 		profile.packlist.addAll(profile.failed);
 
-		for (PackData.UserPack pk : profile.packlist) {
+		for (PackData.UserPack pk : queue)
 			checkMissingParents(pk);
-		}
 	}
 
 	public static void reloadExternalPacks() {
@@ -251,7 +250,7 @@ public class UserProfile {
 		profile.pending = null;
 		profile.packlist.addAll(profile.failed);
 
-		for (PackData.UserPack pk : profile.packlist) {
+		for (PackData.UserPack pk : queue) {
 			checkMissingParents(pk);
 		}
 	}
@@ -359,7 +358,7 @@ public class UserProfile {
 
 	/**
 	 * Unregister object from registers
-	 * 
+	 *
 	 * @param id ID of registered object
 	 */
 	public static void unregister(String id) {
@@ -392,11 +391,11 @@ public class UserProfile {
 			return false;
 
 		CommonStatic.def.loadProgress(1.0 * packmap.size() / pending.size(), "Reading " + (pack.desc.names.toString().equals("") ? pack.desc.name.equals("") ? pack.desc.id : pack.desc.name : pack.desc.names.toString()) + " data...");
-		if (!CommonStatic.ctx.noticeErr(pack::load, ErrType.WARN, "failed to load pack " + pack.desc, () -> setStatic(CURRENT_PACK, null))) {
+		if (!CommonStatic.ctx.noticeErr(pack::load, ErrType.WARN, "failed to load pack " + pack.desc, () -> setStatic(CURRENT_PACK, null)))
+			packmap.put(pack.desc.id, pack);
+		else
 			failed.add(pack);
-			return true;
-		}
-		packmap.put(pack.desc.id, pack);
+
 		return true;
 	}
 

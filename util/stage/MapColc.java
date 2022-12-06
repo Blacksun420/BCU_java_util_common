@@ -57,7 +57,8 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 			idmap.put("H", 25);
 			idmap.put("CA", 27);
 			idmap.put("Q", 31);
-			idmap.put("L", 32);
+			idmap.put("L", 33);
+			idmap.put("ND", 34);
 
 			for (int i = 0; i < strs.length; i++)
 				new CastleList.DefCasList(Data.hex(i), strs[i]);
@@ -224,6 +225,32 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 
 					groupLine = qs.poll();
 				}
+			}
+
+			qs = VFile.readLine("./org/data/DropItem.csv");
+
+			qs.poll();
+
+			String dropLine = qs.poll();
+
+			while(dropLine != null && !dropLine.isEmpty()) {
+				String[] dropData = dropLine.split(",");
+
+				if(dropData.length != 22) {
+					dropLine = qs.poll();
+
+					continue;
+				}
+
+				int mapID = CommonStatic.safeParseInt(dropData[0]);
+
+				StageMap sm = getMap(mapID);
+
+				if(sm != null && sm.info != null) {
+					sm.info.injectMaterialDrop(dropData);
+				}
+
+				dropLine = qs.poll();
 			}
 		}
 
