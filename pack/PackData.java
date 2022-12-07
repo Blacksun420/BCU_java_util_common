@@ -261,7 +261,7 @@ public abstract class PackData implements IndexContainer {
 		public boolean allowAnim = false;
 		public byte[] parentPassword;
 		@JsonField(generic = String.class)
-		public ArrayList<String> dependency;
+		public SortedPackSet<String> dependency;
 
 		@JCConstructor
 		@Deprecated
@@ -272,7 +272,7 @@ public abstract class PackData implements IndexContainer {
 			BCU_VERSION = AssetLoader.CORE_VER;
 			FORK_VERSION = AssetLoader.FORK_VER; //0 by default to differ Fork packs and non-fork packs
 			this.id = id;
-			this.dependency = new ArrayList<>();
+			this.dependency = new SortedPackSet<>();
 		}
 
 		@Override
@@ -432,11 +432,11 @@ public abstract class PackData implements IndexContainer {
 			UserProfile.unregister(getSID());
 		}
 
-		public ArrayList<String> preGetDependencies() {
+		public SortedPackSet<String> preGetDependencies() {
 			if (!desc.dependency.isEmpty())
 				return desc.dependency;
 
-			ArrayList<String> deps = new ArrayList<>();
+			SortedPackSet<String> deps = new SortedPackSet<>();
 			JsonArray jarr = elem.getAsJsonObject().getAsJsonObject("desc").get("dependency").getAsJsonArray();
 			for (int i = 0; i < jarr.size(); i++)
 				deps.add(jarr.get(i).getAsString());

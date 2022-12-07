@@ -17,6 +17,10 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
         public T next() {
             return (T)arr[ind++];
         }
+        @Override
+        public void remove() {
+            SortedPackSet.this.remove(--ind);
+        }
     }
 
     public Object[] arr;
@@ -60,7 +64,7 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
         int f = 0, l = size;
         while (f < l) {
             int mid = f + (l - f) / 2;
-            if (arr[mid] == o) {
+            if (arr[mid].equals(o)) {
                 return mid;
             } else {
                 int c = ((Comparable<T>)o).compareTo((T)arr[mid]);
@@ -251,5 +255,16 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
     @Override
     public SortedPackSet<T> clone() {
         return new SortedPackSet<>(this);
+    }
+
+    @Override
+    public String toString() {
+        if (isEmpty())
+            return "[]";
+        StringBuilder str = new StringBuilder("[");
+        for (Object obj : this)
+            str.append(obj.toString()).append(", ");
+        str.replace(str.length() - 3, str.length() - 1, "]");
+        return str.toString();
     }
 }

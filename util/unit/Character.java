@@ -20,7 +20,7 @@ public abstract class Character extends Animable<AnimU<?>, AnimU.UType> {
     @JsonField(generic = MultiLangData.class)
     public MultiLangData names = new MultiLangData();
     @JsonField(generic = MultiLangData.class)
-    public MultiLangData description = new MultiLangData("<br><br><br>");
+    public MultiLangData description = new MultiLangData();
 
     @Override
     public EAnimU getEAnim(AnimU.UType t) {

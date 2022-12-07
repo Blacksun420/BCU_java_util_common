@@ -271,7 +271,7 @@ public class UserProfile {
 	}
 
 	public static void checkMissingParents(UserPack pk) {
-		ArrayList<String> deps = pk.preGetDependencies();
+		SortedPackSet<String> deps = pk.preGetDependencies();
 		deps.removeIf(profile.packmap::containsKey);
 		if (deps.size() > 0)
 			CommonStatic.ctx.printErr(ErrType.WARN, pk.desc.names.toString() + " (" + pk.desc.id + ")"
@@ -384,13 +384,13 @@ public class UserProfile {
 	 */
 	private boolean add(UserPack pack) {
 		packlist.add(pack);
-		ArrayList<String> deps = pack.editable ? pack.desc.dependency : pack.preGetDependencies();
+		SortedPackSet<String> deps = pack.editable ? pack.desc.dependency : pack.preGetDependencies();
 
 		if (!canAdd(deps))
 			return false;
 
 		CommonStatic.def.loadProgress(1.0 * packmap.size() / pending.size(), "Reading " + (pack.desc.names.toString().equals("") ? pack.desc.name.equals("") ? pack.desc.id : pack.desc.name : pack.desc.names.toString()) + " data...");
-		if (!CommonStatic.ctx.noticeErr(pack::load, ErrType.WARN, "failed to load pack " + pack.desc, () -> setStatic(CURRENT_PACK, null)))
+		if (CommonStatic.ctx.noticeErr(pack::load, ErrType.WARN, "failed to load pack " + pack.desc, () -> setStatic(CURRENT_PACK, null)))
 			packmap.put(pack.desc.id, pack);
 		else
 			failed.add(pack);
@@ -398,7 +398,7 @@ public class UserProfile {
 		return true;
 	}
 
-	private boolean canAdd(ArrayList<String> deps) {
+	private boolean canAdd(SortedPackSet<String> deps) {
 		for (String dep : deps)
 			if (!packmap.containsKey(dep))
 				return false;
