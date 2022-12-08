@@ -211,7 +211,7 @@ public class StageBasis extends BattleObj {
 		if (amount < 0)
 			CommonStatic.setSE(18);
 		else
-			CommonStatic.setSE(147);
+			CommonStatic.setSE(36);
 
 		if (type == 0) {
 			elu.cool[i][slot % 5] += amount;
