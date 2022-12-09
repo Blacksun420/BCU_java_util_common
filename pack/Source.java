@@ -285,7 +285,7 @@ public abstract class Source {
 		}
 
 		private void write(String type, Consumer<PrintStream> con) throws IOException {
-			File f = CommonStatic.ctx.getWorkspaceFile("./" + id.pack + "/" + id.base + "/" + id.id + "/" + type);
+			File f = CommonStatic.ctx.getWorkspaceFile(id.getPath() + "/" + type);
 			Context.check(f);
 			PrintStream ps = new PrintStream(f, StandardCharsets.UTF_8.toString());
 			con.accept(ps);
@@ -293,7 +293,7 @@ public abstract class Source {
 		}
 
 		private void write(String type, FakeImage img) throws IOException {
-			File f = CommonStatic.ctx.getWorkspaceFile("./" + id.pack + "/" + id.base + "/" + id.id + "/" + type);
+			File f = CommonStatic.ctx.getWorkspaceFile(id.getPath() + "/" + type);
 			Context.check(f);
 			Context.check(FakeImage.write(img, "PNG", f), "save", f);
 		}
@@ -374,7 +374,7 @@ public abstract class Source {
 		public static void validate(ResourceLocation rl) {
 			String id = rl.id;
 			int num = 0;
-			while (CommonStatic.ctx.getWorkspaceFile("./" + rl.pack + "/" + rl.base + "/" + rl.id).exists())
+			while (CommonStatic.ctx.getWorkspaceFile(rl.getPath()).exists())
 				rl.id = id + "_" + (num++);
 		}
 
