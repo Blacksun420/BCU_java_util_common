@@ -161,6 +161,7 @@ public abstract class AnimU<T extends AnimU.ImageKeeper> extends AnimD<AnimU<?>,
 			partial();
 		} catch (Exception e) {
 			e.printStackTrace();
+			loaded = false;
 		}
 	}
 
@@ -182,24 +183,28 @@ public abstract class AnimU<T extends AnimU.ImageKeeper> extends AnimD<AnimU<?>,
 
 	public void partial() {
 		if (!partial) {
-			partial = true;
-			imgcut = loader.getIC();
-			mamodel = loader.getMM();
-			anims = loader.getMA();
-			types = new UType[anims.length];
-			if (types.length <= TYPEDEF.length) {
-				types = types.length == 1 ? SOUL : types.length == 2 ? BGEFFECT : types.length == TYPEDEF.length ? TYPEDEF : Arrays.copyOf(TYPEDEF, types.length);
-			} else {
-				for (int i = 0; i < types.length; i++) {
-					if (i < 3)
-						types[i] = TYPEDEF[i];
-					else if (i >=  anims.length - 6)
-						types[i] = TYPEDEF[i - (anims.length - TYPEDEF.length)];
-					else
-						types[i] = new UType("attack" + (i - 2), true);
+			try {
+				partial = true;
+				imgcut = loader.getIC();
+				mamodel = loader.getMM();
+				anims = loader.getMA();
+				types = new UType[anims.length];
+				if (types.length <= TYPEDEF.length) {
+					types = types.length == 1 ? SOUL : types.length == 2 ? BGEFFECT : types.length == TYPEDEF.length ? TYPEDEF : Arrays.copyOf(TYPEDEF, types.length);
+				} else {
+					for (int i = 0; i < types.length; i++) {
+						if (i < 3)
+							types[i] = TYPEDEF[i];
+						else if (i >= anims.length - 6)
+							types[i] = TYPEDEF[i - (anims.length - TYPEDEF.length)];
+						else
+							types[i] = new UType("attack" + (i - 2), true);
+					}
 				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				partial = false;
 			}
 		}
 	}
-
 }

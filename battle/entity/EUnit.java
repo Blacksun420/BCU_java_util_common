@@ -197,7 +197,7 @@ public class EUnit extends Entity {
 		if (atk.model instanceof AtkModelEnemy) {
 			SortedPackSet<Trait> sharedTraits = traits.inCommon(atk.trait);
 			boolean isAntiTraited = targetTraited(atk.trait);
-			for (Trait t : atk.trait) {
+			for (Trait t : traits) {
 				if (t.BCTrait || sharedTraits.contains(t))
 					continue;
 				if ((t.targetType && isAntiTraited) || t.others.contains(((MaskUnit)data).getPack()))

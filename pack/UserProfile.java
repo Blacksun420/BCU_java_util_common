@@ -157,7 +157,7 @@ public class UserProfile {
 		return profile().packmap.values();
 	}
 
-	public static void loadPacks() {
+	public static void loadPacks(boolean loadWorkspace) {
 		UserProfile profile = profile();
 
 		if (profile.pending == null) {
@@ -184,7 +184,7 @@ public class UserProfile {
 		} else {
 			packs.mkdir();
 		}
-		if (workspace.exists())
+		if (loadWorkspace && workspace.exists())
 			for (File f : workspace.listFiles())
 				if (f.isDirectory()) {
 					File main = CommonStatic.ctx.getWorkspaceFile("./" + f.getName() + "/pack.json");
@@ -218,41 +218,7 @@ public class UserProfile {
 
 		profile.failed.removeIf(p -> !p.editable);
 
-		profile.pending = new HashMap<>();
-
-		File packs = CommonStatic.ctx.getAuxFile("./packs");
-		if (packs.exists()) {
-			File[] fs = packs.listFiles();
-
-			if(fs != null) {
-				for (File f : fs)
-					if (f.getName().endsWith(".pack.bcuzip")) {
-						UserPack pack = CommonStatic.ctx.noticeErr(() -> readZipPack(f), ErrType.WARN,
-								"failed to load external pack " + f, () -> setStatic(CURRENT_PACK, null));
-
-						if (pack != null) {
-							UserPack p = profile.pending.put(pack.desc.id, pack);
-
-							if (p != null) {
-								CommonStatic.ctx.printErr(ErrType.WARN, ((ZipSource) p.source).getPackFile().getName()
-										+ " has same ID with " + ((ZipSource) pack.source).getPackFile().getName());
-							}
-						}
-					}
-			}
-		}
-
-		Set<UserPack> queue = new HashSet<>(profile.pending.values());
-
-		profile.packlist.addAll(profile.failed);
-		while (queue.removeIf(profile::add));
-
-		profile.pending = null;
-		profile.packlist.addAll(profile.failed);
-
-		for (PackData.UserPack pk : queue) {
-			checkMissingParents(pk);
-		}
+		loadPacks(false);
 	}
 
 	public static UserPack initJsonPack(String id) throws Exception {

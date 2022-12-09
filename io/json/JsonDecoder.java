@@ -75,6 +75,8 @@ public class JsonDecoder {
 			return decodeMap(elem, cls, par);
 		if (Set.class.isAssignableFrom(cls))
 			return decodeSet(elem, cls, par);
+		if (Enum.class.isAssignableFrom(cls))
+			return decodeEnum(elem, cls);
 		// alias
 		if (par != null && par.curjfld.alias().length > par.index) {
 			Class<?> alias = par.curjfld.alias()[par.index];
@@ -314,6 +316,17 @@ public class JsonDecoder {
 			val.add(decode(jarr.get(i), par.curjfld.generic()[0], par));
 		}
 		return val;
+	}
+
+	private static Object decodeEnum(JsonElement elem, Class<?> cls) throws IllegalArgumentException, JsonException {
+		if (elem.isJsonNull())
+			return null;
+		Object[] constants = cls.getEnumConstants();
+		String name = getString(elem);
+		for (Object constant : constants)
+			if (constant.toString().equals(name))
+				return constant;
+		throw new IllegalArgumentException("No constant with text " + elem.getAsString() + " found for " + cls);
 	}
 
 	private static Object getArray(Class<?> cls, int n, JsonDecoder par) throws Exception {
