@@ -61,8 +61,8 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
         if (size == 0)
             return -1;
 
-        int f = 0, l = size;
-        while (f < l) {
+        int f = 0, l = size - 1;
+        while (f <= l) {
             int mid = f + (l - f) / 2;
             if (arr[mid].equals(o)) {
                 return mid;
