@@ -143,7 +143,7 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 						//Finish 0.6.0.0 check
 						names.put(jobj.get("name").getAsString());
 						if (jobj.has("explanation"))
-							description.put(jobj.get("explanation").getAsString());
+							description.put(jobj.get("explanation").getAsString().replace("<br>", "\n"));
 					} //Finish 0.6.4.0 check
 					for (AtkDataModel atk : atks)
 						if (atk.getProc().SUMMON.prob > 0) {

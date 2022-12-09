@@ -1932,7 +1932,6 @@ public abstract class Entity extends AbEntity {
 			} else
 				anim.getEff(INV);
 		}
-		System.out.println(atk.getProc().KB.prob);
 	}
 
 	private boolean checkAIImmunity(int val, int side, boolean invert) {

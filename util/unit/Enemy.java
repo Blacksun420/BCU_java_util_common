@@ -154,7 +154,7 @@ public class Enemy extends Character implements AbEnemy {
 					} //Finish 0.6.1.0 check
 					names.put(jobj.get("name").getAsString());
 					if (jobj.has("desc"))
-						description.put(jobj.get("desc").getAsString());
+						description.put(jobj.get("desc").getAsString().replace("<br>", "\n"));
 				} //Finish 6.4.0 check
 				for (AtkDataModel ma : atks)
 					if (ma.getProc().SUMMON.prob > 0) {
