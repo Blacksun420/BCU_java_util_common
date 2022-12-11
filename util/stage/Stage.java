@@ -2,13 +2,11 @@ package common.util.stage;
 
 import com.google.gson.JsonObject;
 import common.CommonStatic;
-import common.io.json.JsonDecoder;
-import common.util.stage.info.DefStageInfo;
-import common.util.stage.info.StageInfo;
 import common.io.assets.Admin.StaticPermitted;
 import common.io.json.Dependency;
 import common.io.json.JsonClass;
 import common.io.json.JsonClass.NoTag;
+import common.io.json.JsonDecoder;
 import common.io.json.JsonField;
 import common.pack.Identifier;
 import common.pack.IndexContainer;
@@ -24,8 +22,9 @@ import common.util.lang.MultiLangCont;
 import common.util.lang.MultiLangData;
 import common.util.pack.Background;
 import common.util.stage.SCDef.Line;
+import common.util.stage.info.DefStageInfo;
+import common.util.stage.info.StageInfo;
 import common.util.unit.Enemy;
-import common.util.unit.Form;
 
 import java.util.*;
 
@@ -327,5 +326,6 @@ public class Stage extends Data
 	public void onInjected(JsonObject jobj) {
 		if (jobj.has("name"))
 			names.put(jobj.get("name").getAsString());
+		recd.removeIf(Objects::isNull);
 	}
 }

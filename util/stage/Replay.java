@@ -24,6 +24,7 @@ import common.util.Data;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +43,7 @@ public class Replay extends Data {
 			for (File fi : f.listFiles())
 				if (fi.getName().endsWith(".replay"))
 					try {
-						InputStream fis = new FileInputStream(fi);
+						InputStream fis = Files.newInputStream(fi.toPath());
 						Replay rep = read(fis);
 						fis.close();
 						if (rep == null)
@@ -65,6 +66,7 @@ public class Replay extends Data {
 			fis.read(json);
 			JsonElement elem = JsonParser.parseString(new String(json, StandardCharsets.UTF_8));
 			Replay rep = JsonDecoder.decode(elem, Replay.class);
+			rep.rl.base = Source.BasePath.REPLAY;
 			fis.read(len);
 			size = DataIO.toInt(DataIO.translate(len), 0);
 			int[] data = new int[size];
@@ -136,22 +138,21 @@ public class Replay extends Data {
 		Context.renameTo(src, dst);
 	}
 
-	public void rename(String str, Boolean putInMap) {
+	public void rename(String str) {
 		if (rl == null) {
 			rl = new ResourceLocation(ResourceLocation.LOCAL, str, Source.BasePath.REPLAY);
 			Workspace.validate(rl);
 			write();
-			if (putInMap)
-				getMap().put(rl.id, this);
+			getMap().put(rl.id, this);
 			return;
 		}
-		if (putInMap && rl.pack.equals(ResourceLocation.LOCAL))
+		if (rl.pack.equals(ResourceLocation.LOCAL))
 			getMap().remove(rl.id);
 		File src = CommonStatic.ctx.getWorkspaceFile(rl.getPath() + ".replay");
 		rl.id = str;
 		File dst = CommonStatic.ctx.getWorkspaceFile(rl.getPath() + ".replay");
 		Workspace.validate(rl);
-		if (putInMap && rl.pack.equals(ResourceLocation.LOCAL))
+		if (rl.pack.equals(ResourceLocation.LOCAL))
 			getMap().put(rl.id, this);
 		if (!src.exists()) {
 			write();
