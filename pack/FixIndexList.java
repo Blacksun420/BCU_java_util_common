@@ -102,8 +102,12 @@ public class FixIndexList<T> extends Data {
 		}
 
 		public T getRaw(int id) {
-			if (id < arr.length && arr[id] != null)
-				return super.get(id);
+			if (id < arr.length) {
+				if (id < 0)
+					return null;
+				if (arr[id] != null)
+					return arr[id];
+			}
 
 			for (int i = size - 1; i >= 0; i--) {
 				if (arr[order[i]].getID().id == id)
