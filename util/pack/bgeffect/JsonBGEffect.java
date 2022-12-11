@@ -25,12 +25,11 @@ import java.util.List;
 @JsonClass.JCGeneric(Identifier.class)
 @SuppressWarnings("ForLoopReplaceableByForEach")
 public class JsonBGEffect extends BackgroundEffect {
-    private final int jid;
     private final List<BGEffectHandler> handlers = new ArrayList<>();
 
-    public JsonBGEffect(Identifier<BackgroundEffect> identifier, int bgID) throws IOException {
+    public JsonBGEffect(Identifier<BackgroundEffect> identifier) throws IOException {
         super(identifier);
-        jid = bgID;
+        int jid = identifier.id;
         String jsonName = "bg"+ Data.trio(jid)+".json";
 
         VFile vf = VFile.get("./org/data/"+jsonName);
@@ -58,7 +57,7 @@ public class JsonBGEffect extends BackgroundEffect {
             int efID = obj.get("id").getAsInt();
 
             for (BackgroundEffect bge : UserProfile.getBCData().bgEffects)
-                if (bge instanceof JsonBGEffect && ((JsonBGEffect)bge).jid == efID) {
+                if (bge instanceof JsonBGEffect && bge.id.id == efID) {
                     handlers.addAll(((JsonBGEffect)bge).handlers);
                     break;
                 }
@@ -118,10 +117,10 @@ public class JsonBGEffect extends BackgroundEffect {
 
     @Override
     public String toString() {
-        String temp = CommonStatic.def.getBtnName(0, "bgjson" + BackgroundEffect.jsonList.get(id.id - 10));
+        String temp = CommonStatic.def.getBtnName(0, "bgjson" + id.id);
 
-        if (temp.equals("bgjson" + BackgroundEffect.jsonList.get(id.id - 10)))
-            temp = CommonStatic.def.getBtnName(0, "bgeffdum").replace("_", "" + BackgroundEffect.jsonList.get(id.id - 10));
+        if (temp.equals("bgjson" + id.id))
+            temp = CommonStatic.def.getBtnName(0, "bgeffdum").replace("_", "" + id.id);
         return temp;
     }
 }

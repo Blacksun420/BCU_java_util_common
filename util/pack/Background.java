@@ -185,7 +185,7 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 			Background bg = UserProfile.getBCData().bgs.get(i);
 
 			if(bg.reference != null) {
-				Background ref = bg.reference.get(); //UserProfile.getBCData().bgs.get(bg.reference.id);
+				Background ref = bg.reference.get();
 
 				if(ref.overlay != null) {
 					bg.overlay = ref.overlay.clone();

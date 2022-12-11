@@ -23,24 +23,19 @@ public class MixedBGEffect extends BackgroundEffect {
     @JsonField(generic = BackgroundEffect.class, alias = Identifier.class)
     public final ArrayList<BackgroundEffect> effects = new ArrayList<>();
 
-    public final int bid;
-
     @JsonClass.JCConstructor
     public MixedBGEffect() {
         super(null);
-        bid = -1;
     }
 
-    public MixedBGEffect(Identifier<BackgroundEffect> id, int bid, BackgroundEffect... effects) {
+    public MixedBGEffect(Identifier<BackgroundEffect> id, BackgroundEffect... effects) {
         super(id);
-        this.bid = bid;
         name = "BGEffect " + id;
         this.effects.addAll(Arrays.asList(effects));
     }
 
     public MixedBGEffect(Identifier<BackgroundEffect> id, List<BackgroundEffect> effects) {
         super(id);
-        bid = -1;
         name = "BGEffect " + id;
         this.effects.addAll(effects);
     }
@@ -88,14 +83,13 @@ public class MixedBGEffect extends BackgroundEffect {
     @Override
     public String toString() {
         if (id.pack.equals(Identifier.DEF)) {
-            if (bid == Data.BG_EFFECT_SNOWSTAR)
+            if (id.id == Data.BG_EFFECT_SNOWSTAR)
                 return CommonStatic.def.getBtnName(0, "bgeff5");
 
 
-            String temp = CommonStatic.def.getBtnName(0, "bgjson" + bid);
-
-            if (temp.equals("bgjson" + bid))
-                temp = CommonStatic.def.getBtnName(0, "bgeffdum").replace("_", "" + bid);
+            String temp = CommonStatic.def.getBtnName(0, "bgjson" + id.id);
+            if (temp.equals("bgjson" + id.id))
+                temp = CommonStatic.def.getBtnName(0, "bgeffdum").replace("_", "" + id.id);
             return temp;
         }
         if (getName().length() == 0)

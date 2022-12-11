@@ -4,18 +4,20 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import common.io.json.JsonClass;
+import common.io.json.JsonClass.RType;
 import common.io.json.JsonDecoder;
 import common.io.json.JsonEncoder;
 import common.io.json.JsonField;
-import common.io.json.JsonClass.RType;
 import common.io.json.JsonField.IOType;
 import common.pack.IndexContainer.Indexable;
 import common.util.Data;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 import java.util.function.BiConsumer;
 
 @JsonClass(read = RType.FILL)
@@ -48,7 +50,7 @@ public class FixIndexList<T> extends Data {
 		public FixIndexMap(Class<T> cls) {
 			super(cls);
 			this.cls = cls;
-			order = new int[16];
+			order = new int[arr.length];
 		}
 
 		@Override
@@ -60,7 +62,7 @@ public class FixIndexList<T> extends Data {
 		@Override
 		public void expand(int size) {
 			super.expand(size);
-			if (size < order.length)
+			if (size <= order.length)
 				return;
 			order = Arrays.copyOf(order, size);
 		}
@@ -94,16 +96,20 @@ public class FixIndexList<T> extends Data {
 		@Override
 		public T get(int ind) {
 			if(ind < 0 || ind >= order.length || ind >= arr.length)
-				return super.get(ind);
+				return getRaw(ind);
 
 			return arr[order[ind]];
 		}
 
-		public T getRaw(int ind) {
-			if(ind < 0 || ind >= arr.length)
-				return null;
+		public T getRaw(int id) {
+			if (id < arr.length)
+				return super.get(id);
 
-			return arr[ind];
+			for (int i = size - 1; i >= 0; i--) {
+				if (arr[i] != null && arr[i].getID().id == id)
+					return arr[i];
+			}
+			return null;
 		}
 
 		public void reset() {
@@ -144,14 +150,7 @@ public class FixIndexList<T> extends Data {
 		}
 
 		public List<T> getRawList() {
-			List<T> ans = new ArrayList<>();
-
-			for (T t : arr) {
-				if (t != null)
-					ans.add(t);
-			}
-
-			return ans;
+			return super.getList();
 		}
 
 		@SuppressWarnings("unchecked")
@@ -188,9 +187,9 @@ public class FixIndexList<T> extends Data {
 	}
 
 	public void expand(int size) {
-		if (size < arr.length)
+		if (size <= arr.length)
 			return;
-		arr = Arrays.copyOf(arr, arr.length * 2);
+		arr = Arrays.copyOf(arr, size);
 	}
 
 	public void forEach(BiConsumer<Integer, T> c) {
@@ -281,34 +280,5 @@ public class FixIndexList<T> extends Data {
 				data.add(ent);
 			}
 		return data;
-	}
-
-	public T findByID(int id) {
-		try {
-			List<T> ts = getList();
-
-			for(int i = 0; i < ts.size(); i++) {
-				T t = ts.get(i);
-
-				Class<?> cl = t.getClass();
-
-				Field[] fields = cl.getFields();
-
-				for(int j = 0; j < fields.length; j++) {
-					if(fields[j].getAnnotation(JsonClass.JCGetter.class) != null && fields[j].getName().equals("id")) {
-						Identifier<?> identifier = (Identifier<?>) fields[j].get(t);
-
-						if(identifier != null && identifier.id == id)
-							return t;
-					}
-				}
-			}
-
-			return null;
-		} catch (Exception e) {
-			e.printStackTrace();
-
-			return null;
-		}
 	}
 }

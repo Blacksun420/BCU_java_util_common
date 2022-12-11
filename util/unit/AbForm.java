@@ -12,7 +12,6 @@ import common.system.VImg;
 public interface AbForm {
     @JsonClass(noTag = JsonClass.NoTag.LOAD)
     class AbFormJson {
-
         public Identifier<AbUnit> uid;
         public int fid;
 
@@ -21,15 +20,9 @@ public interface AbForm {
         }
 
         @JsonClass.JCConstructor
-        public AbFormJson(UniRand ur) {
-            uid = ur.getID();
-            fid = 0;
-        }
-
-        @JsonClass.JCConstructor
-        public AbFormJson(Form f) {
-            uid = f.uid;
-            fid = f.fid;
+        public AbFormJson(AbForm af) {
+            uid = af.getID();
+            fid = af.getFid();
         }
 
         @JsonClass.JCGetter

@@ -68,7 +68,7 @@ public class JsonEncoder {
 				if (jcgw != null && f.getType() == alias)
 					return encode(f.get(obj), par);
 			}
-			Constructor<?> con = alias.getConstructor(cls);
+			Constructor<?> con = getFuncConstructor(alias, cls);
 			return encode(con.newInstance(obj), par);
 		}
 		if (par != null && par.curjfld != null) {
@@ -107,13 +107,41 @@ public class JsonEncoder {
 		throw new JsonException(Type.UNDEFINED, null, "object " + obj + ":" + obj.getClass() + " not defined");
 	}
 
+	/***
+	 * Gets a valid constructor from a class, and in case no constructor is found with it, checks if there's a valid option using its interfaces or superclass
+	 * @param alias The class intended to be constructed as
+	 * @param cls The current class used as parameter for the constructor
+	 * @return A valid constructor that takes the given class as parameter
+	 * @throws JsonException If this class, and none of it's superclasses or interfaces has a JCGeneric constructor that uses the given class
+	 */
+	private static Constructor<?> getFuncConstructor(Class<?> alias, Class<?> cls) throws JsonException {
+		try {
+			return alias.getConstructor(cls);
+		} catch (Exception e) {
+			if (cls.getSuperclass() != null && cls.getSuperclass().getAnnotation(JCGeneric.class) != null) {
+				JCGeneric jcg = cls.getSuperclass().getAnnotation(JCGeneric.class);
+				for (Class<?> ala : jcg.value())
+					if (ala == alias)
+						return getFuncConstructor(alias, cls.getSuperclass());
+			}
+			for (Class<?> intf : cls.getInterfaces()) {
+				if (intf.getAnnotation(JCGeneric.class) != null) {
+					JCGeneric jcg = intf.getAnnotation(JCGeneric.class);
+					for (Class<?> ala : jcg.value())
+						if (ala == alias)
+							return getFuncConstructor(alias, intf);
+				}
+			}
+			throw new JsonException(Type.FUNC, null, "No constructor using " + alias + " found for " + cls);
+		}
+	}
+
 	private static JsonElement encodeList(List<?> list, JsonEncoder par) throws Exception {
 		if (par != null && par.curjfld != null && par.curjfld.usePool()) {
 			JsonField.Handler handler = new JsonField.Handler();
-			int n = list.size();
-			JsonArray jarr = new JsonArray();
-			for (int i = 0; i < n; i++)
-				jarr.add(handler.add(list.get(i)));
+			JsonArray jarr = new JsonArray(list.size());
+			for (Object o : list) jarr.add(handler.add(o));
+
 			JsonObject jobj = new JsonObject();
 			jobj.add("pool", encode(handler.list));
 			jobj.add("data", jarr);

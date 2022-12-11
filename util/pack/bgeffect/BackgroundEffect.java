@@ -70,7 +70,7 @@ public abstract class BackgroundEffect extends Data implements IndexContainer.In
 
         assets.bgEffects.add(new SnowBGEffect(assets.getNextID(BackgroundEffect.class), snowImage));
 
-        assets.bgEffects.add(new MixedBGEffect(assets.getNextID(BackgroundEffect.class), 5,
+        assets.bgEffects.add(new MixedBGEffect(assets.getNextID(BackgroundEffect.class),
                 assets.bgEffects.get(Data.BG_EFFECT_STAR), assets.bgEffects.get(Data.BG_EFFECT_SNOW)));
 
         assets.bgEffects.add(new BlizzardBGEffect(assets.getNextID(BackgroundEffect.class), secondBubbleImage));
@@ -101,7 +101,7 @@ public abstract class BackgroundEffect extends Data implements IndexContainer.In
 
             jsonList.sort(Integer::compareTo);
             for (Integer id : jsonList) {
-                JsonBGEffect jbg = new JsonBGEffect(assets.getNextID(BackgroundEffect.class), id);
+                JsonBGEffect jbg = new JsonBGEffect(Identifier.rawParseInt(id, BackgroundEffect.class));
                 assets.bgEffects.add(jbg);
                 assets.bgs.getRaw(id).bgEffect = jbg.getID();
             }
@@ -110,7 +110,7 @@ public abstract class BackgroundEffect extends Data implements IndexContainer.In
                 Background bg = assets.bgs.get(i);
 
                 if(bg.reference != null) {
-                    Background ref = bg.reference.get(); //assets.bgs.findByID(bg.reference);
+                    Background ref = bg.reference.get();
 
                     if(ref == null)
                         continue;
@@ -121,7 +121,7 @@ public abstract class BackgroundEffect extends Data implements IndexContainer.In
                         if (bg.bgEffect.cls == MixedBGEffect.class)
                             ((MixedBGEffect) bg.bgEffect.get()).effects.add(ref.bgEffect.get());
                         else {
-                            MixedBGEffect temp = new MixedBGEffect(assets.getNextID(BackgroundEffect.class), bg.id.id, bg.bgEffect.get(), ref.bgEffect.get());
+                            MixedBGEffect temp = new MixedBGEffect(Identifier.rawParseInt(bg.id.id, BackgroundEffect.class), bg.bgEffect.get(), ref.bgEffect.get());
                             assets.bgEffects.add(temp);
                             bg.bgEffect = temp.getID();
                         }

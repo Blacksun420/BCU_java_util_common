@@ -390,7 +390,7 @@ public class localDecoder {
         JsonArray jarr = elem.getAsJsonArray();
         int n = jarr.size();
         @SuppressWarnings("unchecked")
-        Set<Object> val = (Set<Object>) cls.newInstance();
+        Set<Object> val = (Set<Object>) cls.getConstructor(int.class).newInstance(n);
         for (int i = 0; i < n; i++) {
             val.add(decode(jarr.get(i), locfld.generic[0]));
         }

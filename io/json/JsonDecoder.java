@@ -195,18 +195,19 @@ public class JsonDecoder {
 		return (T) inject(null, elem.getAsJsonObject(), cls, pre);
 	}
 
+	@SuppressWarnings("unchecked")
 	protected static List<Object> decodeList(JsonElement elem, Class<?> cls, JsonDecoder par) throws Exception {
 		if (par.curjfld == null || par.curjfld.generic().length != 1)
 			throw new JsonException(Type.TAG, null, "generic data structure requires typeProvider tag");
 		if (elem.isJsonNull())
 			return null;
-		@SuppressWarnings("unchecked")
-		List<Object> val = (List<Object>) cls.newInstance();
+		List<Object> val;
 		if (elem.isJsonObject() && par.curjfld.usePool()) {
 			JsonArray pool = elem.getAsJsonObject().get("pool").getAsJsonArray();
 			JsonArray data = elem.getAsJsonObject().get("data").getAsJsonArray();
 			Handler handler = new Handler(pool, null, par);
 			int n = data.size();
+			val = (List<Object>) cls.getConstructor(int.class).newInstance(n);
 			for (int i = 0; i < n; i++)
 				val.add(handler.get(data.get(i).getAsInt()));
 			return val;
@@ -215,6 +216,7 @@ public class JsonDecoder {
 			throw new JsonException(Type.TYPE_MISMATCH, elem, "this element is not array");
 		JsonArray jarr = elem.getAsJsonArray();
 		int n = jarr.size();
+		val = (List<Object>) cls.getConstructor(int.class).newInstance(n);
 		for (int i = 0; i < n; i++) {
 			val.add(decode(jarr.get(i), par.curjfld.generic()[0], par));
 		}
@@ -311,7 +313,7 @@ public class JsonDecoder {
 		JsonArray jarr = elem.getAsJsonArray();
 		int n = jarr.size();
 		@SuppressWarnings("unchecked")
-		Set<Object> val = (Set<Object>) cls.newInstance();
+		Set<Object> val = (Set<Object>) cls.getConstructor(int.class).newInstance(n);
 		for (int i = 0; i < n; i++) {
 			val.add(decode(jarr.get(i), par.curjfld.generic()[0], par));
 		}
