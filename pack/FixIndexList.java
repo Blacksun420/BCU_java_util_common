@@ -95,31 +95,31 @@ public class FixIndexList<T> extends Data {
 
 		@Override
 		public T get(int ind) {
-			if(ind < 0 || ind >= order.length || ind >= arr.length)
+			if(ind < 0 || ind >= order.length)
 				return getRaw(ind);
 
 			return arr[order[ind]];
 		}
 
 		public T getRaw(int id) {
-			if (id < arr.length)
+			if (id < arr.length && arr[id] != null)
 				return super.get(id);
 
 			for (int i = size - 1; i >= 0; i--) {
-				if (arr[i] != null && arr[i].getID().id == id)
-					return arr[i];
+				if (arr[order[i]].getID().id == id)
+					return arr[order[i]];
 			}
 			return null;
 		}
 
 		public void reset() {
 			int ind = 0;
-			for (int i = 0; i < arr.length; i++) {
-				if (arr[i] != null)
+			for (int i = 0; i < arr.length; i++)
+				if (arr[i] != null) {
 					order[ind++] = i;
-				if (ind == size)
-					return;
-			}
+					if (ind == size)
+						return;
+				}
 		}
 
 		@Override
@@ -133,13 +133,14 @@ public class FixIndexList<T> extends Data {
 				order[size - 1] = ind;
 			}
 			if (dele) {
-				int oind = -1;
+				boolean rarr = false;
 				for (int i = 0; i < size; i++) {
-					if (oind == -1 && order[i] == ind)
-						oind = ind;
-					if (oind >= 0)
+					if (!rarr && order[i] == ind)
+						rarr = true;
+					if (rarr)
 						order[i] = order[i + 1];
 				}
+				order[size] = 0;
 			}
 
 		}
