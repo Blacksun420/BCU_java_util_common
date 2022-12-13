@@ -248,8 +248,12 @@ public abstract class Source {
 				write("imgcut.txt", anim.imgcut::write);
 				write("mamodel.txt", anim.mamodel::write);
 				if (id.base.equals(BasePath.ANIM)) {
-					for (int i = 0; i < anim.anims.length; i++)
-						write("maanim_" + anim.types[i].toString() + ".txt", anim.anims[i]::write);
+					for (int i = 0; i < anim.anims.length; i++) {
+						if (anim.anims[i].parts.length > 0)
+							write("maanim_" + anim.types[i].toString() + ".txt", anim.anims[i]::write);
+						else
+							dispose("maanim_" + anim.types[i].toString() + ".txt");
+					}
 				} else if (id.base.equals(BasePath.SOUL))
 					write(SourceAnimLoader.MA_SOUL[0], anim.anims[0]::write);
 				else {
@@ -290,6 +294,10 @@ public abstract class Source {
 			PrintStream ps = new PrintStream(f, StandardCharsets.UTF_8.toString());
 			con.accept(ps);
 			ps.close();
+		}
+
+		private void dispose(String type) throws IOException {
+			Context.delete(CommonStatic.ctx.getWorkspaceFile(id.getPath() + "/" + type));
 		}
 
 		private void write(String type, FakeImage img) throws IOException {

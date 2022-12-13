@@ -619,14 +619,8 @@ public class StageBasis extends BattleObj {
 			}
 		}
 
-		if(s_stop == 0 || (ubase.getAbi() & AB_TIMEI) != 0) {
+		if(s_stop == 0 || (ubase.getAbi() & AB_TIMEI) != 0)
 			ubase.postUpdate();
-
-			if (!lethal && ubase instanceof ECastle && ubase.health <= 0 && est.hasBoss()) {
-				lethal = true;
-				ubase.health = 1;
-			}
-		}
 
 		if (s_stop == 0) {
 			if (ebase.health <= 0) {
