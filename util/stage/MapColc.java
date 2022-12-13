@@ -436,6 +436,13 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 			UserProfile.getRegister(REG_MAPCOLC).put(pack.getSID(), this);
 		}
 
+		public int getStageCount() {
+			int stageTot = 0;
+			for (StageMap smaps : maps)
+				stageTot += smaps.list.size();
+			return stageTot;
+		}
+
 		@Override
 		public String getSID() {
 			return pack.getSID();

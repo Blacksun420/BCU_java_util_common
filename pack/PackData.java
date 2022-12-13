@@ -36,8 +36,11 @@ import common.util.stage.CastleList.PackCasList;
 import common.util.stage.MapColc.DefMapColc;
 import common.util.stage.MapColc.PackMapColc;
 import common.util.unit.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
@@ -256,6 +259,7 @@ public abstract class PackData implements IndexContainer {
 
 		public String desc;
 		public String creationDate;
+		public String exportDate;
 		public double version = 1.0;
 
 		public boolean allowAnim = false;
@@ -272,7 +276,27 @@ public abstract class PackData implements IndexContainer {
 			BCU_VERSION = AssetLoader.CORE_VER;
 			FORK_VERSION = AssetLoader.FORK_VER; //0 by default to differ Fork packs and non-fork packs
 			this.id = id;
-			this.dependency = new SortedPackSet<>();
+			dependency = new SortedPackSet<>();
+			DateFormat df = new SimpleDateFormat("MM dd, yyyy; HH:mm:ss");
+			creationDate = df.format(new Date());
+		}
+
+		/**
+		 * Null-safe way to get a string off the pack, used for sorting
+		 * @return The requested string, or an empty string if it's null
+		 */
+		@NotNull
+		public String getN(String c) {
+			String s;
+			if (c.equals("author"))
+				s = author;
+			else if (c.equals("cdate"))
+				s = creationDate;
+			else
+				s = exportDate;
+			if (s != null)
+				return s;
+			return "";
 		}
 
 		@Override
@@ -464,6 +488,10 @@ public abstract class PackData implements IndexContainer {
 			if(editable) {
 				desc.BCU_VERSION = AssetLoader.CORE_VER;
 				desc.FORK_VERSION = AssetLoader.FORK_VER;
+				if (desc.creationDate == null) {
+					DateFormat df = new SimpleDateFormat("MM dd, yyyy; HH:mm:ss");
+					desc.creationDate = df.format(new Date());
+				}
 			}
 		}
 

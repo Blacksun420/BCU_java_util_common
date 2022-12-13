@@ -501,8 +501,8 @@ public abstract class Source {
 			} else {
 				desc.parentPassword = null;
 			}
-			DateFormat df = new SimpleDateFormat("dd MM, yyyy; HH:mm:ss");
-			desc.creationDate = df.format(new Date());
+			DateFormat df = new SimpleDateFormat("MM dd, yyyy; HH:mm:ss");
+			desc.exportDate = df.format(new Date());
 
 			PackLoader.writePack(dst, src, desc, password, prog);
 			Context.renameTo(dst, tar);
