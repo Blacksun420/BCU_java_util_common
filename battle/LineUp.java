@@ -22,8 +22,8 @@ public class LineUp extends Data {
 	public final TreeMap<Identifier<AbUnit>, Level> map = new TreeMap<>();
 
 	@JsonField(alias = AbForm.AbFormJson.class)
-	public final Form[][] fs = new Form[2][5];
-	public final EForm[][] efs = new EForm[2][5];
+	public final AbForm[][] fs = new AbForm[2][5];
+	public final IForm[][] efs = new IForm[2][5];
 	public int[] inc = new int[C_TOT], loc = new int[5];
 
 	public List<Combo> coms = new ArrayList<>();
@@ -42,8 +42,7 @@ public class LineUp extends Data {
 	 */
 	protected LineUp(LineUp ref) {
 		for (int i = 0; i < 2; i++)
-			for (int j = 0; j < 5; j++)
-				fs[i][j] = ref.fs[i][j];
+			System.arraycopy(ref.fs[i], 0, fs[i], 0, 5);
 		for (Entry<Identifier<AbUnit>, Level> e : ref.map.entrySet()) {
 			map.put(e.getKey(), e.getValue().clone());
 		}
@@ -78,10 +77,10 @@ public class LineUp extends Data {
 	/**
 	 * get level of an Unit, if no date recorded, record default one
 	 */
-	public synchronized Level getLv(Form u) {
-		if (!map.containsKey(u.unit.id))
-			setLv(u.unit, u.getPrefLvs());
-		return map.get(u.unit.id);
+	public synchronized Level getLv(AbForm u) {
+		if (!map.containsKey(u.getID()))
+			setLv(u.unit(), u.getPrefLvs());
+		return map.get(u.getID());
 	}
 
 	/**
@@ -91,13 +90,14 @@ public class LineUp extends Data {
 		Form[] com = c.forms;
 		int rem = com.length;
 		for (Form form : com)
-			for (int j = 0; j < 5; j++) {
-				Form f = fs[0][j];
-				if (f == null)
-					continue;
-				if (f.unit == form.unit)
-					rem--;
-			}
+			for (int j = 0; j < 5; j++)
+				if (fs[0][j] instanceof Form) {
+					Form f = (Form)fs[0][j];
+					if (f == null)
+						continue;
+					if (f.unit == form.unit)
+						rem--;
+				}
 		return rem;
 	}
 
@@ -112,20 +112,18 @@ public class LineUp extends Data {
 	 * apply a combo
 	 */
 	public void set(Form[] com) {
-		// if a unit in the lineup is present in the combo
-		boolean[] rep = new boolean[5];
 		// if a unit in the combo is already present in the lineup
 		boolean[] exi = new boolean[com.length];
 		// the number of units required to inject
 		int rem = com.length;
 		for (int i = 0; i < com.length; i++)
 			for (int j = 0; j < 5; j++) {
-				Form f = fs[0][j];
-				int formID = com[i].fid;
-				if (f == null)
+				if (fs[0][j] == null || fs[0][j] instanceof UniRand)
 					continue;
+
+				Form f = (Form)fs[0][j];
+				int formID = com[i].fid;
 				if (f.unit == com[i].unit) {
-					rep[j] = true;
 					exi[i] = true;
 					if (f.fid < formID)
 						fs[0][j] = f.unit.forms[formID];
@@ -149,9 +147,11 @@ public class LineUp extends Data {
 					if (c.forms[i] == null)
 						break;
 					for (int j = 0; j < 5; j++) {
-						Form f = fs[0][j];
-						if (f == null)
+						if (fs[0][j] == null)
 							break;
+						if (fs[0][j] instanceof UniRand)
+							continue;
+						Form f = (Form)fs[0][j];
 						if (f.unit != c.forms[i].unit)
 							continue;
 						loc[j]--;
@@ -164,7 +164,7 @@ public class LineUp extends Data {
 		}
 		for (int i = 0; i < 5; i++)
 			for (Form form : com)
-				if (fs[1][i] != null && fs[1][i].unit == form.unit) {
+				if (fs[1][i] != null && fs[1][i] instanceof Form && fs[1][i].unit() == form.unit) {
 					fs[1][i] = null;
 					break;
 				}
@@ -195,18 +195,18 @@ public class LineUp extends Data {
 	/**
 	 * set level record of an Unit
 	 */
-	public synchronized void setLv(Unit u, ArrayList<Integer> lv) {
+	public synchronized void setLv(AbUnit u, ArrayList<Integer> lv) {
 		boolean sub = updating;
 		updating = true;
 
-		Level l = map.get(u.id);
+		Level l = map.get(u.getID());
 
 		if (l != null) {
 			l.setLvs(lv);
 		} else {
 			l = new Level(lv);
 
-			map.put(u.id, l);
+			map.put(u.getID(), l);
 		}
 
 		if (!sub)
@@ -245,7 +245,7 @@ public class LineUp extends Data {
 			else if (loc[i] == 0) {
 				boolean b = true;
 				for (Form is : c.forms)
-					if (fs[0][i].unit == is.unit) {
+					if (fs[0][i].unit() == is.unit) {
 						b = false;
 						break;
 					}
@@ -258,14 +258,14 @@ public class LineUp extends Data {
 	/**
 	 * set slot using 1 dim index
 	 */
-	protected void setFS(Form f, int i) {
+	protected void setFS(AbForm f, int i) {
 		fs[i / 5][i % 5] = f;
 	}
 
 	/**
 	 * get Form from 1 dim index
 	 */
-	private Form getFS(int i) {
+	private AbForm getFS(int i) {
 		return fs[i / 5][i % 5];
 	}
 
@@ -288,7 +288,9 @@ public class LineUp extends Data {
 						break;
 					boolean b0 = false;
 					for (int j = 0; j < 5; j++) {
-						Form f = fs[0][j];
+						if (fs[0][j] instanceof UniRand)
+							continue;
+						Form f = (Form)fs[0][j];
 						if (f == null)
 							break;
 						if (f.unit != fu.unit || f.fid < fu.fid)
@@ -306,8 +308,10 @@ public class LineUp extends Data {
 					inc[c.type] += CommonStatic.getBCAssets().values[c.type][c.lv];
 					for (int i = 0; i < c.forms.length; i++)
 						for (int j = 0; j < 5; j++) {
+							if (fs[0][j] instanceof UniRand)
+								continue;
 							Form fu = c.forms[i];
-							Form f = fs[0][j];
+							Form f = (Form)fs[0][j];
 							if (f == null)
 								continue;
 							if (f.unit == fu.unit && f.fid >= fu.fid)
@@ -332,14 +336,14 @@ public class LineUp extends Data {
 				if (fs[i][j] == null)
 					efs[i][j] = null;
 				else
-					efs[i][j] = new EForm(fs[i][j], getLv(fs[i][j]));
+					efs[i][j] = IForm.newIns(fs[i][j], getLv(fs[i][j]));
 	}
 
 	private void validate() {
 		for (int i = 0; i < 10; i++)
 			if (getFS(i) != null) {
-				Identifier<AbUnit> id = getFS(i).uid;
-				int f = getFS(i).fid;
+				Identifier<AbUnit> id = getFS(i).getID();
+				int f = getFS(i).getFid();
 				AbUnit u = Identifier.get(id);
 				if (u == null || u.getForms()[f] == null)
 					setFS(null, i);

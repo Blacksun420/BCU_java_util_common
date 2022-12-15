@@ -3,6 +3,7 @@ package common.battle;
 import common.CommonStatic;
 import common.util.BattleObj;
 import common.util.stage.Limit;
+import common.util.unit.Form;
 
 public class ELineUp extends BattleObj {
 
@@ -20,8 +21,8 @@ public class ELineUp extends BattleObj {
 					continue;
 				}
 				price[i][j] = (int) (lu.efs[i][j].getPrice(sb.st.getCont().price) * 100);
-				maxC[i][j] = sb.b.t().getFinRes(lu.efs[i][j].du.getRespawn());
-				if (lim != null && ((lim.line > 0 && 2 - (lim.line - i) != 1) || lim.unusable(lu.efs[i][j].du, sb.st.getCont().price)))
+				maxC[i][j] = sb.b.t().getFinRes(lu.efs[i][j].getRespawn());
+				if (lim != null && ((lim.line > 0 && 2 - (lim.line - i) != 1) || (lu.efs[i][j] instanceof Form && lim.unusable(((Form) lu.efs[i][j]).du, sb.st.getCont().price))))
 					price[i][j] = -1;
 			}
 	}
@@ -29,7 +30,7 @@ public class ELineUp extends BattleObj {
 	/**
 	 * reset cool down time of an unit
 	 */
-	protected void get(int i, int j) {
+	protected void resetCD(int i, int j) {
 		cool[i][j] = maxC[i][j];
 	}
 

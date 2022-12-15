@@ -7,6 +7,7 @@ import common.pack.Identifier;
 import common.pack.UserProfile;
 import common.system.Copable;
 import common.util.BattleStatic;
+import common.util.unit.AbForm;
 import common.util.unit.Form;
 import common.util.unit.Unit;
 
@@ -75,11 +76,11 @@ public class BasisLU extends Basis implements Copable<BasisLU>, BattleStatic {
 		BasisLU ans = copy();
 		int[] rad = getRandom(n);
 		List<Unit> list = UserProfile.getBCData().units.getList();
-		list.remove(Identifier.parseInt(339, Unit.class).get());
-		for (Form[] fs : ans.lu.fs)
-			for (Form f : fs)
-				if (f != null)
-					list.remove(f.unit);
+		list.remove((Unit) Identifier.parseInt(339, Unit.class).get());
+		for (AbForm[] fs : ans.lu.fs)
+			for (AbForm f : fs)
+				if (f instanceof Form)
+					list.remove(((Form) f).unit);
 		for (int i = 0; i < n; i++) {
 			Unit u = list.get((int) (Math.random() * list.size()));
 			list.remove(u);

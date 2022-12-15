@@ -12,6 +12,7 @@ import common.pack.IndexContainer.Indexable;
 import common.pack.PackData;
 import common.pack.PackData.UserPack;
 import common.util.Data;
+import common.util.unit.AbForm;
 import common.util.unit.Form;
 import common.util.unit.Level;
 
@@ -86,11 +87,11 @@ public class LvRestrict extends Data implements Indexable<PackData, LvRestrict> 
 	}
 
 	public boolean isValid(LineUp lu) {
-		for (Form[] fs : lu.fs)
-			for (Form f : fs)
+		for (AbForm[] fs : lu.fs)
+			for (AbForm f : fs)
 				if (f != null) {
 					ArrayList<Integer> mlv = valid(f).getLvs();
-					ArrayList<Integer> flv = lu.map.get(f.unit.id).getLvs();
+					ArrayList<Integer> flv = lu.map.get(f.getID()).getLvs();
 					for (int i = 0; i < Math.min(mlv.size(), flv.size()); i++)
 						if (mlv.get(i) < flv.get(i))
 							return false;
@@ -117,11 +118,11 @@ public class LvRestrict extends Data implements Indexable<PackData, LvRestrict> 
 		return false;
 	}
 
-	public Level valid(Form f) {
+	public Level valid(AbForm f) {
 		int[] lv = MAX.clone();
 		boolean mod = false;
 		for (CharaGroup cg : res.keySet())
-			if (cg.fset.contains(f)) {
+			if (f instanceof Form && cg.fset.contains(f)) {
 				int[] rst = res.get(cg);
 				for (int i = 0; i < 6; i++)
 					lv[i] = Math.min(lv[i], rst[i]);
@@ -129,18 +130,19 @@ public class LvRestrict extends Data implements Indexable<PackData, LvRestrict> 
 			}
 		if (mod)
 			return new Level(f.regulateLv(null, Level.LvList(lv)));
-		for (int i = 0; i < 6; i++)
-			lv[i] = Math.min(lv[i], rares[f.unit.rarity][i]);
+		if (f instanceof Form)
+			for (int i = 0; i < 6; i++)
+				lv[i] = Math.min(lv[i], rares[((Form)f).unit.rarity][i]);
 		for (int i = 0; i < 6; i++)
 			lv[i] = Math.min(lv[i], all[i]);
 		return new Level(f.regulateLv(null, Level.LvList(lv)));
 	}
 
 	public void validate(LineUp lu) {
-		for (Form[] fs : lu.fs)
-			for (Form f : fs)
+		for (AbForm[] fs : lu.fs)
+			for (AbForm f : fs)
 				if (f != null)
-					lu.map.put(f.unit.id, valid(f));
+					lu.map.put(f.getID(), valid(f));
 		lu.renew();
 	}
 

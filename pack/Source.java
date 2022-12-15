@@ -1,11 +1,6 @@
 package common.pack;
 
 import common.CommonStatic;
-import common.util.anim.*;
-import common.util.unit.Enemy;
-import common.util.unit.Form;
-import common.util.unit.Trait;
-import common.util.unit.Unit;
 import common.io.PackLoader;
 import common.io.PackLoader.ZipDesc;
 import common.io.assets.Admin.StaticPermitted;
@@ -21,11 +16,16 @@ import common.system.files.FDFile;
 import common.system.files.FileData;
 import common.system.files.VFile;
 import common.util.Data;
+import common.util.anim.*;
 import common.util.pack.Background;
 import common.util.stage.CastleImg;
 import common.util.stage.Replay;
 import common.util.stage.Stage;
 import common.util.stage.StageMap;
+import common.util.unit.Enemy;
+import common.util.unit.Form;
+import common.util.unit.Trait;
+import common.util.unit.Unit;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -90,9 +90,23 @@ public abstract class Source {
 		}
 
 		@JsonClass.JCGetter
-		public AnimCI getAnim() {
+		public AnimU<? extends AnimU.ImageKeeper> getAnim() {
 			if (pack.equals(LOCAL))
 				return AnimCE.map().get(id);
+			if (pack.equals(Identifier.DEF)) {
+				int ind = CommonStatic.parseIntN(id);
+				if (id.charAt(4) == 'e')
+					return UserProfile.getBCData().enemies.arr[ind].anim;
+				if (id.charAt(4) == 'm')
+					return new AnimUD("./org/img/m/" + Data.trio(ind) + "/", id, "edi" + id + Data.duo(Math.min(1, ind)) + ".png", "uni" + id + Data.duo(Math.min(1, ind)) + ".png");
+				byte f = 0;
+				for (byte i = 1; i < 3; i++)
+					if (id.charAt(4) == Data.SUFX[i]) {
+						f = i;
+						break;
+					}
+				return UserProfile.getBCData().units.arr[ind].forms[f].anim;
+			}
 
 			return UserProfile.getUserPack(pack).source.loadAnimation(id, base);
 		}
@@ -365,7 +379,7 @@ public abstract class Source {
 			for (UserPack up : UserProfile.getUserPacks())
 				if (up.source instanceof Workspace)
 					CommonStatic.ctx.noticeErr(() -> ((Workspace) up.source).save(up, true), ErrType.WARN,
-							"failed to save pack " + up.desc.names.toString());
+							"failed to save pack " + up.desc.names);
 		}
 
 		public static void saveLocalAnimations() {
@@ -376,7 +390,7 @@ public abstract class Source {
 			for (UserPack up : UserProfile.getUserPacks())
 				if (up.source instanceof Workspace)
 					CommonStatic.ctx.noticeErr(() -> ((Workspace) up.source).save(up, false), ErrType.WARN,
-							"failed to save pack " + up.desc.names.toString());
+							"failed to save pack " + up.desc.names);
 		}
 
 		public static void validate(ResourceLocation rl) {
@@ -501,7 +515,7 @@ public abstract class Source {
 			} else {
 				desc.parentPassword = null;
 			}
-			DateFormat df = new SimpleDateFormat("MM dd, yyyy; HH:mm:ss");
+			DateFormat df = new SimpleDateFormat("MM dd yyyy HH:mm:ss");
 			desc.exportDate = df.format(new Date());
 
 			PackLoader.writePack(dst, src, desc, password, prog);

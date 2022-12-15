@@ -4,6 +4,8 @@ import common.io.json.JsonClass;
 import common.pack.Identifier;
 import common.system.VImg;
 
+import java.util.ArrayList;
+
 /**
  * Placeholder class to connect RandomUnit with Form
  */
@@ -40,13 +42,19 @@ public interface AbForm {
 
     Identifier<AbUnit> getID();
 
+    AbUnit unit();
+
     default int getFid() {
         return 0;
     }
 
-    int getDefaultPrice(int sta);
+    ArrayList<Integer> getPrefLvs();
 
     VImg getIcon();
 
     VImg getDeployIcon();
+
+    default ArrayList<Integer> regulateLv(int[] mod, ArrayList<Integer> lv) {
+        return lv;
+    }
 }

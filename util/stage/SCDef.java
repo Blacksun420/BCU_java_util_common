@@ -8,7 +8,6 @@ import common.io.json.JsonField;
 import common.io.json.JsonField.GenType;
 import common.pack.FixIndexList;
 import common.pack.Identifier;
-import common.pack.PackData.PackDesc;
 import common.system.Copable;
 import common.util.unit.AbEnemy;
 import common.util.unit.EneRand;
@@ -122,18 +121,29 @@ public class SCDef implements Copable<SCDef> {
 		return sb.entityCount(1, val) < g.getMax(sb.est.star);
 	}
 
-	public boolean contains(Enemy e) {
-		for (Line dat : datas) {
-			if(dat.enemy == null)
-				continue;
+	public boolean contains(AbEnemy e) {
+		if (e instanceof Enemy) {
+			for (Line dat : datas) {
+				if (dat.enemy == null)
+					continue;
 
-			if(dat.enemy.cls == EneRand.class) {
+				if (dat.enemy.cls == EneRand.class) {
+					EneRand rand = (EneRand) Identifier.get(dat.enemy);
+
+					if (rand != null && rand.contains(e.getID(), dat.enemy))
+						return true;
+				} else if (dat.enemy.cls == Enemy.class) {
+					if (dat.enemy.equals(e.getID()))
+						return true;
+				}
+			}
+		} else {
+			for (Line dat : datas) {
+				if (dat.enemy == null || dat.enemy.cls != EneRand.class)
+					continue;
+
 				EneRand rand = (EneRand) Identifier.get(dat.enemy);
-
-				if(rand != null && rand.contains(e.id, dat.enemy))
-					return true;
-			} else if(dat.enemy.cls == Enemy.class) {
-				if (dat.enemy.equals(e.id))
+				if (rand != null && (rand.equals(e) || rand.contains(e.getID(), dat.enemy)))
 					return true;
 			}
 		}
@@ -195,19 +205,6 @@ public class SCDef implements Copable<SCDef> {
 			temp.clear();
 		}
 		return ans;
-	}
-
-	public boolean isSuitable(PackDesc pack) {
-		for (Line ints : datas) {
-			if (ints.enemy.pack.equals(Identifier.DEF))
-				continue;
-			boolean b = ints.enemy.pack.equals(pack.id);
-			for (String rel : pack.dependency)
-				b |= ints.enemy.pack.equals(rel);
-			if (!b)
-				return false;
-		}
-		return true;
 	}
 
 	public boolean isTrail() {

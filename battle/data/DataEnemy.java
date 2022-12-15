@@ -12,20 +12,13 @@ public class DataEnemy extends DefaultData implements MaskEnemy {
 
 	private final Enemy enemy;
 
-	private int earn, star;
+	private final int earn, star;
 	public double limit;
 
-	public DataEnemy(Enemy e) {
+	public DataEnemy(Enemy e, int[] ints) {
 		enemy = e;
 		proc = Proc.blank();
-	}
 
-	public void fillData(String[] strs) {
-		//This function serves to gather BC enemy data and give them their stats accordingly, custom units don't really use this
-		int[] ints = new int[strs.length];
-
-		for (int i = 0; i < strs.length; i++)
-			ints[i] = Integer.parseInt(strs[i]);
 		hp = ints[0];
 		hb = ints[1];
 		speed = ints[2];

@@ -60,7 +60,7 @@ public class AnimCI extends AnimU<AnimCI.AnimCIKeeper> {
 			return loader.getMM();
 		}
 
-		public ResourceLocation getName() {
+		protected ResourceLocation getName() {
 			return loader.getName();
 		}
 

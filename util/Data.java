@@ -680,6 +680,7 @@ public class Data {
 
 			@Deprecated
 			public ProcItem load(int[] data) throws Exception {
+				System.out.println("test");
 				Field[] fs = getDeclaredFields();
 				for (int i = 0; i < Math.min(data.length, fs.length); i++)
 					if (fs[i].getType() == int.class)
@@ -1650,7 +1651,7 @@ public class Data {
 	public static final int SHAKE_COOL_DOWN = 3;
 	public static final double SHAKE_STABILIZER = 2.5;
 
-	public static final String[] SUFX = new String[] { "f", "c", "s" };
+	public static final char[] SUFX = new char[]{'f', 'c', 's'};
 
 	public static EffAnim.EffAnimStore effas() {
 		return CommonStatic.getBCAssets().effas;

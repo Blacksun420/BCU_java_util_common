@@ -3,6 +3,7 @@ package common.util.unit;
 import com.google.gson.JsonObject;
 import common.battle.data.AtkDataModel;
 import common.battle.data.CustomEntity;
+import common.battle.data.MaskEntity;
 import common.io.json.JsonClass;
 import common.io.json.JsonField;
 import common.io.json.localDecoder;
@@ -17,10 +18,10 @@ import common.util.lang.MultiLangData;
 
 @JsonClass(noTag = JsonClass.NoTag.LOAD)
 public abstract class Character extends Animable<AnimU<?>, AnimU.UType> {
-    @JsonField(generic = MultiLangData.class)
-    public MultiLangData names = new MultiLangData();
-    @JsonField(generic = MultiLangData.class)
-    public MultiLangData description = new MultiLangData();
+    @JsonField(generic = MultiLangData.class, gen = JsonField.GenType.FILL)
+    public final MultiLangData names = new MultiLangData();
+    @JsonField(generic = MultiLangData.class, gen = JsonField.GenType.FILL)
+    public final MultiLangData description = new MultiLangData();
 
     @Override
     public EAnimU getEAnim(AnimU.UType t) {
@@ -35,6 +36,8 @@ public abstract class Character extends Animable<AnimU<?>, AnimU.UType> {
 
         return anim.getEdi();
     }
+
+    public abstract MaskEntity getMask();
 
     /**
      * Handles most of the injected parameters of enemies and forms

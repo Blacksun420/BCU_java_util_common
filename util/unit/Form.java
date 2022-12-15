@@ -100,14 +100,13 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 	}
 
 	@Override
-	public int getFid() {
-		return fid;
+	public Unit unit() {
+		return unit;
 	}
 
 	@Override
-	public int getDefaultPrice(int sta) {
-		MaskUnit upc = maxu();
-		return (int) (upc.getPrice() * (1 + sta * 0.5));
+	public int getFid() {
+		return fid;
 	}
 
 	public MaskUnit maxu() {
@@ -121,6 +120,10 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 	@Override
 	public VImg getDeployIcon() {
 		return anim.getUni();
+	}
+
+	public MaskUnit getMask() {
+		return du;
 	}
 
 	@OnInjected
@@ -164,6 +167,7 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 			form.pcoin.update();
 	}
 
+	@Override
 	public ArrayList<Integer> getPrefLvs() {
 		ArrayList<Integer> ans;
 		final PCoin pc = du instanceof CustomUnit ? du.getPCoin() : unit.forms.length >= 3 ? unit.forms[2].du.getPCoin() : null;
@@ -185,7 +189,7 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 				lv.set(i, mod[i]);
 
 		int[] maxs = new int[lv.size()];
-		maxs[0] = unit.max + unit.maxp;
+		maxs[0] = unit.getCap();
 		PCoin pc = du.getPCoin();
 		if (pc != null) {
 			for (int i = 0; i < pc.info.size(); i++)

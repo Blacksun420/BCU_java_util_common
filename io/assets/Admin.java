@@ -224,7 +224,7 @@ public class Admin {
 		PackDesc pd = new PackDesc("asset_" + id);
 		pd.author = "PONOS";
 		pd.BCU_VERSION = ver;
-		pd.desc = desc;
+		pd.info.put(desc);
 		PackLoader.writePack(dst, f, pd, "battlecatsultimate", prog);
 
 	}
@@ -251,7 +251,7 @@ public class Admin {
 			ZipDesc zip = PackLoader.readPack((fd) -> false, new File(args[1]));
 			System.out.println("id: " + zip.desc.id);
 			System.out.println("version: " + zip.desc.BCU_VERSION);
-			System.out.println("description: " + zip.desc.desc);
+			System.out.println("description: " + zip.desc.info);
 			System.out.print("0% ");
 			zip.unzip(path -> new File("./output/" + path), prog);
 			System.out.println();

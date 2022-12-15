@@ -36,7 +36,6 @@ import common.util.stage.CastleList.PackCasList;
 import common.util.stage.MapColc.DefMapColc;
 import common.util.stage.MapColc.PackMapColc;
 import common.util.unit.*;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -138,15 +137,18 @@ public abstract class PackData implements IndexContainer {
 		private void loadEnemies(Consumer<Double> bar) {
 			int i = 0;
 			Collection<VFile> list = VFile.get("./org/enemy/").list();
-			for (VFile p : list) {
-				enemies.add(new Enemy(p));
-				bar.accept(1.0 * (i++) / list.size());
-			}
 			Queue<String> qs = VFile.readLine("./org/data/t_unit.csv");
 			qs.poll();
 			qs.poll();
-			for (Enemy e : enemies.getList())
-				((DataEnemy) e.de).fillData(qs.poll().split("//")[0].trim().split(","));
+			for (VFile p : list) {
+				String[] strs = qs.poll().split("//")[0].trim().split(",");
+				int[] ints = new int[strs.length];
+				for (int j = 0; j < strs.length; j++)
+					ints[j] = Integer.parseInt(strs[j]);
+
+				enemies.add(new Enemy(p, ints));
+				bar.accept(1.0 * (i++) / list.size());
+			}
 			qs = VFile.readLine("./org/data/enemy_dictionary_list.csv");
 			for (String str : qs)
 				enemies.get(Integer.parseInt(str.split(",")[0])).inDic = true;
@@ -211,6 +213,9 @@ public abstract class PackData implements IndexContainer {
 			int x = 0;
 			Collection<VFile> list = VFile.get("./org/unit").list();
 			Queue<String> qs = VFile.readLine("./org/data/unitbuy.csv");
+
+			Queue<String> qt = VFile.readLine("./org/data/unitlevel.csv");
+			FixIndexList<UnitLevel> l = unitLevels;
 			for (VFile p : list) {
 				String[] strs = qs.poll().split(",");
 
@@ -220,14 +225,7 @@ public abstract class PackData implements IndexContainer {
 				u.maxp = Integer.parseInt(strs[51]);
 				u.info.fillBuy(strs);
 
-				units.add(u);
-				bar.accept(1.0 * (x++) / list.size());
-			}
-			qs = VFile.readLine("./org/data/unitlevel.csv");
-			List<Unit> lu = units.getList();
-			FixIndexList<UnitLevel> l = unitLevels;
-			for (Unit u : lu) {
-				String[] strs = qs.poll().split(",");
+				strs = qt.poll().split(",");
 				int[] lv = new int[20];
 				for (int i = 0; i < 20; i++)
 					lv[i] = Integer.parseInt(strs[i]);
@@ -239,6 +237,9 @@ public abstract class PackData implements IndexContainer {
 				int ind = l.indexOf(ul);
 				u.lv = l.get(ind);
 				l.get(ind).units.add(u);
+
+				units.add(u);
+				bar.accept(1.0 * (x++) / list.size());
 			}
 			CommonStatic.getBCAssets().defLv = l.get(2);
 		}
@@ -255,9 +256,10 @@ public abstract class PackData implements IndexContainer {
 		@JsonField(io = JsonField.IOType.R)
 		public String name = "";
 		@JsonField(generic = MultiLangData.class, gen = GenType.FILL)
-		public MultiLangData names = new MultiLangData();
+		public final MultiLangData names = new MultiLangData();
+		@JsonField(generic = MultiLangData.class, gen = GenType.FILL)
+		public final MultiLangData info = new MultiLangData();
 
-		public String desc;
 		public String creationDate;
 		public String exportDate;
 		public double version = 1.0;
@@ -277,31 +279,44 @@ public abstract class PackData implements IndexContainer {
 			FORK_VERSION = AssetLoader.FORK_VER; //0 by default to differ Fork packs and non-fork packs
 			this.id = id;
 			dependency = new SortedPackSet<>();
-			DateFormat df = new SimpleDateFormat("MM dd, yyyy; HH:mm:ss");
+			DateFormat df = new SimpleDateFormat("MM dd yyyy HH:mm:ss");
 			creationDate = df.format(new Date());
 		}
 
 		/**
 		 * Null-safe way to get a string off the pack, used for sorting
+		 * Currently only uses auto since there's no other unsafe string
 		 * @return The requested string, or an empty string if it's null
 		 */
-		@NotNull
-		public String getN(String c) {
-			String s;
-			if (c.equals("author"))
-				s = author;
-			else if (c.equals("cdate"))
-				s = creationDate;
-			else
-				s = exportDate;
-			if (s != null)
-				return s;
+		public String getAuthor() {
+			if (author != null)
+				return author;
 			return "";
+		}
+
+		public long getTimestamp(String val) {
+			String time;
+			if (val.equals("cdate"))
+				time = creationDate;
+			else
+				time = exportDate;
+			if (time != null) {
+				DateFormat df = new SimpleDateFormat("MM dd yyyy HH:mm:ss");
+				try {
+					Date d = df.parse(time);
+					return d.getTime();
+				} catch (Exception e) {
+					System.out.println("Error parsing " + time + " in pack " + this);
+					e.printStackTrace();
+					return 0;
+				}
+			}
+			return 0;
 		}
 
 		@Override
 		public String toString() {
-			return names.toString() + " - " + id;
+			return names + " - " + id;
 		}
 
 		@Override
@@ -310,7 +325,7 @@ public abstract class PackData implements IndexContainer {
 
 			desc.author = author;
 			desc.names.put(names.toString());
-			desc.desc = this.desc;
+			desc.info.put(info.toString());
 			desc.allowAnim = allowAnim;
 			desc.parentPassword = parentPassword == null ? null : parentPassword.clone();
 
@@ -349,16 +364,6 @@ public abstract class PackData implements IndexContainer {
 		private JsonElement elem;
 		@JsonField(block = true)
 		public VImg icon, banner;
-
-		/**
-		 * for old reading method only
-		 */
-		@Deprecated
-		public UserPack(PackDesc desc, Source s) {
-			this.desc = desc;
-			source = s;
-			castles = new PackCasList(this);
-		}
 
 		public UserPack(Source s, PackDesc desc, JsonElement elem) {
 			this.desc = desc;
@@ -449,7 +454,7 @@ public abstract class PackData implements IndexContainer {
 
 		@Override
 		public String toString() {
-			return desc.names == null || desc.names.toString().isEmpty() ? desc.id : desc.names.toString();
+			return desc.names.toString().isEmpty() ? desc.id : desc.names.toString();
 		}
 
 		public void unregister() {
@@ -489,7 +494,7 @@ public abstract class PackData implements IndexContainer {
 				desc.BCU_VERSION = AssetLoader.CORE_VER;
 				desc.FORK_VERSION = AssetLoader.FORK_VER;
 				if (desc.creationDate == null) {
-					DateFormat df = new SimpleDateFormat("MM dd, yyyy; HH:mm:ss");
+					DateFormat df = new SimpleDateFormat("MM dd yyyy HH:mm:ss");
 					desc.creationDate = df.format(new Date());
 				}
 			}

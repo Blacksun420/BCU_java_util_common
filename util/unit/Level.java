@@ -27,11 +27,16 @@ public class Level implements BattleStatic {
 		lvs.add(1);
 	}
 
+	public Level(int[] lvs) {
+		for (int i  = 0; i < lvs.length; i++)
+			this.lvs.set(i, lvs[i]);
+	}
+
 	public Level(ArrayList<Integer> lvs) {
 		if (lvs.size() >= 1) {
 			this.lvs = lvs;
 		} else {
-			this.lvs = new ArrayList<>();
+			this.lvs = new ArrayList<>(lvs);
 			lvs.add(1);
 		}
 	}

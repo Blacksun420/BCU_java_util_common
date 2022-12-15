@@ -18,10 +18,6 @@ public class MultiLangData extends Data {
     public MultiLangData() {
     }
 
-    public MultiLangData(String str) {
-        dat.put(lang(), str);
-    }
-
     public void put(String data) {
         int lang = lang();
 
@@ -94,11 +90,8 @@ public class MultiLangData extends Data {
         return CommonStatic.getConfig().lang;
     }
 
-    public MultiLangData copy() { //Makes a copy of this MultiLangData object
-        MultiLangData ans = new MultiLangData();
-        for (int lang : dat.keySet())
-            ans.dat.put(lang, dat.get(lang));
-
-        return ans;
+    public void overwrite(MultiLangData ans) { //Replaces all values with the given MLD's values
+        for (int lang : ans.dat.keySet())
+            dat.put(lang, dat.get(lang));
     }
 }

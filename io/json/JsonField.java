@@ -30,6 +30,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * Forbidden pairs:
  * <li>Primitive - GenType.FILL</li>
  * <li>Primitive - GenType.GEN</li>
+ * <li>Initialized final values - GenType.SET</li>
  * <li>Collection - GenType.FILL</li>
  * <li>Method - GenType.FILL</li>
  * <li>Method - IOType.RW</li>

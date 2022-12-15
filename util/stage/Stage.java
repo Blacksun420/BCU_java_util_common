@@ -10,10 +10,9 @@ import common.io.json.JsonDecoder;
 import common.io.json.JsonField;
 import common.pack.Identifier;
 import common.pack.IndexContainer;
-import common.pack.PackData;
 import common.pack.PackData.PackDesc;
+import common.pack.PackData.UserPack;
 import common.pack.Source.ResourceLocation;
-import common.pack.UserProfile;
 import common.system.BasedCopable;
 import common.system.files.VFile;
 import common.util.BattleStatic;
@@ -24,7 +23,7 @@ import common.util.pack.Background;
 import common.util.stage.SCDef.Line;
 import common.util.stage.info.DefStageInfo;
 import common.util.stage.info.StageInfo;
-import common.util.unit.Enemy;
+import common.util.unit.AbEnemy;
 
 import java.util.*;
 
@@ -51,8 +50,8 @@ public class Stage extends Data
 	@JsonClass.JCIdentifier
 	public final Identifier<Stage> id;
 
-	@JsonField(generic = MultiLangData.class)
-	public MultiLangData names = new MultiLangData();
+	@JsonField(generic = MultiLangData.class, gen = JsonField.GenType.FILL)
+	public final MultiLangData names = new MultiLangData();
 
 	public boolean non_con, trail;
 	public int len, health, max, mush, bgh;
@@ -210,7 +209,7 @@ public class Stage extends Data
 		validate();
 	}
 
-	public boolean contains(Enemy e) {
+	public boolean contains(AbEnemy e) {
 		return data.contains(e);
 	}
 
@@ -259,17 +258,15 @@ public class Stage extends Data
 		return getCont().list.indexOf(this);
 	}
 
-	public Set<String> isSuitable(String pack) {
-		Dependency dep = Dependency.collect(this);
-		PackData.UserPack us = UserProfile.getUserPack(pack);
-
-		if(us == null)
+	public Set<String> isSuitable(UserPack pack) {
+		if(pack == null)
 			return new TreeSet<>();
+		Dependency dep = Dependency.collect(this);
 
-		PackDesc desc = us.desc;
+		PackDesc desc = pack.desc;
 		Set<String> set = dep.getPacks();
 		set.remove(Identifier.DEF);
-		set.remove(pack);
+		set.remove(pack.getSID());
 		for (String str : desc.dependency)
 			set.remove(str);
 		return set;

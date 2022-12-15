@@ -132,7 +132,7 @@ public class JsonEncoder {
 							return getFuncConstructor(alias, intf);
 				}
 			}
-			throw new JsonException(Type.FUNC, null, "No constructor using " + alias + " found for " + cls);
+			throw new JsonException(Type.FUNC, null, "No constructor using " + cls + " found for " + alias);
 		}
 	}
 

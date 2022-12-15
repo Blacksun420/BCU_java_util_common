@@ -11,7 +11,7 @@ import common.util.anim.EAnimU;
 
 import java.util.ArrayList;
 
-public class EForm extends Data {
+public class EForm extends Data implements IForm {
 
 	private final Form f;
 	private final Level level;
@@ -45,6 +45,7 @@ public class EForm extends Data {
 			du = form.du;
 	}
 
+	@Override
 	public EUnit getEntity(StageBasis b, int[] index, boolean isBase) {
 		int lv = level.getLv();
 
@@ -61,16 +62,26 @@ public class EForm extends Data {
 		return result;
 	}
 
-	public EUnit invokeEntity(StageBasis b, int minLayer, int maxLayer, int[] index) {
-		double d = f.unit.lv.getMult(level.getLv());
-		EAnimU anim = getEntryAnim();
-		return new EUnit(b, du, anim, d, minLayer, maxLayer, level, f.du.getPCoin(), index, false);
-	}
-
+	@Override
 	public EUnit invokeEntity(StageBasis b, int Lvl, int minLayer, int maxLayer) {
 		double d = f.unit.lv.getMult(Lvl);
 		EAnimU anim = getEntryAnim();
 		return new EUnit(b, du, anim, d, minLayer, maxLayer, level, f.du.getPCoin(), null, false);
+	}
+
+	@Override
+	public int getWill() {
+		return du.getWill();
+	}
+
+	@Override
+	public double getPrice(int sta) {
+		return du.getPrice() * (1 + sta * 0.5);
+	}
+
+	@Override
+	public int getRespawn() {
+		return du.getRespawn();
 	}
 
 	public EAnimU getEntryAnim() {
@@ -80,10 +91,6 @@ public class EForm extends Data {
 
 		anim.setTime(0);
 		return anim;
-	}
-
-	public double getPrice(int sta) {
-		return du.getPrice() * (1 + sta * 0.5);
 	}
 
 	private int getAkuStageLevel() {

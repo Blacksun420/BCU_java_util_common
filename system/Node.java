@@ -1,21 +1,21 @@
 package common.system;
 
+import common.util.unit.AbForm;
 import common.util.unit.Form;
 import common.util.unit.Unit;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class Node<T> {
 
-	public static List<Form> deRep(List<Form> list) {
-		List<Form> ans = new ArrayList<>();
-		for (Form f : list)
+	public static List<AbForm> deRep(List<AbForm> list) {
+		List<AbForm> ans = new ArrayList<>();
+		for (AbForm f : list)
 			if (ans.size() > 0) {
-				Form last = ans.get(ans.size() - 1);
-				if (f.unit == last.unit) {
-					if (f.fid > last.fid) {
+				AbForm last = ans.get(ans.size() - 1);
+				if (f.unit() == last.unit()) {
+					if (f.getFid() > last.getFid()) {
 						ans.remove(last);
 						ans.add(f);
 					}
@@ -26,7 +26,7 @@ public class Node<T> {
 		return ans;
 	}
 
-	public static <T> Node<T> getList(Collection<T> l, T n) {
+	public static <T> Node<T> getList(List<T> l, T n) {
 		Node<T> ans = null, ret = null;
 		for (T v : l) {
 			Node<T> temp = new Node<>(v);

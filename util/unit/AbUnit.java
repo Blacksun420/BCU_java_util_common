@@ -12,4 +12,8 @@ public interface AbUnit extends Comparable<AbUnit>, IndexContainer.Indexable<Pac
     }
 
     Form[] getForms();
+
+    default int getCap() {
+        return Integer.MAX_VALUE;
+    }
 }

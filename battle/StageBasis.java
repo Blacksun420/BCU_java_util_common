@@ -3,10 +3,6 @@ package common.battle;
 import common.CommonStatic;
 import common.battle.attack.AttackAb;
 import common.battle.attack.ContAb;
-import common.util.stage.*;
-import common.util.unit.EForm;
-import common.util.unit.EneRand;
-import common.util.unit.Form;
 import common.battle.entity.*;
 import common.pack.Identifier;
 import common.util.BattleObj;
@@ -18,7 +14,11 @@ import common.util.pack.Background;
 import common.util.pack.EffAnim;
 import common.util.pack.EffAnim.DefEff;
 import common.util.pack.bgeffect.BackgroundEffect;
+import common.util.stage.*;
 import common.util.stage.MapColc.DefMapColc;
+import common.util.unit.AbForm;
+import common.util.unit.EneRand;
+import common.util.unit.IForm;
 
 import java.util.*;
 
@@ -145,7 +145,7 @@ public class StageBasis extends BattleObj {
 		upgradeCost = bas.t().getLvCost(work_lv);
 
 		boolean oneLine = true;
-		for(Form f : b.lu.fs[1]) {
+		for(AbForm f : b.lu.fs[1]) {
 			if(f != null) {
 				oneLine = false;
 				break;
@@ -433,36 +433,36 @@ public class StageBasis extends BattleObj {
 		}
 
 		if (elu.cool[i][j] > 0) {
-			if(boo) {
+			if(boo)
 				CommonStatic.setSE(SE_SPEND_FAIL);
-			}
-
 			return false;
 		}
 		if (elu.price[i][j] == -1) {
 			return false;
 		}
 		if (elu.price[i][j] > money) {
-			if(boo) {
+			if(boo)
 				CommonStatic.setSE(SE_SPEND_FAIL);
-			}
 			return false;
 		}
 		if (locks[i][j] || boo) {
-			if (entityCount(-1) >= max_num - b.lu.efs[i][j].du.getWill()) {
-				if(boo) {
+			if (entityCount(-1) >= max_num - b.lu.efs[i][j].getWill()) {
+				if(boo)
 					CommonStatic.setSE(SE_SPEND_FAIL);
-				}
-
 				return false;
 			}
-			EForm f = b.lu.efs[i][j];
+			IForm f = b.lu.efs[i][j];
 			if (f == null) {
 				return false;
 			}
+			EUnit eu = f.getEntity(this, new int[]{i, j}, false);
+			if (eu == null) {
+				if (boo)
+					CommonStatic.setSE(SE_SPEND_FAIL);
+				return false;
+			}
 			CommonStatic.setSE(SE_SPEND_SUC);
-			elu.get(i, j);
-			EUnit eu = f.getEntity(this, new int[] {i, j}, false);
+			elu.resetCD(i, j);
 			eu.added(-1, st.len - 700);
 			le.add(eu);
 			le.sort(Comparator.comparingInt(e -> e.layer));

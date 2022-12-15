@@ -16,6 +16,7 @@ import common.pack.UserProfile;
 import common.system.files.VFile;
 import common.util.Data;
 import common.util.anim.AnimCE;
+import common.util.anim.AnimU;
 import common.util.lang.MultiLangCont;
 
 import java.util.ArrayList;
@@ -82,7 +83,7 @@ public class Unit extends Data implements AbUnit {
 		id = identifier;
 	}
 
-	public Unit(Identifier<AbUnit> id, AnimCE ce, CustomUnit cu) {
+	public Unit(Identifier<AbUnit> id, AnimU<?> ce, CustomUnit cu) {
 		this.id = id;
 		forms = new Form[] { new Form(this, 0, "new unit", ce, cu) };
 		max = 50;
@@ -105,7 +106,7 @@ public class Unit extends Data implements AbUnit {
 			forms = new Form[m.length];
 
 		for (int i = 0; i < forms.length; i++) {
-			if (p.containsSubDire(SUFX[i])) {
+			if (p.containsSubDire("" + SUFX[i])) {
 				forms[i] = new Form(this, i, str + SUFX[i] + "/", qs.poll());
 			} else
 				forms[i] = new Form(this, i, m[i], "./org/img/m/" + Data.trio(m[i]) + "/", qs.poll());
@@ -135,6 +136,11 @@ public class Unit extends Data implements AbUnit {
 	@Override
 	public Form[] getForms() {
 		return forms;
+	}
+
+	@Override
+	public int getCap() {
+		return max + maxp;
 	}
 
 	public List<Combo> allCombo() {

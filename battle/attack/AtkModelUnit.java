@@ -32,38 +32,20 @@ public class AtkModelUnit extends AtkModelEntity {
 			if (proc.min_layer == proc.max_layer && proc.min_layer == -1)
 				minlayer = maxlayer = e.layer;
 
-			if (proc.id == null || proc.id.cls == Unit.class) {
-				Unit u = Identifier.getOr(proc.id, Unit.class);
-				if (b.entityCount(-1) < b.max_num - u.forms[proc.form - 1].du.getWill() || conf.ignore_limit) {
+			if (proc.id == null || AbUnit.class.isAssignableFrom(proc.id.cls)) {
+				AbUnit u = Identifier.getOr(proc.id, AbUnit.class);
+				if (b.entityCount(-1) < b.max_num - u.getForms()[proc.form - 1].du.getWill() || conf.ignore_limit) {
 					int lvl = proc.mult + ((EUnit) e).lvl;
 					if (conf.fix_buff)
 						lvl = proc.mult;
-					lvl = MathUtil.clip(lvl, 1, u.max + u.maxp);
+					lvl = MathUtil.clip(lvl, 1, u.getCap());
 					lvl *= (100.0 - resist) / 100;
 
 					for (int i = 0; i < proc.amount; i++) {
 						int dis = proc.dis == proc.max_dis ? proc.dis : (int) (proc.dis + b.r.nextDouble() * (proc.max_dis - proc.dis + 1));
 						double up = ent.pos + getDire() * dis;
-						EForm ef = new EForm(u.forms[Math.max(proc.form - 1, 0)], proc.mult + ((EUnit) e).lvl);
+						IForm ef = IForm.newIns(u instanceof Unit ? u.getForms()[Math.max(proc.form - 1, 0)] : (AbForm)u, lvl);
 						EUnit eu = ef.invokeEntity(b, lvl, minlayer, maxlayer);
-						if (conf.same_health)
-							eu.health = e.health;
-
-						eu.added(-1, (int) up);
-						b.tempe.add(new EntCont(eu, time));
-						eu.setSummon(conf.anim_type, conf.bond_hp ? e : null);
-					}
-				}
-			} else if (proc.id.cls == UniRand.class) {
-				UniRand ur = Identifier.getOr(proc.id, UniRand.class);
-				int lvl = proc.mult + ((EUnit) e).lvl;
-				if (conf.fix_buff)
-					lvl = proc.mult;
-				for (int i = 0; i < proc.amount; i++) {
-					int dis = proc.dis == proc.max_dis ? proc.dis : (int) (proc.dis + b.r.nextDouble() * (proc.max_dis - proc.dis + 1));
-					double up = ent.pos + getDire() * dis;
-					EUnit eu = ur.getEntity(b, acs, b.max_num - b.entityCount(-1), minlayer, maxlayer, lvl, resist, ((EUnit) e).index);
-					if (eu != null) {
 						if (conf.same_health)
 							eu.health = e.health;
 

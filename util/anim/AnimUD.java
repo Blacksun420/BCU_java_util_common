@@ -1,15 +1,22 @@
 package common.util.anim;
 
 import common.CommonStatic;
+import common.io.json.JsonClass;
+import common.pack.Identifier;
+import common.pack.Source;
 import common.system.VImg;
 import common.system.fake.FakeImage;
 import common.system.fake.FakeImage.Marker;
 import common.system.files.FileData;
 import common.system.files.VFile;
 
+@JsonClass.JCGeneric(Source.ResourceLocation.class)
 public class AnimUD extends AnimU<AnimUD.DefImgLoader> {
 
 	private final String name;
+
+	@JsonClass.JCIdentifier
+	public final Source.ResourceLocation id;
 
 	static class DefImgLoader implements AnimU.ImageKeeper {
 		private final String spath;
@@ -111,6 +118,7 @@ public class AnimUD extends AnimU<AnimUD.DefImgLoader> {
 	public AnimUD(String path, String name, String edi, String uni) {
 		super(path + name, new DefImgLoader(path, name, edi, uni));
 		this.name = name;
+		id = new Source.ResourceLocation(Identifier.DEF, name);
 	}
 
 	@Override

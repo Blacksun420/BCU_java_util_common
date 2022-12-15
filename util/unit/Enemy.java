@@ -3,10 +3,7 @@ package common.util.unit;
 import com.google.gson.JsonObject;
 import common.CommonStatic;
 import common.battle.StageBasis;
-import common.battle.data.AtkDataModel;
-import common.battle.data.CustomEnemy;
-import common.battle.data.DataEnemy;
-import common.battle.data.MaskEnemy;
+import common.battle.data.*;
 import common.battle.entity.EEnemy;
 import common.io.json.JsonClass;
 import common.io.json.JsonDecoder.OnInjected;
@@ -54,10 +51,10 @@ public class Enemy extends Character implements AbEnemy {
 		anim = ac;
 	}
 
-	public Enemy(VFile f) {
+	public Enemy(VFile f, int[] ints) {
 		id = new Identifier<>(Identifier.DEF, Enemy.class, CommonStatic.parseIntN(f.getName()));
 		String str = "./org/enemy/" + Data.trio(id.id) + "/";
-		de = new DataEnemy(this);
+		de = new DataEnemy(this, ints);
 		anim = new AnimUD(str, Data.trio(id.id) + "_e", "edi_" + Data.trio(id.id) + ".png", null);
 		anim.getEdi().check();
 		MaModel model = anim.loader.getMM();
@@ -128,6 +125,10 @@ public class Enemy extends Character implements AbEnemy {
 		Set<Enemy> te = new TreeSet<>();
 		te.add(this);
 		return te;
+	}
+
+	public MaskEnemy getMask() {
+		return de;
 	}
 
 	@OnInjected

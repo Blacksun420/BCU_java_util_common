@@ -104,8 +104,8 @@ public class StageMap extends Data implements BasedCopable<StageMap, MapColc>,
 	@JsonField(generic = Stage.class)
 	public final FixIndexMap<Stage> list = new FixIndexMap<>(Stage.class);
 
-	@JsonField(generic = MultiLangData.class)
-	public MultiLangData names = new MultiLangData();
+	@JsonField(generic = MultiLangData.class, gen = JsonField.GenType.FILL)
+	public final MultiLangData names = new MultiLangData();
 
 	@JsonField
 	public int price = 1, cast = -1;
@@ -146,7 +146,7 @@ public class StageMap extends Data implements BasedCopable<StageMap, MapColc>,
 	@Override
 	public StageMap copy(MapColc mc) {
 		StageMap sm = new StageMap(mc.getNextID());
-		sm.names = names.copy();
+		sm.names.overwrite(names);
 		sm.names.put(toString());
 
 		sm.stars = stars.clone();

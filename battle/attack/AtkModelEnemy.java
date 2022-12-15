@@ -7,10 +7,7 @@ import common.battle.entity.EntCont;
 import common.battle.entity.Entity;
 import common.pack.Identifier;
 import common.util.Data.Proc.SUMMON;
-import common.util.unit.AbEnemy;
-import common.util.unit.EForm;
-import common.util.unit.UniRand;
-import common.util.unit.Unit;
+import common.util.unit.*;
 import org.jcodec.common.tools.MathUtil;
 
 public class AtkModelEnemy extends AtkModelEntity {
@@ -70,35 +67,17 @@ public class AtkModelEnemy extends AtkModelEntity {
 						ee.setSummon(conf.anim_type, conf.bond_hp ? e : null);
 					}
 				}
-			} else if (proc.id.cls == UniRand.class) {
-				UniRand ur = Identifier.getOr(proc.id, UniRand.class);
-				int lvl = (int) (proc.mult * ((EEnemy) e).mult);
-				if (conf.fix_buff)
-					lvl = proc.mult;
-				for (int i = 0; i < proc.amount; i++) {
-					int dis = proc.dis == proc.max_dis ? proc.dis : (int) (proc.dis + b.r.nextDouble() * (proc.max_dis - proc.dis + 1));
-					double ep = ent.pos + getDire() * dis;
-					EUnit eu = ur.getEntity(b, acs, b.max_num - b.entityCount(-1), minlayer, maxlayer, lvl, resist, null);
-					if (eu != null) {
-						if (conf.same_health)
-							eu.health = e.health;
-
-						eu.added(-1, (int) ep);
-						b.tempe.add(new EntCont(eu, time));
-						eu.setSummon(conf.anim_type, conf.bond_hp ? e : null);
-					}
-				}
 			} else {
-				Unit u = Identifier.getOr(proc.id, Unit.class);
-				if (b.entityCount(-1) < b.max_num - u.forms[proc.form - 1].du.getWill() || conf.ignore_limit) {
+				AbUnit u = Identifier.getOr(proc.id, AbUnit.class);
+				if (b.entityCount(-1) < b.max_num - u.getForms()[proc.form - 1].du.getWill() || conf.ignore_limit) {
 					int dis = proc.dis == proc.max_dis ? proc.dis : (int) (proc.dis + b.r.nextDouble() * (proc.max_dis - proc.dis + 1));
 					double ep = ent.pos + getDire() * dis;
 					int lvl = (int) (proc.mult * ((EEnemy) e).mult);
-					lvl = MathUtil.clip(lvl, 1, u.max + u.maxp);
+					lvl = MathUtil.clip(lvl, 1, u.getCap());
 					lvl *= (100.0 - resist) / 100;
 
 					for (int i = 0; i < proc.amount; i++) {
-						EForm ef = new EForm(u.forms[Math.max(proc.form - 1, 0)], lvl);
+						IForm ef = IForm.newIns(u instanceof Unit ? u.getForms()[Math.max(proc.form - 1, 0)] : (AbForm)u, lvl);
 						EUnit eu = ef.invokeEntity(b, lvl, minlayer, maxlayer);
 						if (conf.same_health)
 							eu.health = e.health;
