@@ -67,7 +67,7 @@ public class Dependency {
 						return;
 					}
 				}
-				Constructor<?> con = alias.getConstructor(cls);
+				Constructor<?> con = getFuncConstructor(alias, cls);
 				collect(set, con.newInstance(obj), par);
 				return;
 			}
@@ -117,13 +117,42 @@ public class Dependency {
 			throw new JsonException(Type.UNDEFINED, null, "object " + obj + ":" + obj.getClass() + " not defined");
 		}
 
+		/***
+		 * Gets a valid constructor from a class, and in case no constructor is found with it, checks if there's a valid option using its interfaces or superclass
+		 * @param alias The class intended to be constructed as
+		 * @param cls The current class used as parameter for the constructor
+		 * @return A valid constructor that takes the given class as parameter
+		 * @throws JsonException If this class, and none of it's superclasses or interfaces has a JCGeneric constructor that uses the given class
+		 */
+		private static Constructor<?> getFuncConstructor(Class<?> alias, Class<?> cls) throws JsonException {
+			try {
+				return alias.getConstructor(cls);
+			} catch (Exception e) {
+				if (cls.getSuperclass() != null && cls.getSuperclass().getAnnotation(JCGeneric.class) != null) {
+					JCGeneric jcg = cls.getSuperclass().getAnnotation(JCGeneric.class);
+					for (Class<?> ala : jcg.value())
+						if (ala == alias)
+							return getFuncConstructor(alias, cls.getSuperclass());
+				}
+				for (Class<?> intf : cls.getInterfaces()) {
+					if (intf.getAnnotation(JCGeneric.class) != null) {
+						JCGeneric jcg = intf.getAnnotation(JCGeneric.class);
+						for (Class<?> ala : jcg.value())
+							if (ala == alias)
+								return getFuncConstructor(alias, intf);
+					}
+				}
+				throw new JsonException(Type.FUNC, null, "No constructor using " + cls + " found for " + alias);
+			}
+		}
+
 		private final DependencyCheck par;
 		private final Object obj;
 		private final Dependency set;
 
 		private JsonClass curjcls;
 		private JsonField curjfld;
-		private int index = 0;
+		private final int index = 0;
 
 		private DependencyCheck(Dependency set, DependencyCheck parent, Object object) throws Exception {
 			this.set = set;
@@ -179,7 +208,7 @@ public class Dependency {
 		return set;
 	}
 
-	private Map<Class<?>, Map<String, Set<Identifier<?>>>> map = new HashMap<>();
+	private final Map<Class<?>, Map<String, Set<Identifier<?>>>> map = new HashMap<>();
 
 	public Map<Class<?>, Map<String, Set<Identifier<?>>>> getMap() {
 		return map;
@@ -220,12 +249,12 @@ public class Dependency {
 	}
 
 	protected void add(Identifier<?> id) {
-		Map<String, Set<Identifier<?>>> cont = null;
+		Map<String, Set<Identifier<?>>> cont;
 		if (map.containsKey(id.cls))
 			cont = map.get(id.cls);
 		else
 			map.put(id.cls, cont = new TreeMap<>());
-		Set<Identifier<?>> set = null;
+		Set<Identifier<?>> set;
 		if (cont.containsKey(id.pack))
 			set = cont.get(id.pack);
 		else

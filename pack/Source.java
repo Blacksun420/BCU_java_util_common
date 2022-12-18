@@ -22,6 +22,7 @@ import common.util.stage.CastleImg;
 import common.util.stage.Replay;
 import common.util.stage.Stage;
 import common.util.stage.StageMap;
+import common.util.unit.Character;
 import common.util.unit.Enemy;
 import common.util.unit.Form;
 import common.util.unit.Trait;
@@ -324,73 +325,41 @@ public abstract class Source {
 
 	public static class Workspace extends Source {
 
+		public HashSet<AnimCE>[] anims = new HashSet[3];
+
 		public static void loadAnimations(String id) {
 			if (id == null)
 				id = ResourceLocation.LOCAL;
-			File animFolder = CommonStatic.ctx.getWorkspaceFile("./" + id + "/" + BasePath.ANIM + "/");
-			File soulFolder = CommonStatic.ctx.getWorkspaceFile("./" + id + "/" + BasePath.SOUL + "/");
-			File bgEffFolder = CommonStatic.ctx.getWorkspaceFile("./" + id + "/" + BasePath.BGEffect + "/");
-			if (animFolder.exists() && animFolder.isDirectory()) {
-				File[] animFiles = animFolder.listFiles();
+			loadAnims(id, BasePath.ANIM);
+			loadAnims(id, BasePath.SOUL);
+			loadAnims(id, BasePath.BGEffect);
+		}
+
+		public static void loadAnims(String id, BasePath path) {
+			File folder = CommonStatic.ctx.getWorkspaceFile("./" + id + "/" + path + "/");
+			if (folder.exists() && folder.isDirectory()) {
+				File[] animFiles = folder.listFiles();
 				Arrays.sort(animFiles);
 				for (File f : animFiles) {
-					String path = "./" + id + "/" + BasePath.ANIM + "/" + f.getName() + "/sprite.png";
-
-					if (f.isDirectory() && CommonStatic.ctx.getWorkspaceFile(path).exists()) {
-						ResourceLocation rl = new ResourceLocation(id, f.getName(), Source.BasePath.ANIM);
+					String sprite = "./" + id + "/" + path + "/" + f.getName() + "/sprite.png";
+					if (f.isDirectory() && CommonStatic.ctx.getWorkspaceFile(sprite).exists()) {
+						ResourceLocation rl = new ResourceLocation(id, f.getName(), path);
 						AnimCE anim = new AnimCE(rl);
-
-						AnimCE.map().put(f.getName(), anim);
-					}
-				}
-			}
-			if (soulFolder.exists() && soulFolder.isDirectory()) {
-				File[] soulFiles = soulFolder.listFiles();
-				Arrays.sort(soulFiles);
-				for (File f : soulFiles) {
-					String path = "./" + id + "/" + BasePath.SOUL + "/" + f.getName() + "/sprite.png";
-
-					if (f.isDirectory() && CommonStatic.ctx.getWorkspaceFile(path).exists()) {
-						ResourceLocation rl = new ResourceLocation(id, f.getName(), BasePath.SOUL);
-						AnimCE anim = new AnimCE(rl);
-
-						AnimCE.map().put(f.getName(), anim);
-					}
-				}
-			}
-			if (bgEffFolder.exists() && bgEffFolder.isDirectory()) {
-				File[] bgeFiles = bgEffFolder.listFiles();
-				Arrays.sort(bgeFiles);
-				for (File f : bgeFiles) {
-					String path = "./" + id + "/" + BasePath.BGEffect + "/" + f.getName() + "/sprite.png";
-
-					if (f.isDirectory() && CommonStatic.ctx.getWorkspaceFile(path).exists()) {
-						ResourceLocation rl = new ResourceLocation(id, f.getName(), BasePath.BGEffect);
-						AnimCE anim = new AnimCE(rl);
-
 						AnimCE.map().put(f.getName(), anim);
 					}
 				}
 			}
 		}
 
-		public static void autoSave() {
-			AnimCE.map().values().forEach(AnimCE::autosave);
+		public static void saveWorkspace(boolean auto) {
+			AnimCE.map().values().forEach(auto ? AnimCE::autosave : AnimCE::save);
 			for (UserPack up : UserProfile.getUserPacks())
-				if (up.source instanceof Workspace)
-					CommonStatic.ctx.noticeErr(() -> ((Workspace) up.source).save(up, true), ErrType.WARN,
+				if (up.source instanceof Workspace) {
+					if (!auto)
+						((Workspace) up.source).getAnims(BasePath.ANIM).forEach(AnimCE::save);
+					CommonStatic.ctx.noticeErr(() -> ((Workspace) up.source).save(up, auto), ErrType.WARN,
 							"failed to save pack " + up.desc.names);
-		}
-
-		public static void saveLocalAnimations() {
-			AnimCE.map().values().forEach(AnimCE::save);
-		}
-
-		public static void saveWorkspace() {
-			for (UserPack up : UserProfile.getUserPacks())
-				if (up.source instanceof Workspace)
-					CommonStatic.ctx.noticeErr(() -> ((Workspace) up.source).save(up, false), ErrType.WARN,
-							"failed to save pack " + up.desc.names);
+				}
 		}
 
 		public static void validate(ResourceLocation rl) {
@@ -418,7 +387,7 @@ public abstract class Source {
 		}
 
 		public static String generatePackID() {
-			String format = "abcdefghijklmnopqrstuvwxyz0123456789";
+			String format = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 			Random random = new Random();
 
 			StringBuilder result = new StringBuilder();
@@ -454,45 +423,14 @@ public abstract class Source {
 		}
 
 		public void export(UserPack pack, String password, String parentPassword, Consumer<Double> prog) throws Exception {
-			ArrayList<AnimCE> anims = new ArrayList<>();
+			HashSet<AnimCE> anims = new HashSet<>();
 
-			for (Enemy e : pack.enemies) {
-				AnimCE anim = (AnimCE) e.anim;
-				if (anim.id.pack.equals(ResourceLocation.LOCAL)) {
-					if(!anims.contains(anim)) {
-						anims.add(anim);
-					} else {
-						anim.id.pack = ResourceLocation.LOCAL;
-						anim.id.id = anim.id.id.replaceAll("^_mapped_", "");
-					}
-
-					new SourceAnimSaver(new ResourceLocation(pack.getSID(), "_mapped_"+anim.id.id, anim.id.base), anim).saveAll();
-
-					anim.id.pack = pack.getSID();
-					anim.id.id = "_mapped_"+anim.id.id;
-				}
-				if (anim.id.pack.startsWith(".temp_"))
-					anim.id.pack = anim.id.pack.substring(6);
-			}
+			for (Enemy e : pack.enemies)
+				addAnim(pack, e, anims);
 			for (Unit u : pack.units)
-				for (Form f : u.forms) {
-					AnimCE anim = (AnimCE) f.anim;
-					if (anim.id.pack.equals(ResourceLocation.LOCAL)) {
-						if(!anims.contains(anim)) {
-							anims.add(anim);
-						} else {
-							anim.id.pack = ResourceLocation.LOCAL;
-							anim.id.id = anim.id.id.replaceAll("^_mapped_", "");
-						}
+				for (Form f : u.forms)
+					addAnim(pack, f, anims);
 
-						new SourceAnimSaver(new ResourceLocation(pack.getSID(), "_mapped_"+anim.id.id, anim.id.base), anim).saveAll();
-
-						anim.id.pack = pack.getSID();
-						anim.id.id = "_mapped_"+anim.id.id;
-					}
-					if (anim.id.pack.startsWith(".temp_"))
-						anim.id.pack = anim.id.pack.substring(6);
-				}
 			for (StageMap sm : pack.mc.maps)
 				for (Stage st : sm.list)
 					for (Replay rep : st.recd)
@@ -527,6 +465,25 @@ public abstract class Source {
 			}
 		}
 
+		private void addAnim(UserPack pack, Character e, HashSet<AnimCE> anims) {
+			if (e.anim instanceof AnimUD)
+				return;
+
+			AnimCE anim = (AnimCE) e.anim;
+			if (anim.id.pack.equals(ResourceLocation.LOCAL)) {
+				if(!anims.add(anim)) {
+					anim.id.pack = ResourceLocation.LOCAL;
+					anim.id.id = anim.id.id.replaceAll("^_mapped_", "");
+				}
+				new SourceAnimSaver(new ResourceLocation(pack.getSID(), "_mapped_"+anim.id.id, anim.id.base), anim).saveAll();
+
+				anim.id.pack = pack.getSID();
+				anim.id.id = "_mapped_"+anim.id.id;
+			}
+			if (anim.id.pack.startsWith(".temp_"))
+				anim.id.pack = anim.id.pack.substring(6);
+		}
+
 		public File getBGFile(Identifier<Background> id) {
 			return getFile("./" + BasePath.BG + "/" + Data.trio(id.id) + ".png");
 		}
@@ -553,9 +510,40 @@ public abstract class Source {
 			return getFile(path).list();
 		}
 
+		public HashSet<AnimCE> getAnims(BasePath path) {
+			byte ind = animInd(path);
+			if (anims[ind] != null)
+				return anims[ind];
+
+			File folder = CommonStatic.ctx.getWorkspaceFile("./" + id + "/" + path + "/");
+			if (folder.exists() && folder.isDirectory()) {
+				File[] animFiles = folder.listFiles();
+				anims[ind] = new HashSet<>(animFiles.length);
+
+				Arrays.sort(animFiles);
+				for (File f : animFiles) {
+					String sprite = "./" + id + "/" + path + "/" + f.getName() + "/sprite.png";
+					if (f.isDirectory() && CommonStatic.ctx.getWorkspaceFile(sprite).exists()) {
+						anims[ind].add(new AnimCE(new ResourceLocation(id, f.getName(), path)));
+					}
+				}
+			}
+			return new HashSet<>(1);
+		}
+
+		private byte animInd(BasePath path) {
+			return (byte) (path.equals(BasePath.ANIM) ? 0 : path.equals(BasePath.SOUL) ? 1 : path.equals(BasePath.BGEffect) ? 2 : -1);
+		}
+
 		@Override
 		public AnimCE loadAnimation(String name, BasePath base) {
-			return new AnimCE(new ResourceLocation(id, name, base));
+			int ind = animInd(base == null ? base = BasePath.ANIM : base);
+			for (AnimCE anim : getAnims(base))
+				if (name.equals(anim.id.id) && anim.id.base.equals(base))
+					return anim;
+			AnimCE newAnim = new AnimCE(new ResourceLocation(id, name, base));
+			anims[ind].add(newAnim);
+			return newAnim;
 		}
 
 		@Override
