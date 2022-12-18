@@ -31,7 +31,7 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
     }
 
     public SortedPackSet(int siz) {
-        arr = new Object[siz];
+        arr = new Object[Math.max(1, siz)];
     }
 
     public SortedPackSet(T t) {

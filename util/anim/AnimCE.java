@@ -108,28 +108,32 @@ public class AnimCE extends AnimCI {
 		history("initial");
 	}
 
-	public boolean deletable() {
+	public boolean undeleteableP(UserPack p) {
 		if (types == AnimU.SOUL) {
-			for (UserPack p : UserProfile.getUserPacks())
-				for (Soul s : p.souls.getList())
-					if (s.anim == this)
-						return false;
+			for (Soul s : p.souls.getList())
+				if (s.anim == this)
+					return true;
 		} else if (types == AnimU.BGEFFECT) {
-			for (UserPack p : UserProfile.getUserPacks())
-				for (BackgroundEffect bge : p.bgEffects.getList())
-					if (bge instanceof CustomBGEffect && ((CustomBGEffect) bge).anim == this)
-						return false;
+			for (BackgroundEffect bge : p.bgEffects.getList())
+				if (bge instanceof CustomBGEffect && ((CustomBGEffect) bge).anim == this)
+					return true;
 		} else {
-			for (UserPack p : UserProfile.getUserPacks()) {
-				for (Enemy e : p.enemies.getList())
-					if (e.anim == this)
-						return false;
-				for (Unit u : p.units.getList())
-					for (Form f : u.forms)
-						if (f.anim == this)
-							return false;
-			}
+			for (Enemy e : p.enemies.getList())
+				if (e.anim == this)
+					return true;
+			for (Unit u : p.units.getList())
+				for (Form f : u.forms)
+					if (f.anim == this)
+						return true;
 		}
+		return false;
+	}
+
+	public boolean deletable() {
+		if (id.pack.equals(ResourceLocation.LOCAL))
+			for (UserPack p : UserProfile.getUserPacks())
+				if (p.editable && (id.pack.equals(ResourceLocation.LOCAL) || p.desc.dependency.contains(id.pack) || p.getSID().equals(id.pack)) && undeleteableP(p))
+					return false;
 		return true;
 	}
 
