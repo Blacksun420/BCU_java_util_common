@@ -130,16 +130,17 @@ public class AnimCE extends AnimCI {
 	}
 
 	public boolean deletable() {
-		if (id.pack.equals(ResourceLocation.LOCAL))
-			for (UserPack p : UserProfile.getUserPacks())
-				if (p.editable && (id.pack.equals(ResourceLocation.LOCAL) || p.desc.dependency.contains(id.pack) || p.getSID().equals(id.pack)) && undeleteableP(p))
-					return false;
+		for (UserPack p : UserProfile.getUserPacks())
+			if (p.editable && (id.pack.equals(ResourceLocation.LOCAL) || p.desc.dependency.contains(id.pack) || id.pack.equals(p.getSID())) && undeleteableP(p))
+				return false;
 		return true;
 	}
 
 	public void delete() {
 		map().remove(id.id);
 		AnimGroup.workspaceGroup.renewGroup();
+		if (!(id.pack.equals(ResourceLocation.LOCAL)))
+			((Workspace)UserProfile.getUserPack(id.pack).source).unloadAnimation(this);
 		new SourceAnimSaver(id, this).delete(true);
 	}
 
