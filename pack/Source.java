@@ -510,35 +510,33 @@ public abstract class Source {
 
 		@Override
 		public HashSet<AnimCI> getAnims(BasePath path) {
-			byte ind = animInd(path);
+			byte ind = (byte)(path.equals(BasePath.ANIM) ? 0 : path.equals(BasePath.SOUL) ? 1 : path.equals(BasePath.BGEffect) ? 2 : -1);
 			if (anims[ind] != null)
 				return anims[ind];
 
 			File folder = CommonStatic.ctx.getWorkspaceFile("./" + id + "/" + path + "/");
 			if (folder.exists() && folder.isDirectory()) {
 				File[] animFiles = folder.listFiles();
-				anims[ind] = new HashSet<>(animFiles.length);
-
+				anims[ind] = new LinkedHashSet<>(animFiles.length);
 				Arrays.sort(animFiles);
+
 				for (File f : animFiles) {
 					String sprite = "./" + id + "/" + path + "/" + f.getName() + "/sprite.png";
 					if (f.isDirectory() && CommonStatic.ctx.getWorkspaceFile(sprite).exists()) {
 						anims[ind].add(new AnimCE(new ResourceLocation(id, f.getName(), path)));
 					}
 				}
+				return anims[ind];
 			}
 			return new HashSet<>(1);
 		}
 
 		@Override
 		public AnimCE loadAnimation(String name, BasePath base) {
-			int ind = animInd(base == null ? base = BasePath.ANIM : base);
-			for (AnimCI anim : getAnims(base))
+			for (AnimCI anim : getAnims(base == null ? base = BasePath.ANIM : base))
 				if (name.equals(anim.id.id) && anim.id.base.equals(base))
 					return (AnimCE) anim;
-			AnimCE newAnim = new AnimCE(new ResourceLocation(id, name, base));
-			anims[ind].add(newAnim);
-			return newAnim;
+			return new AnimCE(new ResourceLocation(id, name, base));
 		}
 
 		@Override
@@ -612,7 +610,7 @@ public abstract class Source {
 
 		@Override
 		public HashSet<AnimCI> getAnims(BasePath path) {
-			byte ind = animInd(path);
+			byte ind = (byte)(path.equals(BasePath.ANIM) ? 0 : path.equals(BasePath.SOUL) ? 1 : path.equals(BasePath.BGEffect) ? 2 : -1);
 			if (anims[ind] != null)
 				return anims[ind];
 
@@ -627,19 +625,17 @@ public abstract class Source {
 						anims[ind].add(new AnimCI(new SourceAnimLoader(new ResourceLocation(id, f.getName(), path), this::loadAnimationFile)));
 					}
 				}
+				return anims[ind];
 			}
 			return new HashSet<>(1);
 		}
 
 		@Override
 		public AnimCI loadAnimation(String name, BasePath base) {
-			int ind = animInd(base == null ? base = BasePath.ANIM : base);
-			for (AnimCI anim : getAnims(base))
+			for (AnimCI anim : getAnims(base == null ? base = BasePath.ANIM : base))
 				if (name.equals(anim.id.id) && anim.id.base.equals(base))
 					return anim;
-			AnimCI newAnim = new AnimCI(new SourceAnimLoader(new ResourceLocation(id, name, base), this::loadAnimationFile));
-			anims[ind].add(newAnim);
-			return newAnim;
+			return new AnimCI(new SourceAnimLoader(new ResourceLocation(id, name, base), this::loadAnimationFile));
 		}
 
 		@Override
@@ -681,10 +677,6 @@ public abstract class Source {
 			VFile vf = zip.tree.find("./" + base.toString() + "/" + id.id + "/" + path);
 			return vf == null ? null : vf.getData();
 		}
-	}
-
-	private static byte animInd(BasePath path) {
-		return (byte) (path.equals(BasePath.ANIM) ? 0 : path.equals(BasePath.SOUL) ? 1 : path.equals(BasePath.BGEffect) ? 2 : -1);
 	}
 
 	public enum BasePath {

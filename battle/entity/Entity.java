@@ -1437,7 +1437,7 @@ public abstract class Entity extends AbEntity {
 		maxCurrentShield = currentShield = (int) (data.getProc().DEMONSHIELD.hp * hpMagnif);
 
 		if (((DataEntity)data).tba < 0)
-			waitTime = data.getTBA();
+			waitTime = Math.max(data.getTBA() - 1, 0);
 	}
 
 	public void altAbi(int alt) {
@@ -2269,7 +2269,7 @@ public abstract class Entity extends AbEntity {
 
 			if (!touch && nstop && health > 0) {
 				boolean walk = true;
-				if (!acted && atkm.loop != 0 && !isBase && getProc().AI.type.assist && tba + atkm.atkTime <= 0) {
+				if (!acted && atkm.loop != 0 && !isBase && getProc().AI.type.assist && tba + atkm.atkTime == 0) {
 					int[] supportPwr = new int[data.getAtkTypeCount()];
 					for (int i = 0; i < supportPwr.length; i++) {
 						supportPwr[i] = aam.isSupport(i);
@@ -2311,7 +2311,7 @@ public abstract class Entity extends AbEntity {
 		// update wait and attack state
 		if (kbTime == 0 && anim.anim.type != AnimU.TYPEDEF[AnimU.ENTRY]) {
 			// if it can attack, setup attack state
-			if (!acted && touchEnemy && atkm.loop != 0 && nstop && tba + atkm.atkTime <= 0 && !(isBase && health <= 0))
+			if (!acted && touchEnemy && atkm.loop != 0 && nstop && tba + atkm.atkTime == 0 && !(isBase && health <= 0))
 				atkm.setUp();
 
 			// update waiting state
@@ -2350,7 +2350,7 @@ public abstract class Entity extends AbEntity {
 			tba += data.getTBA() * (status[P_LETHARGY][1] / 100.0);
 		else if (status[P_LETHARGY][2] == 0)
 			tba += status[P_LETHARGY][1];
-		return tba;
+		return Math.max(0, tba);
 	}
 
 	protected int critCalc(boolean isMetal, int ans, AttackAb atk) {

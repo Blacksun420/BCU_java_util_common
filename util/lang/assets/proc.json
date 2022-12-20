@@ -119,7 +119,7 @@
         "abbr_name": "Lethargy",
         "full_name": "Lethargy",
         "tooltip": null,
-        "format": "(prob)% chance to [(mult>0){increase}(mult<0){decrease}] target's TBA by [(type.percentage){(_abs(mult)%)}(!type.percentage){(_dispTime(time))}] for (_dispTime(time))",
+        "format": "(prob)% chance to [(mult>0){increase}(mult<0){decrease}] target's TBA by [(type.percentage){(_abs(mult))%}(!type.percentage){(_dispTime(time))}] for (_dispTime(time))",
         "class": {
             "prob": {
                 "name": "chance",
@@ -1378,7 +1378,7 @@
             "[(dmult!=0){receive (_abs(dmult))% [(dmult>0){more}(dmult<0){less}] damage per hit}]",
             "[(amult!=0|dmult!=0){[(smult!=0&tmult!=0){, }(smult==0^tmult==0){ and }]}]",
             "[(smult!=0){their speed [(smult>100){increased}(smult<100){decreased}] to (smult)%}]",
-            "[(tmult!=0){[(amult!=0|dmult!=0|smult!=0){ and }]their TBA [(amult>0){increased}(amult<0){decreased}] by (_abs(amult))%}]."],
+            "[(tmult!=0){[(amult!=0|dmult!=0|smult!=0){ and }]their TBA [(tmult>0){increased}(tmult<0){decreased}] by (_abs(tmult))%}]."],
         "class": {
             "amult": {
                 "name": "ATK Mult.",
@@ -1420,7 +1420,7 @@
             "[(dmult!=0){receive (dmult)% damage from attacks}]",
             "[(amult!=0|dmult!=0){[(smult!=0&tmult!=0){, }(smult==0^tmult==0){ and }]}]",
             "[(smult!=0){their speed [(smult>0){increased}(smult<0){decreased}] by (smult)%}]",
-            "[(tmult!=0){[(amult!=0|dmult!=0|smult!=0){ and }]their TBA [(amult>0){increased}(amult<0){decreased}] by (_abs(amult))%}]."],
+            "[(tmult!=0){[(amult!=0|dmult!=0|smult!=0){ and }]their TBA [(tmult>100){increased}(tmult<100){decreased}] to (tmult)%}]."],
         "class": {
             "amult": {
                 "name": "ATK Mult.",

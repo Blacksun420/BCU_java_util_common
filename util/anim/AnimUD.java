@@ -122,6 +122,13 @@ public class AnimUD extends AnimU<AnimUD.DefImgLoader> {
 	}
 
 	@Override
+	public void partial() {
+		super.partial();
+		if (types.length == 5)
+			types[4] = TYPEDEF[ENTRY]; //Iron Wall
+	}
+
+	@Override
 	public String toString() {
 		return name;
 	}

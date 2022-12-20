@@ -58,7 +58,7 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
     }
 
     public int indexOf(Object o) {
-        if (size == 0)
+        if (size == 0 || o == null)
             return -1;
 
         int f = 0, l = size - 1;
@@ -114,7 +114,7 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
 
     @Override
     public boolean add(T t) {
-        if (contains(t))
+        if (t == null || contains(t))
             return false;
         if (size == arr.length)
             arr = Arrays.copyOf(arr, arr.length * 2);
