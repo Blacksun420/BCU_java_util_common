@@ -539,6 +539,11 @@ public abstract class Source {
 			return new AnimCE(new ResourceLocation(id, name, base));
 		}
 
+		public void addAnimation(AnimCE anim) {
+			anims[anim.id.base.equals(BasePath.ANIM) ? 0 : anim.id.base.equals(BasePath.SOUL) ? 1 :
+					anim.id.base.equals(BasePath.BGEffect) ? 2 : -1].add(anim);
+		}
+
 		public void unloadAnimation(AnimCE anim) {
 			anims[anim.id.base.equals(BasePath.ANIM) ? 0 : anim.id.base.equals(BasePath.SOUL) ? 1 :
 					anim.id.base.equals(BasePath.BGEffect) ? 2 : -1].remove(anim);
