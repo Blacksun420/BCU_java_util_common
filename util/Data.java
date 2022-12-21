@@ -379,6 +379,9 @@ public class Data {
 				public boolean on_hit;
 				@Order(6)
 				public boolean on_kill;
+				@BitCount(2)
+				@Order(7)
+				public int pass_proc;
 			}
 
 			@Order(0)

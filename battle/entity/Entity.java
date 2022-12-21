@@ -43,7 +43,6 @@ public abstract class Entity extends AbEntity {
 	public static class AnimManager extends BattleObj {
 
 		private final Entity e;
-		private final int[][] status;
 
 		/**
 		 * dead FSM time <br>
@@ -106,7 +105,6 @@ public abstract class Entity extends AbEntity {
 		private AnimManager(Entity ent, EAnimU ea) {
 			e = ent;
 			anim = ea;
-			status = e.status;
 		}
 
 		/**
@@ -124,7 +122,7 @@ public abstract class Entity extends AbEntity {
 				corpse.paraTo(back);
 				corpse.draw(gra, p, siz);
 			}
-			if (corpse == null || status[P_REVIVE][1] < REVIVE_SHOW_TIME) {
+			if (corpse == null || e.status.revs[1] < REVIVE_SHOW_TIME) {
 				if (corpse != null) {
 					gra.setTransform(at);
 					anim.changeAnim(AnimU.TYPEDEF[AnimU.IDLE], false);
@@ -151,7 +149,7 @@ public abstract class Entity extends AbEntity {
 		public void drawEff(FakeGraphics g, P p, double siz) {
 			if (dead != -1)
 				return;
-			if (status[P_WARP][2] != 0)
+			if (e.status.warp[2] != 0)
 				return;
 
 			FakeTransform at = g.getTransform();
@@ -165,7 +163,7 @@ public abstract class Entity extends AbEntity {
 				if(i == A_B || i == A_DEMON_SHIELD || i == A_COUNTER || i == A_DMGCUT || i == A_DMGCAP || i == A_REMSHIELD)
 					continue;
 
-				if ((i == A_SLOW && status[P_STOP][0] != 0) || (i == A_UP && status[P_WEAK][0] != 0) || (i == A_CURSE && status[P_SEAL][0] != 0))
+				if ((i == A_SLOW && e.status.stop != 0) || (i == A_UP && e.status.weak[0] != 0) || (i == A_CURSE && e.status.seal != 0))
 					continue;
 
 				EAnimD<?> eae = effs[i];
@@ -240,12 +238,12 @@ public abstract class Entity extends AbEntity {
 					effs[A_SLOW] = (dire == -1 ? effas().A_SLOW : effas().A_E_SLOW).getEAnim(DefEff.DEF);
 					break;
 				} case P_LETHARGY: {
-					effs[A_LETHARGY] = (dire == -1 ? effas().A_LETHARGY : effas().A_E_LETHARGY).getEAnim(status[P_LETHARGY][1] > 0 ? LethargyEff.DOWN : LethargyEff.UP);
+					effs[A_LETHARGY] = (dire == -1 ? effas().A_LETHARGY : effas().A_E_LETHARGY).getEAnim(e.status.lethargy[1] > 0 ? LethargyEff.DOWN : LethargyEff.UP);
 					break;
 				} case P_WEAK: {
-					if (status[P_WEAK][1] == 100)
+					if (e.status.weak[1] == 100)
 						break;
-					if (status[P_WEAK][1] < 100) {
+					if (e.status.weak[1] < 100) {
 						effs[A_DOWN] = (dire == -1 ? effas().A_DOWN : effas().A_E_DOWN).getEAnim(DefEff.DEF);
 						effs[A_WEAK_UP] = null;
 					} else {
@@ -257,7 +255,7 @@ public abstract class Entity extends AbEntity {
 					effs[A_CURSE] = (dire == -1 ? effas().A_CURSE : effas().A_E_CURSE).getEAnim(DefEff.DEF);
 					break;
 				} case P_POISON: {
-					int mask = status[P_POISON][0];
+					int mask = e.status.poison;
 					EffAnim<?>[] arr = {effas().A_POI0, e.dire == -1 ? effas().A_POI1 : effas().A_POI1_E, effas().A_POI2, effas().A_POI3, effas().A_POI4,
 							effas().A_POI5, effas().A_POI6, effas().A_POI7};
 					for (int i = 0; i < A_POIS.length; i++)
@@ -279,12 +277,12 @@ public abstract class Entity extends AbEntity {
 					break;
 				} case P_WARP: {
 					EffAnim<WarpEff> ea = effas().A_W;
-					int ind = status[P_WARP][2];
+					int ind = e.status.warp[2];
 					WarpEff pa = ind == 0 ? WarpEff.ENTER : WarpEff.EXIT;
 					e.basis.lea.add(new WaprCont(e.pos, pa, e.layer, anim, e.dire));
 					e.basis.lea.sort(Comparator.comparingInt(e -> e.layer));
 					CommonStatic.setSE(ind == 0 ? SE_WARP_ENTER : SE_WARP_EXIT);
-					status[P_WARP][ind] = ea.len(pa);
+					e.status.warp[ind] = ea.len(pa);
 					break;
 				} case BREAK_ABI: {
 					effs[A_B] = (dire == -1 ? effas().A_B : effas().A_E_B).getEAnim(BarrierEff.BREAK);
@@ -299,15 +297,15 @@ public abstract class Entity extends AbEntity {
 					CommonStatic.setSE(SE_BARRIER_NON);
 					break;
 				} case P_ARMOR: {
-					ArmorEff index = status[P_ARMOR][1] >= 0 ? ArmorEff.DEBUFF : ArmorEff.BUFF;
+					ArmorEff index = e.status.armor[1] >= 0 ? ArmorEff.DEBUFF : ArmorEff.BUFF;
 					effs[A_ARMOR] = (dire == -1 ? effas().A_ARMOR : effas().A_E_ARMOR).getEAnim(index);
 					break;
 				} case P_SPEED: {
 					SpeedEff index;
-					if (status[P_SPEED][2] <= 1)
-						index = status[P_SPEED][1] >= 0 ? SpeedEff.UP : SpeedEff.DOWN;
+					if (e.status.speed[2] <= 1)
+						index = e.status.speed[1] >= 0 ? SpeedEff.UP : SpeedEff.DOWN;
 					else
-						index = status[P_SPEED][1] >= e.data.getSpeed() ? SpeedEff.UP : SpeedEff.DOWN;
+						index = e.status.speed[1] >= e.data.getSpeed() ? SpeedEff.UP : SpeedEff.DOWN;
 					effs[A_SPEED] = (dire == -1 ? effas().A_SPEED : effas().A_E_SPEED).getEAnim(index);
 					break;
 				} case HEAL: {
@@ -318,22 +316,18 @@ public abstract class Entity extends AbEntity {
 					boolean half = e.currentShield * 1.0 / (e.getProc().DEMONSHIELD.hp * e.shieldMagnification) < 0.5;
 
 					effs[A_DEMON_SHIELD] = eff.getEAnim(half ? ShieldEff.HALF : ShieldEff.FULL);
-					status[P_DEMONSHIELD][0] = effs[A_DEMON_SHIELD].len();
 					CommonStatic.setSE(SE_SHIELD_HIT);
 					break;
 				} case SHIELD_BROKEN: {
 					effs[A_DEMON_SHIELD] = (dire == -1 ? effas().A_DEMON_SHIELD : effas().A_E_DEMON_SHIELD).getEAnim(ShieldEff.BROKEN);
-					status[P_DEMONSHIELD][0] = effs[A_DEMON_SHIELD].len();
 					CommonStatic.setSE(SE_SHIELD_BROKEN);
 					break;
 				} case SHIELD_REGEN: {
 					effs[A_DEMON_SHIELD] = (dire == -1 ? effas().A_DEMON_SHIELD : effas().A_E_DEMON_SHIELD).getEAnim(ShieldEff.REGENERATION);
-					status[P_DEMONSHIELD][0] = effs[A_DEMON_SHIELD].len();
 					CommonStatic.setSE(SE_SHIELD_REGEN);
 					break;
 				} case SHIELD_BREAKER: {
 					effs[A_DEMON_SHIELD] = (dire == -1 ? effas().A_DEMON_SHIELD : effas().A_E_DEMON_SHIELD).getEAnim(ShieldEff.BREAKER);
-					status[P_DEMONSHIELD][0] = effs[A_DEMON_SHIELD].len();
 					CommonStatic.setSE(SE_SHIELD_BREAKER);
 					break;
 				} case P_COUNTER: {
@@ -376,41 +370,41 @@ public abstract class Entity extends AbEntity {
 		private void checkEff() {
 			if (efft == 0)
 				effs[eftp] = null;
-			if (status[P_STOP][0] == 0)
+			if (e.status.stop == 0)
 				effs[A_STOP] = null;
-			if (status[P_SLOW][0] == 0)
+			if (e.status.slow == 0)
 				effs[A_SLOW] = null;
-			if (status[P_WEAK][0] == 0 || status[P_WEAK][1] == 100) {
-				byte id = status[P_WEAK][1] <= 100 ? A_DOWN : A_WEAK_UP;
+			if (e.status.weak[0] == 0 || e.status.weak[1] == 100) {
+				byte id = e.status.weak[1] <= 100 ? A_DOWN : A_WEAK_UP;
 
-				status[P_WEAK][1] = 100;
+				e.status.weak[1] = 100;
 				effs[id] = null;
 			}
-			if (status[P_LETHARGY][0] == 0) {
-				status[P_LETHARGY][2] = -1;
+			if (e.status.lethargy[0] == 0) {
+				e.status.lethargy[2] = -1;
 				effs[A_LETHARGY] = null;
 			}
-			if (status[P_CURSE][0] == 0)
+			if (e.status.curse == 0)
 				effs[A_CURSE] = null;
-			if (status[P_IMUATK][0] == 0 && status[P_BSTHUNT][0] == 0)
+			if (e.status.inv == 0 && e.status.wild == 0)
 				effs[A_IMUATK] = null;
-			if (status[P_POISON][0] == 0)
+			if (e.status.poison == 0)
 				for(int i = 0; i < A_POIS.length; i++)
 					effs[A_POIS[i]] = null;
-			if (status[P_SEAL][0] == 0)
+			if (e.status.seal == 0)
 				effs[A_SEAL] = null;
 
 			if (effs[A_SHIELD] != null && effs[A_SHIELD].done())
 				effs[A_SHIELD] = null;
 			if (effs[A_WAVE_INVALID] != null && effs[A_WAVE_INVALID].done())
 				effs[A_WAVE_INVALID] = null;
-			if (status[P_STRONG][0] == 0)
+			if (e.status.strengthen == 0)
 				effs[A_UP] = null;
 			if (effs[A_B] != null && effs[A_B].done())
 				effs[A_B] = null;
-			if (status[P_ARMOR][0] == 0)
+			if (e.status.armor[0] == 0)
 				effs[A_ARMOR] = null;
-			if (status[P_SPEED][0] == 0)
+			if (e.status.speed[0] == 0)
 				effs[A_SPEED] = null;
 			if(effs[A_HEAL] != null && effs[A_HEAL].done())
 				effs[A_HEAL] = null;
@@ -430,7 +424,7 @@ public abstract class Entity extends AbEntity {
 		private void kbAnim() {
 			int t = e.kb.kbType;
 			if (t != INT_SW && t != INT_WARP)
-				if(e.status[P_REVIVE][1] >= REVIVE_SHOW_TIME) {
+				if(e.status.revs[1] >= REVIVE_SHOW_TIME) {
 					e.anim.corpse = (e.dire == -1 ? effas().A_U_ZOMBIE : effas().A_ZOMBIE).getEAnim(ZombieEff.BACK);
 				} else {
 					if (e.anim.corpse != null) {
@@ -440,19 +434,19 @@ public abstract class Entity extends AbEntity {
 									e.basis.getAttack(e.aam.getSpAttack(REVI, i));
 						}
 						e.anim.corpse = null;
-						status[P_REVIVE][1] = 0;
+						e.status.revs[1] = 0;
 					}
 					setAnim(AnimU.TYPEDEF[AnimU.HB], true);
 				}
 			else
 				setAnim(AnimU.TYPEDEF[AnimU.WALK], false);
 			if (t == INT_WARP) {
-				e.kbTime = status[P_WARP][0];
+				e.kbTime = e.status.warp[0];
 				getEff(P_WARP);
-				status[P_WARP][2] = 1;
+				e.status.warp[2] = 1;
 			}
 			if (t == INT_KB)
-				e.kbTime = status[P_KB][0];
+				e.kbTime = e.status.kb;
 			if (t == INT_HB)
 				back = effas().A_KB.getEAnim(KBEff.KB);
 			if (t == INT_SW)
@@ -485,7 +479,8 @@ public abstract class Entity extends AbEntity {
 			if (e.getProc().DEATHSURGE.perform(e.basis.r)) {
 				deathSurge = true;
 
-				status[P_WEAK][0] = status[P_WEAK][1] = 0;
+				e.status.weak[0] = 0;
+				e.status.weak[1] = 100;
 				soul = UserProfile.getBCData().demonSouls.get((1 - e.dire) / 2).getEAnim(AnimU.SOUL[0]);
 				dead = soul.len();
 				CommonStatic.setSE(SE_DEATH_SURGE);
@@ -522,7 +517,7 @@ public abstract class Entity extends AbEntity {
 					effs[i].update(false);
 
 			boolean checkKB = e.kb.kbType != INT_SW && e.kb.kbType != INT_WARP;
-			if (status[P_STOP][0] == 0 && (e.kbTime == 0 || checkKB))
+			if (e.status.stop == 0 && (e.kbTime == 0 || checkKB))
 				anim.update(false);
 			if (back != null)
 				back.update(false);
@@ -787,7 +782,7 @@ public abstract class Entity extends AbEntity {
 
 				e.anim.back = null;
 
-				if(e.status[P_REVIVE][1] > 0)
+				if(e.status.revs[1] > 0)
 					e.anim.corpse = (e.dire == -1 ? effas().A_U_ZOMBIE : effas().A_ZOMBIE).getEAnim(ZombieEff.DOWN);
 
 				e.anim.setAnim(AnimU.TYPEDEF[AnimU.WALK], true);
@@ -830,20 +825,20 @@ public abstract class Entity extends AbEntity {
 					time++;
 				} else {
 					e.anim.setAnim(AnimU.TYPEDEF[AnimU.IDLE], false);
-					if (e.status[P_WARP][0] > 0)
-						e.status[P_WARP][0]--;
-					if (e.status[P_WARP][1] > 0)
-						e.status[P_WARP][1]--;
+					if (e.status.warp[0] > 0)
+						e.status.warp[0]--;
+					if (e.status.warp[1] > 0)
+						e.status.warp[1]--;
 					EffAnim<WarpEff> ea = effas().A_W;
 					if (e.kbTime + 1 == ea.len(WarpEff.EXIT)) {
 						kbmove(kbDis);
 						kbDis = 0;
 						e.anim.getEff(P_WARP);
-						e.status[P_WARP][2] = 0;
+						e.status.warp[2] = 0;
 						e.kbTime -= 11;
 					}
 				}
-				if (kbType == INT_HB && e.data.getRevenge() != null) {
+				if (kbType == INT_HB) {
 					for (int i = 0; i < e.data.getRevenge().length; i++)
 						if (KB_TIME[INT_HB] - e.kbTime == e.data.getRevenge()[i].pre)
 							e.basis.getAttack(e.aam.getSpAttack(REV, i));
@@ -880,7 +875,7 @@ public abstract class Entity extends AbEntity {
 			int max = 0;
 			for (int i = 0; i < list.size(); i++)
 				max |= 1 << type(list.get(i));
-			e.status[P_POISON][0] = max;
+			e.status.poison = max;
 		}
 
 		private int type(POISON ws) {
@@ -913,37 +908,34 @@ public abstract class Entity extends AbEntity {
 		private Barrier (Entity ent) { e = ent; }
 
 		private void update() {
-			if (e.status[P_BARRIER][0] > 0) {
-				if (e.status[P_BARRIER][2] > 0) {
-					e.status[P_BARRIER][2]--;
-					if (e.status[P_BARRIER][2] == 0)
+			if (e.status.barrier[0] > 0) {
+				if (e.status.barrier[1] > 0) {
+					e.status.barrier[1]--;
+					if (e.status.barrier[1] == 0)
 						breakBarrier(false);
 				}
-			} else if (e.status[P_BARRIER][1] > 0) {
-				e.status[P_BARRIER][1]--;
-				if (e.status[P_BARRIER][1] == 0) {
-					e.status[P_BARRIER][0] = e.getProc().BARRIER.type.magnif ? (int) (e.shieldMagnification * e.getProc().BARRIER.health) : e.getProc().BARRIER.health;
+			} else if (e.status.barrier[1] > 0) {
+				e.status.barrier[1]--;
+				if (e.status.barrier[1] == 0) {
+					e.status.barrier[0] = e.getProc().BARRIER.type.magnif ? (int) (e.shieldMagnification * e.getProc().BARRIER.health) : e.getProc().BARRIER.health;
 					int timeout = e.getProc().BARRIER.timeout;
 					if (timeout > 0)
-						e.status[P_BARRIER][2] = timeout + effas().A_B.len(BarrierEff.NONE);
+						e.status.barrier[1] = timeout + effas().A_B.len(BarrierEff.NONE);
 					e.anim.getEff(BREAK_NON);
 				}
 			}
 		}
 
 		private void breakBarrier(boolean abi) {
-			e.status[P_BARRIER][0] = 0;
-
-			int regen = e.getProc().BARRIER.regentime;
-			if (regen > 0) {
-				int len = abi ? effas().A_B.len(BarrierEff.BREAK) : effas().A_B.len(BarrierEff.DESTR);
-				e.status[P_BARRIER][1] = regen + len;
-			}
-
+			e.status.barrier[0] = 0;
 			if (abi)
 				e.anim.getEff(BREAK_ABI);
 			else
 				e.anim.getEff(BREAK_ATK);
+
+			int regen = e.getProc().BARRIER.regentime;
+			if (regen > 0)
+				e.status.barrier[1] = regen + e.anim.effs[A_B].len();
 		}
 	}
 
@@ -965,7 +957,7 @@ public abstract class Entity extends AbEntity {
 		}
 
 		private byte canRevive() {
-			if (e.status[P_REVIVE][0] != 0)
+			if (e.status.revs[0] != 0)
 				return 1;
 			int tot = totExRev();
 			if (tot == -1 || tot > extraRev)
@@ -990,7 +982,7 @@ public abstract class Entity extends AbEntity {
 			int deadAnim = minRevTime();
 			EffAnim<ZombieEff> ea = effas().A_ZOMBIE;
 			deadAnim += ea.getEAnim(ZombieEff.REVIVE).len();
-			e.status[P_REVIVE][1] = deadAnim;
+			e.status.revs[1] = deadAnim;
 			int maxR = maxRevHealth();
 			if (maxR > 100)
 				e.health = e.maxH = Math.min(Integer.MAX_VALUE, e.maxH * maxR / 100);
@@ -998,28 +990,28 @@ public abstract class Entity extends AbEntity {
 				e.health = e.maxH * maxR / 100;
 
 			if (c == 1)
-				e.status[P_REVIVE][0]--;
+				e.status.revs[0]--;
 			else if (c == 2)
 				extraRev++;
 		}
 
 		private int maxRevHealth() {
-			int max = e.getProc().REVIVE.health;
-			if (e.status[P_REVIVE][0] == 0)
+			int max = e.data.getProc().REVIVE.health;
+			if (e.status.revs[0] == 0)
 				max = 0;
 			for (Entity zx : list) {
-				int val = zx.getProc().REVIVE.health;
+				int val = zx.data.getProc().REVIVE.health;
 				max = Math.max(max, val);
 			}
 			return max;
 		}
 
 		private int minRevTime() {
-			int min = e.getProc().REVIVE.time;
-			if (e.status[P_REVIVE][0] == 0)
+			int min = e.data.getProc().REVIVE.time;
+			if (e.status.revs[0] == 0)
 				min = Integer.MAX_VALUE;
 			for (Entity zx : list) {
-				int val = zx.getProc().REVIVE.time;
+				int val = zx.data.getProc().REVIVE.time;
 				min = Math.min(min, val);
 			}
 			return min;
@@ -1033,19 +1025,15 @@ public abstract class Entity extends AbEntity {
 		private boolean prekill() {
 			int c = canRevive();
 			if (!tempZK && c > 0) {
-				int[][] status = e.status;
+				ProcManager status = e.status;
 				doRevive(c);
 				// clear state
 				e.bdist = 0;
-				status[P_BURROW][2] = 0;
-				status[P_STOP] = new int[PROC_WIDTH];
-				status[P_SLOW] = new int[PROC_WIDTH];
-				status[P_WEAK] = new int[PROC_WIDTH];
-				status[P_CURSE] = new int[PROC_WIDTH];
-				status[P_SEAL] = new int[PROC_WIDTH];
-				status[P_STRONG] = new int[PROC_WIDTH];
-				status[P_LETHAL] = new int[PROC_WIDTH];
-				status[P_POISON] = new int[PROC_WIDTH];
+				status.removeActive(false);
+				status.burs[1] = 0;
+				status.strengthen = 0;
+				status.lethal = false;
+				status.poison = 0;
 				return true;
 			}
 			return false;
@@ -1054,7 +1042,7 @@ public abstract class Entity extends AbEntity {
 		private int totExRev() {
 			int sum = 0;
 			for (Entity zx : list) {
-				int val = zx.getProc().REVIVE.count;
+				int val = zx.data.getProc().REVIVE.count;
 				if (val == -1)
 					return -1;
 				sum += val;
@@ -1066,7 +1054,7 @@ public abstract class Entity extends AbEntity {
 		 * update revive status
 		 */
 		private void updateRevive() {
-			int[][] status = e.status;
+			int[] rev = e.status.revs;
 			AnimManager anim = e.anim;
 
 			list.removeIf(em -> {
@@ -1097,30 +1085,30 @@ public abstract class Entity extends AbEntity {
 				list.add(em);
 			}
 
-			if (status[P_REVIVE][1] > 0) {
+			if (rev[1] > 0) {
 				e.acted = true;
 				EffAnim<ZombieEff> ea = e.dire == -1 ? effas().A_U_ZOMBIE : effas().A_ZOMBIE;
 				if (anim.corpse == null) {
 					anim.corpse = ea.getEAnim(ZombieEff.DOWN);
 					anim.corpse.setTime(0);
 				}
-				if (status[P_REVIVE][1] == ea.getEAnim(ZombieEff.REVIVE).len()) {
+				if (rev[1] == ea.getEAnim(ZombieEff.REVIVE).len()) {
 					anim.corpse = ea.getEAnim(ZombieEff.REVIVE);
 					anim.corpse.setTime(0);
 				}
 				if(e.kbTime == 0) {
-					status[P_REVIVE][1]--;
+					rev[1]--;
 
 					if(anim.corpse != null && anim.corpse.type == ZombieEff.REVIVE)
 						for (int i = 0; i < e.data.getRevive().length; i++)
-							if (anim.corpse.len() - status[P_REVIVE][1] == e.data.getRevive()[i].pre) {
+							if (anim.corpse.len() - rev[1] == e.data.getRevive()[i].pre) {
 								e.basis.getAttack(e.aam.getSpAttack(REVI, i));
 					}
 
 					if (anim.corpse != null)
 						anim.corpse.update(false);
 				}
-				if (status[P_REVIVE][1] == 0) {
+				if (rev[1] == 0) {
 					if(anim.corpse != null && e.anim.corpse.type == ZombieEff.REVIVE)
 						for (int i = 0; i < e.data.getRevive().length; i++)
 							if (e.data.getRevive()[i].pre >= e.anim.corpse.len()) {
@@ -1218,6 +1206,98 @@ public abstract class Entity extends AbEntity {
 		}
 	}
 
+	public static class ProcManager extends BattleObj {
+
+		public boolean lethal;
+		public int kb, slow, stop, curse, seal, strengthen, money, dcut, dcap, poison, inv, wild;
+		public final int[] weak = new int[2], barrier = new int[3], shield = new int[2], burs = new int[2], revs = new int[2], armor = new int[2], speed = new int[3];
+		public final int[] lethargy = new int[3], warp = new int[3];
+
+		private final Entity e;
+
+		public ProcManager(Entity ent) {
+			e = ent;
+		}
+
+		public void update() {
+			if (stop > 0)
+				stop--;
+			if (slow > 0)
+				slow--;
+			if (weak[0] > 0)
+				weak[0]--;
+			if (curse > 0)
+				curse--;
+			if (seal > 0)
+				seal--;
+			if (poison > 0)
+				poison--;
+			if (armor[0] > 0)
+				armor[0]--;
+			if (speed[0] > 0)
+				speed[0]--;
+			if (lethargy[0] > 0)
+				lethargy[0]--;
+			if (inv > 0)
+				inv--;
+			if (wild > 0)
+				wild--;
+		}
+
+		public void pass(ProcManager pm) {
+			stop = Math.max(stop, pm.stop);
+			if (stop != 0)
+				e.anim.getEff(P_STOP);
+			slow = Math.max(slow, pm.slow);
+			if (slow != 0)
+				e.anim.getEff(P_SLOW);
+			curse = Math.max(curse, pm.curse);
+			if (curse != 0)
+				e.anim.getEff(P_CURSE);
+			seal = Math.max(seal, pm.seal);
+			if (seal != 0)
+				e.anim.getEff(P_SEAL);
+			poison = Math.max(poison, pm.poison);
+			if (poison != 0)
+				e.anim.getEff(P_POISON);
+
+			if (pm.armor[0] != 0) {
+				armor[0] = pm.armor[0];
+				armor[1] = pm.armor[1];
+				e.anim.getEff(P_ARMOR);
+			}
+			if (pm.lethargy[0] != 0) {
+				lethargy[0] = pm.lethargy[0];
+				lethargy[1] = pm.lethargy[1];
+				lethargy[2] = pm.lethargy[2];
+				e.anim.getEff(P_LETHARGY);
+			}
+			if (pm.speed[0] != 0) {
+				speed[0] = pm.speed[0];
+				speed[1] = pm.speed[1];
+				speed[2] = pm.speed[2];
+				e.anim.getEff(P_SPEED);
+			}
+			if (pm.weak[0] != 0) {
+				if ((weak[0] - 100) * (pm.weak[0] - 100) == 1)
+					weak[0] = Math.max(weak[0], pm.weak[0]);
+				else
+					weak[0] = pm.weak[0];
+
+				if (pm.weak[1] < 100)
+					weak[1] = Math.min(weak[1], pm.weak[1]);
+				else
+					weak[1] = Math.max(weak[1], pm.weak[1]);
+				e.anim.getEff(P_WEAK);
+			}
+		}
+
+		public void removeActive(boolean one) {
+			e.pois.list.clear();
+			stop = slow = weak[0] = curse = seal = poison = armor[0] = speed[0] = lethargy[0] = one ? 1 : 0;
+		}
+	}
+
 	public final AnimManager anim;
 
 	private final AtkManager atkm;
@@ -1284,7 +1364,7 @@ public abstract class Entity extends AbEntity {
 	/**
 	 * proc status, contains ability-specific status data
 	 */
-	public final int[][] status = new int[PROC_TOT][PROC_WIDTH];
+	public final ProcManager status = new ProcManager(this);
 
 	/**
 	 * trait of enemy, also target trait of unit, uses list
@@ -1422,19 +1502,14 @@ public abstract class Entity extends AbEntity {
 	 * Initializes all non-final variables found in both constructors
 	 */
 	private void ini(double hpMagnif) {
-		status[P_WEAK][1] = 100;
-		status[P_BARRIER][0] = getProc().BARRIER.type.magnif ? (int) (getProc().BARRIER.health * hpMagnif) : getProc().BARRIER.health;
-		status[P_BARRIER][1] = getProc().BARRIER.regentime;
-		status[P_BARRIER][2] = getProc().BARRIER.timeout;
-		status[P_BURROW][0] = getProc().BURROW.count;
-		status[P_REVIVE][0] = getProc().REVIVE.count;
-		status[P_DMGCUT][0] = getProc().DMGCUT.type.magnif ? (int) (hpMagnif * getProc().DMGCUT.dmg) : getProc().DMGCUT.dmg;
-		status[P_DMGCAP][0] = getProc().DMGCAP.type.magnif ? (int) (hpMagnif * getProc().DMGCAP.dmg) : getProc().DMGCAP.dmg;
-		sealed.BURROW.set(data.getProc().BURROW);
-		sealed.REVIVE.count = data.getProc().REVIVE.count;
-		sealed.REVIVE.time = data.getProc().REVIVE.time;
-		sealed.REVIVE.health = data.getProc().REVIVE.health;
-		maxCurrentShield = currentShield = (int) (data.getProc().DEMONSHIELD.hp * hpMagnif);
+		status.weak[1] = 100;
+		status.barrier[0] = getProc().BARRIER.type.magnif ? (int) (getProc().BARRIER.health * hpMagnif) : getProc().BARRIER.health;
+		status.barrier[1] = getProc().BARRIER.timeout;
+		status.burs[0] = data.getProc().BURROW.count;
+		status.revs[0] = data.getProc().REVIVE.count;
+		status.dcut = data.getProc().DMGCUT.type.magnif ? (int) (hpMagnif * data.getProc().DMGCUT.dmg) : data.getProc().DMGCUT.dmg;
+		status.dcap = data.getProc().DMGCAP.type.magnif ? (int) (hpMagnif * data.getProc().DMGCAP.dmg) : data.getProc().DMGCAP.dmg;
+		status.shield[0] = status.shield[1] = (int)(data.getProc().DEMONSHIELD.hp * hpMagnif);
 
 		if (((DataEntity)data).tba < 0)
 			waitTime = Math.max(data.getTBA() - 1, 0);
@@ -1455,7 +1530,7 @@ public abstract class Entity extends AbEntity {
 		int dmg = getDamage(atk, atk.atk);
 		boolean proc = true;
 
-		if (anim.corpse != null && anim.corpse.type == ZombieEff.REVIVE && status[P_REVIVE][1] >= REVIVE_SHOW_TIME)
+		if (anim.corpse != null && anim.corpse.type == ZombieEff.REVIVE && status.revs[1] >= REVIVE_SHOW_TIME)
 			return;
 
 		Proc.CANNI cRes = getProc().IMUCANNON;
@@ -1516,16 +1591,16 @@ public abstract class Entity extends AbEntity {
 
 		Proc.PT imuatk = getProc().IMUATK;
 		if (imuatk.prob > 0 && (atk.dire == -1 || receive(-1)) || ctargetable(atk.trait, atk.attacker)) {
-			if (status[P_IMUATK][0] == 0 && (imuatk.prob == 100 || basis.r.nextDouble() * 100 < imuatk.prob)) {
-				status[P_IMUATK][0] = (int) (imuatk.time * (1 + 0.2 / 3 * getFruit(atk.trait, atk.dire, -1)));
+			if (status.inv == 0 && (imuatk.prob == 100 || basis.r.nextDouble() * 100 < imuatk.prob)) {
+				status.inv = (int) (imuatk.time * (1 + 0.2 / 3 * getFruit(atk.trait, atk.dire, -1)));
 				anim.getEff(P_IMUATK);
 			}
-			if (status[P_IMUATK][0] > 0)
+			if (status.inv > 0)
 				return;
 		}
 
 		Proc.DMGCUT dmgcut = getProc().DMGCUT;
-		if (dmgcut.prob > 0 && ((dmgcut.type.traitIgnore && status[P_CURSE][0] == 0) || ctargetable(atk.trait, atk.attacker)) && dmg < status[P_DMGCUT][0] && dmg > 0 && (dmgcut.prob == 100 || basis.r.nextDouble() * 100 < dmgcut.prob)) {
+		if (dmgcut.prob > 0 && ((dmgcut.type.traitIgnore && status.curse == 0) || ctargetable(atk.trait, atk.attacker)) && dmg < status.dcut && dmg > 0 && (dmgcut.prob == 100 || basis.r.nextDouble() * 100 < dmgcut.prob)) {
 			anim.getEff(P_DMGCUT);
 			if (dmgcut.type.procs)
 				proc = false;
@@ -1539,7 +1614,7 @@ public abstract class Entity extends AbEntity {
 		}
 
 		Proc.DMGCAP dmgcap = getProc().DMGCAP;
-		if (dmgcap.prob > 0 && ((dmgcap.type.traitIgnore && status[P_CURSE][0] == 0) || ctargetable(atk.trait, atk.attacker)) && dmg > status[P_DMGCAP][0] && (dmgcap.prob == 100 || basis.r.nextDouble() * 100 < dmgcap.prob)) {
+		if (dmgcap.prob > 0 && ((dmgcap.type.traitIgnore && status.curse == 0) || ctargetable(atk.trait, atk.attacker)) && dmg > status.dcap && (dmgcap.prob == 100 || basis.r.nextDouble() * 100 < dmgcap.prob)) {
 			anim.getEff(dmgcap.type.nullify ? DMGCAP_SUCCESS : DMGCAP_FAIL);
 			if (dmgcap.type.procs)
 				proc = false;
@@ -1549,13 +1624,13 @@ public abstract class Entity extends AbEntity {
 					return;
 				dmg = 0;
 			} else
-				dmg = status[P_DMGCAP][0];
+				dmg = status.dcap;
 		}
 
 		if (atk.attacker != null) {
 			Proc.REMOTESHIELD remote = getProc().REMOTESHIELD;
 			double stRange = Math.abs(atk.attacker.pos - pos);
-			if (remote.prob > 0 && remote.reduction + remote.block != 0 && ((!remote.type.traitCon && status[P_CURSE][0] == 0) || ctargetable(atk.trait, atk.attacker)) &&
+			if (remote.prob > 0 && remote.reduction + remote.block != 0 && ((!remote.type.traitCon && status.curse == 0) || ctargetable(atk.trait, atk.attacker)) &&
 					(remote.type.waves || atk instanceof AttackSimple) && stRange >= remote.minrange && stRange <= remote.maxrange && (remote.prob == 100 || basis.r.nextDouble() * 100 < remote.prob)) {
 				if (remote.type.procs)
 					proc = false;
@@ -1575,7 +1650,7 @@ public abstract class Entity extends AbEntity {
 					dmg = dmg * (100 - remote.reduction) / 100;
 			}
 			for (Proc.REMOTESHIELD r : atk.r) {
-				if (((!r.type.traitCon && status[P_CURSE][0] == 0) || ctargetable(atk.trait, atk.attacker))
+				if (((!r.type.traitCon && status.curse == 0) || ctargetable(atk.trait, atk.attacker))
 						&& stRange >= r.minrange && stRange <= r.maxrange) {
 					if (r.type.procs)
 						proc = false;
@@ -1590,64 +1665,56 @@ public abstract class Entity extends AbEntity {
 			}
 		}
 
-		boolean barrierContinue = status[P_BARRIER][0] == 0;
+		boolean barrierContinue = status.barrier[0] == 0;
 		boolean shieldContinue = currentShield == 0;
 
 		if (!barrierContinue) {
 			if (atk.getProc().BREAK.prob > 0) {
 				barrier.breakBarrier(true);
 				barrierContinue = true;
-			} else if (dmg >= status[P_BARRIER][0]) {
+			} else if (dmg >= status.barrier[0]) {
 				barrier.breakBarrier(false);
-				cancelAllProc();
+				status.removeActive(true);
 			} else {
 				anim.getEff(BREAK_NON);
-				cancelAllProc();
+				status.removeActive(true);
 			}
 		}
 
 		if (!shieldContinue) {
 			if (atk.getProc().SHIELDBREAK.prob > 0) {
-				currentShield = 0;
+				status.shield[0] = 0;
 
 				anim.getEff(SHIELD_BREAKER);
-
 				shieldContinue = true;
 			} else if (dmg >= currentShield) {
-				currentShield = 0;
+				status.shield[0] = 0;
 
 				anim.getEff(SHIELD_BROKEN);
-
-				cancelAllProc();
+				status.removeActive(true);
 			} else {
-				currentShield -= dmg;
+				status.shield[0] -= dmg;
 
-				if (currentShield > maxCurrentShield)
-					currentShield = maxCurrentShield;
-
+				if (status.shield[0] > status.shield[1])
+					status.shield[0] = status.shield[1];
 				anim.getEff(SHIELD_HIT);
-
-				cancelAllProc();
+				status.removeActive(true);
 			}
 		}
-
 		if (!barrierContinue)
 			return;
-
 		//75.0 is guessed value compared from BC
 		if (atk.getProc().CRIT.mult > 0) {
 			basis.lea.add(new EAnimCont(pos, layer, effas().A_CRIT.getEAnim(DefEff.DEF), -75.0));
 			basis.lea.sort(Comparator.comparingInt(e -> e.layer));
 			CommonStatic.setSE(SE_CRIT);
 		}
-
 		//75.0 is guessed value compared from BC
 		if (atk.getProc().SATK.mult > 0) {
 			basis.lea.add(new EAnimCont(pos, layer, effas().A_SATK.getEAnim(DefEff.DEF), -75.0));
 			basis.lea.sort(Comparator.comparingInt(e -> e.layer));
 			CommonStatic.setSE(SE_SATK);
 		}
-
 		if (!shieldContinue)
 			return;
 
@@ -1656,7 +1723,7 @@ public abstract class Entity extends AbEntity {
 		hit = 2;
 		damage += dmg;
 		zx.damaged(atk);
-		status[P_BOUNTY][0] = atk.getProc().BOUNTY.mult;
+		status.money = atk.getProc().BOUNTY.mult;
 
 		if (atk.atk < 0)
 			anim.getEff(HEAL);
@@ -1694,8 +1761,14 @@ public abstract class Entity extends AbEntity {
 					if (data.getCounter() != null) {
 						if (counter.type.useOwnDamage)
 							reflectAtk = data.getCounter().atk;
-						else
+						else {
 							reflectAtk = reflectAtk * counter.damage / 100;
+							if (e.status.weak[0] > 0)
+								reflectAtk = reflectAtk * e.status.weak[1] / 100;
+							if (e.status.strengthen != 0)
+								reflectAtk += reflectAtk * e.status.strengthen / 100;
+							reflectAtk *= auras.getAtkAura();
+						}
 
 						if (counter.type.procType >= 2) {
 							Proc p = data.getCounter().getProc();
@@ -1706,7 +1779,14 @@ public abstract class Entity extends AbEntity {
 					} else {
 						if (counter.type.useOwnDamage)
 							reflectAtk = getAtk();
-						reflectAtk = reflectAtk * counter.damage / 100;
+						else {
+							reflectAtk = reflectAtk * counter.damage / 100;
+							if (e.status.weak[0] > 0)
+								reflectAtk = reflectAtk * e.status.weak[1] / 100;
+							if (e.status.strengthen != 0)
+								reflectAtk += reflectAtk * e.status.strengthen / 100;
+							reflectAtk *= auras.getAtkAura();
+						}
 
 						if (counter.type.procType >= 2) {
 							Proc p = data.getAllProc();
@@ -1719,11 +1799,6 @@ public abstract class Entity extends AbEntity {
 							}
 						}
 					}
-					if (e.status[P_WEAK][0] > 0)
-						reflectAtk = reflectAtk * e.status[P_WEAK][1] / 100;
-					if (e.status[P_STRONG][0] != 0)
-						reflectAtk += reflectAtk * e.status[P_STRONG][0] / 100;
-					reflectAtk *= auras.getAtkAura();
 
 					AttackSimple as = new AttackSimple(this, aam, reflectAtk, traits, getAbi(), reflectProc, ds[0], ds[1],
 							e.data.getCounter() != null ? e.data.getCounter() : e.data.getAtkModel(0, 0), e.layer, false);
@@ -1736,8 +1811,8 @@ public abstract class Entity extends AbEntity {
 
 			int d = FDmg;
 
-			if (status[P_ARMOR][0] > 0) {
-				d *= (100 + status[P_ARMOR][1]) / 100.0;
+			if (status.armor[0] > 0) {
+				d *= (100 + status.armor[1]) / 100.0;
 			}
 
 			e.damageGiven += Math.min(d, health);
@@ -1781,9 +1856,9 @@ public abstract class Entity extends AbEntity {
 			if (rst < 100) {
 				val = val * (100 - rst) / 100;
 				if (val < 0)
-					status[P_STOP][0] = Math.max(status[P_STOP][0], Math.abs(val));
+					status.stop = Math.max(status.stop, Math.abs(val));
 				else
-					status[P_STOP][0] = val;
+					status.stop = val;
 				anim.getEff(P_STOP);
 			} else
 				anim.getEff(INV);
@@ -1794,9 +1869,9 @@ public abstract class Entity extends AbEntity {
 			if (rst < 100) {
 				val = val * (100 - rst) / 100;
 				if (val < 0)
-					status[P_SLOW][0] = Math.max(status[P_SLOW][0], Math.abs(val));
+					status.slow = Math.max(status.slow, Math.abs(val));
 				else
-					status[P_SLOW][0] = val;
+					status.slow = val;
 				anim.getEff(P_SLOW);
 			} else
 				anim.getEff(INV);
@@ -1807,11 +1882,16 @@ public abstract class Entity extends AbEntity {
 			val = val * (100 - rst) / 100;
 			if (rst < 100) {
 				if (val < 0)
-					status[P_WEAK][0] = Math.max(status[P_WEAK][0], Math.abs(val));
+					status.weak[0] = Math.max(status.weak[0], Math.abs(val));
 				else
-					status[P_WEAK][0] = val;
-				status[P_WEAK][1] = status[P_WEAK][1] == 100 ? atk.getProc().WEAK.mult : Math.min(status[P_WEAK][1], atk.getProc().WEAK.mult);
+					status.weak[0] = val;
 
+				if (atk.getProc().WEAK.mult > 100)
+					status.weak[1] = Math.max(status.weak[1], atk.getProc().WEAK.mult);
+				else if (val < 0)
+					status.weak[1] = Math.min(status.weak[1], atk.getProc().WEAK.mult);
+				else
+					status.weak[1] = atk.getProc().WEAK.mult;
 				anim.getEff(P_WEAK);
 			} else
 				anim.getEff(INV);
@@ -1822,14 +1902,14 @@ public abstract class Entity extends AbEntity {
 			val = val * (100 - rst) / 100;
 			if (rst < 100) {
 				if (val < 0)
-					status[P_LETHARGY][0] = Math.max(status[P_LETHARGY][0], Math.abs(val));
+					status.lethargy[0] = Math.max(status.lethargy[0], Math.abs(val));
 				else
-					status[P_LETHARGY][0] = val;
-				status[P_LETHARGY][1] = Math.min(status[P_LETHARGY][1], atk.getProc().LETHARGY.mult);
+					status.lethargy[0] = val;
+				status.lethargy[1] = Math.min(status.lethargy[1], atk.getProc().LETHARGY.mult);
 				boolean t = atk.getProc().LETHARGY.type.percentage;
-				if (status[P_LETHARGY][2] == -1 || (t && status[P_LETHARGY][1] * data.getTBA() > status[P_LETHARGY][1] + data.getTBA()) ||
-						(!t && status[P_LETHARGY][1] * data.getTBA() < status[P_LETHARGY][1] + data.getTBA()))
-					status[P_LETHARGY][2] = t ? 1 : 0;
+				if (status.lethargy[2] == -1 || (t && status.lethargy[1] * data.getTBA() > status.lethargy[1] + data.getTBA()) ||
+						(!t && status.lethargy[1] * data.getTBA() < status.lethargy[1] + data.getTBA()))
+					status.lethargy[2] = t ? 1 : 0;
 				anim.getEff(P_LETHARGY);
 			} else
 				anim.getEff(INV);
@@ -1840,9 +1920,9 @@ public abstract class Entity extends AbEntity {
 			if (rst < 100) {
 				val = val * (100 - rst) / 100;
 				if (val < 0)
-					status[P_CURSE][0] = Math.max(status[P_CURSE][0], Math.abs(val));
+					status.curse = Math.max(status.curse, Math.abs(val));
 				else
-					status[P_CURSE][0] = val;
+					status.curse = val;
 				anim.getEff(P_CURSE);
 			} else
 				anim.getEff(INV);
@@ -1850,7 +1930,7 @@ public abstract class Entity extends AbEntity {
 		if (atk.getProc().KB.dis != 0) {
 			int rst = getProc().IMUKB.mult;
 			if (rst < 100) {
-				status[P_KB][0] = atk.getProc().KB.time;
+				status.kb = atk.getProc().KB.time;
 				interrupt(P_KB, atk.getProc().KB.dis * dist * (100 - rst) / 100);
 			} else
 				anim.getEff(INV);
@@ -1869,7 +1949,7 @@ public abstract class Entity extends AbEntity {
 				int val = atk.getProc().WARP.time;
 				int rst = getProc().IMUWARP.mult;
 				val = val * (100 - rst) / 100;
-				status[P_WARP][0] = val + len;
+				status.warp[0] = val + len;
 			} else
 				anim.getEff(INVWARP);
 
@@ -1879,9 +1959,9 @@ public abstract class Entity extends AbEntity {
 				int val = (int) (atk.getProc().SEAL.time * time);
 				val = val * (100 - rst) / 100;
 				if (val < 0)
-					status[P_SEAL][0] = Math.max(status[P_SEAL][0], Math.abs(val));
+					status.seal = Math.max(status.seal, Math.abs(val));
 				else
-					status[P_SEAL][0] = val;
+					status.seal = val;
 				anim.getEff(P_SEAL);
 			} else
 				anim.getEff(INV);
@@ -1905,8 +1985,8 @@ public abstract class Entity extends AbEntity {
 			int res = checkAIImmunity(atk.getProc().ARMOR.mult, getProc().IMUARMOR.smartImu, getProc().IMUARMOR.mult < 0) ? getProc().IMUARMOR.mult : 0;
 			if (res < 100) {
 				int val = (int) (atk.getProc().ARMOR.time * time);
-				status[P_ARMOR][0] = val * (100 - res) / 100;
-				status[P_ARMOR][1] = atk.getProc().ARMOR.mult;
+				status.armor[0] = val * (100 - res) / 100;
+				status.armor[1] = atk.getProc().ARMOR.mult;
 				anim.getEff(P_ARMOR);
 			} else
 				anim.getEff(INV);
@@ -1925,9 +2005,9 @@ public abstract class Entity extends AbEntity {
 
 			if (res < 100) {
 				int val = (int) (atk.getProc().SPEED.time * time);
-				status[P_SPEED][0] = val * (100 - res) / 100;
-				status[P_SPEED][1] = atk.getProc().SPEED.speed;
-				status[P_SPEED][2] = atk.getProc().SPEED.type;
+				status.speed[0] = val * (100 - res) / 100;
+				status.speed[1] = atk.getProc().SPEED.speed;
+				status.speed[2] = atk.getProc().SPEED.type;
 				anim.getEff(P_SPEED);
 			} else
 				anim.getEff(INV);
@@ -1949,7 +2029,7 @@ public abstract class Entity extends AbEntity {
 	 */
 	@Override
 	public int getAbi() {
-		if (status[P_SEAL][0] > 0)
+		if (status.seal > 0)
 			return (data.getAbi() ^ altAbi) & (AB_ONLY | AB_METALIC | AB_GLASS);
 		return data.getAbi() ^ altAbi;
 	}
@@ -1966,7 +2046,7 @@ public abstract class Entity extends AbEntity {
 	 */
 	@Override
 	public Proc getProc() {
-		if (status[P_SEAL][0] > 0)
+		if (status.seal > 0)
 			return sealed;
 		return data.getProc();
 	}
@@ -2017,8 +2097,8 @@ public abstract class Entity extends AbEntity {
 		long ext = health * hb % maxH;
 		if (ext == 0)
 			ext = maxH;
-		if (status[P_ARMOR][0] > 0) {
-			damage *= (100 + status[P_ARMOR][1]) / 100.0;
+		if (status.armor[0] > 0) {
+			damage *= (100 + status.armor[1]) / 100.0;
 		}
 		damage *= auras.getDefAura();
 		if (!isBase && damage > 0 && kbTime <= 0 && kbTime != -1 && (ext <= damage * hb || health < damage))
@@ -2031,18 +2111,18 @@ public abstract class Entity extends AbEntity {
 
 		// increase damage
 		int strong = getProc().STRONG.health;
-		if ((touchable() & TCH_CORPSE) == 0 && status[P_STRONG][0] == 0 && strong > 0 && health * 100 <= maxH * strong) {
-			status[P_STRONG][0] = getProc().STRONG.mult;
+		if ((touchable() & TCH_CORPSE) == 0 && status.strengthen == 0 && strong > 0 && health * 100 <= maxH * strong) {
+			status.strengthen = getProc().STRONG.mult;
 			anim.getEff(P_STRONG);
 		}
 		// lethal strike
 		if (getProc().LETHAL.prob > 0 && health <= 0) {
 			boolean b = getProc().LETHAL.prob == 100 || basis.r.nextDouble() * 100 < getProc().LETHAL.prob;
-			if (status[P_LETHAL][0] == 0 && b) {
+			if (!status.lethal && b) {
 				health = 1;
 				anim.getEff(P_LETHAL);
 			}
-			status[P_LETHAL][0]++;
+			status.lethal = true;
 		}
 
 		for (int i = 0; i < tokens.size(); i++)
@@ -2079,7 +2159,7 @@ public abstract class Entity extends AbEntity {
 			killCounted = true;
 		}
 		if (health > 0)
-			status[P_BOUNTY][0] = 0;
+			status.money = 0;
 	}
 
 	/**
@@ -2090,13 +2170,13 @@ public abstract class Entity extends AbEntity {
 		if (conf == 1) {
 			kb.kbType = INT_WARP; // conf 1 - Warp exit animation
 			kbTime = effas().A_W.len(WarpEff.EXIT);
-			status[P_WARP][2] = 1;
+			status.warp[2] = 1;
 		} else if (conf == 2 && data.getPack().anim.anims.length >= 7) {
 			kbTime = -3; // conf 2 - Unborrow animation
 			bdist = -1;
 		} else if (conf == 3 && data.getPack().anim.anims.length >= 7) {
 			kbTime = -3; // conf 3 - Unborrow with Disabled burrow
-			status[P_BURROW] = new int[PROC_WIDTH];
+			status.burs[0] = 0;
 			bdist = -1;
 		} else if (conf != 4) {
 			anim.setAnim(AnimU.TYPEDEF[AnimU.WALK], true); // conf 0 - Sets animation to walk animation. conf 4 - sets the animation to entry, if unit has one
@@ -2132,7 +2212,7 @@ public abstract class Entity extends AbEntity {
 	public boolean btargetable(AttackAb atk) {
 		if ((receive(1) || atk.dire == 1) && atk.matk.getATKTraits().isEmpty())
 			return true; //Ignore traits if: Enemy Attacks Enemy, Enemy Attacks Unit, Unit Attacks Unit, and no traits are set for the attack
-		else if (receive(1) && (status[P_CURSE][0] > 0 || status[P_SEAL][0] > 0))
+		else if (receive(1) && (status.curse > 0 || status.seal > 0))
 			for (int j = 0; j < atk.trait.size(); j++)
 				if (data.getTraits().contains(atk.trait.get(j)) || (dire == -1 && atk.trait.get(j).others.contains(((MaskUnit)data).getPack())))
 					return true; //Cursed units lack traits, this "re-adds" them for enemies that consider traits debuff
@@ -2196,9 +2276,9 @@ public abstract class Entity extends AbEntity {
 		int ex = getProc().REVIVE.type.revive_others ? TCH_ZOMBX : 0;
 		if (kbTime == -1)
 			return TCH_SOUL | ex;
-		if (status[P_REVIVE][1] >= REVIVE_SHOW_TIME && anim.corpse != null && anim.corpse.type != ZombieEff.BACK)
+		if (status.revs[1] >= REVIVE_SHOW_TIME && anim.corpse != null && anim.corpse.type != ZombieEff.BACK)
 			return TCH_CORPSE | ex;
-		if (status[P_BURROW][2] > 0)
+		if (status.burs[1] > 0)
 			return n | TCH_UG | ex;
 		if (kbTime < -1)
 			return TCH_UG | ex;
@@ -2215,7 +2295,7 @@ public abstract class Entity extends AbEntity {
 		// if this entity is in kb state, do kbmove()
 		if (kbTime > 0)
 			kb.updateKB();
-		if (kbTime == 0 && status[P_REVIVE][1] == 0 && !killCounted) { // if this entity has auras and is not on HB, set them to all nearby units
+		if (kbTime == 0 && status.revs[1] == 0 && !killCounted) { // if this entity has auras and is not on HB, set them to all nearby units
 			Proc.AURA aura = getProc().WEAKAURA;
 			for (int i = 0; i < 2; i++) {
 				if (aura.exists()) {
@@ -2235,17 +2315,6 @@ public abstract class Entity extends AbEntity {
 	}
 
 	/**
-	 * Remove existing proc to this entity
-	 */
-	private void cancelAllProc() {
-		pois.list.clear();
-
-		for (int i = 0; i < REMOVABLE_PROC.length; i++)
-			if (status[REMOVABLE_PROC[i]][0] > 0)
-				status[REMOVABLE_PROC[i]][0] = 1;
-	}
-
-	/**
 	 * update the entity. order of update: <br>
 	 *  move -> KB -> revive -> burrow -> wait -> attack
 	 */
@@ -2256,15 +2325,16 @@ public abstract class Entity extends AbEntity {
 
 		auras.updateAuras();
 		// update proc effects
-		updateProc();
+		status.update();
+		pois.update();
 		barrier.update();
 
-		boolean nstop = status[P_STOP][0] == 0;
+		boolean nstop = status.stop == 0;
 		canBurrow |= atkm.loop < data.getAtkLoop() - 1;
 
 		// do move check if available, move if possible
 		int tba = getEffectiveTBA();
-		if (kbTime == 0 && !acted && atkm.atkTime == 0 && status[P_REVIVE][1] == 0 && anim.anim.type != AnimU.TYPEDEF[AnimU.ENTRY]) {
+		if (kbTime == 0 && !acted && atkm.atkTime == 0 && status.revs[1] == 0 && anim.anim.type != AnimU.TYPEDEF[AnimU.ENTRY]) {
 			checkTouch();
 
 			if (!touch && nstop && health > 0) {
@@ -2346,10 +2416,10 @@ public abstract class Entity extends AbEntity {
 	 */
 	private int getEffectiveTBA() {
 		int tba = waitTime + auras.getTbaAura();
-		if (status[P_LETHARGY][2] == 1)
-			tba += data.getTBA() * (status[P_LETHARGY][1] / 100.0);
-		else if (status[P_LETHARGY][2] == 0)
-			tba += status[P_LETHARGY][1];
+		if (status.lethargy[2] == 1)
+			tba += data.getTBA() * (status.lethargy[1] / 100.0);
+		else if (status.lethargy[2] == 0)
+			tba += status.lethargy[1];
 		return Math.max(0, tba);
 	}
 
@@ -2387,10 +2457,10 @@ public abstract class Entity extends AbEntity {
 		if ((e.getAbi() & AB_ONLY) > 0 && !targetable(e))
 			return 0;
 		float ans = 1;
-		if (status[P_CURSE][0] == 0 && (matk.getDire() == -1 || receive(-1)) || ctargetable(matk.getATKTraits(), e)) {
+		if (status.curse == 0 && (matk.getDire() == -1 || receive(-1)) || ctargetable(matk.getATKTraits(), e)) {
 			ans *= (100 - getProc().IMUATK.prob) / 100f;
 			Proc.DMGCUT dmgcut = getProc().DMGCUT;
-			if (dmgcut.prob > 0 && dmg < status[P_DMGCUT][0] && dmg > 0) {
+			if (dmgcut.prob > 0 && dmg < status.dcut && dmg > 0) {
 				if (dmgcut.prob == 100) {
 					if (dmgcut.reduction == 100)
 						return 0;
@@ -2399,16 +2469,16 @@ public abstract class Entity extends AbEntity {
 					ans *= (100 - (1f * dmgcut.reduction / dmgcut.prob)) / 100f;
 			}
 			Proc.DMGCAP dmgcap = getProc().DMGCAP;
-			if (dmgcap.prob > 0 && dmg > status[P_DMGCAP][0]) {
+			if (dmgcap.prob > 0 && dmg > status.dcap) {
 				if (dmgcap.type.nullify) {
 					return 0;
 				} else
-					ans = 1f * dmg / status[P_DMGCAP][0];
+					ans = 1f * dmg / status.dcap;
 			}
 		}
 		Proc.REMOTESHIELD remote = getProc().REMOTESHIELD;
 		double stRange = Math.abs(e.pos - pos);
-		if (remote.prob > 0 && remote.reduction + remote.block != 0 && ((!remote.type.traitCon && status[P_CURSE][0] == 0) || ctargetable(matk.getATKTraits(), e))
+		if (remote.prob > 0 && remote.reduction + remote.block != 0 && ((!remote.type.traitCon && status.curse == 0) || ctargetable(matk.getATKTraits(), e))
 			&& stRange >= remote.minrange && stRange <= remote.maxrange) {
 			if (remote.reduction == 100 || remote.block == 100) {
 				if (remote.prob == 100)
@@ -2421,6 +2491,19 @@ public abstract class Entity extends AbEntity {
 		}
 		if (isBase)
 			ans *= 1 + matk.getProc().ATKBASE.mult / 100.0;
+		if (status.barrier[0] != 0) {
+			if (matk.getProc().BREAK.prob > 0) {
+				ans *= matk.getProc().BREAK.prob / 100f;
+				if (dmg >= status.barrier[0]) {
+					return ans * status.barrier[0] / dmg;
+				}
+			} else if (dmg >= status.barrier[0]) {
+				return 1f * status.barrier[0] / dmg;
+			} else {
+				return 0;
+			}
+		}
+
 		return ans;
 	}
 
@@ -2435,6 +2518,12 @@ public abstract class Entity extends AbEntity {
 	protected abstract double getLim();
 
 	protected abstract int traitType();
+
+	/**
+	 * Buffs level for summon
+	 * @param lv total to buff
+	 */
+	public abstract double buff(int lv);
 
 	/**
 	 * move forward <br>
@@ -2465,14 +2554,14 @@ public abstract class Entity extends AbEntity {
 	}
 
 	public double getSpeed(double extmov) {
-		double mov = status[P_SLOW][0] > 0 ? 0.25 : data.getSpeed() * 0.5;
-		if (status[P_SPEED][0] > 0 && status[P_SLOW][0] <= 0) {
-			if (status[P_SPEED][2] == 0) {
-				mov += status[P_SPEED][1] * 0.5;
-			} else if (status[P_SPEED][2] == 1) {
-				mov = mov * (100 + status[P_SPEED][1]) / 100;
-			} else if (status[P_SPEED][2] == 2) {
-				mov = status[P_SPEED][1] * 0.5;
+		double mov = status.slow > 0 ? 0.25 : data.getSpeed() * 0.5;
+		if (status.speed[0] > 0 && status.slow == 0) {
+			if (status.speed[2] == 0) {
+				mov += status.speed[1] * 0.5;
+			} else if (status.speed[2] == 1) {
+				mov = mov * (100 + status.speed[1]) / 100;
+			} else if (status.speed[2] == 2) {
+				mov = status.speed[1] * 0.5;
 			}
 		}
 		mov += extmov;
@@ -2513,7 +2602,7 @@ public abstract class Entity extends AbEntity {
 	 * @return True if the unit is in a position it can no longer move any further
 	 */
 	private boolean cantGoMore() {
-		if (status[P_SPEED][0] == 0)
+		if (status.speed[0] == 0)
 			return false;
 
 		if (dire == 1) {
@@ -2528,8 +2617,8 @@ public abstract class Entity extends AbEntity {
 	 */
 	private void clearState() {
 		atkm.stopAtk();
-		if (kbTime < -1 || status[P_BURROW][2] > 0) {
-			status[P_BURROW][2] = 0;
+		if (kbTime < -1 || status.burs[1] > 0) {
+			status.burs[1] = 0;
 			bdist = 0;
 			kbTime = 0;
 		}
@@ -2604,27 +2693,27 @@ public abstract class Entity extends AbEntity {
 	 * update burrow state
 	 */
 	private void updateBurrow() {
-		if (!acted && kbTime == 0 && touch && status[P_BURROW][0] != 0) {
+		if (!acted && kbTime == 0 && touch && status.burs[0] != 0) {
 			double bpos = basis.getBase(dire).pos;
 			boolean ntbs = (bpos - pos) * dire > data.touchBase();
 			if (ntbs) {
 				// setup burrow state
-				status[P_BURROW][0]--;
-				status[P_BURROW][2] = anim.setAnim(AnimU.TYPEDEF[AnimU.BURROW_DOWN], true);
+				status.burs[0]--;
+				status.burs[1] = anim.setAnim(AnimU.TYPEDEF[AnimU.BURROW_DOWN], true);
 				kbTime = -2;
 			}
 		}
 		if (!acted && kbTime == -2) {
 			acted = true;
 			// burrow down
-			status[P_BURROW][2]--;
+			status.burs[1]--;
 			for (int i = 0; i < data.getGouge().length; i++)
-				if (data.getGouge() != null && anim.anim.len() - status[P_BURROW][2] == data.getGouge()[i].pre)
+				if (anim.anim.len() - status.burs[1] == data.getGouge()[i].pre)
 					basis.getAttack(aam.getSpAttack(BUR, i));
-			if (status[P_BURROW][2] == 0) {
+			if (status.burs[1] == 0) {
 				kbTime = -3;
 				anim.setAnim(AnimU.TYPEDEF[AnimU.UNDERGROUND], true);
-				bdist = data.getRepAtk().getProc().BURROW.dis;
+				bdist = data.getProc().BURROW.dis;
 			}
 		}
 		if (!acted && kbTime == -3) {
@@ -2635,46 +2724,20 @@ public abstract class Entity extends AbEntity {
 			if (bdist < 0 || (basis.getBase(dire).pos - pos) * dire - data.touchBase() <= 0) {
 				bdist = 0;
 				kbTime = -4;
-				status[P_BURROW][2] = anim.setAnim(AnimU.TYPEDEF[AnimU.BURROW_UP], true) - 2;
+				status.burs[1] = anim.setAnim(AnimU.TYPEDEF[AnimU.BURROW_UP], true) - 2;
 			}
 		}
 		if (!acted && kbTime == -4) {
 			// burrow up
 			acted = true;
-			status[P_BURROW][2]--;
+			status.burs[1]--;
 			for (int i = 0; i < data.getResurface().length; i++)
-				if (data.getResurface() != null && anim.anim.len() - status[P_BURROW][2] == data.getResurface()[i].pre)
+				if (anim.anim.len() - status.burs[1] - 2 == data.getResurface()[i].pre)
 					basis.getAttack(aam.getSpAttack(RESU, i));
-			if (status[P_BURROW][2] <= 0)
+			if (status.burs[1] <= 0)
 				kbTime = 0;
 		}
 
-	}
-
-	/**
-	 * update proc status
-	 */
-	private void updateProc() {
-		if (status[P_STOP][0] > 0)
-			status[P_STOP][0]--;
-		if (status[P_SLOW][0] > 0)
-			status[P_SLOW][0]--;
-		if (status[P_WEAK][0] > 0)
-			status[P_WEAK][0]--;
-		if (status[P_CURSE][0] > 0)
-			status[P_CURSE][0]--;
-		if (status[P_SEAL][0] > 0)
-			status[P_SEAL][0]--;
-		if (status[P_IMUATK][0] > 0)
-			status[P_IMUATK][0]--;
-		if (status[P_ARMOR][0] > 0)
-			status[P_ARMOR][0]--;
-		if (status[P_SPEED][0] > 0)
-			status[P_SPEED][0]--;
-		if (status[P_BSTHUNT][0] > 0)
-			status[P_BSTHUNT][0]--;
-		// update tokens
-		pois.update();
 	}
 
 	/**
@@ -2695,13 +2758,11 @@ public abstract class Entity extends AbEntity {
 		List<AbEntity> le = basis.inRange(getTouch(), dire, ds[0], ds[1], false);
 
 		double bpos = basis.getBase(dire).pos;
-		boolean blds = data.touchBase() != 0 && (bpos - pos) * dire > data.touchBase();
+		boolean blds = (bpos - pos) * dire > data.touchBase();
 		if (blds)
 			le.remove(basis.getBase(dire));
 		if (!le.contains(basis.getBase(dire))) {
-			if (dire == -1 && pos <= bpos)
-				le.add(basis.getBase(dire));
-			else if(dire == 1 && pos * dire >= bpos)
+			if (pos * dire >= bpos)
 				le.add(basis.getBase(dire));
 			blds &= le.size() == 0;
 		}
@@ -2719,7 +2780,7 @@ public abstract class Entity extends AbEntity {
 		}
 	}
 
-	/*
+	/**
 	 * Get anim. Used only for Door
 	 */
 	public EAnimU getAnim() {

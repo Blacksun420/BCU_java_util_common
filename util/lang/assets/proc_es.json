@@ -582,6 +582,10 @@
                     " Las invocaciones múltiples son posibles para ataques de área."
                 ]
             },
+            "type.pass_proc": {
+                "name": "Pass procs",
+                "tooltip": "Passes all inflicted status to summoned units. 0 = none, 1 = from summoner, 2 = from attacked entities, 3 = from both"
+            },
             "amount": {
                 "name": "Amount",
                 "tooltip": "The amount to be summoned."

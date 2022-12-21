@@ -37,7 +37,7 @@ public class EEnemy extends Entity {
 	public void kill(boolean atk) {
 		super.kill(atk);
 		if (!basis.st.trail && !atk) {
-			double mul = basis.b.t().getDropMulti() * (1 + (status[P_BOUNTY][0] / 100.0));
+			double mul = basis.b.t().getDropMulti() * (1 + (status.money / 100.0));
 			basis.money += mul * ((MaskEnemy) data).getDrop();
 		}
 	}
@@ -47,18 +47,6 @@ public class EEnemy extends Entity {
 		float ans = super.calcDamageMult(dmg, e, matk);
 		if (ans == 0)
 			return 0;
-		if (status[P_BARRIER][0] != 0) {
-			if (matk.getProc().BREAK.prob > 0) {
-				ans *= matk.getProc().BREAK.prob / 100f;
-				if (dmg >= status[P_BARRIER][0]) {
-					return ans * status[P_BARRIER][0] / dmg;
-				}
-			} else if (dmg >= status[P_BARRIER][0]) {
-				return 1f * status[P_BARRIER][0] / dmg;
-			} else {
-				return 0;
-			}
-		}
 		if (e instanceof EUnit) {
 			ArrayList<Trait> sharedTraits = new ArrayList<>(matk.getATKTraits());
 			sharedTraits.retainAll(traits);
@@ -71,7 +59,7 @@ public class EEnemy extends Entity {
 			}
 
 			if (!sharedTraits.isEmpty()) {
-				if (e.status[P_CURSE][0] == 0) {
+				if (e.status.curse == 0) {
 					if ((e.getAbi() & AB_GOOD) != 0)
 						ans *= 1.5;
 					if ((e.getAbi() & AB_MASSIVE) != 0)
@@ -79,7 +67,7 @@ public class EEnemy extends Entity {
 					if ((e.getAbi() & AB_MASSIVES) != 0)
 						ans *= 5;
 				}
-				if (status[P_CURSE][0] == 0) {
+				if (status.curse == 0) {
 					if ((getAbi() & AB_GOOD) > 0)
 						ans /= 2;
 					if ((getAbi() & AB_RESIST) > 0)
@@ -116,7 +104,7 @@ public class EEnemy extends Entity {
 			}
 
 			if (!sharedTraits.isEmpty()) {
-				if (atk.attacker.status[P_CURSE][0] == 0) {
+				if (atk.attacker.status.curse == 0) {
 					if ((atk.abi & AB_GOOD) != 0)
 						ans *= EUnit.OrbHandler.getOrbGood(atk, sharedTraits, basis.b.t());
 					if ((atk.abi & AB_MASSIVE) != 0)
@@ -124,7 +112,7 @@ public class EEnemy extends Entity {
 					if ((atk.abi & AB_MASSIVES) != 0)
 						ans *= basis.b.t().getMASSIVESATK(sharedTraits);
 				}
-				if (status[P_CURSE][0] == 0) {
+				if (status.curse == 0) {
 					if ((getAbi() & AB_GOOD) > 0)
 						ans /= 2;
 					if ((getAbi() & AB_RESIST) > 0)
@@ -182,4 +170,9 @@ public class EEnemy extends Entity {
 	@Override
 	protected void onLastBreathe() {
 	}
+
+	@Override
+	public double buff(int lv) {
+		return lv * mult * mula;
+	};
 }

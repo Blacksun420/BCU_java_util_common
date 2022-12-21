@@ -18,6 +18,8 @@ import common.util.unit.Trait;
 @SuppressWarnings("ForLoopReplaceableByForEach")
 public class EUnit extends Entity {
 
+	private static final SortedPackSet<Trait> blankSet = new SortedPackSet<>();
+
 	public static class OrbHandler extends BattleObj {
 		protected static int getOrbAtk(AttackAb atk, EEnemy en) {
 			if (atk.matk == null) {
@@ -80,27 +82,17 @@ public class EUnit extends Entity {
 	}
 
 	@Override
-	public int getAtk() {
-		int atk = aam.getAtk();
-		if (status[P_WEAK][0] > 0)
-			atk = atk * status[P_WEAK][1] / 100;
-		if (status[P_STRONG][0] != 0)
-			atk += atk * (status[P_STRONG][0] + basis.b.getInc(C_STRONG)) / 100;
-		return atk;
-	}
-
-	@Override
 	public void kill(boolean atk) {
 		super.kill(atk);
-		if (index != null && status[P_BOUNTY][0] != 0) {
-			basis.money -= (status[P_BOUNTY][0] / 100.0) * basis.elu.price[index[0]][index[1]];
+		if (index != null && status.money != 0) {
+			basis.money -= (status.money / 100.0) * basis.elu.price[index[0]][index[1]];
 		}
  	}
 
 	@Override
 	public void update() {
 		super.update();
-		traits = status[P_CURSE][0] == 0 && status[P_SEAL][0] == 0 ? data.getTraits() : new SortedPackSet<>();
+		traits = status.curse == 0 && status.seal == 0 ? data.getTraits() : blankSet;
 	}
 
 	@Override
@@ -108,18 +100,6 @@ public class EUnit extends Entity {
 		float ans = super.calcDamageMult(dmg, e, matk);
 		if (ans == 0)
 			return 0;
-		if (status[P_BARRIER][0] != 0) {
-			if (matk.getProc().BREAK.prob > 0) {
-				ans *= matk.getProc().BREAK.prob / 100f;
-				if (dmg >= status[P_BARRIER][0]) {
-					return ans * status[P_BARRIER][0] / dmg;
-				}
-			} else if (dmg >= status[P_BARRIER][0]) {
-				return 1f * status[P_BARRIER][0] / dmg;
-			} else {
-				return 0;
-			}
-		}
 		if (e instanceof EEnemy) {
 			SortedPackSet<Trait> sharedTraits = traits.inCommon(matk.getATKTraits());
 			boolean isAntiTraited = targetTraited(matk.getATKTraits());
@@ -131,7 +111,7 @@ public class EUnit extends Entity {
 			}
 
 			if (!sharedTraits.isEmpty()) {
-				if (status[P_CURSE][0] == 0) {
+				if (status.curse == 0) {
 					if ((getAbi() & AB_GOOD) != 0)
 						ans *= 1.5;
 					if ((getAbi() & AB_MASSIVE) != 0)
@@ -139,7 +119,7 @@ public class EUnit extends Entity {
 					if ((getAbi() & AB_MASSIVES) != 0)
 						ans *= 5;
 				}
-				if (e.status[P_CURSE][0] == 0) {
+				if (e.status.curse == 0) {
 					if ((e.getAbi() & AB_GOOD) > 0)
 						ans /= 2;
 					if ((e.getAbi() & AB_RESIST) > 0)
@@ -165,12 +145,12 @@ public class EUnit extends Entity {
 		if (atk.trait.contains(BCTraits.get(TRAIT_BEAST))) {
 			Proc.BSTHUNT beastDodge = getProc().BSTHUNT;
 			if (beastDodge.prob > 0 && (atk.dire != dire)) {
-				if (status[P_BSTHUNT][0] == 0 && (beastDodge.prob == 100 || basis.r.nextDouble() * 100 < beastDodge.prob)) {
-					status[P_BSTHUNT][0] = beastDodge.time;
+				if (status.wild == 0 && (beastDodge.prob == 100 || basis.r.nextDouble() * 100 < beastDodge.prob)) {
+					status.wild = beastDodge.time;
 					anim.getEff(P_IMUATK);
 				}
 
-				if (status[P_BSTHUNT][0] > 0) {
+				if (status.wild > 0) {
 					damageTaken += atk.atk;
 
 					if(index != null) {
@@ -204,7 +184,7 @@ public class EUnit extends Entity {
 					sharedTraits.add(t);
 			}
 			if (!sharedTraits.isEmpty()) {
-				if (status[P_CURSE][0] == 0) {
+				if (status.curse == 0) {
 					if ((getAbi() & AB_GOOD) != 0)
 						ans *= basis.b.t().getGOODDEF(atk.trait, sharedTraits, ((MaskUnit) data).getOrb(), level);
 					if ((getAbi() & AB_RESIST) != 0)
@@ -212,7 +192,7 @@ public class EUnit extends Entity {
 					if ((getAbi() & AB_RESISTS) != 0)
 						ans *= basis.b.t().getRESISTSDEF(sharedTraits);
 				}
-				if (atk.attacker.status[P_CURSE][0] == 0) {
+				if (atk.attacker.status.curse == 0) {
 					if ((atk.abi & AB_GOOD) != 0)
 						ans *= 1.5;
 					if ((atk.abi & AB_MASSIVE) != 0)
@@ -252,14 +232,14 @@ public class EUnit extends Entity {
 
 	@Override
 	protected double updateMove(double extmov) {
-		if (status[P_SLOW][0] == 0)
+		if (status.slow == 0)
 			extmov += data.getSpeed() * basis.b.getInc(C_SPE) / 200.0;
 		return super.updateMove(extmov);
 	}
 
 	@Override
 	protected double getMov(double extmov) {
-		if (status[P_SLOW][0] == 0)
+		if (status.slow == 0)
 			extmov += data.getSpeed() * basis.b.getInc(C_SPE) / 200.0;
 		return super.getMov(extmov);
 	}
@@ -376,4 +356,9 @@ public class EUnit extends Entity {
 	protected void onLastBreathe() {
 		basis.notifyUnitDeath();
 	}
+
+	@Override
+	public double buff(int lv) {
+		return lv + lvl;
+	};
 }

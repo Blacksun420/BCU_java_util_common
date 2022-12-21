@@ -605,6 +605,10 @@
           "範囲攻撃では複数体の召喚が可能です。"
         ]
       },
+      "type.pass_proc": {
+        "name": "Pass procs",
+        "tooltip": "Passes all inflicted status to summoned units. 0 = none, 1 = from summoner, 2 = from attacked entities, 3 = from both"
+      },
       "amount": {
         "name": "量",
         "tooltip": null

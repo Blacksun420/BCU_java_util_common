@@ -28,8 +28,8 @@ public class ContVolcano extends ContAb {
 		defProc = v.getProc().clone();
 		CommonStatic.setSE(SE_VOLC_START);
 
-		performed[0] = performed[2] = v.attacker.status[P_CURSE][0] == 0;
-		performed[1] = performed[3] = v.attacker.status[P_SEAL][0] == 0;
+		performed[0] = performed[2] = v.attacker.status.curse == 0;
+		performed[1] = performed[3] = v.attacker.status.seal == 0;
 
 		update();
 	}
@@ -81,18 +81,18 @@ public class ContVolcano extends ContAb {
 
 	private void updateProc() {
 		if (v.attacker.anim.dead == 0) {
-			if (v.attacker.status[P_CURSE][0] > 0)
-				v.attacker.status[P_CURSE][0]--;
-			if (v.attacker.status[P_SEAL][0] > 0)
-				v.attacker.status[P_SEAL][0]--;
+			if (v.attacker.status.curse > 0)
+				v.attacker.status.curse--;
+			if (v.attacker.status.seal > 0)
+				v.attacker.status.seal--;
 		}
 
 		String[] sealp = { "CRIT", "SNIPER", "BREAK", "SUMMON", "SATK", "SHIELDBREAK"};
-		if (v.attacker.status[P_SEAL][0] > 0 && performed[3]) {
+		if (v.attacker.status.seal > 0 && performed[3]) {
 			performed[3] = false;
 			for (String s : sealp)
 				v.proc.get(s).clear();
-		} else if (v.attacker.status[P_SEAL][0] == 0 && !performed[3]) {
+		} else if (v.attacker.status.seal == 0 && !performed[3]) {
 			AtkModelEntity aam = (AtkModelEntity) v.model;
 			for (String s : sealp)
 				if (!v.proc.get(s).exists() && (defProc.get(s).exists() || (!performed[1] && aam.getProc(v.matk).get(s).perform(aam.b.r)))) {
@@ -102,11 +102,11 @@ public class ContVolcano extends ContAb {
 			performed[1] = performed[3] = true;
 		}
 		String[] cursep = {"KB", "STOP", "SLOW", "WEAK", "WARP", "CURSE", "SNIPER", "SEAL", "POISON", "BOSS", "POIATK", "ARMOR", "SPEED", "DMGCUT", "DMGCAP"};
-		if (v.attacker.status[P_CURSE][0] > 0 || v.attacker.status[P_SEAL][0] > 0 && performed[2]) {
+		if (v.attacker.status.curse > 0 || v.attacker.status.seal > 0 && performed[2]) {
 			performed[2] = false;
 			for (String s : cursep)
 				v.proc.get(s).clear();
-		} else if (v.attacker.status[P_CURSE][0] == 0 && v.attacker.status[P_SEAL][0] == 0 && !performed[2]) {
+		} else if (v.attacker.status.curse == 0 && v.attacker.status.seal == 0 && !performed[2]) {
 			AtkModelEntity aam = (AtkModelEntity) v.model;
 			for (String s : cursep)
 				if (!v.proc.get(s).exists() && (defProc.get(s).exists() || (!performed[0] && aam.getProc(v.matk).get(s).perform(aam.b.r)))) {
