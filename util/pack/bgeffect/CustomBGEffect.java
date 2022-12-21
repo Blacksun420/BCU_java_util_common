@@ -56,7 +56,7 @@ public class CustomBGEffect extends BackgroundEffect {
     public void preDraw(FakeGraphics g, P rect, double siz, double midH) {
         FakeTransform at = g.getTransform();
         g.translate(convertP(1024, siz) + rect.x, convertP(7000 - midH, siz) - rect.y);
-        ebg[0].drawBGEffect(g, origin, siz * 0.8, 1000, 1, 1);
+        ebg[0].drawBGEffect(g, origin, siz * 0.8, 255, 1, 1);
         g.setTransform(at);
         g.delete(at);
     }
