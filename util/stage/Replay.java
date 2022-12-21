@@ -136,6 +136,7 @@ public class Replay extends Data {
 		Workspace.validate(rl);
 		File dst = CommonStatic.ctx.getWorkspaceFile(rl.getPath() + ".replay");
 		Context.renameTo(src, dst);
+		write();
 	}
 
 	public void rename(String str) {
