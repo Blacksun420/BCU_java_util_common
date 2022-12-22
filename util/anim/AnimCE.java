@@ -176,13 +176,22 @@ public class AnimCE extends AnimCI {
 		for (UserPack pack : UserProfile.getUserPacks())
 			if (pack.editable) {
 				List<Animable<AnimU<?>, UType>> list = new ArrayList<>();
-				for (Enemy e : pack.enemies)
-					if (e.anim == this)
-						list.add(e);
-				for (Unit u : pack.units)
-					for (Form f : u.forms)
-						if (f.anim == this)
-							list.add(f);
+				if (id.base == Source.BasePath.ANIM) {
+					for (Enemy e : pack.enemies)
+						if (e.anim == this)
+							list.add(e);
+					for (Unit u : pack.units)
+						for (Form f : u.forms)
+							if (f.anim == this)
+								list.add(f);
+				} else if (id.base == Source.BasePath.SOUL) {
+					for (Soul s : pack.souls)
+						if (s.anim == this)
+							list.add(s);
+				} else
+					for (BackgroundEffect bge : pack.bgEffects)
+						if (bge instanceof CustomBGEffect && ((CustomBGEffect)bge).anim == this)
+							list.add(((CustomBGEffect) bge).anim);
 				if (list.size() == 0)
 					continue;
 				((Workspace)pack.source).addAnimation(this);

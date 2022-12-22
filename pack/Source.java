@@ -68,6 +68,7 @@ public abstract class Source {
 		@JsonField
 		public String pack, id;
 
+		@JsonField
 		public BasePath base;
 
 		@JsonClass.JCConstructor
@@ -148,7 +149,7 @@ public abstract class Source {
 		public static final String IC = "imgcut.txt";
 		public static final String MM = "mamodel.txt";
 		public static final String[] MA_SOUL = { "maanim_soul.txt" };
-		public static final String[] MA_BACKGROUND = { "maanim_foreground.txt", "maanim_background.txt" };
+		public static final String[] MA_BACKGROUND = { "maanim_background.txt", "maanim_foreground.txt" };
 		public static final String SP = "sprite.png";
 		public static final String EDI = "icon_display.png";
 		public static final String UNI = "icon_deploy.png";
@@ -353,8 +354,11 @@ public abstract class Source {
 			AnimCE.map().values().forEach(auto ? AnimCE::autosave : AnimCE::save);
 			for (UserPack up : UserProfile.getUserPacks())
 				if (up.source instanceof Workspace) {
-					if (!auto)
-						up.source.getAnims(BasePath.ANIM).forEach(a -> ((AnimCE)a).save());
+					if (!auto) {
+						up.source.getAnims(BasePath.ANIM).forEach(a -> ((AnimCE) a).save());
+						up.source.getAnims(BasePath.SOUL).forEach(a -> ((AnimCE) a).save());
+						up.source.getAnims(BasePath.BGEffect).forEach(a -> ((AnimCE) a).save());
+					}
 					CommonStatic.ctx.noticeErr(() -> ((Workspace) up.source).save(up, auto), ErrType.WARN,
 							"failed to save pack " + up.desc.names);
 				}
