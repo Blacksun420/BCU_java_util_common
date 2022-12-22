@@ -3,7 +3,7 @@ package common.battle;
 import common.CommonStatic;
 import common.util.BattleObj;
 import common.util.stage.Limit;
-import common.util.unit.Form;
+import common.util.unit.EForm;
 
 public class ELineUp extends BattleObj {
 
@@ -22,7 +22,7 @@ public class ELineUp extends BattleObj {
 				}
 				price[i][j] = (int) (lu.efs[i][j].getPrice(sb.st.getCont().price) * 100);
 				maxC[i][j] = sb.b.t().getFinRes(lu.efs[i][j].getRespawn());
-				if (lim != null && ((lim.line > 0 && 2 - (lim.line - i) != 1) || (lu.efs[i][j] instanceof Form && lim.unusable(((Form) lu.efs[i][j]).du, sb.st.getCont().price))))
+				if (lim != null && ((lim.line > 0 && 2 - (lim.line - i) != 1) || (lu.efs[i][j] instanceof EForm && lim.unusable(((EForm) lu.efs[i][j]).du, sb.st.getCont().price))))
 					price[i][j] = -1;
 			}
 	}

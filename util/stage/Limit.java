@@ -8,7 +8,10 @@ import common.pack.UserProfile;
 import common.util.BattleStatic;
 import common.util.Data;
 import common.util.stage.MapColc.DefMapColc;
+import common.util.unit.EForm;
+import common.util.unit.ERUnit;
 import common.util.unit.Form;
+import common.util.unit.IForm;
 
 @JsonClass
 public class Limit extends Data implements BattleStatic {

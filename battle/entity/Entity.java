@@ -1564,7 +1564,7 @@ public abstract class Entity extends AbEntity {
 						case 32:
 							if (cRes.mult > 0 && basis.r.nextDouble() * 100 < cRes.mult)
 								atk.getProc().BREAK.clear();
-							atk.getProc().KB.time = atk.getProc().KB.time * (100 - cRes.mult) / 100;
+							atk.getProc().KB.dis = atk.getProc().KB.dis * (100 - cRes.mult) / 100;
 							break;
 						case 64:
 							atk.getProc().CURSE.time = atk.getProc().CURSE.time * (100 - cRes.mult) / 100;
@@ -1941,7 +1941,7 @@ public abstract class Entity extends AbEntity {
 			int rst = getProc().IMUKB.mult;
 			if (rst < 100) {
 				status.kb = atk.getProc().KB.time;
-				interrupt(P_KB, atk.getProc().KB.dis * dist * (100 - rst) / 100);
+				interrupt(atk.getProc().KB.time == KB_TIME[INT_HB] ? INT_HB : P_KB, atk.getProc().KB.dis * dist * (100 - rst) / 100);
 			} else
 				anim.getEff(INV);
 		}
