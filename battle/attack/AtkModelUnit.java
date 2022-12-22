@@ -17,7 +17,7 @@ public class AtkModelUnit extends AtkModelEntity {
 
 	@Override
 	public int getEffAtk(MaskAtk matk) {
-		int dmg = (int) (Math.round(matk.getAtk() * d0) * d1);
+		int dmg = (int) (Math.round(matk.getAtk() * d1) * d0);
 		if (e.status.weak[0] > 0)
 			dmg = dmg * e.status.weak[1] / 100;
 		if (e.status.strengthen != 0)

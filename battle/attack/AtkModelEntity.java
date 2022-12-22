@@ -70,9 +70,9 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		data = e.data;
 		this.d0 = d0;
 		if (pc != null && lv != null && lv.getLvs().size() == pc.max.size())
-			this.d1 = Math.round((pc.getAtkMultiplication(lv.getLvs()) * d1) * (1 + ent.basis.b.getInc(Data.C_ATK) * 0.01));
+			this.d1 = (pc.getAtkMultiplication(lv.getLvs()) * d1) * (1 + ent.basis.b.getInc(Data.C_ATK) * 0.01);
 		else
-			this.d1 = Math.round(d1 * (1 + ent.basis.b.getInc(Data.C_ATK) * 0.01));
+			this.d1 = d1 * (1 + ent.basis.b.getInc(Data.C_ATK) * 0.01);
 
 		MaskAtk[][] matks = data.getAllAtks();
 		MaskAtk[][] satks = data.getSpAtks(false);
@@ -85,7 +85,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		setExtraAtks(satks);
 	}
 
-	public void setExtraAtks(MaskAtk[][] satks) {
+	protected void setExtraAtks(MaskAtk[][] satks) {
 		for(int i = 0; i < satks.length; i++) {
 			int ind = act.length - satks.length + i;
 			act[ind] = new int[satks[i].length];
