@@ -132,7 +132,17 @@ public abstract class Entity extends AbEntity {
 				return;
 			}
 
-			anim.paraTo(back);
+			if(e.data instanceof CustomEntity) {
+				if(e.kb.kbType == INT_HB && ((CustomEntity) e.data).kbBounce)
+					anim.paraTo(back);
+				else if(e.kb.kbType == INT_SW && ((CustomEntity) e.data).bossBounce)
+					anim.paraTo(back);
+				else if(e.kb.kbType != INT_HB && e.kb.kbType != INT_SW)
+					anim.paraTo(back);
+			} else {
+				anim.paraTo(back);
+			}
+
 			if (e.kbTime == 0 || e.kb.kbType != INT_WARP)
 				anim.draw(gra, p, siz, e.negSpeed);
 
