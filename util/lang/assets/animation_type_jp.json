@@ -15,8 +15,8 @@
     "WALK": "移動",
     "SOUL": "魂",
     "RETREAT": "撤退",
-    "FOREGROUND": "foreground",
-    "BACKGROUND": "background"
+    "FOREGROUND": "前景",
+    "BACKGROUND": "背景"
   },
   "VolcEff": {
     "DURING": "中",
@@ -79,17 +79,17 @@
     "SUCCESS" : "成功"
   },
   "LethargyEff": {
-    "DOWN" : "weaken",
-    "UP" : "strengthen"
+    "DOWN" : "エネルギー低減",
+    "UP" : "エネルギーを高める"
   },
   "RemShieldEff": {
     "NEAR": "近い",
     "FAR": "遠い"
   },
   "AuraEff": {
-    "ENEDOWN": "Weaken Enemy",
-    "ENEUP": "Strengthen Enemy",
-    "UNIDOWN": "Weaken Ally",
-    "UNIUP": "Strengthen Ally"
+    "ENEDOWN": "敵の攻撃力低減",
+    "ENEUP": "敵の攻撃力増加",
+    "UNIDOWN": "味方の攻撃力低減",
+    "UNIUP": "味方の攻撃力増加"
   }
 }
