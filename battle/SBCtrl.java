@@ -114,7 +114,7 @@ public class SBCtrl extends BattleField {
 					}
 				for (byte i = 0; i < 2; i++) {
 					int row = (i + sb.frontLineup) % 2; // check front row first, then back row
-					if (act_spawn(row, j, b0 || b1) && (b0 || b1) && !sb.locks[row][j])
+					if (act_spawn(row, j, b0 || b1) && (b0 || b1))
 						rec |= 1 << (row * 5 + j + 13);
 				}
 			}
