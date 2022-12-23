@@ -56,36 +56,31 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		MaskAtk[][] matks = data.getAllAtks();
 		MaskAtk[][] satks = data.getSpAtks(false);
 		act = new int[matks.length + satks.length][];
-		for (int i = 0; i < matks.length; i++) {
-			act[i] = new int[matks[i].length];
-			for (int j = 0; j < act[i].length; j++)
-				act[i][j] = data.getAtkModel(i, j).loopCount();
-		}
-		setExtraAtks(satks);
+		setAtks(matks, satks);
 	}
 
 	protected AtkModelEntity(Entity ent, double d0, double d1, PCoin pc, Level lv) {
 		super(ent.basis);
 		e = ent;
 		data = e.data;
-		this.d0 = d0;
 		if (pc != null && lv != null && lv.getLvs().size() == pc.max.size())
-			this.d1 = (pc.getAtkMultiplication(lv.getLvs()) * d1) * (1 + ent.basis.b.getInc(Data.C_ATK) * 0.01);
+			this.d0 = d0 * pc.getAtkMultiplication(lv.getLvs());
 		else
-			this.d1 = d1 * (1 + ent.basis.b.getInc(Data.C_ATK) * 0.01);
+			this.d0 = d0;
+		this.d1 = d1 * (1 + ent.basis.b.getInc(Data.C_ATK) * 0.01);
 
 		MaskAtk[][] matks = data.getAllAtks();
 		MaskAtk[][] satks = data.getSpAtks(false);
 		act = new int[matks.length + satks.length][];
+		setAtks(matks, satks);
+	}
+
+	protected void setAtks(MaskAtk[][] matks, MaskAtk[][] satks) {
 		for (int i = 0; i < matks.length; i++) {
 			act[i] = new int[matks[i].length];
 			for (int j = 0; j < act[i].length; j++)
 				act[i][j] = data.getAtkModel(i, j).loopCount();
 		}
-		setExtraAtks(satks);
-	}
-
-	protected void setExtraAtks(MaskAtk[][] satks) {
 		for(int i = 0; i < satks.length; i++) {
 			int ind = act.length - satks.length + i;
 			act[ind] = new int[satks[i].length];

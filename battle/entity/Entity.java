@@ -323,7 +323,7 @@ public abstract class Entity extends AbEntity {
 					break;
 				} case SHIELD_HIT: {
 					EffAnim<ShieldEff> eff = dire == -1 ? effas().A_DEMON_SHIELD : effas().A_E_DEMON_SHIELD;
-					boolean half = e.currentShield * 1.0 / (e.getProc().DEMONSHIELD.hp * e.shieldMagnification) < 0.5;
+					boolean half = e.status.shield[0] * 1.0 / (e.getProc().DEMONSHIELD.hp * e.shieldMagnification) < 0.5;
 
 					effs[A_DEMON_SHIELD] = eff.getEAnim(half ? ShieldEff.HALF : ShieldEff.FULL);
 					CommonStatic.setSE(SE_SHIELD_HIT);
@@ -802,9 +802,9 @@ public abstract class Entity extends AbEntity {
 				time = 1;
 
 				if(kbType == INT_HB && e.health > 0 && e.getProc().DEMONSHIELD.hp > 0) {
-					e.currentShield = (int) (e.getProc().DEMONSHIELD.hp * e.getProc().DEMONSHIELD.regen * e.shieldMagnification / 100.0);
-					if (e.currentShield > e.maxCurrentShield)
-						e.maxCurrentShield = e.currentShield;
+					e.status.shield[0] = (int) (e.getProc().DEMONSHIELD.hp * e.getProc().DEMONSHIELD.regen * e.shieldMagnification / 100.0);
+					if (e.status.shield[0] > e.status.shield[1])
+						e.status.shield[1] = e.status.shield[0];
 
 					e.anim.getEff(SHIELD_REGEN);
 				}
@@ -915,29 +915,31 @@ public abstract class Entity extends AbEntity {
 
 	private static class Barrier extends BattleObj {
 		private final Entity e;
+		private int health, timer;
+
 		private Barrier (Entity ent) { e = ent; }
 
 		private void update() {
-			if (e.status.barrier[0] > 0) {
-				if (e.status.barrier[1] > 0) {
-					e.status.barrier[1]--;
-					if (e.status.barrier[1] == 0)
+			if (health > 0) {
+				if (timer > 0) {
+					timer--;
+					if (timer == 0)
 						breakBarrier(false);
 				}
-			} else if (e.status.barrier[1] > 0) {
-				e.status.barrier[1]--;
-				if (e.status.barrier[1] == 0) {
-					e.status.barrier[0] = e.getProc().BARRIER.type.magnif ? (int) (e.shieldMagnification * e.getProc().BARRIER.health) : e.getProc().BARRIER.health;
+			} else if (timer > 0) {
+				timer--;
+				if (timer == 0) {
+					health = e.getProc().BARRIER.type.magnif ? (int) (e.shieldMagnification * e.getProc().BARRIER.health) : e.getProc().BARRIER.health;
 					int timeout = e.getProc().BARRIER.timeout;
 					if (timeout > 0)
-						e.status.barrier[1] = timeout + effas().A_B.len(BarrierEff.NONE);
+						timer = timeout + effas().A_B.len(BarrierEff.NONE);
 					e.anim.getEff(BREAK_NON);
 				}
 			}
 		}
 
 		private void breakBarrier(boolean abi) {
-			e.status.barrier[0] = 0;
+			health = 0;
 			if (abi)
 				e.anim.getEff(BREAK_ABI);
 			else
@@ -945,7 +947,7 @@ public abstract class Entity extends AbEntity {
 
 			int regen = e.getProc().BARRIER.regentime;
 			if (regen > 0)
-				e.status.barrier[1] = regen + e.anim.effs[A_B].len();
+				timer = regen + e.anim.effs[A_B].len();
 		}
 	}
 
@@ -1220,7 +1222,7 @@ public abstract class Entity extends AbEntity {
 
 		public boolean lethal;
 		public int kb, slow, stop, curse, seal, strengthen, money, dcut, dcap, poison, inv, wild;
-		public final int[] weak = new int[2], barrier = new int[3], shield = new int[2], burs = new int[2], revs = new int[2], armor = new int[2], speed = new int[3];
+		public final int[] weak = new int[2], shield = new int[2], burs = new int[2], revs = new int[2], armor = new int[2], speed = new int[3];
 		public final int[] lethargy = new int[3], warp = new int[3];
 
 		private final Entity e;
@@ -1467,11 +1469,6 @@ public abstract class Entity extends AbEntity {
 	private final Barrier barrier = new Barrier(this);
 
 	/**
-	 * Entity's shield hp
-	 */
-	public int currentShield, maxCurrentShield;
-
-	/**
 	 * Used for regenerating shield considering enemy's magnification
 	 */
 	private final double shieldMagnification;
@@ -1513,8 +1510,8 @@ public abstract class Entity extends AbEntity {
 	 */
 	private void ini(double hpMagnif) {
 		status.weak[1] = 100;
-		status.barrier[0] = getProc().BARRIER.type.magnif ? (int) (getProc().BARRIER.health * hpMagnif) : getProc().BARRIER.health;
-		status.barrier[1] = getProc().BARRIER.timeout;
+		barrier.health = getProc().BARRIER.type.magnif ? (int) (getProc().BARRIER.health * hpMagnif) : getProc().BARRIER.health;
+		barrier.timer = getProc().BARRIER.timeout;
 		status.burs[0] = data.getProc().BURROW.count;
 		status.revs[0] = data.getProc().REVIVE.count;
 		status.dcut = data.getProc().DMGCUT.type.magnif ? (int) (hpMagnif * data.getProc().DMGCUT.dmg) : data.getProc().DMGCUT.dmg;
@@ -1675,14 +1672,14 @@ public abstract class Entity extends AbEntity {
 			}
 		}
 
-		boolean barrierContinue = status.barrier[0] == 0;
-		boolean shieldContinue = currentShield == 0;
+		boolean barrierContinue = barrier.health == 0;
+		boolean shieldContinue = status.shield[0] == 0;
 
 		if (!barrierContinue) {
 			if (atk.getProc().BREAK.prob > 0) {
 				barrier.breakBarrier(true);
 				barrierContinue = true;
-			} else if (dmg >= status.barrier[0]) {
+			} else if (dmg >= barrier.health) {
 				barrier.breakBarrier(false);
 				status.removeActive(true);
 			} else {
@@ -1697,7 +1694,7 @@ public abstract class Entity extends AbEntity {
 
 				anim.getEff(SHIELD_BREAKER);
 				shieldContinue = true;
-			} else if (dmg >= currentShield) {
+			} else if (dmg >= status.shield[0]) {
 				status.shield[0] = 0;
 
 				anim.getEff(SHIELD_BROKEN);
@@ -2501,14 +2498,14 @@ public abstract class Entity extends AbEntity {
 		}
 		if (isBase)
 			ans *= 1 + matk.getProc().ATKBASE.mult / 100.0;
-		if (status.barrier[0] != 0) {
+		if (barrier.health != 0) {
 			if (matk.getProc().BREAK.prob > 0) {
 				ans *= matk.getProc().BREAK.prob / 100f;
-				if (dmg >= status.barrier[0]) {
-					return ans * status.barrier[0] / dmg;
+				if (dmg >= barrier.health) {
+					return ans * barrier.health / dmg;
 				}
-			} else if (dmg >= status.barrier[0]) {
-				return 1f * status.barrier[0] / dmg;
+			} else if (dmg >= barrier.health) {
+				return 1f * barrier.health / dmg;
 			} else {
 				return 0;
 			}
