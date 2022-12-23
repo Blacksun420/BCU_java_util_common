@@ -437,14 +437,14 @@ public class StageBasis extends BattleObj {
 				CommonStatic.setSE(SE_SPEND_FAIL);
 			return false;
 		}
-		if (elu.price[i][j] == -1) {
+		if (elu.price[i][j] == -1)
 			return false;
-		}
 		if (elu.price[i][j] > money) {
-			if(manual) {
+			if(manual)
 				CommonStatic.setSE(SE_SPEND_FAIL);
 			return false;
 		}
+
 		if (locks[i][j] || manual) {
 			if (entityCount(-1) >= max_num - b.lu.efs[i][j].getWill()) {
 				if(manual)
