@@ -25,6 +25,8 @@ public class CastleImg implements Indexable<CastleList, CastleImg> {
 	public Identifier<CastleImg> id;
 	@JsonField
 	public double boss_spawn = 0;
+	@JsonField
+	public int scale = 1000, center;
 	public VImg img;
 
 	public static void loadBossSpawns() {

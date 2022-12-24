@@ -329,10 +329,10 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 			g.translate(tpos.x, tpos.y);
 			g.scale(hf, vf);
 			P.delete(tpos);
-		} else if (fa != null && model.confs.length > 0 && EWarp) {
+		} else if (fa != null && EWarp) {
 			int[] fir = fa.model.parts[0];
 			int[] data = model.confs[0];
-			P tpos = P.newP(data[2] * model.parts[0][8] / model.ints[0] - fir[6], data[3] * model.parts[0][8] / model.ints[0] - fir[7]).times(siz);
+			P tpos = P.newP(1.0 * data[2] * model.parts[0][8] / model.ints[0] - fir[6], 1.0 * data[3] * model.parts[0][8] / model.ints[0] - fir[7]).times(siz);
 			g.translate(-tpos.x, -tpos.y);
 			tpos = P.newP(-piv.x, -piv.y).times(siz);
 			g.translate(tpos.x, tpos.y);
