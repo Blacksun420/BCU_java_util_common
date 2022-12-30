@@ -402,6 +402,10 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 		public EffAnim<AuraEff> A_AURA;
 		@Order(79)
 		public EffAnim<AuraEff> A_E_AURA;
+		@Order(80)
+		public EffAnim<DefEff> A_RAGE;
+		@Order(81)
+		public EffAnim<DefEff> A_HYPNO;
 
 		public EffAnim<?>[] values() {
 			Field[] fld = FieldOrder.getDeclaredFields(EffAnimStore.class);
@@ -502,32 +506,6 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 		effas.A_DEMON_SHIELD = new EffAnim<>("./org/battle/s14/skill_demonshield", vsh, icsh, ShieldEff.values());
 		effas.A_DEMON_SHIELD.rev = true;
 		effas.A_E_DEMON_SHIELD = new EffAnim<>("./org/battle/s14/skill_demonshield", vsh, icsh, ShieldEff.values());
-
-		String path = "./org/battle/skill_door/skill_door";
-		VImg vdr = new VImg(path + ".png");
-		ImgCut icdr = ImgCut.newIns(path + ".imgcut");
-		effas.A_DOOR = new EffAnim<>(path, vdr, icdr, DefEff.values());
-
-		path = "./org/battle/skill_lethargy/skill_lethargy";
-		VImg vlt = new VImg(path + ".png");
-		ImgCut iclt = ImgCut.newIns(path + ".imgcut");
-		effas.A_LETHARGY = new EffAnim<>(path, vlt, iclt, LethargyEff.values());
-		effas.A_E_LETHARGY = new EffAnim<>(path, vlt, iclt, LethargyEff.values());
-		effas.A_E_LETHARGY.rev = true;
-
-		path = "./org/battle/skill_remoteshield/skill_remoteshield";
-		VImg vrs = new VImg(path + ".png");
-		ImgCut icrs = ImgCut.newIns(path + ".imgcut");
-		effas.A_REMSHIELD = new EffAnim<>(path, vrs, icrs, RemShieldEff.values());
-		effas.A_E_REMSHIELD = new EffAnim<>(path, vrs, icrs, RemShieldEff.values());
-		effas.A_E_REMSHIELD.rev = true;
-
-		path = "./org/battle/skill_aura/skill_aura";
-		VImg vau = new VImg(path + ".png");
-		ImgCut icau = ImgCut.newIns(path + ".imgcut");
-		effas.A_AURA = new EffAnim<>(path, vau, icau, AuraEff.values());
-		effas.A_E_AURA = new EffAnim<>(path, vau, icau, AuraEff.values());
-		effas.A_E_AURA.rev = true;
 	}
 
 	private static void excColor(FakeImage fimg, Function<int[], Integer> f) {
@@ -641,7 +619,6 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 		VImg vcount = new VImg(counter+".png");
 		ImgCut iccount = ImgCut.newIns(counter+".imgcut");
 		effas.A_COUNTER =  new EffAnim<>(counter, vcount, iccount, DefEff.values());
-
 		effas.A_E_COUNTER = new EffAnim<>(counter, vcount, iccount, DefEff.values());
 		effas.A_E_COUNTER.rev = true;
 
@@ -649,7 +626,6 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 		VImg vdmgcut = new VImg(dmgcut+".png");
 		ImgCut icdmgcut = ImgCut.newIns(dmgcut+".imgcut");
 		effas.A_DMGCUT = new EffAnim<>(dmgcut, vdmgcut, icdmgcut, DefEff.values());
-
 		effas.A_E_DMGCUT = new EffAnim<>(dmgcut, vdmgcut, icdmgcut, DefEff.values());
 		effas.A_E_DMGCUT.rev = true;
 
@@ -658,8 +634,43 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 		ImgCut icdmgcap = ImgCut.newIns(dmgcap+".imgcut");
 		effas.A_DMGCAP = new EffAnim<>(dmgcap, vdmgcap, icdmgcap, DmgCap.values());
 		effas.A_DMGCAP.rev = true;
-
 		effas.A_E_DMGCAP = new EffAnim<>(dmgcap, vdmgcap, icdmgcap, DmgCap.values());
+
+		String path = "./org/battle/skill_door/skill_door";
+		VImg vdr = new VImg(path + ".png");
+		ImgCut icdr = ImgCut.newIns(path + ".imgcut");
+		effas.A_DOOR = new EffAnim<>(path, vdr, icdr, DefEff.values());
+
+		path = "./org/battle/skill_lethargy/skill_lethargy";
+		VImg vlt = new VImg(path + ".png");
+		ImgCut iclt = ImgCut.newIns(path + ".imgcut");
+		effas.A_LETHARGY = new EffAnim<>(path, vlt, iclt, LethargyEff.values());
+		effas.A_E_LETHARGY = new EffAnim<>(path, vlt, iclt, LethargyEff.values());
+		effas.A_E_LETHARGY.rev = true;
+
+		path = "./org/battle/skill_remoteshield/skill_remoteshield";
+		VImg vrs = new VImg(path + ".png");
+		ImgCut icrs = ImgCut.newIns(path + ".imgcut");
+		effas.A_REMSHIELD = new EffAnim<>(path, vrs, icrs, RemShieldEff.values());
+		effas.A_E_REMSHIELD = new EffAnim<>(path, vrs, icrs, RemShieldEff.values());
+		effas.A_E_REMSHIELD.rev = true;
+
+		path = "./org/battle/skill_aura/skill_aura";
+		VImg vau = new VImg(path + ".png");
+		ImgCut icau = ImgCut.newIns(path + ".imgcut");
+		effas.A_AURA = new EffAnim<>(path, vau, icau, AuraEff.values());
+		effas.A_E_AURA = new EffAnim<>(path, vau, icau, AuraEff.values());
+		effas.A_E_AURA.rev = true;
+
+		path = "./org/battle/skill_rage/skill_rage";
+		VImg var = new VImg(path + ".png");
+		ImgCut icar = ImgCut.newIns(path + ".imgcut");
+		effas.A_RAGE = new EffAnim<>(path, var, icar, DefEff.values());
+
+		path = "./org/battle/skill_hypno/skill_hypno";
+		VImg vah = new VImg(path + ".png");
+		ImgCut icah = ImgCut.newIns(path + ".imgcut");
+		effas.A_HYPNO = new EffAnim<>(path, vah, icah, DefEff.values());
 	}
 
 	private final VImg vimg;

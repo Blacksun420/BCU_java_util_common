@@ -18,7 +18,7 @@ import java.util.List;
 public abstract class AtkModelEntity extends AtkModelAb {
 
 	protected static final Proc sealed = Proc.blank();
-	protected static final String[] par = { "KB", "STOP", "SLOW", "WEAK", "WARP", "CURSE", "SNIPER", "SEAL", "POISON", "BOSS",
+	public static final String[] par = { "KB", "STOP", "SLOW", "WEAK", "WARP", "CURSE", "SNIPER", "SEAL", "POISON", "BOSS", "RAGE", "HYPNO",
 			"POIATK", "ARMOR", "SPEED", "LETHARGY", "CRIT", "WAVE", "BREAK", "SATK", "VOLC", "MINIWAVE", "SHIELDBREAK", "WORKERLV", "CDSETTER"};
 	/**
 	 * @param e The entity
@@ -150,53 +150,6 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		return total;
 	}
 
-	public int isSupport(int ind) {
-		int total = 0;
-		MaskAtk[] atks = data.getAtks(ind);
-		for (int i = 0; i < data.getAtkCount(atkType); i++) {
-			if (atks[i].getDire() != -1)
-				continue;
-			int dmg = -getEffAtk(atks[i]);
-			double[] ranges = inRange(atks[i]);
-			List<AbEntity> ents = e.basis.inRange(atks[i].getTarget(), -getDire(), ranges[0], ranges[1], false);
-			for (AbEntity ent : ents) {
-				total += Math.min(ent.maxH - (ent.maxH - ent.health), dmg);
-				if (!(ent instanceof Entity))
-					continue;
-				Entity entity = (Entity) ent;
-				if (atks[i].getProc().WEAK.mult != 0)
-					total += entity.getAtk() * (atks[i].getProc().WEAK.mult / 100.0) - entity.getAtk();
-				if (atks[i].getProc().ARMOR.mult != 0)
-					total += ent.health * -atks[i].getProc().ARMOR.mult * (atks[i].getProc().ARMOR.prob / 100.0);
-				Proc.SPEED spd = atks[i].getProc().SPEED;
-				if (spd.prob != 0) {
-					if (spd.type == 0)
-						total += spd.speed * (spd.prob / 100.0);
-					else if (spd.type == 1)
-						total += spd.speed * ((Entity) ent).getSpeed(0) * (spd.prob / 100.0);
-					else
-						total += spd.speed - ((Entity) ent).getSpeed(0) * (spd.prob / 100.0);
-				}
-				Proc.LETHARGY leth = atks[i].getProc().LETHARGY;
-				if (leth.prob != 0) {
-					if (leth.type.percentage)
-						total += -leth.mult * ((Entity) ent).data.getTBA() * (spd.prob / 100.0);
-					else
-						total += -leth.mult * (spd.prob / 100.0);
-				}
-				Proc.POISON pois = atks[i].getProc().POISON;
-				if (pois.prob > 0) {
-					int type = pois.type.damage_type;
-					long mul = type == 0 ? 100 : type == 1 ? e.maxH : type == 2 ? e.health : (e.maxH - e.health);
-					long dmgp = mul * pois.damage / 100;
-
-					total += -dmgp * (pois.time / pois.itv) * (pois.prob / 100.0);
-				}
-			}
-		}
-		return total;
-	}
-
 	/**
 	 * generate attack entity
 	 */
@@ -244,7 +197,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 
 	@Override
 	public int getDire() {
-		return e.dire;
+		return e.getDire();
 	}
 
 	@Override
@@ -256,9 +209,9 @@ public abstract class AtkModelEntity extends AtkModelAb {
 	 * get the attack box for maskAtk
 	 */
 	public double[] inRange(MaskAtk atk) {
-		int dire = e.dire;
+		int dire = e.getDire();
 		double d0, d1;
-		d0 = d1 = e.pos;
+		d0 = d1 = dire == e.dire ? e.pos : e.pos + (data.getWidth() * dire);;
 		if (!atk.isLD() && !atk.isOmni()) {
 			d0 += data.getRange() * dire;
 			d1 -= data.getWidth() * dire;
@@ -292,9 +245,9 @@ public abstract class AtkModelEntity extends AtkModelAb {
 	 * get the collide box bound
 	 */
 	public double[] touchRange() {
-		int dire = e.dire;
+		int dire = e.getDire();
 		double d0, d1;
-		d0 = d1 = e.pos;
+		d0 = d1 = dire == e.dire ? e.pos : e.pos + (data.getWidth() * dire);
 		d0 += data.getRange() * dire;
 		if (data.isLD() && e.getProc().AI.type.calcblindspot)
 			d1 += getBlindSpot() * dire;
@@ -305,7 +258,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 
 	protected void extraAtk(MaskAtk matk) {
 		if (matk.getMove() != 0)
-			e.pos += matk.getMove() * e.dire;
+			e.pos += matk.getMove() * e.getDire();
 		if (matk.getAltAbi() != 0)
 			e.altAbi(matk.getAltAbi());
 
@@ -382,14 +335,14 @@ public abstract class AtkModelEntity extends AtkModelAb {
 	}
 
 	public double getBlindSpot() {
-		double blindspot = data.getWidth() * e.dire;
+		double blindspot = data.getWidth() * e.getDire();
 		if (data.isLD()) {
 			blindspot = Integer.MAX_VALUE;
 			for (int i = 0; i < data.getAtkCount(0); i++)
 				blindspot = Math.min(getMAtk(i).getShortPoint(), blindspot);
 
 			if (blindspot >= data.getRange())
-				blindspot = data.getWidth() * e.dire;
+				blindspot = data.getWidth() * e.getDire();
 		}
 		return blindspot;
 	}

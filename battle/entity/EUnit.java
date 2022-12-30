@@ -144,7 +144,7 @@ public class EUnit extends Entity {
 	public void damaged(AttackAb atk) {
 		if (atk.trait.contains(BCTraits.get(TRAIT_BEAST))) {
 			Proc.BSTHUNT beastDodge = getProc().BSTHUNT;
-			if (beastDodge.prob > 0 && (atk.dire != dire)) {
+			if (beastDodge.prob > 0 && (atk.dire != getDire())) {
 				if (status.wild == 0 && (beastDodge.prob == 100 || basis.r.nextDouble() * 100 < beastDodge.prob)) {
 					status.wild = beastDodge.time;
 					anim.getEff(P_IMUATK);
@@ -223,11 +223,6 @@ public class EUnit extends Entity {
 	@Override
 	protected double getLim() {
 		return Math.max(0, basis.st.len - pos - ((MaskUnit) data).getLimit());
-	}
-
-	@Override
-	protected int traitType() {
-		return -1;
 	}
 
 	@Override

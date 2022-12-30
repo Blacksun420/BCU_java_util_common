@@ -531,18 +531,16 @@ public class Data {
 			@JsonClass(noTag = NoTag.LOAD)
 			public static class TYPE extends IntType {
 				@Order(0)
-				public boolean assist;
-				@Order(1)
 				public boolean calcstrongest;
-				@Order(2)
-				public boolean retreat;
-				@Order(3)
+				@Order(1)
 				public boolean calcblindspot;
 			}
 			@Order(0)
-			public TYPE type = new TYPE();
+			public int retreatDist;
 			@Order(1)
 			public int retreatSpeed;
+			@Order(0)
+			public TYPE type = new TYPE();
 		}
 
 		public static abstract class IntType implements Cloneable, BattleStatic {
@@ -907,6 +905,14 @@ public class Data {
 		public final REMOTESHIELD REMOTESHIELD = new REMOTESHIELD();
 		@Order(62)
 		public final AI AI = new AI();
+		@Order(63)
+		public final PT RAGE = new PT();
+		@Order(64)
+		public final PT HYPNO = new PT();
+		@Order(65)
+		public final IMU IMURAGE = new IMU();
+		@Order(65)
+		public final IMU IMUHYPNO = new IMU();
 
 		@Override
 		public Proc clone() {
@@ -1271,8 +1277,11 @@ public class Data {
 	public static final int P_IMULETHARGY = 60;
 	public static final int P_REMOTESHIELD = 61;
 	public static final int P_AI = 62;
-	public static final byte PROC_TOT = 63;// 53
-	public static final byte PROC_WIDTH = 3;
+	public static final int P_RAGE = 63;
+	public static final int P_HYPNO = 64;
+	public static final int P_IMURAGE = 65;
+	public static final int P_IMUHYPNO = 66;
+	public static final byte PROC_TOT = 67;// 67
 
 	public static final boolean[] procSharable = {
 			false, //kb
@@ -1337,20 +1346,17 @@ public class Data {
 			false, //Lethargy
 			true, //Imu.Lethargy
 			true, //Remote shield
-			true //AI
+			true, //AI
+			false, //Rage
+			false, //Hypno
+			true, //Imu. Rage
+			true // Imu Hypno
 	};
 
 	/**
 	 * Procs in here are shareable on any hit for BC entities, but not shareable for custom entities
 	 */
 	public static final int[] BCShareable = { P_BOUNTY, P_ATKBASE };
-
-	/**
-	 * Procs in this list are removed when an unit is hit and has a barrier or Aku shield active
-	 */
-	public static final byte[] REMOVABLE_PROC = {
-			P_STOP, P_SLOW, P_WEAK, P_CURSE, P_SEAL, P_POISON, P_ARMOR, P_SPEED, P_LETHARGY
-	};
 
 	public static final byte WT_WAVE = 1;
 	public static final byte WT_MOVE = 2;
@@ -1516,7 +1522,9 @@ public class Data {
 	public static final byte A_REMSHIELD = 30;
 	public static final byte A_WEAKAURA = 31;
 	public static final byte A_STRONGAURA = 32;
-	public static final byte A_TOT = 33;
+	public static final byte A_RAGE = 33;
+	public static final byte A_HYPNO = 34;
+	public static final byte A_TOT = 35;
 
 	// atk type index used in filter page
 	public static final byte ATK_SINGLE = 0;

@@ -87,7 +87,7 @@ public class ContVolcano extends ContAb {
 				v.attacker.status.seal--;
 		}
 
-		String[] sealp = { "CRIT", "SNIPER", "BREAK", "SUMMON", "SATK", "SHIELDBREAK"};
+		String[] sealp = { "CRIT", "SNIPER", "BREAK", "SUMMON", "SATK", "SHIELDBREAK", "WORKERLV", "CDSETTER"};
 		if (v.attacker.status.seal > 0 && performed[3]) {
 			performed[3] = false;
 			for (String s : sealp)
@@ -101,7 +101,7 @@ public class ContVolcano extends ContAb {
 				}
 			performed[1] = performed[3] = true;
 		}
-		String[] cursep = {"KB", "STOP", "SLOW", "WEAK", "WARP", "CURSE", "SNIPER", "SEAL", "POISON", "BOSS", "POIATK", "ARMOR", "SPEED", "DMGCUT", "DMGCAP"};
+		String[] cursep = {"KB", "STOP", "SLOW", "WEAK", "WARP", "CURSE", "SNIPER", "SEAL", "POISON", "BOSS", "POIATK", "ARMOR", "SPEED", "DMGCUT", "DMGCAP", "RAGE", "HYPNO"};
 		if (v.attacker.status.curse > 0 || v.attacker.status.seal > 0 && performed[2]) {
 			performed[2] = false;
 			for (String s : cursep)

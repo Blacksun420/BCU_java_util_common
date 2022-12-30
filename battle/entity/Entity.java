@@ -102,6 +102,11 @@ public abstract class Entity extends AbEntity {
 		 */
 		private final EAnimD<?>[] effs = new EAnimD[A_TOT];
 
+		/**
+		 * Checks if speed is negative to flip
+		 */
+		private boolean negSpeed = false;
+
 		private AnimManager(Entity ent, EAnimU ea) {
 			e = ent;
 			anim = ea;
@@ -134,17 +139,17 @@ public abstract class Entity extends AbEntity {
 
 			if(e.data instanceof CustomEntity) {
 				if(e.kb.kbType == INT_HB && ((CustomEntity) e.data).kbBounce)
-					anim.paraTo(back);
+					anim.paraTo(back, e.status.hypno > 0);
 				else if(e.kb.kbType == INT_SW && ((CustomEntity) e.data).bossBounce)
-					anim.paraTo(back);
+					anim.paraTo(back, e.status.hypno > 0);
 				else if(e.kb.kbType != INT_HB && e.kb.kbType != INT_SW)
-					anim.paraTo(back);
+					anim.paraTo(back, e.status.hypno > 0);
 			} else {
-				anim.paraTo(back);
+				anim.paraTo(back, e.status.hypno > 0);
 			}
 
 			if (e.kbTime == 0 || e.kb.kbType != INT_WARP)
-				anim.draw(gra, p, siz, e.negSpeed);
+				anim.draw(gra, p, siz, e.status.hypno > 0 || (negSpeed && anim.type == AnimU.TYPEDEF[AnimU.WALK]));
 
 			anim.paraTo(null);
 			gra.setTransform(at);
@@ -370,6 +375,12 @@ public abstract class Entity extends AbEntity {
 				} case A_STRAURAWEAK: {
 					effs[A_STRONGAURA] = (dire == -1 ? effas().A_AURA : effas().A_E_AURA).getEAnim(AuraEff.UNIDOWN);
 					break;
+				} case P_RAGE: {
+					effs[A_RAGE] = effas().A_RAGE.getEAnim(DefEff.DEF);
+					break;
+				} case P_HYPNO: {
+					effs[A_HYPNO] = effas().A_HYPNO.getEAnim(DefEff.DEF);
+					break;
 				}
 			}
 		}
@@ -424,6 +435,10 @@ public abstract class Entity extends AbEntity {
 				effs[A_DMGCUT] = null;
 			if(effs[A_DMGCAP] != null && effs[A_DMGCAP].done())
 				effs[A_DMGCAP] = null;
+			if (e.status.rage == 0)
+				effs[A_RAGE] = null;
+			if (e.status.hypno == 0)
+				effs[A_HYPNO] = null;
 			efft--;
 		}
 
@@ -435,7 +450,7 @@ public abstract class Entity extends AbEntity {
 			int t = e.kb.kbType;
 			if (t != INT_SW && t != INT_WARP)
 				if(e.status.revs[1] >= REVIVE_SHOW_TIME) {
-					e.anim.corpse = (e.dire == -1 ? effas().A_U_ZOMBIE : effas().A_ZOMBIE).getEAnim(ZombieEff.BACK);
+					e.anim.corpse = (e.getDire() == -1 ? effas().A_U_ZOMBIE : effas().A_ZOMBIE).getEAnim(ZombieEff.BACK);
 				} else {
 					if (e.anim.corpse != null) {
 						if(e.anim.corpse.type == ZombieEff.REVIVE)
@@ -491,7 +506,7 @@ public abstract class Entity extends AbEntity {
 
 				e.status.weak[0] = 0;
 				e.status.weak[1] = 100;
-				soul = UserProfile.getBCData().demonSouls.get((1 - e.dire) / 2).getEAnim(AnimU.SOUL[0]);
+				soul = UserProfile.getBCData().demonSouls.get((1 - e.getDire()) / 2).getEAnim(AnimU.SOUL[0]);
 				dead = soul.len();
 				CommonStatic.setSE(SE_DEATH_SURGE);
 			} else {
@@ -793,7 +808,7 @@ public abstract class Entity extends AbEntity {
 				e.anim.back = null;
 
 				if(e.status.revs[1] > 0)
-					e.anim.corpse = (e.dire == -1 ? effas().A_U_ZOMBIE : effas().A_ZOMBIE).getEAnim(ZombieEff.DOWN);
+					e.anim.corpse = (e.getDire() == -1 ? effas().A_U_ZOMBIE : effas().A_ZOMBIE).getEAnim(ZombieEff.DOWN);
 
 				e.anim.setAnim(AnimU.TYPEDEF[AnimU.WALK], true);
 
@@ -1077,7 +1092,7 @@ public abstract class Entity extends AbEntity {
 					return em.kbTime == -1;
 				return true;
 			});
-			List<AbEntity> lm = e.basis.inRange(TCH_ZOMBX, -e.dire, 0, e.basis.st.len, false);
+			List<AbEntity> lm = e.basis.inRange(TCH_ZOMBX, -e.getDire(), 0, e.basis.st.len, false);
 			for (int i = 0; i < lm.size(); i++) {
 				if (lm.get(i) == e)
 					continue;
@@ -1099,7 +1114,7 @@ public abstract class Entity extends AbEntity {
 
 			if (rev[1] > 0) {
 				e.acted = true;
-				EffAnim<ZombieEff> ea = e.dire == -1 ? effas().A_U_ZOMBIE : effas().A_ZOMBIE;
+				EffAnim<ZombieEff> ea = e.getDire() == -1 ? effas().A_U_ZOMBIE : effas().A_ZOMBIE;
 				if (anim.corpse == null) {
 					anim.corpse = ea.getEAnim(ZombieEff.DOWN);
 					anim.corpse.setTime(0);
@@ -1221,7 +1236,7 @@ public abstract class Entity extends AbEntity {
 	public static class ProcManager extends BattleObj {
 
 		public boolean lethal;
-		public int kb, slow, stop, curse, seal, strengthen, money, dcut, dcap, poison, inv, wild;
+		public int kb, slow, stop, curse, seal, strengthen, money, dcut, dcap, poison, inv, wild, rage, hypno;
 		public final int[] weak = new int[2], shield = new int[2], burs = new int[2], revs = new int[2], armor = new int[2], speed = new int[3];
 		public final int[] lethargy = new int[3], warp = new int[3];
 
@@ -1254,6 +1269,10 @@ public abstract class Entity extends AbEntity {
 				inv--;
 			if (wild > 0)
 				wild--;
+			if (rage > 0)
+				rage--;
+			if (hypno > 0)
+				hypno--;
 		}
 
 		public void pass(ProcManager pm) {
@@ -1457,11 +1476,6 @@ public abstract class Entity extends AbEntity {
 	 * temporary value for move check
 	 */
 	protected boolean moved = false;
-
-	/**
-	 * Checks if speed is negative to flip
-	 */
-	private boolean negSpeed = false;
 
 	/**
 	 * entity's barrier processor
@@ -1747,15 +1761,14 @@ public abstract class Entity extends AbEntity {
 		final int FDmg = dmg;
 		atk.notifyEntity(e -> {
 			Proc.COUNTER counter = getProc().COUNTER;
-			if ((counter.prob == 100 || basis.r.nextDouble() * 100 < counter.prob) && e.dire != dire && (e.touchable() & getTouch()) > 0) {
+			if ((counter.prob == 100 || basis.r.nextDouble() * 100 < counter.prob) && e.getDire() != getDire() && (e.touchable() & getTouch()) > 0) {
 				boolean isWave = (atk.waveType & WT_WAVE) > 0 || (atk.waveType & WT_MINI) > 0 || (atk.waveType & WT_MOVE) > 0 || (atk.waveType & WT_VOLC) > 0;
 				if (!isWave || counter.type.counterWave != 0) {
 					double[] ds = counter.minRange != 0 || counter.maxRange != 0 ? new double[]{pos + counter.minRange, pos + counter.maxRange} : aam.touchRange();
 					int reflectAtk = FDmg;
 
 					Proc reflectProc = Proc.blank();
-					String[] par = {"CRIT", "KB", "WARP", "STOP", "SLOW", "WEAK", "POISON", "CURSE", "SNIPER", "VOLC", "WAVE",
-							"BOSS", "SEAL", "BREAK", "SUMMON", "SATK", "POIATK", "ARMOR", "SPEED", "SHIELDBREAK", "MINIWAVE"};
+					String[] par = AtkModelEntity.par;
 
 					if (counter.type.procType == 1 || counter.type.procType == 3)
 						for (String s0 : par)
@@ -1973,7 +1986,6 @@ public abstract class Entity extends AbEntity {
 			} else
 				anim.getEff(INV);
 		}
-
 		if (atk.getProc().POISON.time > 0) {
 			int res = checkAIImmunity(atk.getProc().POISON.damage, getProc().IMUPOI.smartImu, getProc().IMUPOI.mult < 0) ? getProc().IMUPOI.mult : 0;
 			if (res < 100) {
@@ -1987,7 +1999,6 @@ public abstract class Entity extends AbEntity {
 			} else
 				anim.getEff(INV);
 		}
-
 		if (!isBase && atk.getProc().ARMOR.time > 0) {
 			int res = checkAIImmunity(atk.getProc().ARMOR.mult, getProc().IMUARMOR.smartImu, getProc().IMUARMOR.mult < 0) ? getProc().IMUARMOR.mult : 0;
 			if (res < 100) {
@@ -1998,7 +2009,6 @@ public abstract class Entity extends AbEntity {
 			} else
 				anim.getEff(INV);
 		}
-
 		if (atk.getProc().SPEED.time > 0) {
 			int res = getProc().IMUSPEED.mult;
 
@@ -2016,6 +2026,31 @@ public abstract class Entity extends AbEntity {
 				status.speed[1] = atk.getProc().SPEED.speed;
 				status.speed[2] = atk.getProc().SPEED.type;
 				anim.getEff(P_SPEED);
+			} else
+				anim.getEff(INV);
+		}
+		if (atk.getProc().RAGE.time > 0) {
+			int res = getProc().IMURAGE.mult;
+			if (res < 100) {
+				int t = (int) ((atk.getProc().RAGE.time * time) * (100 - res) / 100.0);
+				if (t < 0)
+					status.rage = Math.max(Math.abs(t), status.rage);
+				else
+					status.rage = t;
+				anim.getEff(P_RAGE);
+			} else
+				anim.getEff(INV);
+		}
+
+		if (atk.getProc().HYPNO.time > 0) {
+			int res = getProc().IMUHYPNO.mult;
+			if (res < 100) {
+				int t = (int) ((atk.getProc().HYPNO.time * time) * (100 - res) / 100.0);
+				if (t < 0)
+					status.hypno = Math.max(Math.abs(t), status.hypno);
+				else
+					status.hypno = t;
+				anim.getEff(P_HYPNO);
 			} else
 				anim.getEff(INV);
 		}
@@ -2306,8 +2341,8 @@ public abstract class Entity extends AbEntity {
 			Proc.AURA aura = getProc().WEAKAURA;
 			for (int i = 0; i < 2; i++) {
 				if (aura.exists()) {
-					int dir = i == 0 ? dire : -dire;
-					List<AbEntity> le = basis.inRange(getTouch(), dir, pos + (aura.min_dis * dire), pos + (aura.max_dis * dire), false);
+					int dir = i == 0 ? getDire() : -getDire();
+					List<AbEntity> le = basis.inRange(getTouch(), dir, pos + (aura.min_dis * getDire()), pos + (aura.max_dis * getDire()), false);
 					if (dir == 1 || basis.getBase(-1) instanceof ECastle)
 						le.remove(basis.getBase(dir));
 					for (int j = 0; j < le.size(); j++) {
@@ -2345,30 +2380,14 @@ public abstract class Entity extends AbEntity {
 			checkTouch();
 
 			if (!touch && nstop && health > 0) {
-				boolean walk = true;
-				if (!acted && atkm.loop != 0 && !isBase && getProc().AI.type.assist && tba + atkm.atkTime == 0) {
-					int[] supportPwr = new int[data.getAtkTypeCount()];
-					for (int i = 0; i < supportPwr.length; i++) {
-						supportPwr[i] = aam.isSupport(i);
-						if (supportPwr[i] > supportPwr[aam.atkType])
-							aam.atkType = i;
-					}
-					if (supportPwr[aam.atkType] > 0) {
-						atkm.setAtk();
-						atkm.setUpAtk();
-						walk = false;
-					}
-				}
-				if (walk) {
-					double mov = updateMove(0);
-					if (mov != 0) {
-						if (mov > 0 || getAnim().anim().getEAnim(AnimU.TYPEDEF[AnimU.RETREAT]).unusable())
-							anim.setAnim(AnimU.TYPEDEF[AnimU.WALK], true);
-						else
-							anim.setAnim(AnimU.TYPEDEF[AnimU.RETREAT], true);
-					} else
-						anim.setAnim(AnimU.TYPEDEF[AnimU.IDLE], true);
-				}
+				double mov = updateMove(0);
+				if (mov != 0) {
+					if (mov > 0 || getAnim().anim().getEAnim(AnimU.TYPEDEF[AnimU.RETREAT]).unusable())
+						anim.setAnim(AnimU.TYPEDEF[AnimU.WALK], true);
+					else
+						anim.setAnim(AnimU.TYPEDEF[AnimU.RETREAT], true);
+				} else
+					anim.setAnim(AnimU.TYPEDEF[AnimU.IDLE], true);
 			}
 		} else if (anim.anim.type == AnimU.TYPEDEF[AnimU.ENTRY])
 			for (int i = 0; i < data.getEntry().length; i++)
@@ -2393,9 +2412,9 @@ public abstract class Entity extends AbEntity {
 
 			// update waiting state
 			if ((tba >= 0 || !touchEnemy) && touch && atkm.atkTime == 0 && !(isBase && health <= 0)) {
-				double mov = getProc().AI.type.retreat ? getMov(0) : 0;
-				if (negSpeed) {
-					pos += mov * dire;
+				double mov = getProc().AI.retreatDist > 0 ? getMov(0) : 0;
+				if (anim.negSpeed) {
+					pos += mov * getDire();
 					if (getAnim().anim().getEAnim(AnimU.TYPEDEF[AnimU.RETREAT]).unusable())
 						anim.setAnim(AnimU.TYPEDEF[AnimU.WALK], true);
 					else
@@ -2524,7 +2543,11 @@ public abstract class Entity extends AbEntity {
 	 */
 	protected abstract double getLim();
 
-	protected abstract int traitType();
+	public int getDire() {
+		if (status.hypno > 0)
+			return -dire;
+		return dire;
+	}
 
 	/**
 	 * Buffs level for summon
@@ -2543,8 +2566,7 @@ public abstract class Entity extends AbEntity {
 		moved = true;
 
 		double mov = getMov(extmov);
-
-		pos += mov * dire;
+		pos += mov * getDire();
 		return mov;
 	}
 
@@ -2553,10 +2575,10 @@ public abstract class Entity extends AbEntity {
 			return 0;
 		double mov = getSpeed(extmov);
 
-		if (mov > 0 && getProc().AI.type.retreat)
+		if (mov > 0 && getProc().AI.retreatDist > 0)
 			mov = AIMove(mov);
 
-		negSpeed = mov < 0;
+		anim.negSpeed = mov < 0;
 		return mov;
 	}
 
@@ -2577,13 +2599,13 @@ public abstract class Entity extends AbEntity {
 	}
 
 	private double AIMove(double mov) {
-		double mv = mov, predictedPos = pos + mv * dire, blindspot = aam.getBlindSpot();
+		double mv = mov, predictedPos = pos + mv * getDire();
 
 		for (Entity e : basis.le) {
-			if (e.dire == dire)
+			if (e.getDire() == getDire())
 				continue;
-			if (Math.abs(pos - e.pos) < blindspot) {
-				mv *= -getProc().AI.retreatSpeed;
+			if (Math.abs(pos - e.pos) < getProc().AI.retreatDist) {
+				mv = -getProc().AI.retreatSpeed * getDire();
 				break;
 			}
 			if (atkm.atkTime == 0 || e.aam.getAtk(e.atkm.preID, getTouch()) < 0)
@@ -2598,7 +2620,7 @@ public abstract class Entity extends AbEntity {
 			if (pos > end)
 				mv = 0;
 			else
-				mv *= -getProc().AI.retreatSpeed;
+				mv = -getProc().AI.retreatSpeed * getDire();
 			break;
 		}
 		return mv;
@@ -2612,7 +2634,7 @@ public abstract class Entity extends AbEntity {
 		if (status.speed[0] == 0)
 			return false;
 
-		if (dire == 1) {
+		if (getDire() == 1) {
 			return pos <= 0;
 		} else {
 			return pos >= basis.st.len;
@@ -2652,7 +2674,7 @@ public abstract class Entity extends AbEntity {
 				gra.drawRect(x, y, w, h);
 		}
 		gra.setColor(FakeGraphics.YELLOW);
-		int x = (int) ((pos + data.getRange() * dire) * rat * siz + poa);
+		int x = (int) ((pos + (status.hypno == 0 ? 0 : data.getWidth()) + data.getRange() * getDire()) * rat * siz + poa);
 		gra.drawLine(x, py, x, py + h);
 		gra.setColor(FakeGraphics.BLUE);
 		int bx = (int) ((dire == -1 ? pos : pos - data.getWidth()) * rat * siz + poa);
@@ -2693,7 +2715,7 @@ public abstract class Entity extends AbEntity {
 	 * determines atk direction for procs and abilities
 	 */
 	private boolean receive(int dire) {
-		return traitType() != dire;
+		return this.dire != dire;
 	}
 
 	/**
@@ -2701,8 +2723,8 @@ public abstract class Entity extends AbEntity {
 	 */
 	private void updateBurrow() {
 		if (!acted && kbTime == 0 && touch && status.burs[0] != 0) {
-			double bpos = basis.getBase(dire).pos;
-			boolean ntbs = (bpos - pos) * dire > data.touchBase();
+			double bpos = basis.getBase(getDire()).pos;
+			boolean ntbs = (bpos - pos) * getDire() > data.touchBase();
 			if (ntbs) {
 				// setup burrow state
 				status.burs[0]--;
@@ -2727,8 +2749,8 @@ public abstract class Entity extends AbEntity {
 			// move underground
 			double oripos = pos;
 			updateMove(0);
-			bdist -= (pos - oripos) * dire;
-			if (bdist < 0 || (basis.getBase(dire).pos - pos) * dire - data.touchBase() <= 0) {
+			bdist -= (pos - oripos) * getDire();
+			if (bdist < 0 || (basis.getBase(getDire()).pos - pos) * getDire() - data.touchBase() <= 0) {
 				bdist = 0;
 				kbTime = -4;
 				status.burs[1] = anim.setAnim(AnimU.TYPEDEF[AnimU.BURROW_UP], true) - 2;
@@ -2762,15 +2784,18 @@ public abstract class Entity extends AbEntity {
 	public void checkTouch() {
 		touch = true;
 		double[] ds = aam.touchRange();
-		List<AbEntity> le = basis.inRange(getTouch(), dire, ds[0], ds[1], false);
+		List<AbEntity> le = basis.inRange(getTouch(), getDire(), ds[0], ds[1], false);
+		if (status.hypno > 0)
+			le.remove(this);
 
-		double bpos = basis.getBase(dire).pos;
-		boolean blds = (bpos - pos) * dire > data.touchBase();
+		double bpos = basis.getBase(getDire()).pos;
+		double poss = status.hypno == 0 ? pos : pos + (data.getWidth() * -dire);
+		boolean blds = (bpos - poss) * getDire() > data.touchBase();
 		if (blds)
-			le.remove(basis.getBase(dire));
-		if (!le.contains(basis.getBase(dire))) {
-			if (pos * dire >= bpos)
-				le.add(basis.getBase(dire));
+			le.remove(basis.getBase(getDire()));
+		if (!le.contains(basis.getBase(getDire()))) {
+			if (poss * getDire() >= bpos)
+				le.add(basis.getBase(getDire()));
 			blds &= le.size() == 0;
 		}
 

@@ -299,6 +299,10 @@ public class Editors {
 
 		map().put("SLOW", pt);
 
+		map().put("RAGE", pt);
+
+		map().put("HYPNO", pt);
+
 		map().put("CRIT", new EditControl<>(Proc.PM.class, (t) -> {
 			t.prob = MathUtil.clip(t.prob, 0, 100);
 			if (t.prob == 0)
@@ -592,6 +596,10 @@ public class Editors {
 
 		map().put("IMUMOVING", wavei);
 
+		map().put("IMURAGE", imu);
+
+		map().put("IMUHYPNO", imu);
+
 		map().put("IMUCANNON", new EditControl<>(Proc.CANNI.class, (t) -> {
 			t.mult = Math.min(t.mult, 100);
 			if (t.mult != 0)
@@ -714,8 +722,9 @@ public class Editors {
 		}));
 
 		map().put("AI", new EditControl<>(Proc.AI.class, (t) -> {
-			setComponentVisibility("AI", t.type.retreat, 4);
-			if (!t.type.retreat)
+			setComponentVisibility("AI", t.retreatDist > 0, 1, 2);
+			t.retreatDist = Math.max(0, t.retreatDist);
+			if (t.retreatDist == 0)
 				t.retreatSpeed = 0;
 		}));
 	}

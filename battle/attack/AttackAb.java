@@ -188,6 +188,22 @@ public abstract class AttackAb extends BattleObj {
 					else
 						proc.SEAL.time *= (100 - imus.IMUSEAL.block) / 100.0;
 				}
+				if (proc.RAGE.time > 0 && imus.IMURAGE.block != 0) {
+					if (imus.IMURAGE.block > 0)
+						blocked = true;
+					if (imus.IMURAGE.block == 100)
+						proc.RAGE.clear();
+					else
+						proc.RAGE.time *= (100 - imus.IMURAGE.block) / 100.0;
+				}
+				if (proc.HYPNO.time > 0 && imus.IMUHYPNO.block != 0) {
+					if (imus.IMUHYPNO.block > 0)
+						blocked = true;
+					if (imus.IMUHYPNO.block == 100)
+						proc.HYPNO.clear();
+					else
+						proc.HYPNO.time *= (100 - imus.IMUHYPNO.block) / 100.0;
+				}
 				if (proc.ARMOR.time > 0 && imus.IMUARMOR.block != 0 && checkAIImmunity(proc.ARMOR.mult, imus.IMUARMOR.smartImu, imus.IMUARMOR.block < 0)) {
 					if (imus.IMUARMOR.block > 0)
 						blocked = true;

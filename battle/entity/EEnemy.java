@@ -158,11 +158,6 @@ public class EEnemy extends Entity {
 	}
 
 	@Override
-	protected int traitType() {
-		return 1;
-	}
-
-	@Override
 	public void postUpdate() {
 		super.postUpdate();
 	}

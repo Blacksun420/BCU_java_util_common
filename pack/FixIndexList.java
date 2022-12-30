@@ -169,7 +169,7 @@ public class FixIndexList<T> extends Data {
 
 	@SuppressWarnings("unchecked")
 	public FixIndexList(Class<T> cls) {
-		arr = (T[]) Array.newInstance(cls, 16);
+		arr = (T[]) Array.newInstance(cls, 1);
 	}
 
 	public void add(T t) {

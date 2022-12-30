@@ -38,6 +38,8 @@ public class Dependency {
 				return;
 			if (obj instanceof Class)
 				return;
+			if (obj instanceof Enum)
+				return;
 			if (obj instanceof Identifier) {
 				set.add((Identifier<?>) obj);
 				return;

@@ -266,9 +266,9 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 		img = args[2];
 		z = args[3] * ent.length + ind;
 		pos = pos.setTo(args[4], args[5]);
-		piv = piv.setTo(args[6], args[7]);
-		sca = sca.setTo(args[8], args[9]);
-		angle = args[10];
+		piv = piv.setTo(args[6] * (flipped && fa == null ? -1 : 1), args[7]);
+		sca = sca.setTo(args[8] * (flipped && fa == null ? -1 : 1), args[9]);
+		angle = args[10] * (flipped ? -1 : 1);
 		opacity = args[11];
 		glow = args[12];
 		gsca = model.ints[0];

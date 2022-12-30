@@ -43,10 +43,10 @@ public class ContWaveDef extends ContWaveAb {
 			atk.capture();
 			for (AbEntity e : atk.capt)
 				if (e instanceof Entity) {
-					int waves = ((Entity)e).getProc().IMUWAVE.block;
+					int waves = e.getProc().IMUWAVE.block;
 					if (waves != 0) {
 						if (waves > 0)
-							((Entity) e).anim.getEff(STPWAVE);
+							((Entity)e).anim.getEff(STPWAVE);
 						if (waves == 100) {
 							deactivate();
 							return;

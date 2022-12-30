@@ -46,7 +46,7 @@ public class AttackWave extends AttackAb {
 
 	@Override
 	public void capture() {
-		List<AbEntity> le = model.b.inRange(touch, dire, sta, end, excludeLastEdge);
+		List<AbEntity> le = model.b.inRange(touch, attacker != null && attacker.status.rage > 0 ? 2 : dire, sta, end, excludeLastEdge);
 		if (incl != null)
 			le.removeIf(incl::contains);
 		capt.clear();

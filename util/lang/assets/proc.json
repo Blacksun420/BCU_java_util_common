@@ -1506,15 +1506,10 @@
         "abbr_name": "AI",
         "full_name": "Strategist",
         "tooltip": "Allows the unit to keep away from enemy attacks and fight smarter",
-        "format": ["Strategist[(type.assist){ (_left)Improved Support(_right)}]",
-            "[(type.calcstrongest){ (_left)Unit will seek the most effective attack to use(_right)}]",
-            "[(type.retreat){ (_left)When in danger, unit will retreat with (retreatSpeed)% of it's walking speed(_right)}]",
+        "format": ["Strategist [(type.calcstrongest){ (_left)Unit will seek the most effective attack to use(_right)}]",
+            "[(retreatDist>0){ (_left)When in danger or enemies are (retreatDist) units away from this entity, unit will retreat at (retreatSpeed)% of it's walking speed(_right)}]",
             "[(type.calcblindspot){ (_left)Unit will not count entities on it's blindspot for attack detection or other effectiveness calculations(_right)}]"],
         "class": {
-            "type.assist": {
-                "name": "Improved Support",
-                "tooltip": "Used for units that buff or heal allies."
-            },
             "type.calcstrongest": {
                 "name": "Check Strongest Attack",
                 "tooltip": "If this unit has more than one attack pattern, choose an attack based on which will deal the most effective damage instead of randomly"
@@ -1527,9 +1522,83 @@
                 "name": "Blindspot Check",
                 "tooltip": "Unit will not attack if there's no enemies within the width of it's standing range and blindspot. If retreat is activated, this moves back an unit enters it's blindspot as well"
             },
+            "retreatDist": {
+                "name": "Retreat Distance",
+                "tooltip": "Minimum distance unit's retreat will activate"
+            },
             "retreatSpeed": {
                 "name": "Retreat Speed",
                 "tooltip": "Speed used to move back if retreat is activated"
+            }
+        }
+    },
+    "RAGE": {
+        "abbr_name": "rage",
+        "full_name": "Rage",
+        "tooltip": "Enrages the target, making it's attacks hurt both enemies and it's own allies",
+        "format": "(prob)% chance to enrage target for (_dispTime(time))",
+        "class": {
+            "prob": {
+                "name": "chance",
+                "tooltip": null
+            },
+            "time": {
+                "name": "duration",
+                "tooltip": null
+            }
+        }
+    },
+    "HYPNO": {
+        "abbr_name": "hypno",
+        "full_name": "Hypnotize",
+        "tooltip": "Turns the target against its own allies",
+        "format": "(prob)% chance to hypnotize target for (_dispTime(time))",
+        "class": {
+            "prob": {
+                "name": "chance",
+                "tooltip": null
+            },
+            "time": {
+                "name": "duration",
+                "tooltip": null
+            }
+        }
+    },
+    "IMURAGE": {
+        "abbr_name": "imu. Rage",
+        "full_name": "Immune/Resistant to Rage",
+        "tooltip": null,
+        "format": ["[(mult!=0&block!=100){[(mult==100){Immune}(mult<100&mult>0){Resistant}(mult<0){Weak}] to Rage",
+            "[(mult<100&mult>0){ (_left)Decreases duration by (mult)%(_right)}(mult<0){ (_left)Increases duration by (_abs(mult))%(_right)}]",
+            "[(block!=0&block<100){ & }]}][(block!=0){Rage [(block==100){blocker}(block<100&block>0){absorber}(block<0){increaser}]",
+            "[(block<100&block>0){ (_left)Decreases duration by (block)%(_right)}(block<0){ (_left)Increases duration by (_abs(block))%(_right)}]}]"],
+        "class": {
+            "mult": {
+                "name": "percent",
+                "tooltip": null
+            },
+            "block": {
+                "name": "Blocker",
+                "tooltip": "Set from 1 to 99 to reduce duration amongst all units. Set to 100 to completely block Rage"
+            }
+        }
+    },
+    "IMUHYPNO": {
+        "abbr_name": "imu. Hypno",
+        "full_name": "Immune/Resistant to Hypnosis",
+        "tooltip": null,
+        "format": ["[(mult!=0&block!=100){[(mult==100){Immune}(mult<100&mult>0){Resistant}(mult<0){Weak}] to Hypnosis",
+            "[(mult<100&mult>0){ (_left)Decreases duration by (mult)%(_right)}(mult<0){ (_left)Increases duration by (_abs(mult))%(_right)}]",
+            "[(block!=0&block<100){ & }]}][(block!=0){Hypnosis [(block==100){blocker}(block<100&block>0){absorber}(block<0){increaser}]",
+            "[(block<100&block>0){ (_left)Decreases duration by (block)%(_right)}(block<0){ (_left)Increases duration by (_abs(block))%(_right)}]}]"],
+        "class": {
+            "mult": {
+                "name": "percent",
+                "tooltip": null
+            },
+            "block": {
+                "name": "Blocker",
+                "tooltip": "Set from 1 to 99 to reduce duration amongst all units. Set to 100 to completely block Hypnosis"
             }
         }
     }
