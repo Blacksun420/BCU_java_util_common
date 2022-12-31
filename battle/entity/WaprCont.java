@@ -20,7 +20,7 @@ public class WaprCont extends EAnimCont {
 		ent = a;
 		chara = effas().A_W_C.getEAnim(pa);
 		this.dire = dire;
-		ent.ent[0].EWarp = dire == 1;
+		a.ent[0].EWarp = dire == 1;
 	}
 
 	@Override
@@ -46,9 +46,13 @@ public class WaprCont extends EAnimCont {
 
 	@Override
 	public boolean done() {
-		if (type == WarpEff.EXIT)
-			return chara.ind() == chara.len() - 2;
-		else
+		if (type == WarpEff.EXIT) {
+			if (chara.ind() == chara.len() - 2) {
+				ent.ent[0].EWarp = false;
+				return true;
+			}
+			return false;
+		} else
 			return super.done();
 	}
 }
