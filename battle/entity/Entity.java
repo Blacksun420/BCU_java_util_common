@@ -780,11 +780,10 @@ public abstract class Entity extends AbEntity {
 		}
 
 		private void kbmove(double mov) {
-			if (mov < 0) {
-				e.pos += mov * e.dire;
-			} else {
+			if (mov < 0)
+				e.pos -= mov * e.dire;
+			else
 				e.pos -= Math.min(mov, e.getLim()) * e.dire;
-			}
 		}
 
 		/**
