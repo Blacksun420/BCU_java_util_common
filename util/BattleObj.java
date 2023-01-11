@@ -8,6 +8,7 @@ import common.util.unit.Trait;
 import common.io.BCUException;
 import common.io.assets.Admin.StaticPermitted;
 import common.pack.Context.ErrType;
+import common.util.unit.UniRand;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -33,7 +34,7 @@ public strictfp class BattleObj extends ImgCore implements Cloneable {
 
 	public static final String NONC = "NONC_";
 
-	private static final Class<?>[] EXCLUDE = { Number.class, String.class, Boolean.class, BattleStatic.class, Trait.class, Enum.class, BackgroundEffect.class, BattleField.class, EneRand.class };
+	private static final Class<?>[] EXCLUDE = { Number.class, String.class, Boolean.class, BattleStatic.class, Trait.class, Enum.class, BackgroundEffect.class, BattleField.class, EneRand.class, UniRand.class };
 
 	private static final Set<Class<?>> OLD = new HashSet<>();
 	private static final Set<Class<?>> UNCHECKED = new HashSet<>();
@@ -108,7 +109,7 @@ public strictfp class BattleObj extends ImgCore implements Cloneable {
 
 	@SuppressWarnings("unchecked")
 	private static List<Field> getField(Class<? extends BattleObj> cls) {
-		List<Field> fl = new ArrayList<Field>();
+		List<Field> fl = new ArrayList<>();
 		Field[] fs = cls.getDeclaredFields();
 		for (Field f : fs)
 			if (!Modifier.isStatic(f.getModifiers())) {

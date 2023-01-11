@@ -58,9 +58,9 @@ public class ContWaveDef extends ContWaveAb {
 		if (!activate)
 			return;
 		if (t == (isMini ? W_MINI_TIME - 1 : W_TIME)) {
-			if (isMini && atk.proc.MINIWAVE.lv > 0)
+			if (isMini && atk.proc.MINIWAVE.lv > this.waves.size())
 				nextWave();
-			else if (!isMini && atk.getProc().WAVE.lv > 0)
+			else if (!isMini && atk.proc.WAVE.lv > this.waves.size())
 				nextWave();
 		}
 		if (t == attack) {

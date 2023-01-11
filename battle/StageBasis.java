@@ -17,7 +17,6 @@ import common.util.pack.bgeffect.BackgroundEffect;
 import common.util.stage.*;
 import common.util.stage.MapColc.DefMapColc;
 import common.util.unit.AbForm;
-import common.util.unit.EneRand;
 import common.util.unit.IForm;
 
 import java.util.*;
@@ -41,9 +40,10 @@ public class StageBasis extends BattleObj {
 	public final List<ContAb> lw = new ArrayList<>();
 	public final List<ContAb> tlw = new ArrayList<>();
 	public final List<EAnimCont> lea = new ArrayList<>();
+	public final List<DoorCont> doors = new ArrayList<>();
 	public final List<EAnimCont> ebaseSmoke = new ArrayList<>();
 	public final List<EAnimCont> ubaseSmoke = new ArrayList<>();
-	public final Set<EneRand> rege = new HashSet<>();
+
 	public final int[] conf;
 	public final CopRand r;
 	public final Recorder rx = new Recorder();
@@ -231,6 +231,10 @@ public class StageBasis extends BattleObj {
 		int ans = 0;
 		if (ebase instanceof EEnemy && d == 1)
 			ans += ((EEnemy)ebase).data.getWill() + 1;
+		if (d == 1)
+			for (DoorCont door : doors)
+				ans += door.getWill();
+
 		for (Entity ent : le) {
 			if (ent.dire == d && !ent.dead)
 				ans += ent.data.getWill() + 1;
@@ -481,8 +485,6 @@ public class StageBasis extends BattleObj {
 	@Override
 	protected void performDeepCopy() {
 		super.performDeepCopy();
-		for (EneRand er : rege)
-			er.updateCopy((StageBasis) hardCopy(this), hardCopy(er.map.get(this)));
 	}
 
 	/**
@@ -534,8 +536,8 @@ public class StageBasis extends BattleObj {
 				if (e != null) {
 					e.added(1, (e.mark >= 1 ? boss_spawn : 700.0) + (st.len - 800 - ebase.pos) * e.door / 100);
 					if (e.door > 0 && !e.getAnim().anim().getEAnim(AnimU.TYPEDEF[AnimU.WALK]).unusable()) {
-						lea.add(new DoorCont(this, e));
-						lea.sort(Comparator.comparingInt(ea -> ea.layer));
+						doors.add(new DoorCont(this, e));
+						doors.sort(Comparator.comparingInt(d -> d.layer));
 					} else {
 						le.add(e);
 						le.sort(Comparator.comparingInt(en -> en.layer));
@@ -602,6 +604,7 @@ public class StageBasis extends BattleObj {
 
 		if (s_stop == 0) {
 			lea.forEach(EAnimCont::update);
+			doors.forEach(EAnimCont::update);
 			ebaseSmoke.forEach(EAnimCont::update);
 			ubaseSmoke.forEach(EAnimCont::update);
 			lw.addAll(tlw);
@@ -673,6 +676,7 @@ public class StageBasis extends BattleObj {
 			le.removeIf(e -> e.anim.dead == 0 && e.summoned.isEmpty());
 			lw.removeIf(w -> !w.activate);
 			lea.removeIf(EAnimCont::done);
+			doors.removeIf(EAnimCont::done);
 			ebaseSmoke.removeIf(EAnimCont::done);
 			ubaseSmoke.removeIf(EAnimCont::done);
 		}

@@ -14,6 +14,7 @@ public class DoorCont extends EAnimCont {
     private final StageBasis bas;
     private final Entity ent;
     private boolean entLeft;
+    public boolean drawn;
 
     public DoorCont(StageBasis b, Entity e) {
         super(e.pos, e.layer, effas().A_DOOR.getEAnim(EffAnim.DefEff.DEF));
@@ -32,6 +33,7 @@ public class DoorCont extends EAnimCont {
         if (!entLeft)
             ent.getAnim().draw(gra, p, psiz);
         gra.delete(at);
+        drawn = true;
     }
 
     @Override
@@ -39,7 +41,7 @@ public class DoorCont extends EAnimCont {
         super.update();
         if (getAnim().ind() > 9) {
             if (getAnim().ind() < 18) {
-                if (!ent.getAnim().anim().getEAnim(AnimU.TYPEDEF[AnimU.ENTRY]).unusable()) {
+                if (ent.getAnim().type == AnimU.TYPEDEF[AnimU.ENTRY]) {
                     ent.getAnim().update(false);
                 }
             } else if (!entLeft) {
@@ -49,5 +51,13 @@ public class DoorCont extends EAnimCont {
                 entLeft = true;
             }
         }
+    }
+
+    public int getWill() {
+        return entLeft ? 0 : ent.data.getWill() + 1;
+    }
+
+    public boolean ECheck(Entity e) {
+        return !drawn && e.layer >= layer;
     }
 }

@@ -236,7 +236,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 			SUMMON.TYPE conf = proc.type;
 			if (conf.on_hit || (conf.on_kill && e.health <= 0)) {
 				int rst = e.getProc().IMUSUMMON.mult;
-				summon(proc, e, e, rst);
+				summon(proc, e, atk, rst);
 			}
 		}
 	}
@@ -315,7 +315,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 			SUMMON sprc = getProc(matk).SUMMON;
 			SUMMON.TYPE conf = sprc.type;
 			if (!conf.on_hit && !conf.on_kill)
-				summon(sprc, e, matk,0);
+				summon(sprc, e, matk, 0);
 			else
 				proc.SUMMON.set(sprc);
 		}

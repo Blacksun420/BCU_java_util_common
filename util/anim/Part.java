@@ -131,8 +131,6 @@ public class Part extends Data implements Cloneable, Comparable<Part> {
 					double ti = 1.0 * (frame - f0) / (f1 - f0);
 					if (moves[i][2] == 1 || ints[1] == 13 || ints[1] == 14)
 						ti = 0;
-					else if (moves[i][2] == 0)
-						;
 					else if (moves[i][2] == 2)
 						if (moves[i][3] >= 0)
 							ti = 1 - Math.sqrt(1 - Math.pow(ti, moves[i][3]));

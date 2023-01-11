@@ -96,7 +96,6 @@ public class EneRand extends Data implements AbEnemy {
 
 	@Override
 	public EEnemy getEntity(StageBasis sb, Object obj, double mul, double mul2, int d0, int d1, int m) {
-		sb.rege.add(this);
 		return get(getSelection(sb, obj), sb, obj, mul, mul2, d0, d1, m);
 	}
 

@@ -16,10 +16,6 @@ public class AttackWave extends AttackAb {
 		waveType = wt;
 		isCounter = a.isCounter;
 		incl = new HashSet<>();
-		if(waveType == WT_MINI)
-			proc.MINIWAVE.lv--;
-		else
-			proc.WAVE.lv--;
 	}
 
 	public AttackWave(Entity e, AttackWave a, double p0, double wid) {
@@ -27,10 +23,6 @@ public class AttackWave extends AttackAb {
 		waveType = a.waveType;
 		isCounter = a.isCounter;
 		incl = a.incl;
-		if(waveType == WT_MINI)
-			proc.MINIWAVE.lv--;
-		else
-			proc.WAVE.lv--;
 	}
 
 	public AttackWave(Entity e, AttackWave a, double pos, double start, double end) {
@@ -38,10 +30,6 @@ public class AttackWave extends AttackAb {
 		waveType = a.waveType;
 		isCounter = a.isCounter;
 		incl = a.incl;
-		if(waveType == WT_MINI)
-			proc.MINIWAVE.lv--;
-		else
-			proc.WAVE.lv--;
 	}
 
 	@Override
@@ -77,5 +65,4 @@ public class AttackWave extends AttackAb {
 		}
 		r.clear();
 	}
-
 }
