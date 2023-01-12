@@ -1767,10 +1767,8 @@ public abstract class Entity extends AbEntity {
 					int reflectAtk = FDmg;
 
 					Proc reflectProc = Proc.blank();
-					String[] par = AtkModelEntity.par;
-
 					if (counter.type.procType == 1 || counter.type.procType == 3)
-						for (String s0 : par)
+						for (String s0 : AtkModelEntity.par)
 							if (s0.equals("VOLC") || s0.equals("WAVE") || s0.equals("MINIWAVE")) {
 								if (isWave && counter.type.counterWave == 2)
 									reflectProc.get(s0).set(atk.getProc().get(s0));
@@ -1791,7 +1789,7 @@ public abstract class Entity extends AbEntity {
 
 						if (counter.type.procType >= 2) {
 							Proc p = data.getCounter().getProc();
-							for (String s0 : par)
+							for (String s0 : AtkModelEntity.par)
 								if (p.get(s0).perform(basis.r))
 									reflectProc.get(s0).set(p.get(s0));
 						}
@@ -1809,7 +1807,7 @@ public abstract class Entity extends AbEntity {
 
 						if (counter.type.procType >= 2) {
 							Proc p = data.getAllProc();
-							for (String s0 : par) {
+							for (String s0 : AtkModelEntity.par) {
 								if ((s0.equals("VOLC") || s0.equals("WAVE") || s0.equals("MINIWAVE")) && (!isWave || counter.type.counterWave != 2))
 									continue;
 

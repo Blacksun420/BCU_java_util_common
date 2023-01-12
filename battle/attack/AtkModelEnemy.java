@@ -5,7 +5,7 @@ import common.battle.entity.EEnemy;
 
 public class AtkModelEnemy extends AtkModelEntity {
 
-	protected static final int cursedProcs = 14;
+	protected static final int cursedProcs = 16;
 
 	protected AtkModelEnemy(EEnemy ent, double d0) {
 		super(ent, d0, 1);
