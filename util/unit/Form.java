@@ -232,4 +232,8 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 			return Integer.compare(fid, u.getFid());
 		return i;
 	}
+
+	public boolean hasEvolveCost() {
+		return unit.info.hasEvolveCost() && fid == 2;
+	}
 }
