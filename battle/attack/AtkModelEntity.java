@@ -211,7 +211,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 	public double[] inRange(MaskAtk atk) {
 		int dire = e.getDire();
 		double d0, d1;
-		d0 = d1 = dire == e.dire ? e.pos : e.pos + (data.getWidth() * dire);;
+		d0 = d1 = dire == e.dire ? e.pos : e.pos + (data.getWidth() * dire);
 		if (!atk.isLD() && !atk.isOmni()) {
 			d0 += data.getRange() * dire;
 			d1 -= data.getWidth() * dire;

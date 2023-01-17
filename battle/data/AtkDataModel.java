@@ -13,8 +13,6 @@ import common.util.Data;
 import common.util.stage.Music;
 import common.util.unit.Trait;
 
-import java.util.ArrayList;
-
 @JsonClass(read = RType.FILL, noTag = NoTag.LOAD)
 public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataModel, CustomEntity> {
 

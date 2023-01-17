@@ -72,6 +72,8 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
                     f = mid + 1;
                 else if (c < 0)
                     l = mid - 1;
+                else //Dunno if it lowers accuracy, but prevents softlocks
+                    return mid;
             }
         }
         return -1;
@@ -155,7 +157,7 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
     }
 
     @Override
-    public boolean removeAll(@NotNull Collection c) {
+    public boolean removeAll(@NotNull Collection<?> c) {
         boolean rem = false;
         for (T t : (Iterable<T>) c) rem |= remove(t);
         return rem;
