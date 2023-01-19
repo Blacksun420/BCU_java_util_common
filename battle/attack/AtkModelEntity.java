@@ -19,7 +19,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 
 	protected static final Proc sealed = Proc.blank();
 	public static final String[] par = { "KB", "STOP", "SLOW", "WEAK", "WARP", "CURSE", "SNIPER", "SEAL", "POISON", "BOSS", "RAGE", "HYPNO", "POIATK",
-			"ARMOR", "SPEED", "LETHARGY", "ATKBASE", "CRIT", "WAVE", "BREAK", "SATK", "VOLC", "MINIWAVE", "SHIELDBREAK", "WORKERLV", "CDSETTER"};
+			"ARMOR", "SPEED", "LETHARGY", "ATKBASE", "CRIT", "WAVE", "BREAK", "SATK", "VOLC", "MINIWAVE", "MOVEWAVE", "SHIELDBREAK", "WORKERLV", "CDSETTER"};
 	/**
 	 * @param e The entity
 	 * @param d0 Level multiplication for EUnit, Magnification for EEnemy
