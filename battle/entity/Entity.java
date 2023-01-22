@@ -2371,9 +2371,10 @@ public abstract class Entity extends AbEntity {
 		boolean nstop = status.stop == 0;
 		canBurrow |= atkm.loop < data.getAtkLoop() - 1;
 
+		boolean canAct = kbTime == 0 && anim.anim.type != AnimU.TYPEDEF[AnimU.ENTRY];
 		// do move check if available, move if possible
 		int tba = getEffectiveTBA();
-		if (kbTime == 0 && !acted && atkm.atkTime == 0 && status.revs[1] == 0 && anim.anim.type != AnimU.TYPEDEF[AnimU.ENTRY]) {
+		if (canAct && !acted && atkm.atkTime == 0 && status.revs[1] == 0) {
 			checkTouch();
 
 			if (!touch && nstop && health > 0) {
@@ -2401,8 +2402,9 @@ public abstract class Entity extends AbEntity {
 		if (nstop && canBurrow)
 			updateBurrow();
 
+		boolean canAttack = !isBase || !(data.getSpeed() == 0 && getAtk() == 0);
 		// update wait and attack state
-		if (kbTime == 0 && anim.anim.type != AnimU.TYPEDEF[AnimU.ENTRY]) {
+		if (canAct && canAttack) {
 			// if it can attack, setup attack state
 			if (!acted && touchEnemy && atkm.loop != 0 && nstop && tba + atkm.atkTime == 0 && !(isBase && health <= 0))
 				atkm.setUp();
