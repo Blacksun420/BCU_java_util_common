@@ -2418,7 +2418,7 @@ public abstract class Entity extends AbEntity {
 						anim.setAnim(AnimU.TYPEDEF[AnimU.WALK], true);
 					else
 						anim.setAnim(AnimU.TYPEDEF[AnimU.RETREAT], true);
-				} else
+				} else if (kbTime == 0)
 					anim.setAnim(AnimU.TYPEDEF[AnimU.IDLE], true);
 			}
 		}
