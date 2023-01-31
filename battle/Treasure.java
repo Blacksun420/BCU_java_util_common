@@ -15,10 +15,7 @@ import common.util.Data;
 import common.util.unit.Level;
 import common.util.unit.Trait;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 
 @SuppressWarnings("ForLoopReplaceableByForEach")
 @JsonClass(read = RType.FILL)

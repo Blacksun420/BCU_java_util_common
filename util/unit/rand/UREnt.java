@@ -23,7 +23,7 @@ public class UREnt implements BattleStatic, Copable<UREnt> {
 
     public UREnt(AbForm f) {
         ent = f;
-        lv = f instanceof Form ? new Level(((Form) f).getPrefLvs()) : new Level();
+        lv = f.unit().getPrefLvs();
     }
 
     @Override

@@ -12,9 +12,6 @@ public interface IForm {
             return new EForm((Form) form, lv);
         return new ERUnit((UniRand) form, lv);
     }
-    static IForm newIns(AbForm form, ArrayList<Integer> lvs) {
-        return newIns(form, new Level(lvs));
-    }
 
     static IForm newIns(AbForm form, Level lvs) {
         if (form instanceof Form)
