@@ -16,7 +16,7 @@ public class ERUnit extends Data implements IForm {
     public ERUnit(UniRand unit, int lv) {
         this.unit = unit;
         level = new Level();
-        level.setLv(lv);
+        level.setLevel(lv);
     }
 
     public ERUnit(UniRand unit, Level lvs) {
@@ -59,8 +59,9 @@ public class ERUnit extends Data implements IForm {
         for (int i = 0; i < unit.list.size(); i++) {
             if (unit.list.get(i).ent instanceof UniRand) {
                 Level eLv = unit.list.get(i).lv.clone();
-                for (int j = 0; j < Math.min(eLv.getLvs().size(), level.getLvs().size()); j++)
-                    eLv.getLvs().set(j, eLv.getLvs().get(j) + level.getLvs().get(j));
+                ArrayList<Integer> l = getLvs(eLv), e = getLvs(level);
+                for (int j = 0; j < Math.min(l.size(), e.size()); j++)
+                    l.set(j, l.get(j) + e.get(j));
 
                 int t = unit.list.get(i).share;
                 iList.add(new DH(new ERUnit((UniRand)unit.list.get(i).ent, eLv), t));
@@ -71,9 +72,10 @@ public class ERUnit extends Data implements IForm {
             if (f.du.getWill() > sb.entityCount(-1))
                 continue;
             Level eLv = unit.list.get(i).lv.clone();
-            for (int j = 0; j < Math.min(eLv.getLvs().size(), level.getLvs().size()); j++)
-                eLv.getLvs().set(j, eLv.getLvs().get(j) + level.getLvs().get(j));
-            EForm ef = new EForm(f, f.regulateLv(null, eLv.getLvs()));
+            ArrayList<Integer> l = getLvs(eLv), e = getLvs(level);
+            for (int j = 0; j < Math.min(l.size(), e.size()); j++)
+                l.set(j, l.get(j) + e.get(j));
+            EForm ef = new EForm(f, f.regulateLv(null, eLv));
             if (deploy && sb.st.lim != null && !sb.st.lim.unusable(ef.du, sb.st.getCont().price))
                 continue;
             DH h = new DH(ef, unit.list.get(i).share);
@@ -92,6 +94,14 @@ public class ERUnit extends Data implements IForm {
             }
         }
         return null;
+    }
+
+    private static ArrayList<Integer> getLvs(Level lv) {
+        ArrayList<Integer> lvs = new ArrayList<>(lv.getTalents().length + 1);
+        lvs.add(lv.getLv() + lv.getPlusLv());
+        for (int i = 0; i < lv.getTalents().length + 1; i++)
+            lvs.add(lv.getTalents()[i]);
+        return lvs;
     }
 
     @Override

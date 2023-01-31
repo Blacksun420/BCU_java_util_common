@@ -2,6 +2,7 @@ package common.util.unit;
 
 import common.CommonStatic;
 import common.battle.data.CustomUnit;
+import common.battle.data.PCoin;
 import common.io.json.FieldOrder;
 import common.io.json.JsonClass;
 import common.io.json.JsonClass.JCGeneric;
@@ -32,7 +33,7 @@ public class Unit extends Data implements AbUnit {
 
 		public int[][] evo;
 		public int[] price = new int[10];
-		public int xp, type;
+		public int xp, type, tfLevel = -1;
 
 		public void fillBuy(String[] strs) {
 			for (int i = 0; i < 10; i++)
@@ -167,8 +168,49 @@ public class Unit extends Data implements AbUnit {
 		return getID().compareTo(u.getID());
 	}
 
-	public int getPrefLv() {
-		return Math.min(CommonStatic.getConfig().prefLevel, max) + Math.min((rarity < 2 && maxp > 0 ? (int)((CommonStatic.getConfig().prefLevel - 1) / 49.0 * maxp) : 0),maxp);
+	@Override
+	public Level getPrefLvs() {
+		int maxTalent = 0;
+		PCoin pc = null;
+
+		for(Form f : forms) {
+			PCoin coin = f.du.getPCoin();
+
+			if(coin != null && coin.max.length > maxTalent) {
+				maxTalent = coin.max.length;
+				pc = coin;
+
+			}
+		}
+
+		Level lv;
+
+		if (pc != null) {
+			lv = new Level(maxTalent);
+		} else {
+			lv = new Level(0);
+		}
+
+		lv.setLevel(getPreferredLevel());
+		lv.setPlusLevel(getPreferredPlusLevel());
+
+		if (pc != null) {
+			int[] talents = new int[pc.max.length];
+
+			System.arraycopy(pc.max, 0, talents, 0, talents.length);
+
+			lv.setTalents(talents);
+		}
+
+		return lv;
+	}
+
+	public int getPreferredLevel() {
+		return Math.min(CommonStatic.getConfig().prefLevel, max);
+	}
+
+	public int getPreferredPlusLevel() {
+		return Math.min((rarity < 2 && maxp > 0 ? (int)((CommonStatic.getConfig().prefLevel - 1) / 49.0 * maxp) : 0),maxp);
 	}
 
 	@Override

@@ -72,7 +72,7 @@ public class AssetLoader {
 
 	}
 
-	public static final String CORE_VER = "0.7.0.0";
+	public static final String CORE_VER = "0.7.1.0";
 	public static final byte FORK_VER = 4;
 
 	private static final String[] ANIMFL = { ".imgcut", ".mamodel", ".maanim" };

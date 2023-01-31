@@ -1,5 +1,7 @@
 package common.battle;
 
+import common.CommonStatic;
+import common.battle.data.PCoin;
 import common.io.json.JsonClass;
 import common.io.json.JsonField;
 import common.io.json.JsonField.GenType;
@@ -7,9 +9,7 @@ import common.pack.Identifier;
 import common.pack.UserProfile;
 import common.system.Copable;
 import common.util.BattleStatic;
-import common.util.unit.AbForm;
-import common.util.unit.Form;
-import common.util.unit.Unit;
+import common.util.unit.*;
 
 import java.util.List;
 
@@ -88,6 +88,51 @@ public class BasisLU extends Basis implements Copable<BasisLU>, BattleStatic {
 		}
 		ans.lu.arrange();
 		return ans;
+	}
+
+	public void performRealisticLeveling() {
+		if(!CommonStatic.getConfig().realLevel)
+			return;
+
+		for(AbForm[] fs : lu.fs) {
+			for(int i = 0; i < fs.length; i++) {
+				if(fs[i] == null || fs[i] instanceof UniRand)
+					continue;
+				Form f = (Form) fs[i];
+
+				Level lv = lu.getLv(fs[i]);
+
+				if(lv == null) {
+					throw new IllegalStateException("Battle started without initializing level of form in lineup");
+				}
+
+				if(f.unit.info.tfLevel != -1 && lv.getLv() + lv.getPlusLv() < f.unit.info.tfLevel && f.fid == 2) {
+					fs[i] = f.unit.forms[1];
+				} else if(f.fid == 2 && f.du.getPCoin() != null) {
+					int[] talents = lv.getTalents();
+					PCoin pc = f.du.getPCoin();
+
+					for(int j = 0; j < Math.min(pc.info.size(), talents.length); j++) {
+						if(pc.info.get(j)[13] == 1 && lv.getLv() + lv.getPlusLv() < 60) {
+							talents[j] = 0;
+						}
+					}
+
+					int[][] orbs = lv.getOrbs();
+
+					if(orbs != null && f.orbs != null && f.orbs.getSlots() != -1) {
+						int[] limits = f.orbs.getLimits();
+
+						for(int j = 0; j < orbs.length; j++) {
+							if(limits[j] == 1 && lv.getLv() + lv.getPlusLv() < 60)
+								orbs[j] = new int[0];
+						}
+					}
+				}
+			}
+		}
+
+		lu.renew();
 	}
 
 	/**

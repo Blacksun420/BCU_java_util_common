@@ -276,6 +276,7 @@ public class Res extends ImgCore {
 		aux.icon[4][PC2_COST] = new VImg(parts[92]);
 		aux.icon[4][PC2_CD] = new VImg(parts[94]);
 		aux.icon[4][PC2_HB] = new VImg(parts[98]);
+		aux.icon[4][PC2_TBA] = new VImg(parts[305]);
 
 		aux.waveShield = new VImg(parts[218]);
 		CommonStatic.getConfig().icon = false;

@@ -4,6 +4,7 @@ import common.io.json.JsonClass;
 import common.pack.Identifier;
 import common.system.VImg;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 
 /**
@@ -48,13 +49,11 @@ public interface AbForm {
         return 0;
     }
 
-    ArrayList<Integer> getPrefLvs();
-
     VImg getIcon();
 
     VImg getDeployIcon();
 
-    default ArrayList<Integer> regulateLv(int[] mod, ArrayList<Integer> lv) {
-        return lv;
+    default Level regulateLv(@Nullable Level src, Level target) {
+        return target;
     }
 }

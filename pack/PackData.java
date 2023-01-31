@@ -225,6 +225,16 @@ public abstract class PackData implements IndexContainer {
 				u.maxp = Integer.parseInt(strs[51]);
 				u.info.fillBuy(strs);
 
+
+				int tf =  Integer.parseInt(strs[20]);
+				if (tf != -1) {
+					u.info.tfLevel = tf;
+				} else {
+					tf = Integer.parseInt(strs[25]);
+					if (tf != -1) {
+						u.info.tfLevel = tf;
+					}
+				}
 				strs = qt.poll().split(",");
 				int[] lv = new int[20];
 				for (int i = 0; i < 20; i++)

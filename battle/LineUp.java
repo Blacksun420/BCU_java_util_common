@@ -1,6 +1,7 @@
 package common.battle;
 
 import common.CommonStatic;
+import common.battle.data.PCoin;
 import common.io.json.JsonClass;
 import common.io.json.JsonDecoder.OnInjected;
 import common.io.json.JsonField;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+@SuppressWarnings("ForLoopReplaceableByForEach")
 @JsonClass
 public class LineUp extends Data {
 
@@ -46,6 +48,7 @@ public class LineUp extends Data {
 		for (Entry<Identifier<AbUnit>, Level> e : ref.map.entrySet()) {
 			map.put(e.getKey(), e.getValue().clone());
 		}
+
 		renew();
 	}
 
@@ -79,8 +82,10 @@ public class LineUp extends Data {
 	 */
 	public synchronized Level getLv(AbForm u) {
 		if (!map.containsKey(u.getID()))
-			setLv(u.unit(), u.getPrefLvs());
-		return map.get(u.getID());
+			setLv(u.unit(), u.unit().getPrefLvs());
+		if (u instanceof UniRand)
+			return map.get(u.getID());
+		return validateLevel((Form) u, map.get(u.getID()));
 	}
 
 	/**
@@ -195,7 +200,7 @@ public class LineUp extends Data {
 	/**
 	 * set level record of an Unit
 	 */
-	public synchronized void setLv(AbUnit u, ArrayList<Integer> lv) {
+	public synchronized void setLv(AbUnit u, Level lv) {
 		boolean sub = updating;
 		updating = true;
 
@@ -204,33 +209,41 @@ public class LineUp extends Data {
 		if (l != null) {
 			l.setLvs(lv);
 		} else {
-			l = new Level(lv);
+			l = lv.clone();
 
 			map.put(u.getID(), l);
 		}
 
 		if (!sub)
 			renewEForm();
+
 		updating &= sub;
 	}
 
 	/**
 	 * set orb data of an Unit
 	 */
-	public synchronized void setOrb(Unit u, ArrayList<Integer> lvs, int[][] orbs) {
+	public synchronized void setOrb(Unit u, Level lv, int[][] orbs) {
 		// lvs must be generated before doing something with orbs
 		boolean sub = updating;
 		updating = true;
+
 		Level l = map.get(u.id);
+
 		if (l != null) {
-			l.setLvs(lvs);
+			l.setLvs(lv);
 			l.setOrbs(orbs);
 		} else {
-			l = new Level(lvs, orbs);
+			l = lv.clone();
+
+			l.setOrbs(orbs);
+
 			map.put(u.id, l);
 		}
+
 		if (!sub)
 			renewEForm();
+
 		updating &= sub;
 	}
 
@@ -239,19 +252,23 @@ public class LineUp extends Data {
 	 */
 	public boolean willRem(Combo c) {
 		int free = 0;
+
 		for (int i = 0; i < 5; i++)
 			if (fs[0][i] == null)
 				free++;
 			else if (loc[i] == 0) {
 				boolean b = true;
+
 				for (Form is : c.forms)
 					if (fs[0][i].unit() == is.unit) {
 						b = false;
+
 						break;
 					}
 				if (b)
 					free++;
 			}
+
 		return free < occupance(c);
 	}
 
@@ -325,6 +342,7 @@ public class LineUp extends Data {
 				coms.remove(i);
 				i--;
 			}
+
 		for (int i = 0; i < tcom.size(); i++)
 			if (!coms.contains(tcom.get(i)))
 				coms.add(tcom.get(i));
@@ -349,5 +367,40 @@ public class LineUp extends Data {
 					setFS(null, i);
 			}
 		arrange();
+	}
+	private Level validateLevel(Form f, Level lv) {
+		Unit u = f.unit;
+
+		int maxTalent = 0;
+		PCoin pc = null;
+
+		for(Form form : u.forms) {
+			if(form.du.getPCoin() != null && form.du.getPCoin().max.length > maxTalent) {
+				pc = form.du.getPCoin();
+				maxTalent = pc.max.length;
+			}
+		}
+
+		lv.setLevel(Math.max(1, Math.min(u.max, lv.getLv())));
+		lv.setPlusLevel(Math.max(0, Math.min(u.maxp, lv.getPlusLv())));
+
+		if(pc != null) {
+			int[] max = pc.max;
+
+			if(lv.getTalents().length < max.length) {
+				int[] talents = new int[max.length];
+
+				for(int i = 0; i < lv.getTalents().length; i++) {
+					talents[i] = lv.getTalents()[i];
+				}
+
+				if (max.length - lv.getTalents().length >= 0)
+					System.arraycopy(max, lv.getTalents().length, talents, lv.getTalents().length, max.length - lv.getTalents().length);
+
+				lv.setTalents(talents);
+			}
+		}
+
+		return lv;
 	}
 }

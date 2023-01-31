@@ -85,10 +85,8 @@ public class UniRand extends Data implements AbUnit, AbForm {
         return this;
     }
 
-    public ArrayList<Integer> getPrefLvs() {
-        ArrayList<Integer> temp = new ArrayList<>();
-        temp.add(0);
-        return temp;
+    public Level getPrefLvs() {
+        return new Level();
     }
 
     public void updateCopy(StageBasis sb, Object o) {
