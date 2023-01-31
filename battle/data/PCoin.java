@@ -50,22 +50,20 @@ public class PCoin extends Data {
 
 	public PCoin(String[] strs, MaskUnit du) {
 		trait = Trait.convertType(CommonStatic.parseIntN(strs[1]));
+		System.out.println(du.getPack().toString());
 
-		for (int i = 0; i < 8; i++) {
+		for (int i = 0; i < 8; i++)
 			if(talentExist(strs, 2 + i * 14)) {
 				info.add(new int[14]);
 
 				for (int j = 0; j < 14; j++)
 					info.get(info.size() - 1)[j] = CommonStatic.parseIntN(strs[2 + i * 14 + j]);
+				if (info.get(info.size() - 1)[13] == 1)
+					info.get(info.size() - 1)[13] = 60;
 			}
-		}
-
 		max = new int[info.size()];
-
-		for (int i = 0; i < info.size(); i++) {
+		for (int i = 0; i < info.size(); i++)
 			max[i] = Math.max(1, info.get(i)[1]);
-		}
-
 		this.du = du;
 
 		full = improve(max);
@@ -75,21 +73,21 @@ public class PCoin extends Data {
 		int id = CommonStatic.parseIntN(strs[0]);
 		trait = Trait.convertType(CommonStatic.parseIntN(strs[1]));
 
-		for (int i = 0; i < 8; i++) {
+		for (int i = 0; i < 8; i++)
 			if(!strs[2 + i * 14].equals("0")) {
 				info.add(new int[14]);
 
 				for (int j = 0; j < 14; j++)
 					info.get(info.size() - 1)[j] = CommonStatic.parseIntN(strs[2 + i * 14 + j]);
+				if (info.get(info.size() - 1)[13] == 1)
+					info.get(info.size() - 1)[13] = 60;
 			}
-		}
-		du = Identifier.parseInt(id, Unit.class).get().getForms()[2].du;
 		max = new int[info.size()];
-
-		for (int i = 0; i < info.size(); i++) {
+		for (int i = 0; i < info.size(); i++)
 			max[i] = Math.max(1, info.get(i)[1]);
-		}
+		du = Identifier.parseInt(id, Unit.class).get().getForms()[2].du;
 		((DataUnit)du).pcoin = this;
+
 		full = improve(max);
 	}
 

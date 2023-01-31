@@ -381,8 +381,9 @@ public class LineUp extends Data {
 			}
 		}
 
+		int plusLv = Math.max(0, lv.getLv() - u.max);
 		lv.setLevel(Math.max(1, Math.min(u.max, lv.getLv())));
-		lv.setPlusLevel(Math.max(0, Math.min(u.maxp, lv.getPlusLv())));
+		lv.setPlusLevel(Math.max(0, Math.min(u.maxp, lv.getPlusLv() + plusLv)));
 
 		if(pc != null) {
 			int[] max = pc.max;

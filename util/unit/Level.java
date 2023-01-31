@@ -193,13 +193,12 @@ public class Level implements BattleStatic, LevelInterface {
 	public void parseOldLevel(ArrayList<Integer> levels) {
 		if (levels.size() > 0) {
 			level = levels.get(0);
-		}
+			if (levels.size() > 1) {
+				talents = new int[levels.size() - 1];
 
-		if (levels.size() > 1) {
-			talents = new int[levels.size() - 1];
-
-			for (int i = 0; i < talents.length; i++) {
-				talents[i] = levels.get(i + 1);
+				for (int i = 0; i < talents.length; i++) {
+					talents[i] = levels.get(i + 1);
+				}
 			}
 		}
 	}
