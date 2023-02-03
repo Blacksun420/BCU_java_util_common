@@ -41,37 +41,50 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 		}
 
 		public static void read() {
-			Map<String, Integer> idmap = UserProfile.getRegister(REG_IDMAP);
-			idmap.put("E", 4);
+			final Map<String, Integer> idmap = UserProfile.getRegister(REG_IDMAP);
+			idmap.put("CH", 3);
+			idmap.put("M", 12);
 			idmap.put("N", 0);
+			idmap.put("A", 13);
+			idmap.put("ND", 34);
 			idmap.put("S", 1);
 			idmap.put("C", 2);
-			idmap.put("CH", 3);
-			idmap.put("T", 6);
-			idmap.put("V", 7);
-			idmap.put("R", 11);
-			idmap.put("M", 12);
-			idmap.put("A", 13);
+			idmap.put("E", 4);
 			idmap.put("B", 14);
-			idmap.put("RA", 24);
+			idmap.put("V", 7);
 			idmap.put("H", 25);
-			idmap.put("CA", 27);
 			idmap.put("Q", 31);
 			idmap.put("L", 33);
-			idmap.put("ND", 34);
+			idmap.put("RA", 24);
+			idmap.put("CA", 27);
+			idmap.put("T", 6);
+			idmap.put("R", 11);
 
 			for (int i = 0; i < strs.length; i++)
 				new CastleList.DefCasList(Data.hex(i), strs[i]);
 			VFile f = VFile.get("./org/stage/");
 			if (f == null)
 				return;
-			for (VFile fi : f.list()) {
-				if (fi.getName().equals("CH"))
-					continue;
-				if (fi.getName().equals("D"))
-					continue;
-				if (fi.getName().equals("DM"))
-					continue;
+			ArrayList<VFile> sortedFiles = new ArrayList<>(f.list());
+			sortedFiles.removeIf(v -> v.getName().equals("CH") || v.getName().equals("D") || v.getName().equals("DM"));
+			sortedFiles.sort((vff, vf) -> {
+				Set<String> ids = idmap.keySet();
+				int n = 0, o = -1, p = -1;
+				for (String str : ids)
+					if (str.equals(vff.getName())) {
+						o = n;
+						if (p != -1)
+							return 1;
+					} else if (str.equals(vf.getName())) {
+						p = n;
+						if (o != -1)
+							return -1;
+					} else
+						n++;
+				return vff.compareTo(vf);
+			});
+			new DefMapColc();
+			for (VFile fi : sortedFiles) {
 				List<VFile> list = new ArrayList<>(fi.list());
 				VFile map = list.get(0);
 				List<VFile> stage = new ArrayList<>();
@@ -84,7 +97,6 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 				}
 				new DefMapColc(fi.getName(), idmap.get(fi.getName()), stage, map);
 			}
-			new DefMapColc();
 			Queue<String> qs = VFile.readLine("./org/data/Map_option.csv");
 			qs.poll();
 			for (String str : qs) {
