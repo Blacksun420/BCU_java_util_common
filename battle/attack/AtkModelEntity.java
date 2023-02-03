@@ -187,7 +187,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		int atk = getAttack(data.getAtkModel(0, 0), p);
 		AttackSimple as = new AttackSimple(e, this, atk, e.traits, getAbi(), p, 0, 0, e.data.getAtkModel(0, 0), 0, false);
 		Proc.VOLC ds = e.getProc().DEATHSURGE;
-		int addp = ds.dis_0 + (int) (b.r.nextDouble() * (ds.dis_1 - ds.dis_0));
+		int addp = ds.dis_0 == ds.dis_1 ? ds.dis_0 : ds.dis_0 + (int) (b.r.nextDouble() * (ds.dis_1 - ds.dis_0));
 		double p0 = getPos() + getDire() * addp;
 		double sta = p0 + (getDire() == 1 ? W_VOLC_PIERCE : W_VOLC_INNER);
 		double end = p0 - (getDire() == 1 ? W_VOLC_INNER : W_VOLC_PIERCE);

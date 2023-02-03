@@ -1760,7 +1760,7 @@ public abstract class Entity extends AbEntity {
 		final int FDmg = dmg;
 		atk.notifyEntity(e -> {
 			Proc.COUNTER counter = getProc().COUNTER;
-			if ((counter.prob == 100 || basis.r.nextDouble() * 100 < counter.prob) && e.getDire() != getDire() && (e.touchable() & getTouch()) > 0) {
+			if (!atk.isCounter && counter.prob > 0 && e.getDire() != getDire() && (e.touchable() & getTouch()) > 0 && (counter.prob == 100 || basis.r.nextDouble() * 100 < counter.prob)) {
 				boolean isWave = (atk.waveType & WT_WAVE) > 0 || (atk.waveType & WT_MINI) > 0 || (atk.waveType & WT_MOVE) > 0 || (atk.waveType & WT_VOLC) > 0;
 				if (!isWave || counter.type.counterWave != 0) {
 					double[] ds = counter.minRange != 0 || counter.maxRange != 0 ? new double[]{pos + counter.minRange, pos + counter.maxRange} : aam.touchRange();
@@ -1780,10 +1780,10 @@ public abstract class Entity extends AbEntity {
 							reflectAtk = data.getCounter().atk;
 						else {
 							reflectAtk = reflectAtk * counter.damage / 100;
-							if (e.status.weak[0] > 0)
-								reflectAtk = reflectAtk * e.status.weak[1] / 100;
-							if (e.status.strengthen != 0)
-								reflectAtk += reflectAtk * e.status.strengthen / 100;
+							if (status.weak[0] > 0)
+								reflectAtk = reflectAtk * status.weak[1] / 100;
+							if (status.strengthen != 0)
+								reflectAtk += reflectAtk * status.strengthen / 100;
 							reflectAtk *= auras.getAtkAura();
 						}
 
@@ -1798,10 +1798,10 @@ public abstract class Entity extends AbEntity {
 							reflectAtk = getAtk();
 						else {
 							reflectAtk = reflectAtk * counter.damage / 100;
-							if (e.status.weak[0] > 0)
-								reflectAtk = reflectAtk * e.status.weak[1] / 100;
-							if (e.status.strengthen != 0)
-								reflectAtk += reflectAtk * e.status.strengthen / 100;
+							if (status.weak[0] > 0)
+								reflectAtk = reflectAtk * status.weak[1] / 100;
+							if (status.strengthen != 0)
+								reflectAtk += reflectAtk * status.strengthen / 100;
 							reflectAtk *= auras.getAtkAura();
 						}
 
@@ -1827,16 +1827,12 @@ public abstract class Entity extends AbEntity {
 			}
 
 			int d = FDmg;
-
-			if (status.armor[0] > 0) {
+			if (status.armor[0] > 0)
 				d *= (100 + status.armor[1]) / 100.0;
-			}
 
 			e.damageGiven += Math.min(d, health);
-
 			if(e instanceof EUnit && ((EUnit) e).index != null) {
 				int[] index = ((EUnit) e).index;
-
 				basis.totalDamageGiven[index[0]][index[1]] += Math.min(d, health);
 			}
 		});

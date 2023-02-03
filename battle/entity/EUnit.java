@@ -89,9 +89,8 @@ public class EUnit extends Entity {
 	@Override
 	public void kill(boolean atk) {
 		super.kill(atk);
-		if (index != null && status.money != 0) {
-			basis.money -= (status.money / 100.0) * basis.elu.price[index[0]][index[1]];
-		}
+		if (status.money != 0)
+			basis.money -= (status.money / 100.0) * (index != null ? basis.elu.price[index[0]][index[1]] : ((MaskUnit)data).getPrice());
  	}
 
 	@Override

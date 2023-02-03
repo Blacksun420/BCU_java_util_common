@@ -58,29 +58,22 @@ public class ERUnit extends Data implements IForm {
         ArrayList<DH> iList = new ArrayList<>();
         for (int i = 0; i < unit.list.size(); i++) {
             if (unit.list.get(i).ent instanceof UniRand) {
-                Level eLv = unit.list.get(i).lv.clone();
-                ArrayList<Integer> l = getLvs(eLv), e = getLvs(level);
-                for (int j = 0; j < Math.min(l.size(), e.size()); j++)
-                    l.set(j, l.get(j) + e.get(j));
-
+                Level eLv = modifyLv(unit.list.get(i).lv.clone());
                 int t = unit.list.get(i).share;
                 iList.add(new DH(new ERUnit((UniRand)unit.list.get(i).ent, eLv), t));
                 tot += t;
-                continue;
+            } else {
+                Form f = (Form) unit.list.get(i).ent;
+                if (f.du.getWill() > sb.entityCount(-1))
+                    continue;
+                Level eLv = modifyLv(unit.list.get(i).lv.clone());
+                EForm ef = new EForm(f, f.regulateLv(null, eLv));
+                if (deploy && sb.st.lim != null && !sb.st.lim.unusable(ef.du, sb.st.getCont().price))
+                    continue;
+                DH h = new DH(ef, unit.list.get(i).share);
+                iList.add(h);
+                tot += h.share;
             }
-            Form f = (Form) unit.list.get(i).ent;
-            if (f.du.getWill() > sb.entityCount(-1))
-                continue;
-            Level eLv = unit.list.get(i).lv.clone();
-            ArrayList<Integer> l = getLvs(eLv), e = getLvs(level);
-            for (int j = 0; j < Math.min(l.size(), e.size()); j++)
-                l.set(j, l.get(j) + e.get(j));
-            EForm ef = new EForm(f, f.regulateLv(null, eLv));
-            if (deploy && sb.st.lim != null && !sb.st.lim.unusable(ef.du, sb.st.getCont().price))
-                continue;
-            DH h = new DH(ef, unit.list.get(i).share);
-            iList.add(h);
-            tot += h.share;
         }
 
         if (iList.size() == 1)
@@ -96,12 +89,14 @@ public class ERUnit extends Data implements IForm {
         return null;
     }
 
-    private static ArrayList<Integer> getLvs(Level lv) {
-        ArrayList<Integer> lvs = new ArrayList<>(lv.getTalents().length + 1);
-        lvs.add(lv.getLv() + lv.getPlusLv());
-        for (int i = 0; i < lv.getTalents().length + 1; i++)
-            lvs.add(lv.getTalents()[i]);
-        return lvs;
+    private Level modifyLv(Level eLv) {
+        eLv.setLevel(eLv.getLv() + level.getLv());
+        eLv.setPlusLevel(eLv.getPlusLv() + level.getPlusLv());
+        int[] eT = eLv.getTalents();
+        for (int k = 0; k < eT.length; k++)
+            eT[k] += level.getTalents()[k];
+        eLv.setTalents(eT);
+        return eLv;
     }
 
     @Override

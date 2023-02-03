@@ -40,6 +40,10 @@ public class Level implements BattleStatic, LevelInterface {
 				if (arr.length > 1)
 					lv.plusLevel = Math.max(0, Math.min(arr[1], ((Unit) u).maxp));
 			}
+		} else if (arr.length > 0) {
+			lv.level = Math.max(1, arr[0]);
+			if (arr.length > 1)
+				lv.plusLevel = Math.max(0, arr[1]);
 		}
 
 		if(coin != null) {
@@ -69,7 +73,7 @@ public class Level implements BattleStatic, LevelInterface {
 	}
 
 	public Level(int level, int plusLevel, @Nonnull int[] talents) {
-		this.level = Math.max(1, level);
+		this.level = level;
 		this.plusLevel = plusLevel;
 
 		this.talents = talents.clone();

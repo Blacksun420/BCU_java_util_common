@@ -262,9 +262,7 @@ public abstract class AttackAb extends BattleObj {
 	}
 
 	public void notifyEntity(Consumer<Entity> notifier) {
-		if (!isCounter && attacker != null) {
+		if (attacker != null)
 			notifier.accept(attacker);
-		}
 	}
-
 }

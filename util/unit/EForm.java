@@ -36,19 +36,13 @@ public class EForm extends Data implements IForm {
 
 	@Override
 	public EUnit getEntity(StageBasis b, int[] index, boolean isBase) {
-		int lv = level.getLv() + level.getPlusLv();
-
 		if(b.st.isAkuStage())
 			level.setLevel(getAkuStageLevel());
 
 		double d = f.unit.lv.getMult(level.getLv() + level.getPlusLv());
 		EAnimU anim = getEntryAnim();
 
-		EUnit result = new EUnit(b, du, anim, d, du.getFront(), du.getBack(), level, f.du.getPCoin(), index, isBase);
-
-		level.setLevel(lv);
-
-		return result;
+		return new EUnit(b, du, anim, d, du.getFront(), du.getBack(), level, f.du.getPCoin(), index, isBase);
 	}
 
 	@Override
