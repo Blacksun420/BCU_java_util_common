@@ -19,15 +19,25 @@ public class MultiLangData extends Data {
     }
 
     public void put(String data) {
-        int lang = lang();
+        put(lang(), data);
+    }
 
+    public void put(int lang, String data) {
         if (data != null && data.length() > 0)
             dat.put(lang, data);
         else
             dat.remove(lang);
     }
-    public void remove() {
-        dat.remove(lang());
+
+    public void remove(int lang) {
+        dat.remove(lang);
+    }
+
+    public String get(int lang) {
+        String temp = dat.get(lang);
+        if (temp != null)
+            return temp;
+        return toString();
     }
 
     public void replace(String olds, String news) {

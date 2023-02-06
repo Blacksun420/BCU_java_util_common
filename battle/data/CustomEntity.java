@@ -339,6 +339,41 @@ public abstract class CustomEntity extends DataEntity {
 			for (int i = 0; i < hits.get(j).length; i++)
 				hits.get(j)[i] = tnew.get(inds[i]);
 		}
+
+		revs = new AtkDataModel[ce.revs.length];
+		for (int i = 0; i < revs.length; i++) {
+			revs[i] = new AtkDataModel(this, ce.revs[i]);
+			revs[i].str = "revenge" + (i > 0 ? i + 1 : "");
+		}
+		ress = new AtkDataModel[ce.ress.length];
+		for (int i = 0; i < ress.length; i++) {
+			ress[i] = new AtkDataModel(this, ce.ress[i]);
+			ress[i].str = "resurrection" + (i > 0 ? i + 1 : "");
+		}
+		if (ce.cntr != null) {
+			cntr = new AtkDataModel(this, ce.cntr);
+			cntr.str = "counterattack";
+		}
+		burs = new AtkDataModel[ce.burs.length];
+		for (int i = 0; i < burs.length; i++) {
+			burs[i] = new AtkDataModel(this, ce.burs[i]);
+			burs[i].str = "burrow" + (i > 0 ? i + 1 : "");
+		}
+		resus = new AtkDataModel[ce.resus.length];
+		for (int i = 0; i < resus.length; i++) {
+			resus[i] = new AtkDataModel(this, ce.resus[i]);
+			resus[i].str = "resurface" + (i > 0 ? i + 1 : "");
+		}
+		revis = new AtkDataModel[ce.revis.length];
+		for (int i = 0; i < revis.length; i++) {
+			revis[i] = new AtkDataModel(this, ce.revis[i]);
+			revis[i].str = "revive" + (i > 0 ? i + 1 : "");
+		}
+		entrs = new AtkDataModel[ce.entrs.length];
+		for (int i = 0; i < entrs.length; i++) {
+			entrs[i] = new AtkDataModel(this, ce.entrs[i]);
+			entrs[i].str = "entrance" + (i > 0 ? i + 1 : "");
+		}
 	}
 
 	public void animChanged(int del) {

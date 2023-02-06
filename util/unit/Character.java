@@ -7,6 +7,7 @@ import common.battle.data.MaskEntity;
 import common.io.json.JsonClass;
 import common.io.json.JsonField;
 import common.io.json.localDecoder;
+import common.pack.Identifier;
 import common.pack.PackData.UserPack;
 import common.pack.UserProfile;
 import common.system.VImg;
@@ -38,6 +39,8 @@ public abstract class Character extends Animable<AnimU<?>, AnimU.UType> {
     }
 
     public abstract MaskEntity getMask();
+
+    public abstract Identifier<?> getID();
 
     /**
      * Handles most of the injected parameters of enemies and forms

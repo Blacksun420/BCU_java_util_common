@@ -893,11 +893,18 @@
     "abbr_name": "烈波ダメージ無効",
     "full_name": "烈波ダメージ無効/耐性",
     "tooltip": null,
-    "format": "烈波ダメージ[(mult==100){無効}(mult<100&mult>0){(mult)%耐性}(mult<0){(_abs(mult))%脆弱性}]",
+    "format": [
+      "烈波ダメージ[(mult==100){無効}(mult<100&mult>0){(mult)%耐性}(mult<0){(_abs(mult))%脆弱性}][(block!=0&block!=100&mult!=0){と}]",
+      "[(block==100){ストッパー}(block<100&block>0){(block)%アブソーバー}(block<0){(block)%強化}]"
+    ],
     "class": {
       "mult": {
-        "name": "軽減割合",
+        "name": "種類",
         "tooltip": null
+      },
+      "block": {
+        "name": "ストッパー",
+        "tooltip": "100で烈波ダメージを完全にブロックします。100以下の正の数値では効果が減少します。"
       }
     }
   },
@@ -1473,10 +1480,10 @@
     }
   },
   "RAGE": {
-    "abbr_name": "Rage",
-    "full_name": "Rage",
-    "tooltip": "Enrages the target, making it's attacks hurt both enemies and it's own allies",
-    "format": "(prob)% chance to enrage target for (_dispTime(time))",
+    "abbr_name": "怒り",
+    "full_name": "怒り",
+    "tooltip": "対象を激怒させ、敵と味方の両方を攻撃させる。",
+    "format": "(prob)%の確率で(_dispTime(time))の間を怒りる",
     "class": {
       "prob": {
         "name": "chance",
@@ -1489,10 +1496,10 @@
     }
   },
   "HYPNO": {
-    "abbr_name": "Hypno",
-    "full_name": "Hypnotize",
-    "tooltip": "Turns the target against its own allies",
-    "format": "(prob)% chance to hypnotize target for (_dispTime(time))",
+    "abbr_name": "催眠術",
+    "full_name": "催眠術",
+    "tooltip": "対象が味方を裏切るようにする",
+    "format": "(prob)%の確率で(_dispTime(time))の間を催眠術をかける",
     "class": {
       "prob": {
         "name": "chance",
@@ -1501,6 +1508,44 @@
       "time": {
         "name": "duration",
         "tooltip": null
+      }
+    }
+  },
+  "IMURAGE": {
+    "abbr_name": "怒り無効",
+    "full_name": "怒り無効/耐性",
+    "tooltip": null,
+    "format": [
+      "怒り[(mult==100){無効}(mult<100&mult>0){(mult)%耐性}(mult<0){(_abs(mult))%脆弱性}][(block!=0&block!=100&mult!=0){と}]",
+      "[(block==100){ストッパー}(block<100&block>0){(block)%アブソーバー}(block<0){(block)%強化}]"
+    ],
+    "class": {
+      "mult": {
+        "name": "種類",
+        "tooltip": null
+      },
+      "block": {
+        "name": "ストッパー",
+        "tooltip": "100で怒りを完全にブロックします。100以下の正の数値では効果が減少します。"
+      }
+    }
+  },
+  "IMUHYPNO": {
+    "abbr_name": "催眠術無効",
+    "full_name": "催眠術無効/耐性",
+    "tooltip": null,
+    "format": [
+      "催眠術[(mult==100){無効}(mult<100&mult>0){(mult)%耐性}(mult<0){(_abs(mult))%脆弱性}][(block!=0&block!=100&mult!=0){と}]",
+      "[(block==100){ストッパー}(block<100&block>0){(block)%アブソーバー}(block<0){(block)%強化}]"
+    ],
+    "class": {
+      "mult": {
+        "name": "種類",
+        "tooltip": null
+      },
+      "block": {
+        "name": "ストッパー",
+        "tooltip": "100で催眠術を完全にブロックします。100以下の正の数値では効果が減少します。"
       }
     }
   }

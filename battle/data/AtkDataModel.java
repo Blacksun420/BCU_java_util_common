@@ -8,6 +8,7 @@ import common.io.json.JsonDecoder;
 import common.io.json.JsonField;
 import common.pack.Identifier;
 import common.pack.SortedPackSet;
+import common.pack.UserProfile;
 import common.system.BasedCopable;
 import common.util.Data;
 import common.util.stage.Music;
@@ -45,6 +46,7 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 		ld1 = adm.ld1;
 		range = adm.range;
 		traits = new SortedPackSet<>(adm.traits);
+		traits.removeIf(t -> !(t.id.pack.equals(ene.getPack().getID().pack) || UserProfile.getUserPack(ene.getPack().getID().pack).desc.dependency.contains(t.id.pack)));
 		dire = adm.dire;
 		count = adm.count;
 		targ = adm.targ;
