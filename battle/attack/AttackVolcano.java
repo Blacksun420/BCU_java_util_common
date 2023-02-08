@@ -27,9 +27,8 @@ public class AttackVolcano extends AttackAb {
 		capt.clear();
 
 		for (AbEntity e : le)
-			if (e instanceof Entity && !vcapt.contains((Entity) e)) {
+			if (e instanceof Entity && !vcapt.contains((Entity) e) && ((abi & AB_ONLY) == 0 || e.ctargetable(trait, attacker)))
 				capt.add(e);
-			}
 	}
 
 	@Override
@@ -39,13 +38,11 @@ public class AttackVolcano extends AttackAb {
 		if (volcTime == 0) {
 			volcTime = VOLC_ITV;
 			vcapt.clear();
-		} else {
+		} else
 			volcTime--;
-		}
 
-		if(attacker != null) {
+		if(attacker != null)
 			atk = ((AtkModelEntity)model).getEffAtk(matk);
-		}
 
 		for (AbEntity e : capt) {
 			if (e.isBase() && !(e instanceof Entity))

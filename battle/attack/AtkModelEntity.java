@@ -64,7 +64,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		e = ent;
 		data = e.data;
 		if (pc != null && lv != null && lv.getTalents().length == pc.max.length)
-			this.d0 = d0 * pc.getAtkMultiplication(lv);
+			this.d0 = d0 * pc.getStatMultiplication(PC2_ATK, lv.getTalents());
 		else
 			this.d0 = d0;
 		this.d1 = d1 * (1 + ent.basis.b.getInc(Data.C_ATK) * 0.01);

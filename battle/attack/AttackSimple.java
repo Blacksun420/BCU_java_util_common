@@ -138,9 +138,8 @@ public class AttackSimple extends AttackAb {
 
 			ContWaveDef wave = new ContWaveDef(new AttackWave(attacker, this, p0, wid, WT_MINI), p0, layer, false);
 
-			if(attacker != null) {
+			if(attacker != null)
 				attacker.summoned.add(wave);
-			}
 		}
 		if (proc.VOLC.exists() && (capt.size() > 0 || proc.VOLC.type.hitless)) {
 			int dire = model.getDire();
