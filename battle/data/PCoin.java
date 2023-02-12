@@ -300,8 +300,8 @@ public class PCoin extends Data {
 					int v1 = info.get(i)[3];
 					int modif = (v1 - v0) * (talents[i] - 1) / (maxlv - 1) + v0;
 					return 1 + modif * 0.01;
-				} else
-					return 1 + info.get(i)[3] * 0.01;
+				}
+				return 1 + info.get(i)[3] * 0.01;
 			}
 		}
 		return 1.0;
