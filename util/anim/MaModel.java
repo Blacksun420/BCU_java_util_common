@@ -43,8 +43,8 @@ public class MaModel extends Data implements Cloneable, BattleStatic {
 		parts = new int[][] { { -1, -1, 0, 0, 0, 0, 0, 0, 1000, 1000, 0, 1000, 0, 0 } };
 		ints = new int[] { 1000, 3600, 1000 };
 		confs = new int[][] { { 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0 } };
-		strs0 = new String[] { "default" };
-		strs1 = new String[] { "default" };
+		strs0 = new String[] { "def" };
+		strs1 = new String[] { "def" };
 	}
 
 	protected MaModel(Queue<String> qs) {

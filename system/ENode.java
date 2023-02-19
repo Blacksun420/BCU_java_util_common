@@ -5,15 +5,15 @@ import common.util.unit.Enemy;
 
 import java.util.List;
 
-public class ENode extends Node<AbEnemy> {
+public class ENode extends Node<Enemy> {
 
-    public ENode(AbEnemy v) {
+    public ENode(Enemy v) {
         super(v);
         mul = 100;
         mula = 100;
     }
 
-    public ENode(AbEnemy v, int[] muls) {
+    public ENode(Enemy v, int[] muls) {
         super(v);
         mul = muls[0];
         mula = muls[1];
@@ -22,7 +22,9 @@ public class ENode extends Node<AbEnemy> {
     public static ENode getListE(List<AbEnemy> list, AbEnemy enemy) {
         ENode ans = null, ret = null;
         for (AbEnemy e : list) {
-            ENode temp = new ENode(e);
+            if (!(e instanceof Enemy))
+                continue;
+            ENode temp = new ENode((Enemy) e);
             if (ans != null)
                 ans.add(temp);
             if (e == enemy)

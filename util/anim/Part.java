@@ -9,7 +9,7 @@ import java.util.Queue;
 
 public class Part extends Data implements Cloneable, Comparable<Part> {
 
-	public int[] ints = new int[5];
+	public int[] ints = new int[5]; //0 - id, i - modif, 2 - loop, 3 - nothing, 4 - nothing
 	public String name;
 	public int n, max, off, fir;
 	public int frame, vd;// for editor only
@@ -33,7 +33,7 @@ public class Part extends Data implements Cloneable, Comparable<Part> {
 		String[] ss = qs.poll().trim().split(",");
 		for (int i = 0; i < 5; i++)
 			ints[i] = Integer.parseInt(ss[i].trim());
-		if (ss.length == 6)
+		if (ss.length == 6) //TODO Only make custom anims use 3 parts while tolerating BC's use of 5
 			name = restrict(ss[5]);
 		else
 			name = "";
