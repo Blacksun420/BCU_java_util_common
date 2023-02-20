@@ -68,8 +68,12 @@ public abstract class AnimD<A extends AnimD<A, T>, T extends AnimI.AnimType<A, T
 			if (ints != null && ints[0] >= 0)
 				ints[0] = inds[ints[0]];
 		for (MaAnim ma : anims)
-			for (Part part : ma.parts)
+			for (Part part : ma.parts) {
 				part.ints[0] = inds[part.ints[0]];
+				if (part.ints[1] == 0)
+					for (int[] move : part.moves)
+						move[1] = inds[move[1]];
+			}
 	}
 
 	public void revert() {
