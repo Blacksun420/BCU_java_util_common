@@ -9,6 +9,7 @@ import common.battle.data.MaskEnemy;
 import common.battle.data.MaskUnit;
 import common.pack.SortedPackSet;
 import common.pack.UserProfile;
+import common.util.anim.AnimU;
 import common.util.anim.EAnimU;
 import common.util.unit.Trait;
 
@@ -159,6 +160,8 @@ public class EEnemy extends Entity {
 
 	@Override
 	public void postUpdate() {
+		if (!canBurrow && notAttacking())
+			canBurrow = status.burs[0] != 0;
 		super.postUpdate();
 	}
 

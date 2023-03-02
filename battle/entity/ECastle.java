@@ -74,6 +74,14 @@ public class ECastle extends AbEntity {
 			CommonStatic.setSE(SE_CRIT);
 		}
 		CommonStatic.setSE(SE_HIT_BASE);
+
+		if (atk.attacker != null) {
+			atk.attacker.damageGiven += Math.min(ans, health);
+			if(atk.attacker instanceof EUnit && ((EUnit)atk.attacker).index != null) {
+				int[] index = ((EUnit)atk.attacker).index;
+				sb.totalDamageGiven[index[0]][index[1]] += Math.min(ans, health);
+			}
+		}
 		health -= ans;
 
 		if (health > maxH)

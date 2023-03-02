@@ -699,10 +699,8 @@ public abstract class Entity extends AbEntity {
 				}
 				preTime--;
 			}
-			if (atkTime == 0) {
-				e.canBurrow = true;
+			if (atkTime == 0)
 				e.anim.setAnim(AnimU.TYPEDEF[AnimU.IDLE], true);
-			}
 		}
 	}
 
@@ -1472,11 +1470,6 @@ public abstract class Entity extends AbEntity {
 	protected boolean canBurrow = true;
 
 	/**
-	 * temporary value for move check
-	 */
-	protected boolean moved = false;
-
-	/**
 	 * entity's barrier processor
 	 */
 	private final Barrier barrier = new Barrier(this);
@@ -2184,9 +2177,8 @@ public abstract class Entity extends AbEntity {
 			anim.setAnim(AnimU.TYPEDEF[AnimU.HB], true);
 		}
 
-		if(!dead || !summoned.isEmpty()) {
+		if(!dead || !summoned.isEmpty())
 			livingTime++;
-		}
 
 		summoned.removeIf(s -> !s.activate);
 
@@ -2368,8 +2360,6 @@ public abstract class Entity extends AbEntity {
 		barrier.update();
 
 		boolean nstop = status.stop == 0;
-		canBurrow |= atkm.loop < data.getAtkLoop() - 1;
-
 		boolean canAct = kbTime == 0 && anim.anim.type != AnimU.TYPEDEF[AnimU.ENTRY];
 		// do move check if available, move if possible
 		int tba = getEffectiveTBA();
@@ -2398,12 +2388,14 @@ public abstract class Entity extends AbEntity {
 		checkTouch();
 
 		// update burrow state if not stopped
-		if (nstop && canBurrow)
+		if (nstop && canBurrow) {
 			updateBurrow();
+			canAct &= kbTime == 0;
+		}
 
-		boolean canAttack = !isBase || !(data.getSpeed() == 0 && data.allAtk(0) == 0);
+		boolean canAttack = canAct && (!isBase || !(data.getSpeed() == 0 && data.allAtk(0) == 0));
 		// update wait and attack state
-		if (canAct && canAttack) {
+		if (canAttack) {
 			// if it can attack, setup attack state
 			if (!acted && touchEnemy && atkm.loop != 0 && nstop && tba + atkm.atkTime == 0 && !(isBase && health <= 0))
 				atkm.setUp();
@@ -2417,7 +2409,7 @@ public abstract class Entity extends AbEntity {
 						anim.setAnim(AnimU.TYPEDEF[AnimU.WALK], true);
 					else
 						anim.setAnim(AnimU.TYPEDEF[AnimU.RETREAT], true);
-				} else if (kbTime == 0)
+				} else
 					anim.setAnim(AnimU.TYPEDEF[AnimU.IDLE], true);
 			}
 		}
@@ -2559,10 +2551,6 @@ public abstract class Entity extends AbEntity {
 	 * @return distance moved
 	 */
 	protected double updateMove(double extmov) {
-		if (moved)
-			canBurrow = true;
-		moved = true;
-
 		double mov = getMov(extmov);
 		pos += mov * getDire();
 		return mov;
@@ -2761,8 +2749,10 @@ public abstract class Entity extends AbEntity {
 			for (int i = 0; i < data.getResurface().length; i++)
 				if (anim.anim.len() - status.burs[1] - 2 == data.getResurface()[i].pre)
 					basis.getAttack(aam.getSpAttack(RESU, i));
-			if (status.burs[1] <= 0)
+			if (status.burs[1] <= 0) {
 				kbTime = 0;
+				canBurrow = status.burs[0] != 0;
+			}
 		}
 
 	}
@@ -2815,5 +2805,9 @@ public abstract class Entity extends AbEntity {
 	 */
 	public EAnimU getAnim() {
 		return anim.anim;
+	}
+
+	protected boolean notAttacking() {
+		return atkm.atkTime == 0;
 	}
 }
