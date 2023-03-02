@@ -119,7 +119,7 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 		else if (m == 2)
 			return img;
 		else if (m == 3)
-			return z / ent.length - ind;
+			return (z - ind) / ent.length;
 		else if (m == 4)
 			return (int) pos.x;
 		else if (m == 5)

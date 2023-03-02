@@ -1481,6 +1481,10 @@ public abstract class Entity extends AbEntity {
 	 */
 	private final Barrier barrier = new Barrier(this);
 
+	public boolean hasBarrier() {
+		return barrier.health > 0;
+	}
+
 	/**
 	 * Used for regenerating shield considering enemy's magnification
 	 */
@@ -1545,11 +1549,10 @@ public abstract class Entity extends AbEntity {
 	 */
 	@Override
 	public void damaged(AttackAb atk) {
-		damageTaken += atk.atk;
-
 		int dmg = getDamage(atk, atk.atk);
 		boolean proc = true;
 
+		damageTaken += dmg;
 		if (anim.corpse != null && anim.corpse.type == ZombieEff.REVIVE && status.revs[1] >= REVIVE_SHOW_TIME)
 			return;
 
@@ -1685,7 +1688,7 @@ public abstract class Entity extends AbEntity {
 			}
 		}
 
-		boolean barrierContinue = barrier.health == 0;
+		boolean barrierContinue = !hasBarrier();
 		boolean shieldContinue = status.shield[0] == 0;
 
 		if (!barrierContinue) {
