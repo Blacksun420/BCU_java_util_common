@@ -37,11 +37,10 @@ public class EForm extends Data implements IForm {
 	@Override
 	public EUnit getEntity(StageBasis b, int[] index, boolean isBase) {
 		if(b.st.isAkuStage())
-			level.setLevel(getAkuStageLevel());
+			getAkuStageLevel();
 
 		double d = f.unit.lv.getMult(level.getLv() + level.getPlusLv());
 		EAnimU anim = getEntryAnim();
-
 		return new EUnit(b, du, anim, d, du.getFront(), du.getBack(), level, f.du.getPCoin(), index, isBase);
 	}
 
@@ -76,15 +75,10 @@ public class EForm extends Data implements IForm {
 		return anim;
 	}
 
-	private int getAkuStageLevel() {
+	private void getAkuStageLevel() {
 		if(CommonStatic.getConfig().levelLimit == 0)
-			return level.getLv() + level.getPlusLv();
-
-		int normal = level.getLv();
-		int plus = level.getPlusLv();
-
-		normal = Math.min(normal, CommonStatic.getConfig().levelLimit);
-
-		return CommonStatic.getConfig().plus ? normal + plus : normal;
+			return;
+		level.setLevel(Math.min(level.getLv(), CommonStatic.getConfig().levelLimit));
+		level.setPlusLevel(CommonStatic.getConfig().plus ? level.getPlusLv() : 0);
 	}
 }

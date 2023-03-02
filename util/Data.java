@@ -1065,7 +1065,7 @@ public class Data {
 	public static final byte RARITY_TOT = 6;
 
 	// trait bit filter
-	public static final int TB_RED = 1;
+	public static final byte TB_RED = 1;
 	public static final byte TB_FLOAT = 2;
 	public static final byte TB_BLACK = 4;
 	public static final byte TB_METAL = 8;

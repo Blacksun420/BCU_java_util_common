@@ -2401,7 +2401,7 @@ public abstract class Entity extends AbEntity {
 		if (nstop && canBurrow)
 			updateBurrow();
 
-		boolean canAttack = !isBase || !(data.getSpeed() == 0 && getAtk() == 0);
+		boolean canAttack = !isBase || !(data.getSpeed() == 0 && data.allAtk(0) == 0);
 		// update wait and attack state
 		if (canAct && canAttack) {
 			// if it can attack, setup attack state
