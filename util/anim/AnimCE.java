@@ -60,6 +60,7 @@ public class AnimCE extends AnimCI {
 	public EditLink link;
 
 	public Stack<History> history = new Stack<>();
+	public Stack<History> redo = new Stack<>();
 
 	@NotNull
 	public String group = "";
@@ -146,6 +147,12 @@ public class AnimCE extends AnimCI {
 
 	public String getUndo() {
 		return history.peek().name;
+	}
+
+	public String getRedo() {
+		if (redo.empty())
+			return "nothing";
+		return redo.peek().name;
 	}
 
 	public void ICedited() {
@@ -304,9 +311,8 @@ public class AnimCE extends AnimCI {
 		unSave("resize");
 	}
 
-	public void restore() {
-		history.pop();
-		InStream is = history.peek().data.translate();
+	public void restore(History hist) {
+		InStream is = hist.data.translate();
 		imgcut.restore(is);
 		ICedited();
 		mamodel.restore(is);
@@ -316,7 +322,7 @@ public class AnimCE extends AnimCI {
 			anims[i] = new MaAnim();
 			anims[i].restore(is);
 		}
-		is = history.peek().mms.translate();
+		is = hist.mms.translate();
 		n = is.nextInt();
 		for (int i = 0; i < n; i++) {
 			int ind = is.nextInt();
@@ -325,6 +331,17 @@ public class AnimCE extends AnimCI {
 				mamodel.status.put(mamodel.parts[ind], val);
 		}
 		saved = false;
+	}
+
+	public void undo() {
+		redo.push(history.pop());
+		restore(history.peek());
+	}
+
+	public void redo() {
+		History hist = redo.pop();
+		restore(hist);
+		history.push(hist);
 	}
 
 	@Override
@@ -432,6 +449,9 @@ public class AnimCE extends AnimCI {
 	}
 
 	private void history(String str) {
+		if (!history.empty() && str.equals("initial"))
+			return;
+
 		partial();
 		OutStream os = OutStream.getAnimIns();
 		imgcut.write(os);
@@ -442,6 +462,7 @@ public class AnimCE extends AnimCI {
 		os.terminate();
 		History h = new History(str, os);
 		history.push(h);
+		redo.clear();
 		updateStatus();
 	}
 

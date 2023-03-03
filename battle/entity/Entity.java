@@ -1545,7 +1545,7 @@ public abstract class Entity extends AbEntity {
 		int dmg = getDamage(atk, atk.atk);
 		boolean proc = true;
 
-		damageTaken += dmg;
+		damageTaken += atk.atk;
 		if (anim.corpse != null && anim.corpse.type == ZombieEff.REVIVE && status.revs[1] >= REVIVE_SHOW_TIME)
 			return;
 
