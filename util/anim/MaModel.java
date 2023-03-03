@@ -33,7 +33,7 @@ public class MaModel extends Data implements Cloneable, BattleStatic {
 	public int n, m;
 	public int[] ints = new int[3];
 	public int[][] confs, parts;
-	public String[] strs0, strs1;
+	public String[] strs0;
 
 	public Map<int[], Integer> status = new HashMap<>();
 
@@ -44,7 +44,6 @@ public class MaModel extends Data implements Cloneable, BattleStatic {
 		ints = new int[] { 1000, 3600, 1000 };
 		confs = new int[][] { { 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0 } };
 		strs0 = new String[] { "def" };
-		strs1 = new String[] { "def" };
 	}
 
 	protected MaModel(Queue<String> qs) {
@@ -67,15 +66,10 @@ public class MaModel extends Data implements Cloneable, BattleStatic {
 			ints[i] = Integer.parseInt(ss[i].trim());
 		m = Integer.parseInt(qs.poll().trim());
 		confs = new int[m][6];
-		strs1 = new String[m];
 		for (int i = 0; i < m; i++) {
 			ss = qs.poll().trim().split(",");
 			for (int j = 0; j < 6; j++)
 				confs[i][j] = Integer.parseInt(ss[j].trim());
-			if (ss.length == 7)
-				strs1[i] = restrict(ss[6]);
-			else
-				strs1[i] = "";
 		}
 	}
 
@@ -90,7 +84,6 @@ public class MaModel extends Data implements Cloneable, BattleStatic {
 		for (int i = 0; i < m; i++)
 			confs[i] = mm.confs[i].clone();
 		strs0 = mm.strs0.clone();
-		strs1 = mm.strs1.clone();
 	}
 
 	/**
@@ -176,11 +169,9 @@ public class MaModel extends Data implements Cloneable, BattleStatic {
 		}
 		ps.println(ints[0] + "," + ints[1] + "," + ints[2]);
 		ps.println(m);
-		for (int i = 0; i < m; i++) {
+		for (int i = 0; i < m; i++)
 			for (int j = 0; j < confs[i].length; j++)
 				ps.print(confs[i][j] + ",");
-			ps.println(strs1[i]);
-		}
 	}
 
 	protected EPart[] arrange(EAnimI e) {
@@ -199,9 +190,6 @@ public class MaModel extends Data implements Cloneable, BattleStatic {
 		strs0 = new String[n];
 		for (int i = 0; i < n; i++)
 			strs0[i] = is.nextString();
-		strs1 = new String[m];
-		for (int i = 0; i < m; i++)
-			strs1[i] = is.nextString();
 	}
 
 	protected void write(OutStream os) {
@@ -211,8 +199,6 @@ public class MaModel extends Data implements Cloneable, BattleStatic {
 		os.writeIntBB(parts);
 		os.writeIntBB(confs);
 		for (String str : strs0)
-			os.writeString(str);
-		for (String str : strs1)
 			os.writeString(str);
 	}
 

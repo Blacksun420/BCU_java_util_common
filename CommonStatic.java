@@ -271,13 +271,11 @@ public class CommonStatic {
 	}
 
 	public static int parseIntN(String str) {
-		int ans;
 		try {
-			ans = parseIntsN(str)[0];
+			return parseIntsN(str)[0];
 		} catch (Exception e) {
-			ans = -1;
+			return -1;
 		}
-		return ans;
 	}
 
 	public static String verifyFileName(String str) {
