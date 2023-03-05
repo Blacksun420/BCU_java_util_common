@@ -10,6 +10,7 @@ import common.util.BattleObj;
 import common.util.stage.info.CustomStageInfo;
 import common.util.unit.AbEnemy;
 import common.util.unit.EForm;
+import common.util.unit.Form;
 
 public class EStage extends BattleObj {
 
@@ -133,10 +134,16 @@ public class EStage extends BattleObj {
 		return null;
 	}
 
+	public Form getBase() {
+		if (s.info instanceof CustomStageInfo)
+			return ((CustomStageInfo)s.info).ubase;
+		return null;
+	}
+
 	public EUnit ubase(StageBasis sb) {
-		if (s.info instanceof CustomStageInfo && ((CustomStageInfo)s.info).ubase != null) {
+		if (getBase() != null) {
 			CustomStageInfo csi = (CustomStageInfo)s.info;
-			int[] slot = null;
+			int[] slot = new int[]{1, 5};
 			for (int i = 0; i < 2; i++)
 				for (int j = 0; j < 5; j++) {
 					if (sb.b.lu.fs[i][j] == null)

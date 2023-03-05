@@ -84,7 +84,6 @@ public class CustomStageInfo implements StageInfo {
         float[] FChances = new float[chances.size()];
         for (int i = 0; i < chances.size(); i++)
             FChances[i] = chances.get(i);
-
         return FChances;
     }
 

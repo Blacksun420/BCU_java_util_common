@@ -110,6 +110,10 @@ public class StageBasis extends BattleObj {
 			ebase.added(1, 800);
 		}
 		EUnit eu = est.ubase(this);
+		if (eu != null) {
+			totalDamageGiven[1] = new long[6];
+			totalDamageTaken[1] = new long[6];
+		}
 		ubase = eu != null ? eu : new ECastle(this, bas);
 		ubase.added(-1, st.len - 800);
 
