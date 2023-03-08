@@ -108,7 +108,7 @@ public class EUnit extends Entity {
 			SortedPackSet<Trait> sharedTraits = traits.inCommon(matk.getATKTraits());
 			boolean isAntiTraited = targetTraited(matk.getATKTraits());
 			for (Trait t : traits) {
-				if (t.BCTrait || sharedTraits.contains(t))
+				if (t.BCTrait() || sharedTraits.contains(t))
 					continue;
 				if ((t.targetType && isAntiTraited) || t.others.contains(((MaskUnit)e.data).getPack()))
 					sharedTraits.add(t);
@@ -182,7 +182,7 @@ public class EUnit extends Entity {
 			SortedPackSet<Trait> sharedTraits = traits.inCommon(atk.trait);
 			boolean isAntiTraited = targetTraited(atk.trait);
 			for (Trait t : atk.trait) {
-				if (t.BCTrait || sharedTraits.contains(t))
+				if (t.BCTrait() || sharedTraits.contains(t))
 					continue;
 				if ((t.targetType && isAntiTraited) || t.others.contains(((MaskUnit)data).getPack()))
 					sharedTraits.add(t);

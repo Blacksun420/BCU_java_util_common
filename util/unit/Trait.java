@@ -24,7 +24,6 @@ public class Trait extends Data implements Indexable<PackData, Trait>, Comparabl
         String[] traitNames = {"Red", "Floating", "Black", "Metal", "Angel", "Alien", "Zombie", "Aku", "Relic", "White", "EVA", "Witch", "Baron", "Beast", "base", "cannon"};
         for (int i = 0; i < traitNames.length ; i++) {
             Trait t = new Trait(data.getNextID(Trait.class));
-            t.BCTrait = true;
             t.name = traitNames[i];
             data.traits.add(t);
         }
@@ -37,7 +36,6 @@ public class Trait extends Data implements Indexable<PackData, Trait>, Comparabl
     @JsonField
     public Identifier<Trait> id;
     public VImg icon = null;
-    public boolean BCTrait = false;
 
     @JsonField
     public boolean targetType;
@@ -53,10 +51,10 @@ public class Trait extends Data implements Indexable<PackData, Trait>, Comparabl
         id = null;
     }
 
-    public Trait(Trait t) {
+    public Trait(Identifier<Trait> id, Trait t) {
         name = t.name;
         targetType = t.targetType;
-        id = t.id;
+        this.id = id;
         icon = t.icon;
         others.addAll(t.others);
     }
@@ -131,5 +129,9 @@ public class Trait extends Data implements Indexable<PackData, Trait>, Comparabl
     @Override
     public int compareTo(@NotNull Trait t) {
         return id.compareTo(t.id);
+    }
+
+    public boolean BCTrait() {
+        return id.pack.equals(Identifier.DEF);
     }
 }

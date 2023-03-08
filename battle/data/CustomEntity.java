@@ -242,7 +242,7 @@ public abstract class CustomEntity extends DataEntity {
 		loop = de.getAtkLoop();
 		traits = new SortedPackSet<>();
 		for(Trait t : de.getTraits()) {
-			if(!t.BCTrait)
+			if(!t.BCTrait())
 				traits.add(t);
 			else if(t.id.id != Data.TRAIT_EVA && t.id.id != Data.TRAIT_WITCH)
 				traits.add(t);

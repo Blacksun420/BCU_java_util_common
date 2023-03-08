@@ -1,6 +1,5 @@
 package common.util.unit;
 
-import common.io.InStream;
 import common.io.json.JsonClass;
 import common.io.json.JsonField;
 import common.pack.Identifier;
@@ -25,11 +24,6 @@ public class UnitLevel implements Indexable<PackData, UnitLevel> {
 	@JsonField
 	@JsonClass.JCIdentifier
 	public Identifier<UnitLevel> id;
-
-	public UnitLevel(Identifier<UnitLevel> ID, InStream is) {
-		id = ID;
-		zread(is);
-	}
 
 	public UnitLevel(Identifier<UnitLevel> ID, UnitLevel ul) {
 		id = ID;
@@ -89,30 +83,4 @@ public class UnitLevel implements Indexable<PackData, UnitLevel> {
 		ans.append("}");
 		return ans.toString();
 	}
-
-	private void zread(InStream is) {
-		int ver = is.nextInt();
-		int[] lvs = new int[3];
-		if (ver == 1) {
-			int[] vs = is.nextIntsB();
-			lvs[0] = vs[0];
-			lvs[1] = vs[1];
-			lvs[2] = vs[2];
-		} else {
-			int[][] vs = is.nextIntsBB();
-			lvs[0] = vs[1][0];
-			lvs[1] = vs[2][0];
-			lvs[2] = vs[3][0];
-		}
-
-		int pre = 0, mul = 20;
-		for (int i = 0; i < 3; i++) {
-			for (int j = pre; j < lvs[i]; j++)
-				if(j < 20)
-					this.lvs[j] = mul;
-			mul /= 2;
-			pre = lvs[i];
-		}
-	}
-
 }

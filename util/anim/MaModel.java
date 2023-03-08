@@ -20,6 +20,7 @@ public class MaModel extends Data implements Cloneable, BattleStatic {
 		try {
 			return new MaModel(f.readLine());
 		} catch (Exception e) {
+			System.out.println("Error Reading Mamodel data for " + f);
 			e.printStackTrace();
 			return new MaModel();
 		}

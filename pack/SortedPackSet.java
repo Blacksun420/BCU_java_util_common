@@ -25,6 +25,7 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
 
     public Object[] arr;
     public int size = 0;
+    private Comparator<T> comp = null;
 
     public SortedPackSet() {
         this(1);
@@ -46,10 +47,6 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
     @Override
     public int size() {
         return size;
-    }
-
-    public int capacity() {
-        return arr.length;
     }
 
     @Override
@@ -100,18 +97,17 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
         return (R[]) Arrays.copyOf(arr, size, a.getClass());
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public void sort() {
         Object[] narr = new Object[size];
         System.arraycopy(arr, 0, narr, 0, size);
-        Arrays.sort(narr);
+        Arrays.sort(narr, (Comparator)comp);
         System.arraycopy(narr, 0, arr, 0, size);
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public void sort(Comparator<? super T> c) {
-        Object[] a = toArray();
-        Arrays.sort(a, (Comparator) c);
-        System.arraycopy(a, 0, arr, 0, size);
+    public void setComp(Comparator<T> c) {
+        comp = c;
+        sort();
     }
 
     @Override
@@ -122,8 +118,15 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
             arr = Arrays.copyOf(arr, arr.length * 2);
 
         arr[size++] = t;
-        if (size > 1 && t.compareTo(get(size - 2)) < 0)
-            sort();
+        if (size > 1) {
+            int pos = size - 2;
+            while (pos >= 0 && t.compareTo(get(pos)) < 0) {
+                T cur = get(pos);
+                arr[pos] = t;
+                arr[pos + 1] = cur;
+                pos--;
+            }
+        }
 
         return true;
     }

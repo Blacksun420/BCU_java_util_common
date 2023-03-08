@@ -53,7 +53,7 @@ public class EEnemy extends Entity {
 			sharedTraits.retainAll(traits);
 			boolean isAntiTraited = targetTraited(matk.getATKTraits());
 			for (Trait t : traits) {
-				if (t.BCTrait || sharedTraits.contains(t))
+				if (t.BCTrait() || sharedTraits.contains(t))
 					continue;
 				if ((t.targetType && isAntiTraited) || t.others.contains(((MaskUnit)e.data).getPack()))
 					sharedTraits.add(t);
@@ -98,7 +98,7 @@ public class EEnemy extends Entity {
 			SortedPackSet<Trait> sharedTraits = traits.inCommon(atk.trait);
 			boolean isAntiTraited = targetTraited(atk.trait);
 			for (Trait t : traits) {
-				if (t.BCTrait || sharedTraits.contains(t))
+				if (t.BCTrait() || sharedTraits.contains(t))
 					continue;
 				if ((t.targetType && isAntiTraited) || t.others.contains(((MaskUnit)atk.attacker.data).getPack()))
 					sharedTraits.add(t);
