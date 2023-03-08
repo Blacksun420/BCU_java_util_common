@@ -6,22 +6,10 @@ import common.io.json.JsonField;
 import common.system.BasedCopable;
 import common.util.Data;
 
+import java.util.Arrays;
+
 @JsonClass
 public class SCGroup extends Data implements BasedCopable<SCGroup, Integer> {
-
-	public static SCGroup zread(InStream is) {
-		int ver = getVer(is.nextString());
-		if (ver == 404) {
-			int id = is.nextInt();
-			int n = is.nextInt();
-			int[] max = new int[n];
-			for (int i = 0; i < n; i++)
-				max[i] = is.nextInt();
-			is.nextInt();
-			return new SCGroup(id, max);
-		}
-		return null;
-	}
 
 	@JsonField
 	public final int id;
@@ -35,8 +23,7 @@ public class SCGroup extends Data implements BasedCopable<SCGroup, Integer> {
 
 	public SCGroup(int ID, int... ns) {
 		id = ID;
-		for (int i = 0; i < ns.length; i++)
-			max[i] = ns[i];
+		System.arraycopy(ns, 0, max, 0, ns.length);
 	}
 
 	@Override
@@ -52,8 +39,7 @@ public class SCGroup extends Data implements BasedCopable<SCGroup, Integer> {
 
 	public void setMax(int val, int star) {
 		if (star == -1) {
-			for (int i = 0; i < max.length; i++)
-				max[i] = val;
+			Arrays.fill(max, val);
 			return;
 		}
 		max[star] = val;
