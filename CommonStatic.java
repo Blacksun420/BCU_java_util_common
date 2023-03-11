@@ -16,11 +16,10 @@ import common.util.anim.MaModel;
 import common.util.pack.EffAnim.EffAnimStore;
 import common.util.pack.NyCastle;
 import common.util.stage.Music;
-import common.util.unit.AbEnemy;
-import common.util.unit.AbUnit;
-import common.util.unit.UnitLevel;
+import common.util.unit.*;
 
 import java.io.File;
+import java.lang.Character;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
@@ -173,11 +172,14 @@ public class CommonStatic {
 		 * Perform realistic BC levelings
 		 */
 		public boolean realLevel = false;
+	}
 
-		@JsonField(generic = Identifier.class)
-		public HashSet<Identifier<AbUnit>> favoriteUnits = new HashSet<>();
-		@JsonField(generic = Identifier.class)
-		public SortedPackSet<Identifier<AbEnemy>> favoriteEnemies = new SortedPackSet<>();
+	@JsonClass
+	public static class Faves {
+		@JsonField(generic = AbForm.class, alias = AbForm.AbFormJson.class)
+		public HashSet<AbForm> units = new HashSet<>();
+		@JsonField(generic = AbEnemy.class, alias = Identifier.class)
+		public SortedPackSet<AbEnemy> enemies = new SortedPackSet<>();
 	}
 
 	public interface EditLink {
@@ -251,6 +253,9 @@ public class CommonStatic {
 
 	public static Config getConfig() {
 		return UserProfile.getStatic("config", Config::new);
+	}
+	public static Faves getFaves() {
+		return UserProfile.getStatic("faves", Faves::new);
 	}
 
 	public static boolean isInteger(String str) {

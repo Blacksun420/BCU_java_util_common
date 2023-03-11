@@ -72,7 +72,7 @@ public class UniRand extends Data implements AbUnit, AbForm {
 
     @Override
     public String toString() {
-        return id.id + " - " + name + " (" + id.pack + ")";
+        return (CommonStatic.getFaves().units.contains(this) ? "❤" : "") + id.id + " - " + name + " (" + id.pack + ")";
     }
 
     @Override

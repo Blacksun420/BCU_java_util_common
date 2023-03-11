@@ -120,7 +120,7 @@ public class EneRand extends Data implements AbEnemy {
 
 	@Override
 	public String toString() {
-		return id.id + " - " + name + " (" + id.pack + ")";
+		return (CommonStatic.getFaves().enemies.contains(this) ? "❤" : "") + id.id + " - " + name + " (" + id.pack + ")";
 	}
 
 	private EEnemy get(EREnt x, StageBasis sb, Object obj, double mul, double mul2, int d0, int d1,

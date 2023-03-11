@@ -175,7 +175,7 @@ public class Enemy extends Character implements AbEnemy {
 	@Override
 	public String toString() {
 		String base = Data.trio(id.id);
-		if (CommonStatic.getConfig().favoriteEnemies.contains(getID()))
+		if (CommonStatic.getFaves().enemies.contains(this))
 			base = "❤" + base;
 		String desp = MultiLangCont.get(this);
 		if (desp != null && desp.length() > 0)
