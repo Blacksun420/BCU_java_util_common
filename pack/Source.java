@@ -389,13 +389,14 @@ public abstract class Source {
 		}
 
 		public static String generatePackID() {
-			String format = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+			String format = "abcdefghijklmnopqrstuvwxyz0123456789_ ";
 			Random random = new Random();
 
 			StringBuilder result = new StringBuilder();
+			int tott = 7 + random.nextInt(24);
 
-			while (result.length() < 8) {
-				char ch = format.charAt((int) (random.nextFloat() * format.length()));
+			while (result.length() < tott) {
+				char ch = format.charAt(random.nextInt(format.length()));
 
 				result.append(ch);
 			}
@@ -580,7 +581,6 @@ public abstract class Source {
 		private File getFile(String path) {
 			return CommonStatic.ctx.getWorkspaceFile("./" + id + "/" + path);
 		}
-
 	}
 
 	public static class ZipSource extends Source {

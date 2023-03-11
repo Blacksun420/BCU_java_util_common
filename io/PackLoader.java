@@ -110,6 +110,11 @@ public class PackLoader {
 				return size;
 			}
 
+			@Override
+			public String getPath() {
+				return path;
+			}
+
 		}
 
 		@JsonField

@@ -100,11 +100,9 @@ public class SCDef implements Copable<SCDef> {
 		} else if(en instanceof EneRand) {
 			Set<Enemy> enemies = en.getPossible();
 
-			for(Enemy enemy : enemies) {
-				if(e == null || e.de.getWill() < enemy.de.getWill()) {
+			for(Enemy enemy : enemies)
+				if(e == null || e.de.getWill() < enemy.de.getWill())
 					e = enemy;
-				}
-			}
 
 			if(e == null)
 				return false;

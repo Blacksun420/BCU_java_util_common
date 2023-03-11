@@ -31,9 +31,10 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 			if (str.length() < 20)
 				continue;
 			String[] strs = str.trim().split(",");
+			if (Integer.parseInt(strs[1]) > 0)
+				continue;
 			Combo c = new Combo(Identifier.parseInt(i++, Combo.class), strs);
-			if (c.show > 0)
-				data.combos.add(c);
+			data.combos.add(c);
 		}
 
 		qs = VFile.readLine("./org/data/NyancomboParam.tsv");
@@ -62,7 +63,7 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 	public Identifier<Combo> id;
 
 	@JsonField
-	public int lv, show, type;
+	public int lv, type;
 
 	@JsonField(alias = AbForm.AbFormJson.class)
 	public Form[] forms;
@@ -78,7 +79,6 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 	protected Combo(Identifier<Combo> ID, String[] strs) {
 		id = ID;
 		name = strs[0];
-		show = Integer.parseInt(strs[1]);
 		int n;
 		for (n = 0; n < 5; n++)
 			if (Integer.parseInt(strs[2 + n * 2]) == -1)
@@ -92,12 +92,19 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 		lv = Integer.parseInt(strs[13]);
 	}
 
-	public Combo(Identifier<Combo> ID, String n, int l, int t, int s, Form f) {
+	public Combo(Identifier<Combo> ID, Combo c) {
+		id = ID;
+		name = c.name;
+		lv = c.lv;
+		type = c.type;
+		forms = new Form[c.forms.length];
+	}
+
+	public Combo(Identifier<Combo> ID, String n, Form f) {
 		id = ID;
 		name = n;
-		lv = l;
-		type = t;
-		show = s;
+		lv = 0;
+		type = 0;
 		forms = new Form[] { f };
 	}
 

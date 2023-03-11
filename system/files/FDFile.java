@@ -48,4 +48,9 @@ public class FDFile implements FileData {
 		return file.getName();
 	}
 
+	@Override
+	public String getPath() {
+		return file.getPath();
+	}
+
 }

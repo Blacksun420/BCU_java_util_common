@@ -20,7 +20,7 @@ public class MaModel extends Data implements Cloneable, BattleStatic {
 		try {
 			return new MaModel(f.readLine());
 		} catch (Exception e) {
-			System.out.println("Error Reading Mamodel data for " + f);
+			System.out.println("Error Reading Mamodel data for " + f.getPath());
 			e.printStackTrace();
 			return new MaModel();
 		}
@@ -65,7 +65,7 @@ public class MaModel extends Data implements Cloneable, BattleStatic {
 		String[] ss = qs.poll().trim().split(",");
 		for (int i = 0; i < 3; i++)
 			ints[i] = Integer.parseInt(ss[i].trim());
-		m = Integer.parseInt(qs.poll().trim());
+		m = Math.min(Integer.parseInt(qs.poll().trim()), qs.size());
 		confs = new int[m][6];
 		for (int i = 0; i < m; i++) {
 			ss = qs.poll().trim().split(",");

@@ -102,6 +102,6 @@ public class MultiLangData extends Data {
 
     public void overwrite(MultiLangData ans) { //Replaces all values with the given MLD's values
         for (int lang : ans.dat.keySet())
-            dat.put(lang, dat.get(lang));
+            dat.put(lang, ans.dat.get(lang));
     }
 }

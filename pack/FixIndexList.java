@@ -37,15 +37,14 @@ public class FixIndexList<T> extends Data {
 
 			@Override
 			public T next() {
-				return arr[order[ind++]];
+				return raw ? arr[ind++] : arr[order[ind++]];
 			}
-
 		}
 
 		@JsonField
 		private int[] order;
-
 		public final Class<T> cls;
+		public boolean raw = false;
 
 		public FixIndexMap(Class<T> cls) {
 			super(cls);

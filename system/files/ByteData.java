@@ -25,4 +25,9 @@ interface ByteData extends FileData {
 		return getBytes().length;
 	}
 
+	@Override
+	default String getPath() {
+		return "";
+	}
+
 }

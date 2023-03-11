@@ -59,4 +59,6 @@ public interface FileData {
 
 	int size();
 
+	String getPath();
+
 }
