@@ -227,6 +227,8 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 	@Override
 	public String toString() {
 		String base = (uid == null ? "NULL" : uid.id) + "-" + fid + " ";
+		if (CommonStatic.getConfig().favoriteUnits.contains(getID()))
+			base = "❤" + base;
 		String desp = MultiLangCont.get(this);
 		if (desp != null && desp.length() > 0)
 			return base + desp;

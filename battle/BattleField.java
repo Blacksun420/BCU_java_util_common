@@ -5,6 +5,7 @@ import common.util.stage.EStage;
 public abstract class BattleField {
 
 	public StageBasis sb;
+	public byte endFrames = 0;
 
 	protected BattleField(EStage stage, BasisLU bas, int[] ints, long seed, boolean buttonDelay) {
 		sb = new StageBasis(this, stage, bas, ints, seed, buttonDelay);
@@ -16,6 +17,11 @@ public abstract class BattleField {
 
 	public void update() {
 		sb.time++;
+		if (sb.ebase.health <= 0 || sb.ubase.health <= 0)
+			endFrames = (byte)Math.min(126, endFrames + 1);
+		else
+			endFrames = 0;
+
 		actions();
 		sb.update();
 	}

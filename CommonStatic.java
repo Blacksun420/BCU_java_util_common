@@ -6,6 +6,7 @@ import common.io.json.JsonClass.NoTag;
 import common.io.json.JsonField;
 import common.pack.Context;
 import common.pack.Identifier;
+import common.pack.SortedPackSet;
 import common.pack.UserProfile;
 import common.system.VImg;
 import common.system.fake.FakeImage;
@@ -15,6 +16,8 @@ import common.util.anim.MaModel;
 import common.util.pack.EffAnim.EffAnimStore;
 import common.util.pack.NyCastle;
 import common.util.stage.Music;
+import common.util.unit.AbEnemy;
+import common.util.unit.AbUnit;
 import common.util.unit.UnitLevel;
 
 import java.io.File;
@@ -170,6 +173,11 @@ public class CommonStatic {
 		 * Perform realistic BC levelings
 		 */
 		public boolean realLevel = false;
+
+		@JsonField(generic = Identifier.class)
+		public HashSet<Identifier<AbUnit>> favoriteUnits = new HashSet<>();
+		@JsonField(generic = Identifier.class)
+		public SortedPackSet<Identifier<AbEnemy>> favoriteEnemies = new SortedPackSet<>();
 	}
 
 	public interface EditLink {

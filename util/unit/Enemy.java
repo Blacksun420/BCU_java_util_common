@@ -174,14 +174,17 @@ public class Enemy extends Character implements AbEnemy {
 
 	@Override
 	public String toString() {
+		String base = Data.trio(id.id);
+		if (CommonStatic.getConfig().favoriteEnemies.contains(getID()))
+			base = "❤" + base;
 		String desp = MultiLangCont.get(this);
 		if (desp != null && desp.length() > 0)
-			return Data.trio(id.id) + " - " + desp;
+			return base + " - " + desp;
 
 		String nam = names.toString();
 		if (nam.length() == 0)
-			return Data.trio(id.id);
-		return Data.trio(id.id) + " - " + nam;
+			return base;
+		return base + " - " + nam;
 	}
 
 	public String getExplanation() {
