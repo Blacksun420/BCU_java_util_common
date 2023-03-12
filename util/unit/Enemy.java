@@ -36,7 +36,6 @@ public class Enemy extends Character implements AbEnemy {
 	public final Identifier<AbEnemy> id;
 	@JsonField
 	public final MaskEnemy de;
-	public boolean inDic = false;
 
 	@JsonClass.JCConstructor
 	public Enemy() {

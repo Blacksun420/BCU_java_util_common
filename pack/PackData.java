@@ -149,9 +149,6 @@ public abstract class PackData implements IndexContainer {
 				enemies.add(new Enemy(p, ints));
 				bar.accept(1.0 * (i++) / list.size());
 			}
-			qs = VFile.readLine("./org/data/enemy_dictionary_list.csv");
-			for (String str : qs)
-				enemies.get(Integer.parseInt(str.split(",")[0])).inDic = true;
 		}
 
 		private void loadLimit() {
