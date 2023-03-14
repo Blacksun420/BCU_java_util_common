@@ -17,6 +17,8 @@ import common.util.pack.Background;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.io.IOException;
+import java.util.*;
 
 @IndexContainer.IndexCont(PackData.class)
 @JsonClass.JCGeneric(Identifier.class)
@@ -26,6 +28,7 @@ public abstract class BackgroundEffect extends Data implements IndexContainer.In
     public static final int BGHeight = 512;
     public static final int battleOffset = (int) (400 / CommonStatic.BattleConst.ratio);
     public static final List<Integer> jsonList = new ArrayList<>();
+    protected static final List<Integer> postProcess = new ArrayList<>();
 
     /**
      * Used for manual constructor. Do not delete
@@ -101,14 +104,24 @@ public abstract class BackgroundEffect extends Data implements IndexContainer.In
 
             jsonList.sort(Integer::compareTo);
             for (Integer id : jsonList) {
-                JsonBGEffect jbg = new JsonBGEffect(Identifier.rawParseInt(id, BackgroundEffect.class));
+                JsonBGEffect jbg = new JsonBGEffect(Identifier.rawParseInt(id, BackgroundEffect.class), true);
                 assets.bgEffects.add(jbg);
                 assets.bgs.getRaw(id).bgEffect = jbg.getID();
             }
 
+            for (int j = 0; j < assets.bgEffects.size(); j++) {
+                BackgroundEffect a = assets.bgEffects.get(j);
+
+                if(a instanceof JsonBGEffect && ((JsonBGEffect)a).postNeed) {
+                    try {
+                        assets.bgEffects.set(j, new JsonBGEffect(a.id, true));
+                    } catch (IOException ignored) {
+                    }
+                }
+            }
+
             for(int i = 0; i < assets.bgs.size(); i++) {
                 Background bg = assets.bgs.get(i);
-
                 if(bg.reference != null) {
                     Background ref = bg.reference.get();
 
@@ -127,6 +140,11 @@ public abstract class BackgroundEffect extends Data implements IndexContainer.In
                         }
                 }
             }
+            //Handle BG 197
+            Background zbg = UserProfile.getBCData().bgs.get(197);
+            MixedBGEffect zeff = new MixedBGEffect(Identifier.rawParseInt(zbg.id.id, BackgroundEffect.class), zbg.bgEffect.get(), assets.bgEffects.get(Data.BG_EFFECT_SNOW));
+            assets.bgEffects.add(zeff);
+            zbg.bgEffect = zeff.getID();
         }, Context.ErrType.FATAL, "Failed to read bg effect data");
     }
 
