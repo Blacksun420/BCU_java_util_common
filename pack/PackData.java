@@ -508,16 +508,24 @@ public abstract class PackData implements IndexContainer {
 		}
 
 		public void animChanged(AnimCE anim, int del) {
-			for (Enemy e : enemies) {
-				if (e.anim == anim) {
+			for (Enemy e : enemies)
+				if (e.anim == anim)
 					((CustomEntity)e.de).animChanged(del);
-				}
-			}
 		}
 
 		@Override
 		public int compareTo(UserPack pk) {
 			return toString().compareTo(pk.toString());
+		}
+
+		@Override
+		@SuppressWarnings({ "rawtypes" })
+		public <R> R getList(Class cls, Reductor<R, FixIndexMap> func, R def) {
+			if (cls != CastleImg.class)
+				def = super.getList(cls, func, def);
+			else
+				def = func.reduce(def, castles);
+			return def;
 		}
 	}
 
@@ -560,29 +568,29 @@ public abstract class PackData implements IndexContainer {
 	public <R> R getList(Class cls, Reductor<R, FixIndexMap> func, R def) {
 		if (cls == Trait.class)
 			def = func.reduce(def, traits);
-		if (cls == Unit.class || cls == AbUnit.class)
+		else if (cls != null && Unit.class.isAssignableFrom(cls))
 			def = func.reduce(def, units);
-		if (cls == UniRand.class || cls == AbUnit.class)
+		else if (cls != null && UniRand.class.isAssignableFrom(cls))
 			def = func.reduce(def, randUnits);
-		if (cls == UnitLevel.class)
+		else if (cls == UnitLevel.class)
 			def = func.reduce(def, unitLevels);
-		if (cls == Enemy.class || cls == AbEnemy.class)
+		else if (cls != null && Enemy.class.isAssignableFrom(cls))
 			def = func.reduce(def, enemies);
-		if (cls == EneRand.class || cls == AbEnemy.class)
+		else if (cls != null && EneRand.class.isAssignableFrom(cls))
 			def = func.reduce(def, randEnemies);
-		if (cls == Background.class)
+		else if (cls == Background.class)
 			def = func.reduce(def, bgs);
-		if (cls == BackgroundEffect.class)
+		else if (cls == BackgroundEffect.class)
 			def = func.reduce(def, bgEffects);
-		if (cls == Soul.class)
+		else if (cls == Soul.class)
 			def = func.reduce(def, souls);
-		if (cls == Music.class)
+		else if (cls == Music.class)
 			def = func.reduce(def, musics);
-		if (cls == CharaGroup.class)
+		else if (cls == CharaGroup.class)
 			def = func.reduce(def, groups);
-		if (cls == LvRestrict.class)
+		else if (cls == LvRestrict.class)
 			def = func.reduce(def, lvrs);
-		if (cls == Combo.class)
+		else if (cls == Combo.class)
 			def = func.reduce(def, combos);
 		return def;
 	}
