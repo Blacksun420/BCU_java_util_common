@@ -1,6 +1,8 @@
 package common.util.unit;
 
 import common.CommonStatic;
+import common.battle.BasisLU;
+import common.battle.BasisSet;
 import common.io.json.JsonClass;
 import common.io.json.JsonDecoder;
 import common.io.json.JsonField;
@@ -11,6 +13,7 @@ import common.pack.UserProfile;
 import common.system.files.VFile;
 import common.util.Data;
 import common.util.lang.MultiLangCont;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,7 +23,7 @@ import java.util.Queue;
 @IndexContainer.IndexCont(PackData.class)
 @JsonClass.JCGeneric(Identifier.class)
 @JsonClass
-public class Combo extends Data implements IndexContainer.Indexable<IndexContainer, Combo> {
+public class Combo extends Data implements IndexContainer.Indexable<IndexContainer, Combo>, Comparable<Combo> {
 
 	public static void readFile() {
 		CommonStatic.BCAuxAssets aux = CommonStatic.getBCAssets();
@@ -105,7 +108,7 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 		name = n;
 		lv = 0;
 		type = 0;
-		forms = new Form[] { f };
+		forms = new Form[]{f};
 	}
 
 	@Override
@@ -129,16 +132,29 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 	}
 
 	public void setType(int t) {
+		for (BasisSet b : BasisSet.list())
+			for (BasisLU blu : b.lb)
+				if (blu.lu.coms.contains(this)) {
+					blu.lu.inc[type] -= CommonStatic.getBCAssets().values[type][lv];
+					blu.lu.inc[t] += CommonStatic.getBCAssets().values[t][lv];
+				}
 		type = t;
 	}
 
 	public void setLv(int l) {
+		for (BasisSet b : BasisSet.list())
+			for (BasisLU blu : b.lb)
+				if (blu.lu.coms.contains(this)) {
+					blu.lu.inc[type] -= CommonStatic.getBCAssets().values[type][lv];
+					blu.lu.inc[type] += CommonStatic.getBCAssets().values[type][l];
+				}
 		lv = l;
 	}
 
 	public void addForm(Form f) {
 		forms = Arrays.copyOf(forms, forms.length + 1);
 		forms[forms.length - 1] = f;
+		updateLUs();
 	}
 
 	public void removeForm(int index) {
@@ -148,6 +164,25 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 				formSrc[j++] = forms[i];
 		}
 		forms = formSrc;
+		updateLUs();
+	}
+
+	public void unload() {
+		for (BasisSet b : BasisSet.list())
+			for (BasisLU blu : b.lb) {
+				blu.lu.coms.remove(this);
+				blu.lu.inc[type] -= CommonStatic.getBCAssets().values[type][lv];
+				for (Form frm : forms)
+					for (int i = 0; i < 5; i++)
+						if (blu.lu.fs[0][i] instanceof Form && blu.lu.fs[0][i].unit() == frm.unit && blu.lu.fs[0][i].getFid() >= frm.fid)
+							blu.lu.loc[i]--;
+			}
+	}
+
+	private void updateLUs() {
+		for (BasisSet b : BasisSet.list())
+			for (BasisLU blu : b.lb)
+				blu.lu.renewCombo(this, true);
 	}
 
 	@SuppressWarnings("ForLoopReplaceableByForEach")
@@ -172,5 +207,10 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 
 			forms = f.toArray(new Form[0]);
 		}
+	}
+
+	@Override
+	public int compareTo(@NotNull Combo c) {
+		return id.compareTo(c.id);
 	}
 }

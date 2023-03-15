@@ -7,12 +7,11 @@ import common.io.json.JsonDecoder.OnInjected;
 import common.io.json.JsonField;
 import common.pack.Identifier;
 import common.pack.PackData;
+import common.pack.SortedPackSet;
 import common.pack.UserProfile;
 import common.util.Data;
 import common.util.unit.*;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
@@ -28,7 +27,7 @@ public class LineUp extends Data {
 	public final IForm[][] efs = new IForm[2][5];
 	public int[] inc = new int[C_TOT], loc = new int[5];
 
-	public List<Combo> coms = new ArrayList<>();
+	public SortedPackSet<Combo> coms = new SortedPackSet<>();
 
 	private boolean updating = false;
 
@@ -107,6 +106,20 @@ public class LineUp extends Data {
 	}
 
 	@OnInjected
+	public void load() {
+		renew();
+		map.keySet().removeIf(u -> {
+			for (int i = 0; i < 2; i++)
+				for (int j = 0; j < 5; j++) {
+					if (fs[i][j] == null)
+						break;
+					if (u.equals(fs[i][j].getID()))
+						return false;
+				}
+			return true;
+		});
+	}
+
 	public void renew() {
 		validate();
 		renewEForm();
@@ -289,63 +302,63 @@ public class LineUp extends Data {
 	/**
 	 * check combo information
 	 */
-	private void renewCombo() {
-		List<Combo> tcom = new ArrayList<>();
+	public void renewCombo() {
+		coms.clear();
 		inc = new int[C_TOT];
 		loc = new int[5];
 		for (PackData p : UserProfile.getAllPacks()) {
-			if (p instanceof PackData.UserPack && !((PackData.UserPack)p).useCombos)
+			if (p instanceof PackData.UserPack && !CommonStatic.getConfig().packCombos.get(p.getSID()))
 				continue;
 
-			for (Combo c : p.combos) {
-				boolean b = true;
-				for (int i = 0; i < c.forms.length; i++) {
-					Form fu = c.forms[i];
-					if (fu == null)
-						break;
-					boolean b0 = false;
-					for (int j = 0; j < 5; j++) {
-						if (fs[0][j] instanceof UniRand)
-							continue;
-						Form f = (Form)fs[0][j];
-						if (f == null)
-							break;
-						if (f.unit != fu.unit || f.fid < fu.fid)
-							continue;
-						b0 = true;
-						break;
-					}
-					if (b0)
-						continue;
-					b = false;
-					break;
-				}
-				if (b) {
-					tcom.add(c);
-					inc[c.type] += CommonStatic.getBCAssets().values[c.type][c.lv];
-					for (int i = 0; i < c.forms.length; i++)
-						for (int j = 0; j < 5; j++) {
-							if (fs[0][j] instanceof UniRand)
-								continue;
-							Form fu = c.forms[i];
-							Form f = (Form)fs[0][j];
-							if (f == null)
-								continue;
-							if (f.unit == fu.unit && f.fid >= fu.fid)
-								loc[j]++;
-						}
-				}
-			}
+			for (Combo c : p.combos)
+				renewCombo(c, false);
 		}
-		for (int i = 0; i < coms.size(); i++)
-			if (!tcom.contains(coms.get(i))) {
-				coms.remove(i);
-				i--;
-			}
+	}
 
-		for (int i = 0; i < tcom.size(); i++)
-			if (!coms.contains(tcom.get(i)))
-				coms.add(tcom.get(i));
+	public void renewCombo(Combo c, boolean locChk) {
+		if (locChk)
+			for (int i = 0; i < 5; i++)
+				loc[i]--;
+
+		boolean b = true;
+		for (int i = 0; i < c.forms.length; i++) {
+			Form fu = c.forms[i];
+			if (fu == null)
+				break;
+			boolean b0 = false;
+			for (int j = 0; j < 5; j++) {
+				if (fs[0][j] instanceof UniRand)
+					continue;
+				Form f = (Form)fs[0][j];
+				if (f == null)
+					break;
+				if (f.unit != fu.unit || f.fid < fu.fid)
+					continue;
+				b0 = true;
+				break;
+			}
+			if (b0)
+				continue;
+			b = false;
+			break;
+		}
+		if (b) {
+			coms.add(c);
+			inc[c.type] += CommonStatic.getBCAssets().values[c.type][c.lv];
+			for (int i = 0; i < c.forms.length; i++) {
+				Form fu = c.forms[i];
+				for (int j = 0; j < 5; j++) {
+					if (!(fs[0][j] instanceof Form))
+						continue;
+					Form f = (Form) fs[0][j];
+					if (f.unit == fu.unit && f.fid >= fu.fid)
+						loc[j]++;
+				}
+			}
+		} else if (coms.contains(c)) {
+			inc[c.type] -= CommonStatic.getBCAssets().values[c.type][c.lv];
+			coms.remove(c);
+		}
 	}
 
 	private void renewEForm() {

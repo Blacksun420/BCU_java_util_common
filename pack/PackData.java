@@ -5,7 +5,6 @@ import com.google.gson.JsonElement;
 import common.CommonStatic;
 import common.battle.Treasure;
 import common.battle.data.CustomEntity;
-import common.battle.data.DataEnemy;
 import common.battle.data.Orb;
 import common.battle.data.PCoin;
 import common.io.assets.AssetLoader;
@@ -365,7 +364,6 @@ public abstract class PackData implements IndexContainer {
 		public Source source;
 
 		public boolean editable;
-		public boolean useCombos = true;
 		public boolean loaded = false;
 
 		private JsonElement elem;

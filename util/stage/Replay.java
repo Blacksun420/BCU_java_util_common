@@ -168,6 +168,11 @@ public class Replay extends Data {
 		return rl.id;
 	}
 
+	public void mark() {
+		write();
+		marked = true;
+	}
+
 	public void write() {
 		File tar = CommonStatic.ctx.getWorkspaceFile(rl.getPath() + ".replay");
 		File tmp = CommonStatic.ctx.getWorkspaceFile(rl.getPath() + ".replay.temp");

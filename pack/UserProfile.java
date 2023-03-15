@@ -200,6 +200,7 @@ public class UserProfile {
 
 		profile.pending = null;
 		profile.packlist.addAll(profile.failed);
+		CommonStatic.getConfig().packCombos.keySet().removeIf(k -> !profile.packmap.containsKey(k));
 
 		for (PackData.UserPack pk : queue)
 			checkMissingParents(pk);
@@ -212,12 +213,9 @@ public class UserProfile {
 				p.unregister();
 				profile.packmap.remove(p.desc.id);
 			}
-
 			return !p.editable;
 		});
-
 		profile.failed.removeIf(p -> !p.editable);
-
 		loadPacks(false);
 	}
 
@@ -356,9 +354,11 @@ public class UserProfile {
 			return false;
 
 		CommonStatic.def.loadProgress(1.0 * packmap.size() / pending.size(), "Reading " + (pack.desc.names.toString().equals("") ? pack.desc.name.equals("") ? pack.desc.id : pack.desc.name : pack.desc.names.toString()) + " data...");
-		if (CommonStatic.ctx.noticeErr(pack::load, ErrType.WARN, "failed to load pack " + pack.desc, () -> setStatic(CURRENT_PACK, null)))
+		if (CommonStatic.ctx.noticeErr(pack::load, ErrType.WARN, "failed to load pack " + pack.desc, () -> setStatic(CURRENT_PACK, null))) {
 			packmap.put(pack.desc.id, pack);
-		else
+			if (!CommonStatic.getConfig().packCombos.containsKey(pack.desc.id))
+				CommonStatic.getConfig().packCombos.put(pack.desc.id, true);
+		} else
 			failed.add(pack);
 
 		return true;

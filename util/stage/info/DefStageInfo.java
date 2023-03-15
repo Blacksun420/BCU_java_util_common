@@ -201,7 +201,19 @@ public class DefStageInfo implements StageInfo {
 
     @Override
     public Stage[] getExStages() {
-        return exStages;
+        if (!exConnection)
+            return exStages;
+        StageMap sm = MapColc.DefMapColc.getMap(exMapID + 4000);
+        ArrayList<Stage> sts = new ArrayList<>(exStageIDMax - exStageIDMin + 1);
+
+        if (sm != null) {
+            for (int i = exStageIDMin; i <= exStageIDMax; i++) {
+                Stage st = sm.list.get(i);
+                if (st != null)
+                    sts.add(st);
+            }
+        }
+        return sts.toArray(new Stage[0]);
     }
 
     @Override

@@ -54,31 +54,27 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
         return size == 0;
     }
 
-    public int indexOf(Object o) {
-        if (size == 0 || o == null)
+    public int indexOf(T t) {
+        if (size == 0 || t == null || compareCheck((T)arr[0], t) < 0 || compareCheck((T)arr[size-1], t) > 0)
             return -1;
+        return recInd(t, 0, size - 1);
+    }
 
-        int f = 0, l = size - 1;
-        while (f <= l) {
-            int mid = f + (l - f) / 2;
-            if (arr[mid].equals(o)) {
-                return mid;
-            } else {
-                int c = ((Comparable<T>)o).compareTo((T)arr[mid]);
-                if (c > 0)
-                    f = mid + 1;
-                else if (c < 0)
-                    l = mid - 1;
-                else //Dunno if it lowers accuracy, but prevents softlocks
-                    return mid;
-            }
-        }
+    private int recInd(T t, int f, int l) {
+        int mid = f + (l - f) / 2;
+        if (arr[mid].equals(t))
+            return mid;
+        int c = t.compareTo((T)arr[mid]);
+        if (c > 0)
+            return recInd(t, mid + 1, l);
+        else if (f != l)
+            return recInd(t, f, mid - 1);
         return -1;
     }
 
     @Override
     public boolean contains(Object o) {
-        return indexOf(o) != -1;
+        return indexOf((T)o) != -1;
     }
 
     @Override
@@ -105,6 +101,12 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
         System.arraycopy(narr, 0, arr, 0, size);
     }
 
+    private int compareCheck(T o1, T o2) {
+        if (comp != null)
+            return comp.compare(o1, o2);
+        return o1.compareTo(o2);
+    }
+
     public void setComp(Comparator<T> c) {
         comp = c;
         sort();
@@ -120,7 +122,7 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
         arr[size++] = t;
         if (size > 1) {
             int pos = size - 2;
-            while (pos >= 0 && t.compareTo(get(pos)) < 0) {
+            while (pos >= 0 && compareCheck(t, get(pos)) < 0) {
                 T cur = get(pos);
                 arr[pos] = t;
                 arr[pos + 1] = cur;
@@ -142,21 +144,21 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
 
     @Override
     public boolean remove(Object o) {
-        int ind = indexOf(o);
+        int ind = indexOf((T)o);
         if (ind == -1)
             return false;
         remove(ind);
         return true;
     }
 
-    public void remove(int ind) {
+    public T remove(int ind) {
         if (ind >= size || ind < 0)
             throw new ArrayIndexOutOfBoundsException("Index:" + ind + ", Size:" + size);
+        T val = (T)arr[ind];
 
-        int mov = size - 1 - ind;
-        if (mov >= 0)
-            System.arraycopy(arr, ind + 1, arr, ind, mov);
+        System.arraycopy(arr, ind + 1, arr, ind, size - 1 - ind);
         arr[--size] = null;
+        return val;
     }
 
     @Override

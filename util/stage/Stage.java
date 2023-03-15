@@ -21,6 +21,7 @@ import common.util.lang.MultiLangCont;
 import common.util.lang.MultiLangData;
 import common.util.pack.Background;
 import common.util.stage.SCDef.Line;
+import common.util.stage.info.CustomStageInfo;
 import common.util.stage.info.DefStageInfo;
 import common.util.stage.info.StageInfo;
 import common.util.unit.AbEnemy;
@@ -182,13 +183,11 @@ public class Stage extends Data
 					} else
 						data[SCDef.M1] = data[SCDef.M];
 
-					if(ss.length > 12 && CommonStatic.isInteger(ss[12]) && Integer.parseInt(ss[12]) == 1) {
+					if(ss.length > 12 && CommonStatic.isInteger(ss[12]) && Integer.parseInt(ss[12]) == 1)
 						data[SCDef.S0] *= -1;
-					}
 
-					if(ss.length > 13 && CommonStatic.isInteger(ss[13])) {
+					if(ss.length > 13 && CommonStatic.isInteger(ss[13]))
 						data[SCDef.KC] = Integer.parseInt(ss[13]);
-					}
 
 					if (data[0] == isBase)
 						data[SCDef.C0] = 0;
@@ -235,6 +234,25 @@ public class Stage extends Data
 			ans.mus1 = mus1.clone();
 		ans.bgh = bgh;
 		ans.mush = mush;
+		if (info != null) {
+			CustomStageInfo csi = new CustomStageInfo(ans);
+			csi.stages.addAll(Arrays.asList(ans.info.getExStages()));
+			float[] chances = ans.info.getExChances();
+			if (chances[0] == -1) {
+				for (int i = 0; i < csi.stages.size(); i++)
+					csi.chances.add(chances[1] / csi.stages.size());
+				csi.checkChances();
+			} else
+				for (float chance : chances) {
+					csi.chances.add(chance);
+					csi.totalChance += chance;
+				}
+			if (info instanceof CustomStageInfo && ((CustomStageInfo)info).ubase != null) {
+				csi.ubase = ((CustomStageInfo)info).ubase;
+				csi.lv = ((CustomStageInfo)info).lv;
+			}
+			ans.info = csi;
+		}
 		return ans;
 	}
 

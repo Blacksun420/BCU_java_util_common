@@ -169,9 +169,12 @@ public class CommonStatic {
 		public boolean updateOldMusic = true;
 
 		/**
-		 * Perform realistic BC levelings
+		 * Perform BC levelings
 		 */
 		public boolean realLevel = false;
+
+		@JsonField(generic = { String.class, Boolean.class })
+		public HashMap<String, Boolean> packCombos = new HashMap<>();
 	}
 
 	@JsonClass
@@ -266,19 +269,18 @@ public class CommonStatic {
 			}
 		}
 
-		return true;
+		return str.length() > 0;
 	}
 
 	public static boolean isDouble(String str) {
 		int dots = 0;
-		for (int i = 0; i < str.length(); i++) {
+		for (int i = 0; i < str.length(); i++)
 			if (!Character.isDigit(str.charAt(i))) {
 				if((i == 0 && str.charAt(i) != '-') || str.charAt(i) != '.' || dots > 0)
 					return false;
 				else
 					dots++;
 			}
-		}
 
 		return true;
 	}
