@@ -132,22 +132,20 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 	}
 
 	public void setType(int t) {
-		for (BasisSet b : BasisSet.list())
-			for (BasisLU blu : b.lb)
-				if (blu.lu.coms.contains(this)) {
-					blu.lu.inc[type] -= CommonStatic.getBCAssets().values[type][lv];
-					blu.lu.inc[t] += CommonStatic.getBCAssets().values[t][lv];
-				}
+		for (BasisLU blu : BasisLU.allLus())
+			if (blu.lu.coms.contains(this)) {
+				blu.lu.inc[type] -= CommonStatic.getBCAssets().values[type][lv];
+				blu.lu.inc[t] += CommonStatic.getBCAssets().values[t][lv];
+			}
 		type = t;
 	}
 
 	public void setLv(int l) {
-		for (BasisSet b : BasisSet.list())
-			for (BasisLU blu : b.lb)
-				if (blu.lu.coms.contains(this)) {
-					blu.lu.inc[type] -= CommonStatic.getBCAssets().values[type][lv];
-					blu.lu.inc[type] += CommonStatic.getBCAssets().values[type][l];
-				}
+		for (BasisLU blu : BasisLU.allLus())
+			if (blu.lu.coms.contains(this)) {
+				blu.lu.inc[type] -= CommonStatic.getBCAssets().values[type][lv];
+				blu.lu.inc[type] += CommonStatic.getBCAssets().values[type][l];
+			}
 		lv = l;
 	}
 
@@ -168,21 +166,19 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 	}
 
 	public void unload() {
-		for (BasisSet b : BasisSet.list())
-			for (BasisLU blu : b.lb) {
-				blu.lu.coms.remove(this);
-				blu.lu.inc[type] -= CommonStatic.getBCAssets().values[type][lv];
-				for (Form frm : forms)
-					for (int i = 0; i < 5; i++)
-						if (blu.lu.fs[0][i] instanceof Form && blu.lu.fs[0][i].unit() == frm.unit && blu.lu.fs[0][i].getFid() >= frm.fid)
-							blu.lu.loc[i]--;
-			}
+		for (BasisLU blu : BasisLU.allLus()) {
+			blu.lu.coms.remove(this);
+			blu.lu.inc[type] -= CommonStatic.getBCAssets().values[type][lv];
+			for (Form frm : forms)
+				for (int i = 0; i < 5; i++)
+					if (blu.lu.fs[0][i] instanceof Form && blu.lu.fs[0][i].unit() == frm.unit && blu.lu.fs[0][i].getFid() >= frm.fid)
+						blu.lu.loc[i]--;
+		}
 	}
 
 	private void updateLUs() {
-		for (BasisSet b : BasisSet.list())
-			for (BasisLU blu : b.lb)
-				blu.lu.renewCombo(this, true);
+		for (BasisLU blu : BasisLU.allLus())
+			blu.lu.renewCombo(this, true);
 	}
 
 	@SuppressWarnings("ForLoopReplaceableByForEach")

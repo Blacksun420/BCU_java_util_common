@@ -2098,7 +2098,7 @@ public abstract class Entity extends AbEntity {
 	}
 
 	/**
-	 * mark it dead, proceed death animation
+	 * save it dead, proceed death animation
 	 *
 	 * @param atk if this is true, it means it dies because of self-destruct,
 	 * and entity will not drop money because of this
@@ -2381,7 +2381,7 @@ public abstract class Entity extends AbEntity {
 				if (anim.anim.f == data.getEntry()[i].pre)
 					basis.getAttack(aam.getSpAttack(ENTR, i));
 
-		// update revive status, mark acted
+		// update revive status, save acted
 		zx.updateRevive();
 
 		// check touch after KB or move

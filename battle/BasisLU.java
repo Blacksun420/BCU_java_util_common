@@ -9,8 +9,10 @@ import common.pack.Identifier;
 import common.pack.UserProfile;
 import common.system.Copable;
 import common.util.BattleStatic;
+import common.util.stage.Replay;
 import common.util.unit.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @JsonClass
@@ -27,6 +29,15 @@ public class BasisLU extends Basis implements Copable<BasisLU>, BattleStatic {
 			ans[i] = x;
 		}
 		return ans;
+	}
+
+	public static List<BasisLU> allLus() {
+		List<BasisLU> lus = new ArrayList<>();
+		for (BasisSet set : BasisSet.list())
+			lus.addAll(set.lb);
+		for (Replay r : Replay.getMap().values())
+			lus.add(r.lu);
+		return lus;
 	}
 
 	private final Treasure t;

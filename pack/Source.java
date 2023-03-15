@@ -362,6 +362,9 @@ public abstract class Source {
 					CommonStatic.ctx.noticeErr(() -> ((Workspace) up.source).save(up, auto), ErrType.WARN,
 							"failed to save pack " + up.desc.names);
 				}
+			for (Replay r : Replay.getMap().values())
+				if (r.unsaved)
+					r.write();
 		}
 
 		public static void validate(ResourceLocation rl) {

@@ -96,8 +96,9 @@ public class Replay extends Data {
 	@JsonField
 	public boolean buttonDelay = false;
 	public int[] action;
+	@JsonField(generic = {Integer.class, double[].class})
 	public HashMap<Integer, double[]> sniperCoords;
-	public boolean marked;// FIXME mark save
+	public boolean unsaved;
 
 	@JCConstructor
 	@Deprecated
@@ -168,11 +169,6 @@ public class Replay extends Data {
 		return rl.id;
 	}
 
-	public void mark() {
-		write();
-		marked = true;
-	}
-
 	public void write() {
 		File tar = CommonStatic.ctx.getWorkspaceFile(rl.getPath() + ".replay");
 		File tmp = CommonStatic.ctx.getWorkspaceFile(rl.getPath() + ".replay.temp");
@@ -196,6 +192,7 @@ public class Replay extends Data {
 			fos.write(data);
 			fos.close();
 			tmp.renameTo(tar);
+			unsaved = false;
 		} catch (Exception e) {
 			CommonStatic.ctx.noticeErr(e, ErrType.WARN, "failed to save replay " + rl);
 			Data.err(() -> Context.delete(tmp));
