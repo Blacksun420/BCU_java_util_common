@@ -59,7 +59,7 @@ public class AttackSimple extends AttackAb {
 			capt.addAll(le);
 		else
 			for (AbEntity e : le)
-				if (e.ctargetable(trait, attacker))
+				if (e.isBase() || e.ctargetable(trait, attacker))
 					capt.add(e);
 		if (!range) {
 			if (capt.size() == 0)

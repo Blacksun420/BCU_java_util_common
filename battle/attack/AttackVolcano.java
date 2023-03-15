@@ -27,7 +27,7 @@ public class AttackVolcano extends AttackAb {
 		capt.clear();
 
 		for (AbEntity e : le)
-			if (e instanceof Entity && !vcapt.contains((Entity) e) && ((abi & AB_ONLY) == 0 || e.ctargetable(trait, attacker)))
+			if (e instanceof Entity && !vcapt.contains((Entity) e) && ((abi & AB_ONLY) == 0 || e.isBase() || e.ctargetable(trait, attacker)))
 				capt.add(e);
 	}
 
