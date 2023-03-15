@@ -27,13 +27,13 @@ public abstract class BackgroundEffect extends Data implements IndexContainer.In
     public static final int BGHeight = 512;
     public static final int battleOffset = (int) (400 / CommonStatic.BattleConst.ratio);
     public static final List<Integer> jsonList = new ArrayList<>();
-    protected static final List<Integer> postProcess = new ArrayList<>();
 
     /**
      * Used for manual constructor. Do not delete
      * @param elem Json Data
      * @return Object decoded to its proper class
      */
+    @SuppressWarnings("unused")
     public static Object construct(JsonElement elem) {
         if (elem.getAsJsonObject().has("spacer"))
             return JsonDecoder.decode(elem, CustomBGEffect.class);
@@ -103,7 +103,7 @@ public abstract class BackgroundEffect extends Data implements IndexContainer.In
 
             jsonList.sort(Integer::compareTo);
             for (Integer id : jsonList) {
-                JsonBGEffect jbg = new JsonBGEffect(Identifier.rawParseInt(id, BackgroundEffect.class), true);
+                JsonBGEffect jbg = new JsonBGEffect(Identifier.rawParseInt(id, BackgroundEffect.class), false);
                 assets.bgEffects.add(jbg);
                 assets.bgs.getRaw(id).bgEffect = jbg.getID();
             }
