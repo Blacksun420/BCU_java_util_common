@@ -68,23 +68,16 @@ public class StageMap extends Data implements BasedCopable<StageMap, MapColc>,
 			int materialNumber = value.length - 13;
 
 			materialDrop = new int[materialNumber];
-
-			for(int i = 0; i < materialDrop.length; i++) {
+			for(int i = 0; i < materialDrop.length; i++)
 				materialDrop[i] = CommonStatic.safeParseInt(value[13 + i]);
-			}
 
 			multiplier = new double[4];
-
-			for(int i = 0; i < multiplier.length; i++) {
+			for(int i = 0; i < multiplier.length; i++)
 				multiplier[i] = Double.parseDouble(value[1 + i]);
-			}
 
 			for(int i = 0; i < sm.list.size(); i++) {
 				Stage s = sm.list.get(i);
-
-				if(s.info instanceof DefStageInfo) {
-					((DefStageInfo) s.info).maxMaterial = CommonStatic.safeParseInt(value[5 + i]);
-				}
+				((DefStageInfo) s.info).maxMaterial = CommonStatic.safeParseInt(value[5 + i]);
 			}
 		}
 	}

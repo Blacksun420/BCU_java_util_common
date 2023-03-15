@@ -264,17 +264,13 @@ public class CommonStatic {
 	public static boolean isInteger(String str) {
 		str = str.trim();
 
-		if(str.isEmpty())
-			return false;
-
 		for (int i = 0; i < str.length(); i++) {
 			if (!Character.isDigit(str.charAt(i))) {
 				if(str.charAt(i) != '-' || i != 0)
 					return false;
 			}
 		}
-
-		return str.length() > 0;
+		return !str.isEmpty();
 	}
 
 	public static boolean isDouble(String str) {
