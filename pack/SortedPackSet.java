@@ -55,7 +55,7 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
     }
 
     public int indexOf(T t) {
-        if (size == 0 || t == null || compareCheck((T)arr[0], t) < 0 || compareCheck((T)arr[size-1], t) > 0)
+        if (size == 0 || t == null || compareCheck(t, (T)arr[0]) < 0 || compareCheck(t, (T)arr[size-1]) > 0)
             return -1;
         return recInd(t, 0, size - 1);
     }
@@ -67,7 +67,7 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
         int c = t.compareTo((T)arr[mid]);
         if (c > 0)
             return recInd(t, mid + 1, l);
-        else if (f != l)
+        else if (f < l)
             return recInd(t, f, mid - 1);
         return -1;
     }

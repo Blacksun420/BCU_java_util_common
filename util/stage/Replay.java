@@ -180,7 +180,7 @@ public class Replay extends Data {
 				rl.pack = rl.pack.substring(6);
 			FileOutputStream fos = new FileOutputStream(tmp);
 			fos.write(PackLoader.HEAD_DATA);
-			byte[] head = JsonEncoder.encode(this).toString().getBytes();
+			byte[] head = JsonEncoder.encode(this).toString().getBytes(StandardCharsets.UTF_8);
 			byte[] len = new byte[4];
 			DataIO.fromInt(len, 0, head.length);
 			fos.write(len);
