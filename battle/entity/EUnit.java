@@ -70,6 +70,10 @@ public class EUnit extends Entity {
 		lvl = level.getLv() + level.getPlusLv();
 		this.index = index;
 		this.isBase = isBase;
+		if (isBase) {
+			maxH *= (100 + b.b.getInc(C_BASE)) * 0.01;
+			health = maxH;
+		}
 
 		this.level = level;
 	}
