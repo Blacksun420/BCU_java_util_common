@@ -141,10 +141,10 @@ public abstract class BackgroundEffect extends Data implements IndexContainer.In
                 }
             }
             //Handle BG 197 (Commented because 12.2 assets don't exist yet)
-            //Background zbg = UserProfile.getBCData().bgs.get(197);
-            //MixedBGEffect zeff = new MixedBGEffect(Identifier.rawParseInt(zbg.id.id, BackgroundEffect.class), zbg.bgEffect.get(), assets.bgEffects.get(Data.BG_EFFECT_SNOW));
-            //assets.bgEffects.add(zeff);
-            //zbg.bgEffect = zeff.getID();
+            Background zbg = UserProfile.getBCData().bgs.get(197);
+            MixedBGEffect zeff = new MixedBGEffect(Identifier.rawParseInt(zbg.id.id, BackgroundEffect.class), zbg.bgEffect.get(), assets.bgEffects.get(Data.BG_EFFECT_SNOW));
+            assets.bgEffects.add(zeff);
+            zbg.bgEffect = zeff.getID();
         }, Context.ErrType.FATAL, "Failed to read bg effect data");
     }
 
