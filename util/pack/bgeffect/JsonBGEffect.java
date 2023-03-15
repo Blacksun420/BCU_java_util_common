@@ -65,9 +65,8 @@ public class JsonBGEffect extends BackgroundEffect {
                             handlers.addAll(((JsonBGEffect)bge).handlers);
                             break;
                         }
-                } else {
+                } else
                     postNeed = true;
-                }
             }
         } catch (Exception ignored) {
             Matcher matcher = Pattern.compile("\\{(\\s+)?\"id\"(\\s+)?:(\\s+)?\\d+(\\s+)?\\}").matcher(new String(vf.getData().getBytes()));
