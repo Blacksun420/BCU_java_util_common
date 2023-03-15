@@ -14,11 +14,10 @@ import common.util.Data;
 import common.util.anim.ImgCut;
 import common.util.pack.Background;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.io.IOException;
-import java.util.*;
 
 @IndexContainer.IndexCont(PackData.class)
 @JsonClass.JCGeneric(Identifier.class)
@@ -141,7 +140,7 @@ public abstract class BackgroundEffect extends Data implements IndexContainer.In
                 }
             }
             //Handle BG 197 (Commented because 12.2 assets don't exist yet)
-            Background zbg = UserProfile.getBCData().bgs.get(197);
+            Background zbg = UserProfile.getBCData().bgs.getRaw(197);
             MixedBGEffect zeff = new MixedBGEffect(Identifier.rawParseInt(zbg.id.id, BackgroundEffect.class), zbg.bgEffect.get(), assets.bgEffects.get(Data.BG_EFFECT_SNOW));
             assets.bgEffects.add(zeff);
             zbg.bgEffect = zeff.getID();
