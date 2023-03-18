@@ -123,7 +123,6 @@ public abstract class BackgroundEffect extends Data implements IndexContainer.In
                 Background bg = assets.bgs.get(i);
                 if(bg.reference != null) {
                     Background ref = bg.reference.get();
-
                     if(ref == null)
                         continue;
 
@@ -134,15 +133,14 @@ public abstract class BackgroundEffect extends Data implements IndexContainer.In
                             ((MixedBGEffect) bg.bgEffect.get()).effects.add(ref.bgEffect.get());
                         else {
                             MixedBGEffect temp = new MixedBGEffect(Identifier.rawParseInt(bg.id.id, BackgroundEffect.class), bg.bgEffect.get(), ref.bgEffect.get());
-                            assets.bgEffects.add(temp);
+                            assets.bgEffects.set(assets.bgEffects.indexOf(bg.bgEffect.get()), temp);
                             bg.bgEffect = temp.getID();
                         }
                 }
             }
-            //Handle BG 197 (Commented because 12.2 assets don't exist yet)
             Background zbg = UserProfile.getBCData().bgs.getRaw(197);
             MixedBGEffect zeff = new MixedBGEffect(Identifier.rawParseInt(zbg.id.id, BackgroundEffect.class), zbg.bgEffect.get(), assets.bgEffects.get(Data.BG_EFFECT_SNOW));
-            assets.bgEffects.add(zeff);
+            assets.bgEffects.set(assets.bgEffects.indexOf(zbg.bgEffect.get()), zeff);
             zbg.bgEffect = zeff.getID();
         }, Context.ErrType.FATAL, "Failed to read bg effect data");
     }
