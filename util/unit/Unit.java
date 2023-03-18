@@ -148,7 +148,10 @@ public class Unit extends Data implements AbUnit {
 	public List<Combo> allCombo() {
 		List<Combo> ans = new ArrayList<>();
 		List<Combo> comboList = UserProfile.getBCData().combos.getList();
-		UserProfile.getUserPacks().forEach(p -> comboList.addAll(p.combos.getList()));
+		UserProfile.getUserPacks().forEach(p -> {
+			if (CommonStatic.getConfig().packCombos.containsKey(p.desc.id) && CommonStatic.getConfig().packCombos.get(p.desc.id))
+				comboList.addAll(p.combos.getList());
+		});
 		for (Combo c : comboList)
 			for (Form f : forms)
 				if (Arrays.stream(c.forms).anyMatch(form -> form.uid.compareTo(f.uid) == 0)) {

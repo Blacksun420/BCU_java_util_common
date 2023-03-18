@@ -453,7 +453,6 @@ public abstract class PackData implements IndexContainer {
 
 		public boolean relyOn(String id) {
 			Dependency dep = Dependency.collect(this);
-			System.out.println("Pack: " + dep.getPacks());// FIXME
 			return dep.getPacks().contains(id);
 		}
 

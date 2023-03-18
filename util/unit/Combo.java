@@ -34,7 +34,7 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 			if (str.length() < 20)
 				continue;
 			String[] strs = str.trim().split(",");
-			if (Integer.parseInt(strs[1]) > 0)
+			if (Integer.parseInt(strs[1]) <= 0)
 				continue;
 			Combo c = new Combo(Identifier.parseInt(i++, Combo.class), strs);
 			data.combos.add(c);

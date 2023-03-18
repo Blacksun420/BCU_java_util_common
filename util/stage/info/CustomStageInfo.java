@@ -64,7 +64,7 @@ public class CustomStageInfo implements StageInfo {
                         .append("%</td></tr>");
         }
         if (ubase != null)
-            ans.append("Unit Base: ").append(ubase).append(" (").append(UtilPC.lvText(ubase, lv)[1]).append(")");
+            ans.append("Unit Base: ").append(ubase).append(" (").append(UtilPC.lvText(ubase, lv)[0]).append(")");
 
         return ans.toString();
     }
