@@ -2,7 +2,6 @@ package common.util.unit;
 
 import common.CommonStatic;
 import common.battle.BasisLU;
-import common.battle.BasisSet;
 import common.io.json.JsonClass;
 import common.io.json.JsonDecoder;
 import common.io.json.JsonField;
@@ -181,13 +180,12 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 			blu.lu.renewCombo(this, true);
 	}
 
-	@SuppressWarnings("ForLoopReplaceableByForEach")
 	@JsonDecoder.OnInjected
 	public void onInjected() {
 		boolean broken = false;
 
-		for(int i = 0; i < forms.length; i++) {
-			if(forms[i] == null) {
+		for (Form form : forms) {
+			if (form == null) {
 				broken = true;
 				break;
 			}

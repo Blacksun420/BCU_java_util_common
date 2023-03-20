@@ -5,7 +5,6 @@ import common.pack.Identifier;
 import common.system.VImg;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 
 /**
  * Placeholder class to connect RandomUnit with Form

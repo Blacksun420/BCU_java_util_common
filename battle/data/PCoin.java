@@ -310,14 +310,4 @@ public class PCoin extends Data {
 			max[i] = Math.max(1, info.get(i)[1]);
 		}
 	}
-
-	private static boolean talentExist(String[] data, int index) {
-		for(int i = index; i < index + 14; i++) {
-			if(!data[i].trim().equals("0")) {
-				return true;
-			}
-		}
-
-		return false;
-	}
 }

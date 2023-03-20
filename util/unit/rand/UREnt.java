@@ -1,12 +1,11 @@
 package common.util.unit.rand;
 
-import common.util.unit.Form;
-import common.util.unit.Level;
 import common.io.json.JsonClass;
 import common.io.json.JsonField;
 import common.system.Copable;
 import common.util.BattleStatic;
 import common.util.unit.AbForm;
+import common.util.unit.Level;
 
 @JsonClass(noTag = JsonClass.NoTag.LOAD)
 public class UREnt implements BattleStatic, Copable<UREnt> {

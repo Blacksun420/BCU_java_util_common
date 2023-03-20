@@ -1,6 +1,5 @@
 package common.battle.data;
 
-@SuppressWarnings("ForLoopReplaceableByForEach")
 public abstract class DefaultData extends DataEntity {
 
 	public Proc proc;
@@ -14,8 +13,8 @@ public abstract class DefaultData extends DataEntity {
 	@Override
 	public int allAtk(int ignore) {
 		int ans = 0;
-		for (int i = 0; i < atk.length; i++)
-			ans += atk[i];
+		for (int a : atk)
+			ans += a;
 		return ans;
 	}
 
@@ -68,21 +67,17 @@ public abstract class DefaultData extends DataEntity {
 
 	@Override
 	public boolean isLD() {
-		for(int i = 0; i < ldr.length; i++) {
-			if(ldr[i] <= 0)
+		for (int ld : ldr)
+			if (ld <= 0)
 				return false;
-		}
-
 		return true;
 	}
 
 	@Override
 	public boolean isOmni() {
-		for(int i = 0; i < ldr.length; i++) {
-			if(ldr[i] < 0)
+		for (int ld : ldr)
+			if (ld < 0)
 				return true;
-		}
-
 		return false;
 	}
 

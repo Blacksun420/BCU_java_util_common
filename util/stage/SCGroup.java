@@ -1,6 +1,5 @@
 package common.util.stage;
 
-import common.io.InStream;
 import common.io.json.JsonClass;
 import common.io.json.JsonField;
 import common.system.BasedCopable;

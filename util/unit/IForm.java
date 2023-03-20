@@ -3,8 +3,6 @@ package common.util.unit;
 import common.battle.StageBasis;
 import common.battle.entity.EUnit;
 
-import java.util.ArrayList;
-
 public interface IForm {
 
     static IForm newIns(AbForm form, int lv) {

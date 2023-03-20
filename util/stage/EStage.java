@@ -48,7 +48,7 @@ public class EStage extends BattleObj {
 	 * add n new enemies to StageBasis
 	 */
 	public EEnemy allow() {
-		if(s.trail && s.timeLimit != 0 && s.timeLimit * 60 * 30 - b.time < 0)
+		if(s.trail && s.timeLimit != 0 && s.timeLimit * 30 - b.time < 0)
 			return null;
 
 		for (int i = 0; i < rem.length; i++) {

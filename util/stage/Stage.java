@@ -133,7 +133,7 @@ public class Stage extends Data
 			maxSpawn = Integer.parseInt(strs[3]);
 			bg = Identifier.rawParseInt(Integer.parseInt(strs[4]), Background.class);
 			max = Math.min(50, Integer.parseInt(strs[5]));
-			timeLimit = strs.length >= 8 ? Math.max(Integer.parseInt(strs[7]), 0) : 0;
+			timeLimit = strs.length >= 8 ? Math.max(Integer.parseInt(strs[7]) * 60, 0) : 0;
 			if(timeLimit != 0)
 				health = Integer.MAX_VALUE;
 			trail = timeLimit != 0;
@@ -342,5 +342,8 @@ public class Stage extends Data
 		if (jobj.has("name"))
 			names.put(jobj.get("name").getAsString());
 		recd.removeIf(Objects::isNull);
+		UserPack pack = ((MapColc.PackMapColc)getCont().getCont()).pack;
+		if (pack.desc.FORK_VERSION < 5 && timeLimit > 0)
+			timeLimit *= 60;
 	}
 }

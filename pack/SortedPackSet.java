@@ -6,6 +6,7 @@ import java.util.*;
 
 @SuppressWarnings("unchecked")
 public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, Cloneable, java.io.Serializable {
+    static final long serialVersionUID = 1L;
 
     private class Itr implements Iterator<T> {
         private int ind = 0;
@@ -93,7 +94,7 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
         return (R[]) Arrays.copyOf(arr, size, a.getClass());
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings("rawtypes")
     public void sort() {
         Object[] narr = new Object[size];
         System.arraycopy(arr, 0, narr, 0, size);
@@ -169,7 +170,7 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
     }
 
     @Override
-    public boolean addAll(Collection c) {
+    public boolean addAll(Collection<? extends T> c) {
         if (c.size() + size >= arr.length) {
             int mul = 1;
             while (++mul * arr.length <= c.size() + size);
@@ -240,7 +241,7 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
     }
 
     @Override
-    public boolean retainAll(@NotNull Collection c) {
+    public boolean retainAll(@NotNull Collection<?> c) {
         boolean s = false;
         for (int i = 0; i < size; i++)
             if (!c.contains(arr[i])) {
@@ -252,7 +253,7 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
     }
 
     @Override
-    public boolean containsAll(@NotNull Collection c) {
+    public boolean containsAll(@NotNull Collection<?> c) {
         for (Object o : c)
             if (!contains(o))
                 return false;

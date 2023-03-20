@@ -10,7 +10,6 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-@SuppressWarnings("unused")
 @JsonClass(noTag = NoTag.LOAD)
 public class Level implements BattleStatic, LevelInterface {
 	private int level, plusLevel;
