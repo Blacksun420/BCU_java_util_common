@@ -23,6 +23,7 @@ import common.util.anim.EAnimU;
 import common.util.pack.EffAnim;
 import common.util.pack.EffAnim.*;
 import common.util.pack.Soul;
+import common.util.unit.Enemy;
 import common.util.unit.Level;
 import common.util.unit.Trait;
 
@@ -1527,7 +1528,6 @@ public abstract class Entity extends AbEntity {
 		status.dcut = data.getProc().DMGCUT.type.magnif ? (int) (hpMagnif * data.getProc().DMGCUT.dmg) : data.getProc().DMGCUT.dmg;
 		status.dcap = data.getProc().DMGCAP.type.magnif ? (int) (hpMagnif * data.getProc().DMGCAP.dmg) : data.getProc().DMGCAP.dmg;
 		status.shield[0] = status.shield[1] = (int)(data.getProc().DEMONSHIELD.hp * hpMagnif);
-
 		if (((DataEntity)data).tba < 0)
 			waitTime = Math.max(data.getTBA() - 1, 0);
 	}
@@ -1546,6 +1546,7 @@ public abstract class Entity extends AbEntity {
 		boolean proc = true;
 
 		damageTaken += atk.atk;
+		sumDamage(atk.atk, true);
 		if (anim.corpse != null && anim.corpse.type == ZombieEff.REVIVE && status.revs[1] >= REVIVE_SHOW_TIME)
 			return;
 
@@ -1740,15 +1741,13 @@ public abstract class Entity extends AbEntity {
 		damage += dmg;
 		zx.damaged(atk);
 		status.money = atk.getProc().BOUNTY.mult;
-
-		if (atk.atk < 0)
+		if (dmg < 0)
 			anim.getEff(HEAL);
 
 		if (atk.isLongAtk || atk instanceof AttackVolcano)
 			anim.smoke = effas().A_WHITE_SMOKE.getEAnim(DefEff.DEF);
 		else
 			anim.smoke = effas().A_ATK_SMOKE.getEAnim(DefEff.DEF);
-
 		anim.smokeLayer = (int) (layer + 3 - basis.r.irDouble() * -6);
 		anim.smokeX = (int) (pos + 25 - basis.r.irDouble() * -50);
 
@@ -1823,18 +1822,25 @@ public abstract class Entity extends AbEntity {
 			}
 
 			int d = FDmg;
-			if (status.armor[0] > 0)
-				d *= (100 + status.armor[1]) / 100.0;
+			if (!isBase)
+				if (atk.getProc().ARMOR.prob > 0 && checkAIImmunity(atk.getProc().ARMOR.mult, getProc().IMUARMOR.smartImu, getProc().IMUARMOR.mult < 0) && getProc().IMUARMOR.mult < 100)
+					d *= (100 + atk.getProc().ARMOR.mult) / 100.0;
+				else if (status.armor[0] > 0)
+					d *= (100 + status.armor[1]) / 100.0;
 
 			e.damageGiven += Math.min(d, health);
+			sumDamage(d, false);
 			if(e instanceof EUnit && ((EUnit) e).index != null) {
-				int[] index = ((EUnit) e).index;
+				int[] index = ((EUnit)e).index;
 				basis.totalDamageGiven[index[0]][index[1]] += Math.min(d, health);
-			}
+			} else if (e instanceof EEnemy)
+				basis.enemyStatistics.get((Enemy)e.data.getPack())[0] += Math.min(d, health);
 		});
 		if (proc)
 			processProcs(atk);
 	}
+
+	protected abstract void sumDamage(int atk, boolean raw);
 
 	private void processProcs(AttackAb atk) {
 		// process proc part
@@ -2526,7 +2532,8 @@ public abstract class Entity extends AbEntity {
 	/**
 	 * called when entity starts final hb, no revive, no lethal strike
 	 */
-	protected abstract void onLastBreathe();
+	protected void onLastBreathe() {
+	}
 
 	/**
 	 * get max distance to go back

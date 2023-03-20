@@ -1,5 +1,6 @@
 package common.battle.entity;
 
+import common.CommonStatic;
 import common.battle.StageBasis;
 import common.battle.Treasure;
 import common.battle.attack.AtkModelEnemy;
@@ -157,24 +158,20 @@ public class EUnit extends Entity {
 					status.wild = beastDodge.time;
 					anim.getEff(P_IMUATK);
 				}
-
 				if (status.wild > 0) {
 					damageTaken += atk.atk;
-
-					if(index != null) {
-						basis.totalDamageTaken[index[0]][index[1]] += atk.atk;
-					}
-
+					sumDamage(atk.atk, true);
 					return;
 				}
 			}
 		}
-
 		super.damaged(atk);
+	}
 
-		if(index != null) {
-			basis.totalDamageTaken[index[0]][index[1]] += atk.atk;
-		}
+	@Override
+	protected void sumDamage(int atk, boolean raw) {
+		if (index != null && CommonStatic.getConfig().rawDamage == raw)
+			basis.totalDamageTaken[index[0]][index[1]] += atk;
 	}
 
 	@Override
@@ -398,5 +395,5 @@ public class EUnit extends Entity {
 	@Override
 	public double buff(int lv) {
 		return lv + lvl;
-	};
+	}
 }

@@ -173,6 +173,14 @@ public class CommonStatic {
 		 */
 		public boolean realLevel = false;
 
+		/**
+		 * Use raw damage taken for TotalDamageTable
+		 */
+		public boolean rawDamage = true;
+
+		/**
+		 * Store whether to apply the combos from a given pack or not
+		 */
 		@JsonField(generic = { String.class, Boolean.class })
 		public HashMap<String, Boolean> packCombos = new HashMap<>();
 	}

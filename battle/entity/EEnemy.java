@@ -1,5 +1,6 @@
 package common.battle.entity;
 
+import common.CommonStatic;
 import common.battle.StageBasis;
 import common.battle.attack.AtkModelUnit;
 import common.battle.attack.AttackAb;
@@ -9,8 +10,8 @@ import common.battle.data.MaskEnemy;
 import common.battle.data.MaskUnit;
 import common.pack.SortedPackSet;
 import common.pack.UserProfile;
-import common.util.anim.AnimU;
 import common.util.anim.EAnimU;
+import common.util.unit.Enemy;
 import common.util.unit.Trait;
 
 import java.util.ArrayList;
@@ -90,6 +91,12 @@ public class EEnemy extends Entity {
 	}
 
 	@Override
+	protected void sumDamage(int atk, boolean raw) {
+		if (CommonStatic.getConfig().rawDamage == raw)
+			basis.enemyStatistics.get((Enemy)data.getPack())[1] += atk;
+	}
+
+	@Override
 	protected int getDamage(AttackAb atk, int ans) {
 		if (atk instanceof AttackWave && atk.waveType == WT_MINI) {
 			ans = (int) ((double) ans * atk.getProc().MINIWAVE.multi / 100.0);
@@ -166,11 +173,7 @@ public class EEnemy extends Entity {
 	}
 
 	@Override
-	protected void onLastBreathe() {
-	}
-
-	@Override
 	public double buff(int lv) {
 		return lv * mult * mula;
-	};
+	}
 }

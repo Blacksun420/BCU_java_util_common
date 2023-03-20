@@ -423,6 +423,11 @@ public abstract class AtkModelEntity extends AtkModelAb {
 							ee.status.pass(e.status);
 						if (e != ent && (proc.type.pass_proc & 2) > 0)
 							ee.status.pass(ent.status);
+
+						if (!b.enemyStatistics.containsKey((Enemy)ee.data.getPack()))
+							b.enemyStatistics.put((Enemy)ee.data.getPack(), new long[]{0, 0, 1});
+						else
+							b.enemyStatistics.get((Enemy)ee.data.getPack())[2]++;
 					}
 				}
 			}

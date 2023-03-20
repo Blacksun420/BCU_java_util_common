@@ -17,6 +17,7 @@ import common.util.pack.bgeffect.BackgroundEffect;
 import common.util.stage.*;
 import common.util.stage.MapColc.DefMapColc;
 import common.util.unit.AbForm;
+import common.util.unit.Enemy;
 import common.util.unit.IForm;
 
 import java.util.*;
@@ -31,6 +32,7 @@ public class StageBasis extends BattleObj {
 	public final long[][] totalDamageTaken = new long[2][5];
 	public final long[][] totalDamageGiven = new long[2][5];
 	public final int[][] totalSpawned = new int[2][5];
+	public final TreeMap<Enemy, long[]> enemyStatistics = new TreeMap<>();
 	public final int[] nyc;
 	public final boolean[][] locks = new boolean[2][5];
 	public final AbEntity ebase, ubase;
@@ -105,6 +107,7 @@ public class StageBasis extends BattleObj {
 			ebase = ee;
 			shock = ee.mark == -2;
 			ebase.added(1, shock ? boss_spawn : 700);
+			enemyStatistics.put((Enemy)ee.data.getPack(), new long[]{0, 0, -1});
 		} else {
 			ebase = new ECastle(this);
 			ebase.added(1, 800);
@@ -541,6 +544,12 @@ public class StageBasis extends BattleObj {
 				EEnemy e = est.allow();
 				if (e != null) {
 					e.added(1, (e.mark >= 1 ? boss_spawn : 700.0) + (st.len - 800 - ebase.pos) * e.door / 100);
+
+					if (!enemyStatistics.containsKey((Enemy)e.data.getPack()))
+						enemyStatistics.put((Enemy)e.data.getPack(), new long[]{0, 0, 1});
+					else
+						enemyStatistics.get((Enemy)e.data.getPack())[2]++;
+
 					if (e.door > 0 && !e.getAnim().anim().getEAnim(AnimU.TYPEDEF[AnimU.WALK]).unusable()) {
 						doors.add(new DoorCont(this, e));
 						doors.sort(Comparator.comparingInt(d -> d.layer));
