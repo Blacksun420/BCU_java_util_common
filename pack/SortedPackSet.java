@@ -170,7 +170,7 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
     }
 
     @Override
-    public boolean addAll(Collection<? extends T> c) {
+    public boolean addAll(Collection c) {
         if (c.size() + size >= arr.length) {
             int mul = 1;
             while (++mul * arr.length <= c.size() + size);
@@ -272,7 +272,7 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
         StringBuilder str = new StringBuilder("[");
         for (Object obj : this)
             str.append(obj.toString()).append(", ");
-        str.replace(str.length() - 3, str.length() - 1, "]");
+        str.replace(str.length() - 2, str.length() - 1, "]");
         return str.toString();
     }
 }

@@ -342,8 +342,5 @@ public class Stage extends Data
 		if (jobj.has("name"))
 			names.put(jobj.get("name").getAsString());
 		recd.removeIf(Objects::isNull);
-		UserPack pack = ((MapColc.PackMapColc)getCont().getCont()).pack;
-		if (pack.desc.FORK_VERSION < 5 && timeLimit > 0)
-			timeLimit *= 60;
 	}
 }

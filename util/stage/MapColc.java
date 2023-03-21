@@ -4,6 +4,7 @@ import common.CommonStatic;
 import common.io.assets.Admin.StaticPermitted;
 import common.io.json.JsonClass;
 import common.io.json.JsonClass.RType;
+import common.io.json.JsonDecoder;
 import common.io.json.JsonField;
 import common.pack.FixIndexList.FixIndexMap;
 import common.pack.IndexContainer;
@@ -247,19 +248,11 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 			while(dropLine != null && !dropLine.isEmpty()) {
 				String[] dropData = dropLine.split(",");
 
-				//if(dropData.length != 22 && dropData.length != 30) {
-				//	dropLine = qs.poll();
-				//	continue;
-				//}
-
 				int mapID = CommonStatic.safeParseInt(dropData[0]);
-
 				StageMap sm = getMap(mapID);
 
-				if(sm != null && sm.info != null) {
+				if(sm != null && sm.info != null)
 					sm.info.injectMaterialDrop(dropData);
-				}
-
 				dropLine = qs.poll();
 			}
 		}
@@ -464,6 +457,15 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 			if (str.isEmpty())
 				return pack.desc.id;
 			return str;
+		}
+
+		@JsonDecoder.OnInjected
+		public void onInjected() {
+			if (pack.desc.FORK_VERSION < 5)
+				for (StageMap smaps : maps)
+					for (Stage st : smaps.list)
+						if (st.timeLimit > 0)
+							st.timeLimit *= 60;
 		}
 	}
 
