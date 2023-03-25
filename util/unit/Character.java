@@ -99,18 +99,23 @@ public abstract class Character extends Animable<AnimU<?>, AnimU.UType> {
                                     if ((ent.abi & (1 << 12)) != 0) //Poison Immunity
                                         proc.IMUPOI.mult = 100;
                                     ent.abi = Data.reorderAbi(ent.abi, 0);
+                                    for (AtkDataModel atk : atks)
+                                        atk.alt = Data.reorderAbi(atk.alt, 0);
                                 } //Finish 0.6.0.0 check
                                 proc.DMGCUT.reduction = 100;
                                 for (AtkDataModel atk : atks)
                                     if (atk.getProc().POISON.prob > 0)
                                         atk.getProc().POISON.type.ignoreMetal = true;
                             } //Finish 0.6.1.0 check
-                            if ((ent.abi & 16) > 0) //2x money
-                                for (AtkDataModel atk : atks)
+                            boolean bounty = (ent.abi & 16) > 0;
+                            boolean atkbase = (ent.abi & 32) > 0;
+                            for (AtkDataModel atk : atks) {
+                                atk.alt = Data.reorderAbi(atk.alt, 1);
+                                if (bounty) //2x money
                                     atk.getProc().BOUNTY.mult = 100;
-                            if ((ent.abi & 32) > 0) //base destroyer
-                                for (AtkDataModel atk : atks)
+                                if (atkbase) //base destroyer
                                     atk.getProc().ATKBASE.mult = 300;
+                            }
                             ent.abi = Data.reorderAbi(ent.abi, 1);
                         } //Finish 0.6.5.0 check
                         for (AtkDataModel atk : atks)
@@ -127,6 +132,8 @@ public abstract class Character extends Animable<AnimU<?>, AnimU.UType> {
                     if ((ent.abi & 32) > 0)
                         proc.IMUWAVE.block = 100;
                     ent.abi = Data.reorderAbi(ent.abi, 2);
+                    for (AtkDataModel atk : atks)
+                        atk.alt = Data.reorderAbi(atk.alt, 2);
                 } //Finish FORK_VERSION 1 checks
             } //Finish FORK_VERSION 3 checks
             description.replace("<br>", "\n");
