@@ -21,6 +21,7 @@ import java.lang.reflect.Field;
 @StaticPermitted
 public class Data {
 
+	public static final Proc empty = Proc.blank();
 	@JsonClass(read = JsonClass.RType.MANUAL, write = JsonClass.WType.CLASS, generator = "genProc", serializer = "serProc")
 	public static class Proc implements BattleStatic {
 

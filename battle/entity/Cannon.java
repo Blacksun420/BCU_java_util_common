@@ -167,7 +167,6 @@ public class Cannon extends AtkModelAb {
 			enter.setTime(0);
 			wall = new EUnit(b, f.du, enter, 1);
 			b.le.add(wall);
-			b.le.sort(Comparator.comparingInt(e -> e.layer));
 			wall.added(-1, (int) (pos + 100)); // guessed distance from enemy compared from BC
 			preTime = (int) b.b.t().getCannonMagnification(id, Data.BASE_WALL_ALIVE_TIME) + enter.len();
 		}

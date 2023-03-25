@@ -20,9 +20,11 @@ import common.util.unit.AbForm;
 import common.util.unit.Enemy;
 import common.util.unit.IForm;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.TreeMap;
 
-@SuppressWarnings("ForLoopReplaceableByForEach")
 public class StageBasis extends BattleObj {
 
 	public final BasisLU b;
@@ -38,12 +40,12 @@ public class StageBasis extends BattleObj {
 	public final AbEntity ebase, ubase;
 	public final Cannon canon;
 	public final Sniper sniper;
-	public final List<Entity> le = new ArrayList<>();
+	public final BattleList<Entity> le = new BattleList<>();
 	public final List<EntCont> tempe = new ArrayList<>();
-	public final List<ContAb> lw = new ArrayList<>();
-	public final List<ContAb> tlw = new ArrayList<>();
-	public final List<EAnimCont> lea = new ArrayList<>();
-	public final List<DoorCont> doors = new ArrayList<>();
+	public final BattleList<ContAb> lw = new BattleList<>();
+	public final BattleList<ContAb> tlw = new BattleList<>();
+	public final BattleList<EAnimCont> lea = new BattleList<>();
+	public final BattleList<DoorCont> doors = new BattleList<>();
 	public final List<EAnimCont> ebaseSmoke = new ArrayList<>();
 	public final List<EAnimCont> ubaseSmoke = new ArrayList<>();
 
@@ -130,6 +132,7 @@ public class StageBasis extends BattleObj {
 		int max = est.lim != null ? est.lim.num : 50;
 		max_num = max <= 0 ? 50 : max;
 		maxCannon = bas.t().CanonTime(sttime);
+		le.initCapacity(max_num + st.max);
 
 		work_lv = 1 + bas.getInc(C_M_LV);
 		money = bas.getInc(C_M_INI) * 100;
@@ -480,7 +483,6 @@ public class StageBasis extends BattleObj {
 			totalSpawned[i][j]++;
 			eu.added(-1, st.len - 700);
 			le.add(eu);
-			le.sort(Comparator.comparingInt(e -> e.layer));
 			money -= elu.price[i][j];
 			if (st.minUSpawn == st.maxUSpawn)
 				unitRespawnTime = st.minUSpawn;
@@ -509,10 +511,8 @@ public class StageBasis extends BattleObj {
 		}
 
 		tempe.removeIf(e -> {
-			if (e.t == 0) {
+			if (e.t == 0)
 				le.add(e.ent);
-				le.sort(Comparator.comparingInt(en -> en.layer));
-			}
 			return e.t == 0;
 		});
 
@@ -550,13 +550,10 @@ public class StageBasis extends BattleObj {
 					else
 						enemyStatistics.get((Enemy)e.data.getPack())[2]++;
 
-					if (e.door > 0 && !e.getAnim().anim().getEAnim(AnimU.TYPEDEF[AnimU.WALK]).unusable()) {
+					if (e.door > 0 && !e.getAnim().anim().getEAnim(AnimU.TYPEDEF[AnimU.WALK]).unusable())
 						doors.add(new DoorCont(this, e));
-						doors.sort(Comparator.comparingInt(d -> d.layer));
-					} else {
+					else
 						le.add(e);
-						le.sort(Comparator.comparingInt(en -> en.layer));
-					}
 
 					if(st.minSpawn <= 0 || st.maxSpawn <= 0)
 						respawnTime = 1;
@@ -623,7 +620,6 @@ public class StageBasis extends BattleObj {
 			ebaseSmoke.forEach(EAnimCont::update);
 			ubaseSmoke.forEach(EAnimCont::update);
 			lw.addAll(tlw);
-			lw.sort(Comparator.comparingInt(e -> e.layer));
 			tlw.clear();
 		}
 		la.forEach(AttackAb::capture);
@@ -682,7 +678,6 @@ public class StageBasis extends BattleObj {
 				}
 			}
 			lea.add(new EAnimCont(700, 9, effas().A_SHOCKWAVE.getEAnim(DefEff.DEF)));
-			lea.sort(Comparator.comparingInt(e -> e.layer));
 			CommonStatic.setSE(SE_BOSS);
 			shock = false;
 		}

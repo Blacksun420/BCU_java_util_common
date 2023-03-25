@@ -1,11 +1,11 @@
-package common.pack;
+package common.battle;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
 @SuppressWarnings("unchecked")
-public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, Cloneable, java.io.Serializable {
+public class BattleList<T extends Comparable<? super T>> implements Collection<T>, java.io.Serializable {
     static final long serialVersionUID = 1L;
 
     private class Itr implements Iterator<T> {
@@ -20,29 +20,24 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
         }
         @Override
         public void remove() {
-            SortedPackSet.this.remove(--ind);
+            BattleList.this.remove(--ind);
         }
     }
 
     public Object[] arr;
     public int size = 0;
-    private Comparator<T> comp = null;
 
-    public SortedPackSet() {
-        this(1);
+    public BattleList() {
+        initCapacity(1);
     }
 
-    public SortedPackSet(int siz) {
-        arr = new Object[Math.max(1, siz)];
-    }
-
-    public SortedPackSet(T t) {
-        arr = new Object[]{t};
-    }
-
-    public SortedPackSet(Collection<T> col) {
+    public BattleList(Collection<T> col) {
         arr = new Object[Math.max(col.size(), 1)];
         addAll(col);
+    }
+
+    public void initCapacity(int num) {
+        arr = new Object[num];
     }
 
     @Override
@@ -56,7 +51,7 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
     }
 
     public int indexOf(T t) {
-        if (size == 0 || t == null || compareCheck(t, (T)arr[0]) < 0 || compareCheck(t, (T)arr[size-1]) > 0)
+        if (size == 0 || t == null || t.compareTo((T)arr[0]) < 0 || t.compareTo((T)arr[size-1]) > 0)
             return -1;
         return recInd(t, 0, size - 1);
     }
@@ -94,28 +89,16 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
         return (R[]) Arrays.copyOf(arr, size, a.getClass());
     }
 
-    @SuppressWarnings("rawtypes")
     public void sort() {
         Object[] narr = new Object[size];
         System.arraycopy(arr, 0, narr, 0, size);
-        Arrays.sort(narr, (Comparator)comp);
+        Arrays.sort(narr);
         System.arraycopy(narr, 0, arr, 0, size);
-    }
-
-    private int compareCheck(T o1, T o2) {
-        if (comp != null)
-            return comp.compare(o1, o2);
-        return o1.compareTo(o2);
-    }
-
-    public void setComp(Comparator<T> c) {
-        comp = c;
-        sort();
     }
 
     @Override
     public boolean add(T t) {
-        if (t == null || contains(t))
+        if (t == null)
             return false;
         if (size == arr.length)
             arr = Arrays.copyOf(arr, arr.length * 2);
@@ -123,20 +106,21 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
         arr[size++] = t;
         if (size > 1) {
             int pos = size - 2;
-            while (pos >= 0 && compareCheck(t, get(pos)) < 0) {
+            while (pos >= 0 && t.compareTo(get(pos)) < 0) {
                 T cur = get(pos);
                 arr[pos] = t;
                 arr[pos + 1] = cur;
                 pos--;
             }
         }
-
         return true;
     }
 
-    public void set(int ind, T t) {
+    public T set(int ind, T t) {
+        T prev = (T)arr[ind];
         remove(ind);
         add(t);
+        return prev;
     }
 
     public T get(int ind) {
@@ -178,10 +162,10 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
         }
         boolean ch = false, unsorted = false;
         for (Object elem : c) {
-            if (contains(elem))
+            if (elem == null)
                 continue;
             ch = true;
-            unsorted |= size > 0 && compareCheck((T) elem,(T) arr[size - 1]) > 0;
+            unsorted |= size > 0 && ((Comparable<T>)elem).compareTo((T)arr[size - 1]) > 0;
             arr[size++] = elem;
         }
         if (unsorted)
@@ -199,12 +183,11 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
     public boolean equals(Object o) {
         if (o == this)
             return true;
-        if (!(o instanceof Set))
+        if (!(o instanceof BattleList))
             return false;
-        Set<?> c = (Set<?>) o;
+        BattleList<?> c = (BattleList<?>)o;
         if (c.size() != size)
             return false;
-
         try {
             return containsAll(c);
         } catch (Exception e) {
@@ -218,25 +201,7 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
         for (T obj : this)
             if (obj != null)
                 h += obj.hashCode();
-
         return h;
-    }
-
-    /**
-     * Returns a list containing only the elements these 2 lists both contain
-     * @param col The other list
-     * @return A list containing only the elements these 2 lists both contain
-     */
-    public SortedPackSet<T> inCommon(Collection<T> col) {
-        SortedPackSet<T> np = new SortedPackSet<>();
-        for (T item : col) {
-            if (contains(item))
-                np.add(item);
-            if (np.size() == size)
-                break;
-        }
-
-        return np;
     }
 
     @Override
@@ -257,11 +222,6 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
             if (!contains(o))
                 return false;
         return true;
-    }
-
-    @Override
-    public SortedPackSet<T> clone() {
-        return new SortedPackSet<>(this);
     }
 
     @Override

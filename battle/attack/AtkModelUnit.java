@@ -31,7 +31,7 @@ public class AtkModelUnit extends AtkModelEntity {
 	protected int getAttack(MaskAtk matk, Proc proc) {
 		int atk = getEffAtk(matk);
 
-		if (matk.getProc() != sealed && matk.canProc()) {
+		if (matk.getProc() != empty && matk.canProc()) {
 			setProc(matk, proc, 1);
 			proc.KB.dis = proc.KB.dis * (100 + bas.getInc(C_KB)) / 100;
 			proc.STOP.time = (proc.STOP.time * (100 + bas.getInc(C_STOP))) / 100;

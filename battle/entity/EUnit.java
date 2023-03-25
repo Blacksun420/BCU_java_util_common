@@ -24,7 +24,7 @@ import java.util.List;
 @SuppressWarnings("ForLoopReplaceableByForEach")
 public class EUnit extends Entity {
 
-	private static final SortedPackSet<Trait> blankSet = new SortedPackSet<>();
+	private static final SortedPackSet<Trait> blank = new SortedPackSet<>(0);
 
 	public static class OrbHandler extends BattleObj {
 		protected static int getOrbAtk(AttackAb atk, EEnemy en) {
@@ -101,7 +101,7 @@ public class EUnit extends Entity {
 	@Override
 	public void update() {
 		super.update();
-		traits = status.curse == 0 && status.seal == 0 ? data.getTraits() : blankSet;
+		traits = status.curse == 0 && status.seal == 0 ? data.getTraits() : blank;
 	}
 
 	@Override

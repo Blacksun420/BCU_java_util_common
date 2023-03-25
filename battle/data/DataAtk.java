@@ -1,11 +1,11 @@
 package common.battle.data;
 
 import common.util.Data.Proc;
+import static common.util.Data.empty;
 
 public class DataAtk implements MaskAtk {
 
 	public final int index;
-
 	public final DefaultData data;
 
 	public DataAtk(DefaultData data, int index) {
@@ -55,7 +55,7 @@ public class DataAtk implements MaskAtk {
 	public Proc getProc() {
 		if (data.abis[index])
 			return data.proc;
-		return Proc.blank();
+		return empty;
 	}
 
 	@Override

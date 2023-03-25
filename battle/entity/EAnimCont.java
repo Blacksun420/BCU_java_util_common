@@ -4,8 +4,9 @@ import common.system.P;
 import common.system.fake.FakeGraphics;
 import common.util.BattleObj;
 import common.util.anim.EAnimD;
+import org.jetbrains.annotations.NotNull;
 
-public class EAnimCont extends BattleObj {
+public class EAnimCont extends BattleObj implements Comparable<EAnimCont> {
 
 	public final double pos;
 	public final int layer;
@@ -44,5 +45,10 @@ public class EAnimCont extends BattleObj {
 
 	protected EAnimD<?> getAnim() {
 		return anim;
+	}
+
+	@Override
+	public int compareTo(@NotNull EAnimCont anim) {
+		return Integer.compare(layer, anim.layer);
 	}
 }

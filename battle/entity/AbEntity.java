@@ -44,7 +44,7 @@ public abstract class AbEntity extends BattleObj {
 	}
 
 	public Proc getProc() {
-		return Proc.blank();
+		return empty;
 	}
 
 	public abstract float calcDamageMult(int dmg, Entity e, MaskAtk matk);

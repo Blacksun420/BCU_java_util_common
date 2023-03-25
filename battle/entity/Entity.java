@@ -26,6 +26,7 @@ import common.util.pack.Soul;
 import common.util.unit.Enemy;
 import common.util.unit.Level;
 import common.util.unit.Trait;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -33,7 +34,7 @@ import java.util.*;
  * Entity class for units and enemies
  */
 @SuppressWarnings("ForLoopReplaceableByForEach")
-public abstract class Entity extends AbEntity {
+public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 	/**
 	 * Obtains BC's traits
@@ -296,7 +297,6 @@ public abstract class Entity extends AbEntity {
 					int ind = e.status.warp[2];
 					WarpEff pa = ind == 0 ? WarpEff.ENTER : WarpEff.EXIT;
 					e.basis.lea.add(new WaprCont(e.pos, pa, e.layer, anim, e.dire));
-					e.basis.lea.sort(Comparator.comparingInt(e -> e.layer));
 					CommonStatic.setSE(ind == 0 ? SE_WARP_ENTER : SE_WARP_EXIT);
 					e.status.warp[ind] = ea.len(pa);
 					break;
@@ -485,7 +485,6 @@ public abstract class Entity extends AbEntity {
 			if (e.health <= 0 && e.zx.tempZK && e.traits.contains(BCTraits.get(TRAIT_ZOMBIE))) {
 				EAnimD<DefEff> eae = effas().A_Z_STRONG.getEAnim(DefEff.DEF);
 				e.basis.lea.add(new EAnimCont(e.pos, e.layer, eae));
-				e.basis.lea.sort(Comparator.comparingInt(e -> e.layer));
 				CommonStatic.setSE(SE_ZKILL);
 			}
 		}
@@ -1460,10 +1459,7 @@ public abstract class Entity extends AbEntity {
 	 */
 	private boolean touchEnemy;
 
-
 	private int altAbi = 0;
-
-	private final Proc sealed = Proc.blank();
 
 	/**
 	 * determines when the entity can burrow
@@ -1542,13 +1538,11 @@ public abstract class Entity extends AbEntity {
 	 */
 	@Override
 	public void damaged(AttackAb atk) {
-		int dmg = getDamage(atk, atk.atk);
-		boolean proc = true;
-
 		damageTaken += atk.atk;
 		sumDamage(atk.atk, true);
 		if (anim.corpse != null && anim.corpse.type == ZombieEff.REVIVE && status.revs[1] >= REVIVE_SHOW_TIME)
 			return;
+		int dmg = getDamage(atk, atk.atk);
 
 		Proc.CANNI cRes = getProc().IMUCANNON;
 		if (atk.canon > 0 && cRes.mult != 0)
@@ -1615,6 +1609,7 @@ public abstract class Entity extends AbEntity {
 			if (status.inv > 0)
 				return;
 		}
+		boolean proc = true;
 
 		Proc.DMGCUT dmgcut = getProc().DMGCUT;
 		if (dmgcut.prob > 0 && ((dmgcut.type.traitIgnore && status.curse == 0) || ctargetable(atk.trait, atk.attacker)) && dmg < status.dcut && dmg > 0 && (dmgcut.prob == 100 || basis.r.nextDouble() * 100 < dmgcut.prob)) {
@@ -1711,9 +1706,9 @@ public abstract class Entity extends AbEntity {
 				status.removeActive(true);
 			} else {
 				status.shield[0] -= dmg;
-
 				if (status.shield[0] > status.shield[1])
 					status.shield[0] = status.shield[1];
+
 				anim.getEff(SHIELD_HIT);
 				status.removeActive(true);
 			}
@@ -1723,13 +1718,11 @@ public abstract class Entity extends AbEntity {
 		//75.0 is guessed value compared from BC
 		if (atk.getProc().CRIT.mult > 0) {
 			basis.lea.add(new EAnimCont(pos, layer, effas().A_CRIT.getEAnim(DefEff.DEF), -75.0));
-			basis.lea.sort(Comparator.comparingInt(e -> e.layer));
 			CommonStatic.setSE(SE_CRIT);
 		}
 		//75.0 is guessed value compared from BC
 		if (atk.getProc().SATK.mult > 0) {
 			basis.lea.add(new EAnimCont(pos, layer, effas().A_SATK.getEAnim(DefEff.DEF), -75.0));
-			basis.lea.sort(Comparator.comparingInt(e -> e.layer));
 			CommonStatic.setSE(SE_SATK);
 		}
 		if (!shieldContinue)
@@ -1855,7 +1848,6 @@ public abstract class Entity extends AbEntity {
 				double poiDmg = atk.getProc().POIATK.mult * (100 - rst) / 10000.0;
 				damage += maxH * poiDmg;
 				basis.lea.add(new EAnimCont(pos, layer, effas().A_POISON.getEAnim(DefEff.DEF)));
-				basis.lea.sort(Comparator.comparingInt(e -> e.layer));
 				CommonStatic.setSE(SE_POISON);
 			}
 		}
@@ -2084,7 +2076,7 @@ public abstract class Entity extends AbEntity {
 	@Override
 	public Proc getProc() {
 		if (status.seal > 0)
-			return sealed;
+			return empty;
 		return data.getProc();
 	}
 
@@ -2816,5 +2808,10 @@ public abstract class Entity extends AbEntity {
 
 	protected boolean notAttacking() {
 		return atkm.atkTime == 0;
+	}
+
+	@Override
+	public int compareTo(@NotNull Entity ent) {
+		return Integer.compare(layer, ent.layer);
 	}
 }

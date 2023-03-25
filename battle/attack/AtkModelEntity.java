@@ -12,12 +12,10 @@ import common.util.pack.EffAnim.DefEff;
 import common.util.unit.*;
 import org.jcodec.common.tools.MathUtil;
 
-import java.util.Comparator;
 import java.util.List;
 
 public abstract class AtkModelEntity extends AtkModelAb {
 
-	protected static final Proc sealed = Proc.blank();
 	public static final String[] par = { "SUMMON", "KB", "STOP", "SLOW", "WEAK", "WARP", "CURSE", "SNIPER", "SEAL", "POISON", "BOSS", "RAGE", "HYPNO", "POIATK",
 			"ARMOR", "SPEED", "LETHARGY", "ATKBASE", "CRIT", "WAVE", "BREAK", "SATK", "VOLC", "MINIWAVE", "MOVEWAVE", "SHIELDBREAK", "WORKERLV", "CDSETTER"};
 	/**
@@ -295,7 +293,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 
 	public Proc getProc(MaskAtk matk) {
 		if (e.status.seal > 0)
-			return sealed;
+			return empty;
 		return matk.getProc();
 	}
 
@@ -326,10 +324,8 @@ public abstract class AtkModelEntity extends AtkModelAb {
 			proc.KB.dis = KB_DIS[INT_KB];
 		if (proc.KB.exists() && proc.KB.time == 0)
 			proc.KB.time = KB_TIME[INT_KB];
-		if (proc.BOSS.exists()) {
+		if (proc.BOSS.exists())
 			b.lea.add(new EAnimCont(e.pos, e.layer, effas().A_SHOCKWAVE.getEAnim(DefEff.DEF)));
-			b.lea.sort(Comparator.comparingInt(e -> e.layer));
-		}
 		if (proc.MINIWAVE.exists() && proc.MINIWAVE.multi == 0)
 			proc.MINIWAVE.multi = 20;
 	}

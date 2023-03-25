@@ -47,7 +47,6 @@ public class DoorCont extends EAnimCont {
             } else if (!entLeft) {
                 ent.getAnim().paraTo(null);
                 bas.le.add(ent);
-                bas.le.sort(Comparator.comparingInt(en -> en.layer));
                 entLeft = true;
             }
         }

@@ -9,6 +9,8 @@ import common.util.stage.Music;
 import common.util.unit.Trait;
 
 public interface MaskAtk extends BattleStatic {
+	SortedPackSet<Trait> blank = new SortedPackSet<>(0);
+
 	default int getAltAbi() {
 		return 0;
 	}
@@ -32,8 +34,8 @@ public interface MaskAtk extends BattleStatic {
 	}
 
 	default SortedPackSet<Trait> getATKTraits() {
-		return new SortedPackSet<>();
-	};
+		return blank;
+	}
 
 	Proc getProc();
 
