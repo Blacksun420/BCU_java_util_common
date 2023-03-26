@@ -88,9 +88,9 @@ public class Unit extends Data implements AbUnit {
 	public Unit(Identifier<AbUnit> id, AnimU<?> ce, CustomUnit cu) {
 		this.id = id;
 		forms = new Form[] { new Form(this, 0, "new unit", ce, cu) };
-		max = 50;
+		max = 60;
 		maxp = 0;
-		rarity = 4;
+		rarity = 2;
 		lv = CommonStatic.getBCAssets().defLv;
 		lv.units.add(this);
 	}
@@ -175,14 +175,11 @@ public class Unit extends Data implements AbUnit {
 	public Level getPrefLvs() {
 		int maxTalent = 0;
 		PCoin pc = null;
-
 		for(Form f : forms) {
 			PCoin coin = f.du.getPCoin();
-
 			if(coin != null && coin.max.length > maxTalent) {
 				maxTalent = coin.max.length;
 				pc = coin;
-
 			}
 		}
 
@@ -199,9 +196,7 @@ public class Unit extends Data implements AbUnit {
 
 		if (pc != null) {
 			int[] talents = new int[pc.max.length];
-
 			System.arraycopy(pc.max, 0, talents, 0, talents.length);
-
 			lv.setTalents(talents);
 		}
 
