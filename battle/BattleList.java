@@ -31,11 +31,6 @@ public class BattleList<T extends Comparable<? super T>> implements Collection<T
         initCapacity(1);
     }
 
-    public BattleList(Collection<T> col) {
-        arr = new Object[Math.max(col.size(), 1)];
-        addAll(col);
-    }
-
     public void initCapacity(int num) {
         arr = new Object[num];
     }
@@ -165,7 +160,7 @@ public class BattleList<T extends Comparable<? super T>> implements Collection<T
             if (elem == null)
                 continue;
             ch = true;
-            unsorted |= size > 0 && ((Comparable<T>)elem).compareTo((T)arr[size - 1]) > 0;
+            unsorted |= size > 0 && ((Comparable<T>)elem).compareTo((T)arr[size - 1]) < 0;
             arr[size++] = elem;
         }
         if (unsorted)

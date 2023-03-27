@@ -181,7 +181,7 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
             if (contains(elem))
                 continue;
             ch = true;
-            unsorted |= size > 0 && compareCheck((T) elem,(T) arr[size - 1]) > 0;
+            unsorted |= size > 0 && compareCheck((T) elem,(T) arr[size - 1]) < 0;
             arr[size++] = elem;
         }
         if (unsorted)
