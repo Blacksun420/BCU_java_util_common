@@ -9,7 +9,7 @@ import common.system.P;
 import common.system.fake.FakeGraphics;
 import common.system.fake.FakeTransform;
 import common.util.Data;
-import common.util.anim.AnimCE;
+import common.util.anim.AnimCI;
 import common.util.anim.AnimU;
 import common.util.anim.EAnimU;
 import common.util.pack.Background;
@@ -27,14 +27,14 @@ public class CustomBGEffect extends BackgroundEffect {
 
     public final EAnimU[] ebg = new EAnimU[2];
     @JsonField(alias = Source.ResourceLocation.class)
-    public AnimCE anim;
+    public AnimCI anim;
 
     @JsonClass.JCConstructor
     public CustomBGEffect() {
         super(null);
     }
 
-    public CustomBGEffect(Identifier<BackgroundEffect> id, AnimCE abg) {
+    public CustomBGEffect(Identifier<BackgroundEffect> id, AnimCI abg) {
         super(id);
         name = "BGEffect " + id;
         anim = abg;

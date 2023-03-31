@@ -157,6 +157,18 @@ public class Identifier<T extends IndexContainer.Indexable<?, T>> implements Com
 		return (T) cont.getList(cls, (r, l) -> r == null ? l.getRaw(id) : r, null);
 	}
 
+	/**
+	 * Does get()'s function without the errors. Used mostly for getting stages
+	 * @return get() result, or null if there was an error
+	 */
+	public T safeGet() {
+		try {
+			return get();
+		} catch (Exception ignored) {
+			return null;
+		}
+	}
+
 	public IndexContainer getCont() {
 		return (IndexContainer) getContainer(cls, pack);
 	}

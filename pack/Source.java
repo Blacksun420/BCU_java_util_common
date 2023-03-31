@@ -18,6 +18,9 @@ import common.system.files.VFile;
 import common.util.Data;
 import common.util.anim.*;
 import common.util.pack.Background;
+import common.util.pack.Soul;
+import common.util.pack.bgeffect.BackgroundEffect;
+import common.util.pack.bgeffect.CustomBGEffect;
 import common.util.stage.CastleImg;
 import common.util.stage.Replay;
 import common.util.stage.Stage;
@@ -432,17 +435,23 @@ public abstract class Source {
 			HashSet<AnimCE> anims = new HashSet<>();
 
 			for (Enemy e : pack.enemies)
-				addAnim(pack, e, anims);
+				if (e.anim instanceof AnimCE)
+					addAnim(pack, (AnimCE)e.anim, anims);
 			for (Unit u : pack.units)
 				for (Form f : u.forms)
-					addAnim(pack, f, anims);
-
+					if (f.anim instanceof AnimCE)
+						addAnim(pack, (AnimCE)f.anim, anims);
+			for (Soul s : pack.souls)
+				addAnim(pack, (AnimCE)s.anim, anims);
+			for (BackgroundEffect bge : pack.bgEffects)
+				if (bge instanceof CustomBGEffect)
+					addAnim(pack, (AnimCE)((CustomBGEffect)bge).anim, anims);
 			for (StageMap sm : pack.mc.maps)
 				for (Stage st : sm.list)
 					for (Replay rep : st.recd)
-						if (rep != null && rep.rl.pack.startsWith(".temp_")) {
+						if (rep != null && rep.rl.pack.startsWith(".temp_"))
 							rep.rl.pack = rep.rl.pack.substring(6);
-						}
+
 			save(pack, false);
 			String star = id.startsWith(".temp_") ? "./packs/" : "./exports/";
 			File tar = CommonStatic.ctx.getAuxFile(star + pack.getSID() + ".pack.bcuzip");
@@ -453,12 +462,11 @@ public abstract class Source {
 			Context.check(dst);
 
 			PackData.PackDesc desc = pack.desc.clone();
-
-			if (parentPassword != null) {
+			if (parentPassword != null)
 				desc.parentPassword = PackLoader.getMD5(parentPassword.getBytes(StandardCharsets.UTF_8), 16);
-			} else {
+			else
 				desc.parentPassword = null;
-			}
+
 			DateFormat df = new SimpleDateFormat("MM dd yyyy HH:mm:ss");
 			desc.exportDate = df.format(new Date());
 
@@ -471,11 +479,7 @@ public abstract class Source {
 			}
 		}
 
-		private void addAnim(UserPack pack, Character e, HashSet<AnimCE> anims) {
-			if (e.anim instanceof AnimUD)
-				return;
-
-			AnimCE anim = (AnimCE) e.anim;
+		private void addAnim(UserPack pack, AnimCE anim, HashSet<AnimCE> anims) {
 			if (anim.id.pack.equals(ResourceLocation.LOCAL)) {
 				if(!anims.add(anim)) {
 					anim.id.pack = ResourceLocation.LOCAL;
@@ -488,6 +492,11 @@ public abstract class Source {
 			}
 			if (anim.id.pack.startsWith(".temp_"))
 				anim.id.pack = anim.id.pack.substring(6);
+		}
+
+		private void addAnim(UserPack pack, Character e, HashSet<AnimCE> anims) {
+			if (e.anim instanceof AnimUD)
+				return;
 		}
 
 		public File getBGFile(Identifier<Background> id) {

@@ -86,34 +86,15 @@ public class UpdateCheck {
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class AssetJson {
-
 			public String id;
 			public String ver;
 			public String desc;
 			public String type;
-
-		}
-
-		@JsonClass(noTag = NoTag.LOAD)
-		public static class JarJson {
-			public int ver;
-			public String desc;
-			public boolean isRelease;
-		}
-
-		@JsonClass(noTag = NoTag.LOAD)
-		public static class ApkJson {
-			public String ver;
-			public boolean isTest;
 		}
 
 		public AssetJson[] assets;
 		public String[] pc_libs;
-		public JarJson[] pc_update;
-		public ApkJson[] apk_update;
-		public long text_update;
 		public int music;
-
 	}
 
 	private static final String REG_REQLIB = "required_asset";

@@ -215,4 +215,13 @@ public class Level implements BattleStatic, LevelInterface {
 				", orbs=" + Arrays.deepToString(orbs) +
 				'}';
 	}
+
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Level))
+			return false;
+		Level lv = (Level) obj;
+		if (level + plusLevel != lv.level + lv.plusLevel)
+			return false;
+		return Arrays.equals(talents, lv.talents) && Arrays.deepEquals(orbs, lv.orbs);
+	}
 }

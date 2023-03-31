@@ -418,4 +418,20 @@ public class LineUp extends Data {
 
 		return lv;
 	}
+
+	public boolean equals(Object obj) {
+		if (!(obj instanceof LineUp))
+			return false;
+		LineUp lu = (LineUp)obj;
+		for (int i = 0; i < 2; i++)
+			for (int j = 0; j < 5; j++) {
+				if (fs[i][j] == null && lu.fs[i][j] == null)
+					break;
+				if (fs[i][j] == null || lu.fs[i][j] == null)
+					return false;
+				if (fs[i][j] != lu.fs[i][j] || !getLv(fs[i][j]).equals(lu.getLv(fs[i][j])))
+					return false;
+			}
+		return true;
+	}
 }

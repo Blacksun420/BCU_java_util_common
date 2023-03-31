@@ -466,4 +466,13 @@ public class Treasure extends Data {
 		star = 1500;
 	}
 
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Treasure))
+			return false;
+		Treasure tres = (Treasure) obj;
+		if (alien != tres.alien || star != tres.star)
+			return false;
+		return Arrays.equals(gods, tres.gods) && Arrays.equals(fruit, tres.fruit) && Arrays.equals(bslv, tres.bslv)
+				&& Arrays.equals(tech, tres.tech) && Arrays.equals(trea, tres.trea);
+	}
 }

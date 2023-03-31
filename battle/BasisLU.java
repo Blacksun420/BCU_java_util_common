@@ -1,6 +1,5 @@
 package common.battle;
 
-import common.CommonStatic;
 import common.battle.data.PCoin;
 import common.io.json.JsonClass;
 import common.io.json.JsonField;
@@ -101,21 +100,16 @@ public class BasisLU extends Basis implements Copable<BasisLU>, BattleStatic {
 		return ans;
 	}
 
-	public void performRealisticLeveling() {
-		if(!CommonStatic.getConfig().realLevel)
-			return;
-
+	public void simulateBCLeveling() {
 		for(AbForm[] fs : lu.fs) {
 			for(int i = 0; i < fs.length; i++) {
 				if(fs[i] == null || fs[i] instanceof UniRand)
 					continue;
 				Form f = (Form) fs[i];
-
 				Level lv = lu.getLv(fs[i]);
 
-				if(lv == null) {
+				if(lv == null)
 					throw new IllegalStateException("Battle started without initializing level of form in lineup");
-				}
 
 				if(f.unit.info.tfLevel != -1 && lv.getLv() + lv.getPlusLv() < f.unit.info.tfLevel && f.fid == 2) {
 					fs[i] = f.unit.forms[1];
@@ -153,6 +147,17 @@ public class BasisLU extends Basis implements Copable<BasisLU>, BattleStatic {
 	@Override
 	public Treasure t() {
 		return t;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof BasisLU))
+			return false;
+		BasisLU blu = (BasisLU)obj;
+		for (int i = 0; i < 3; i++)
+			if (nyc[i] != blu.nyc[i])
+				return false;
+		return blu.t.equals(t) && blu.lu.equals(lu);
 	}
 
 }
