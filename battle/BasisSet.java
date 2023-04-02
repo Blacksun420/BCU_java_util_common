@@ -196,7 +196,7 @@ public class BasisSet extends Basis implements Copable<BasisSet> {
 			lb.add(sele = new BasisLU(this, blu));
 	}
 
-	public BasisLU add (int ind) {
+	public BasisLU add(int ind) {
 		if (ind == -1 || ind >= lb.size())
 			return add();
 		lb.add(ind, sele = new BasisLU(this));

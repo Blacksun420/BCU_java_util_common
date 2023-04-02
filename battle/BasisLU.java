@@ -149,11 +149,14 @@ public class BasisLU extends Basis implements Copable<BasisLU>, BattleStatic {
 		return t;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof BasisLU))
+	/**
+	 * Performs a similar operation to equals() function, but without overriding it. Checks if these 2 lineups are functionally identical
+	 * @param blu The lineup to compare with
+	 * @return True if they have the same castle parts, treasure levels, and units in lineup
+	 */
+	public boolean sameAs(BasisLU blu) {
+		if (blu == null)
 			return false;
-		BasisLU blu = (BasisLU)obj;
 		for (int i = 0; i < 3; i++)
 			if (nyc[i] != blu.nyc[i])
 				return false;
