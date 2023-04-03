@@ -13,7 +13,6 @@ import common.util.unit.Enemy;
 import common.util.unit.Trait;
 
 import java.util.Arrays;
-import java.util.Comparator;
 
 public class ECastle extends AbEntity {
 

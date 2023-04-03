@@ -55,9 +55,9 @@ public class StageBasis extends BattleObj {
 	public final boolean isOneLineup;
 	public final boolean buttonDelayOn;
 	public boolean goingUp = true;
-	public int changeFrame = -1;
+	public byte changeFrame = -1;
 	public int changeDivision = -1;
-	public int buttonDelay = 0;
+	public byte buttonDelay = 0;
 	public int[] selectedUnit = {-1, -1};
 	public final double boss_spawn;
 	public final int[] shakeCoolDown = {0, 0};
@@ -70,9 +70,9 @@ public class StageBasis extends BattleObj {
 	public int time, s_stop, temp_s_stop, inten, temp_inten;
 	public int sn_stop, sn_temp_stop;
 	public float n_inten, temp_n_inten;
-	public int[] shake;
-	public int shakeDuration;
-	public double shakeOffset;
+	public byte[] shake;
+	public byte shakeDuration;
+	public float shakeOffset;
 
 	public int respawnTime, unitRespawnTime;
 	public Background bg;
@@ -137,7 +137,7 @@ public class StageBasis extends BattleObj {
 		work_lv = 1 + bas.getInc(C_M_LV);
 		money = bas.getInc(C_M_INI) * 100;
 		cannon = maxCannon * bas.getInc(C_C_INI) / 100;
-		canon = new Cannon(this, nyc[0]);
+		canon = new Cannon(this, nyc);
 		conf = ints;
 
 		if(st.minSpawn <= 0 || st.maxSpawn <= 0)
@@ -776,10 +776,10 @@ public class StageBasis extends BattleObj {
 		}
 	}
 
-	private double getOffset() {
+	private float getOffset() {
 		if(shake == null)
 			return 0;
 
-		return (1 - 2 * ((shake[SHAKE_DURATION] - shakeDuration) % 2)) * (1.0 * (shake[SHAKE_END] - shake[SHAKE_INITIAL]) / (shake[SHAKE_DURATION] - 1) * (shake[SHAKE_DURATION] - shakeDuration) + shake[SHAKE_INITIAL]) / SHAKE_STABILIZER;
+		return (1 - 2 * ((shake[SHAKE_DURATION] - shakeDuration) % 2)) * (1.0f * (shake[SHAKE_END] - shake[SHAKE_INITIAL]) / (shake[SHAKE_DURATION] - 1) * (shake[SHAKE_DURATION] - shakeDuration) + shake[SHAKE_INITIAL]) / SHAKE_STABILIZER;
 	}
 }

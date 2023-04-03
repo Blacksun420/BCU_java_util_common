@@ -1546,7 +1546,17 @@ public class Data {
 	public static final byte BASE_GROUND = 5;
 	public static final byte BASE_BARRIER = 6;
 	public static final byte BASE_CURSE = 7;
-	public static final int BASE_TOT = 8;
+	public static final byte BASE_TOT = 8;
+
+	// decoration/base level
+	public static final byte DECO_BASE_SLOW = 1;
+	public static final byte DECO_BASE_WALL = 2;
+	public static final byte DECO_BASE_STOP = 3;
+	public static final byte DECO_BASE_WATER = 4;
+	public static final byte DECO_BASE_GROUND = 5;
+	public static final byte DECO_BASE_BARRIER = 6;
+	public static final byte DECO_BASE_CURSE = 7;
+	public static final byte DECO_BASE_TOT = 7;
 
 	// base type
 	public static final byte BASE_ATK_MAGNIFICATION = 0;
@@ -1563,7 +1573,21 @@ public class Data {
 	//Figure out type 11
 	public static final byte BASE_CURSE_TIME = 12;
 
+	public static final byte BASE_FLOAT = 1;
+	public static final byte BASE_BLACK = 2;
+	public static final byte BASE_ANGEL = 4;
+	public static final byte BASE_RED = 0;
+	public static final byte BASE_ZOMBIE = 6;
+	public static final byte BASE_ALIEN = 5;
+	public static final byte BASE_RELIC = 7;
 
+	public static final byte DECO_SLOW = 0;
+	public static final byte DECO_WAVE = 1;
+	public static final byte DECO_FREEZE = 2;
+	public static final byte DECO_SURGE = 3;
+	public static final byte DECO_WEAK = 4;
+	public static final byte DECO_TOXIC = 5;
+	public static final byte DECO_CURSE = 6;
 
 	// touchable ID
 	public static final byte TCH_N = 1;
@@ -1615,58 +1639,58 @@ public class Data {
 	public static final int ORB_RESISTANT = 4;
 	public static final int ORB_TYPE = 0, ORB_TRAIT = 1, ORB_GRADE = 2, ORB_TOT = 3;
 
-	public static final int[] ORB_ATK_MULTI = { 100, 200, 300, 400, 500 }; // Atk orb multiplication
-	public static final int[] ORB_RES_MULTI = { 4, 8, 12, 16, 20 }; // Resist orb multiplication
-	public static final int[] ORB_STR_DEF_MULTI = {2, 4, 6, 8, 10};
-	public static final double[] ORB_STR_ATK_MULTI = {0.06, 0.12, 0.18, 0.24, 0.3};
-	public static final double[] ORB_MASSIVE_MULTI = {0.1, 0.2, 0.3, 0.4, 0.5};
-	public static final int[] ORB_RESISTANT_MULTI = {5, 10, 15, 20, 25};
-	public static final int[] GATYA = { 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 160, 161, 164, 167,
+	public static final short[] ORB_ATK_MULTI = { 100, 200, 300, 400, 500 }; // Atk orb multiplication
+	public static final byte[] ORB_RES_MULTI = { 4, 8, 12, 16, 20 }; // Resist orb multiplication
+	public static final byte[] ORB_STR_DEF_MULTI = {2, 4, 6, 8, 10};
+	public static final float[] ORB_STR_ATK_MULTI = {0.06f, 0.12f, 0.18f, 0.24f, 0.3f};
+	public static final float[] ORB_MASSIVE_MULTI = {0.1f, 0.2f, 0.3f, 0.4f, 0.5f};
+	public static final byte[] ORB_RESISTANT_MULTI = {5, 10, 15, 20, 25};
+	public static final short[] GATYA = { 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 160, 161, 164, 167,
 			168, 169, 170, 171, 179, 180, 181, 182, 183, 184};
 
-	public static final int MUSIC_DELAY = 2344; //Music change delay with milliseconds accuracy
+	public static final short MUSIC_DELAY = 2344; //Music change delay with milliseconds accuracy
 
-	public static final int LINEUP_CHANGE_TIME = 6; //in frame
+	public static final byte LINEUP_CHANGE_TIME = 6; //in frame
 
-	public static final int BG_EFFECT_STAR = 0;
-	public static final int BG_EFFECT_RAIN = 1;
-	public static final int BG_EFFECT_BUBBLE = 2;
-	public static final int BG_EFFECT_FALLING_SNOW = 3;
-	public static final int BG_EFFECT_SNOW = 4;
-	public static final int BG_EFFECT_SNOWSTAR = 5;
-	public static final int BG_EFFECT_BLIZZARD = 6;
-	public static final int BG_EFFECT_SHINING = 7;
-	public static final int BG_EFFECT_BALLOON = 8;
-	public static final int BG_EFFECT_ROCK = 9;
+	public static final byte BG_EFFECT_STAR = 0;
+	public static final byte BG_EFFECT_RAIN = 1;
+	public static final byte BG_EFFECT_BUBBLE = 2;
+	public static final byte BG_EFFECT_FALLING_SNOW = 3;
+	public static final byte BG_EFFECT_SNOW = 4;
+	public static final byte BG_EFFECT_SNOWSTAR = 5;
+	public static final byte BG_EFFECT_BLIZZARD = 6;
+	public static final byte BG_EFFECT_SHINING = 7;
+	public static final byte BG_EFFECT_BALLOON = 8;
+	public static final byte BG_EFFECT_ROCK = 9;
 
 	//Below are completely guessed
 	public static final int BG_EFFECT_STAR_TIME = 35;
-	public static final int BG_EFFECT_STAR_Y_RANGE = 140;
-	public static final int BG_EFFECT_SPLASH_MIN_HEIGHT = 90;
-	public static final int BG_EFFECT_SPLASH_RANGE = 60;
-	public static final int BG_EFFECT_BUBBLE_TIME = 780;
-	public static final int BG_EFFECT_BUBBLE_FACTOR = 32;
-	public static final int BG_EFFECT_BUBBLE_STABILIZER = 7;
-	public static final int BG_EFFECT_SNOW_SPEED = 8;
-	public static final double[] BG_EFFECT_BLIZZARD_SIZE = {1.0, 1.5, 2.0};
-	public static final int BG_EFFECT_BLIZZARD_SPEED = 40;
-	public static final int BG_EFFECT_FALLING_SNOW_SPEED = 3;
-	public static final double BG_EFFECT_FALLING_SNOW_SIZE = 2.0;
-	public static final int BG_EFFECT_SHINING_TIME = 8;
-	public static final int BG_EFFECT_BALLOON_SPEED = 1;
-	public static final int BG_EFFECT_BALLOON_FACTOR = 32;
-	public static final int BG_EFFECT_BALLOON_STABILIZER = 25;
+	public static final short BG_EFFECT_STAR_Y_RANGE = 140;
+	public static final byte BG_EFFECT_SPLASH_MIN_HEIGHT = 90;
+	public static final byte BG_EFFECT_SPLASH_RANGE = 60;
+	public static final short BG_EFFECT_BUBBLE_TIME = 780;
+	public static final byte BG_EFFECT_BUBBLE_FACTOR = 32;
+	public static final byte BG_EFFECT_BUBBLE_STABILIZER = 7;
+	public static final byte BG_EFFECT_SNOW_SPEED = 8;
+	public static final float[] BG_EFFECT_BLIZZARD_SIZE = {1.0f, 1.5f, 2.0f};
+	public static final byte BG_EFFECT_BLIZZARD_SPEED = 40;
+	public static final byte BG_EFFECT_FALLING_SNOW_SPEED = 3;
+	public static final float BG_EFFECT_FALLING_SNOW_SIZE = 2.0f;
+	public static final byte BG_EFFECT_SHINING_TIME = 8;
+	public static final byte BG_EFFECT_BALLOON_SPEED = 1;
+	public static final byte BG_EFFECT_BALLOON_FACTOR = 32;
+	public static final byte BG_EFFECT_BALLOON_STABILIZER = 25;
 	public static final double[] BG_EFFECT_ROCK_SIZE = {1.0, 2.25};
-	public static final int[] BG_EFFECT_ROCK_SPEED = {1, 3};
-	public static final int BG_EFFECT_ROCK_BEHIND_SPAWN_OFFSET = 190;
+	public static final byte[] BG_EFFECT_ROCK_SPEED = {1, 3};
+	public static final short BG_EFFECT_ROCK_BEHIND_SPAWN_OFFSET = 190;
 
-	public static final int[] SHAKE_MODE_HIT = {5, 7, 2, 30};
-	public static final int[] SHAKE_MODE_BOSS = {10, 15, 2, 0};
-	public static final int SHAKE_DURATION = 0;
-	public static final int SHAKE_INITIAL = 1;
-	public static final int SHAKE_END = 2;
-	public static final int SHAKE_COOL_DOWN = 3;
-	public static final double SHAKE_STABILIZER = 2.5;
+	public static final byte[] SHAKE_MODE_HIT = {5, 7, 2, 30};
+	public static final byte[] SHAKE_MODE_BOSS = {10, 15, 2, 0};
+	public static final byte SHAKE_DURATION = 0;
+	public static final byte SHAKE_INITIAL = 1;
+	public static final byte SHAKE_END = 2;
+	public static final byte SHAKE_COOL_DOWN = 3;
+	public static final float SHAKE_STABILIZER = 2.5f;
 
 	public static final char[] SUFX = new char[]{'f', 'c', 's'};
 
