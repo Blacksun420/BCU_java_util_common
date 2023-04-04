@@ -15,10 +15,12 @@ public class AttackVolcano extends AttackAb {
 
 	public AttackVolcano(Entity e, AttackSimple a, double sta, double end) {
 		super(e, a, sta, end, false);
-		isCounter = a.isCounter;
 		this.sta = sta;
 		this.end = end;
 		this.waveType = WT_VOLC;
+
+		if(dire == 1 && model.b.canon.deco == DECO_BASE_WATER)
+			atk *= model.b.b.t().getDecorationMagnification(model.b.canon.deco);
 	}
 
 	@Override
@@ -45,16 +47,10 @@ public class AttackVolcano extends AttackAb {
 			atk = ((AtkModelEntity)model).getEffAtk(matk);
 
 		for (AbEntity e : capt) {
-			if (e.isBase() && !(e instanceof Entity))
-				continue;
-
-			if (e instanceof Entity) {
-				e.damaged(this);
-				attacked = true;
-
-				vcapt.add((Entity) e);
-			}
+			e.damaged(this);
+			vcapt.add((Entity) e);
 		}
+		attacked = capt.size() > 0;
 		r.clear();
 	}
 }

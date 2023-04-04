@@ -255,36 +255,30 @@ public class Treasure extends Data {
 		double ans = 1.0;
 		FixIndexMap<Trait> BCTraits = UserProfile.getBCData().traits;
 
-		int trait;
-		int traitData;
+		byte trait;
+		byte traitData;
 		switch (id) {
 			case DECO_BASE_SLOW:
-				trait = TRAIT_FLOAT;
-				traitData = BASE_FLOAT;
+				trait = traitData = TRAIT_FLOAT; //traitData = BASE_FLOAT;
 				break;
 			case DECO_BASE_WALL:
-				trait = TRAIT_BLACK;
-				traitData = BASE_BLACK;
+				trait = traitData = TRAIT_BLACK;
 				break;
 			case DECO_BASE_STOP:
-				trait = TRAIT_ANGEL;
-				traitData = BASE_ANGEL;
+				trait = traitData = TRAIT_ANGEL;
 				break;
 			case DECO_BASE_WATER:
-				trait = TRAIT_RED;
-				traitData = BASE_RED;
+				trait = traitData = TRAIT_RED;
 				break;
 			case DECO_BASE_GROUND:
-				trait = TRAIT_ZOMBIE;
-				traitData = BASE_ZOMBIE;
+				trait = traitData = TRAIT_ZOMBIE;
 				break;
 			case DECO_BASE_BARRIER:
-				trait = TRAIT_ALIEN;
-				traitData = BASE_ALIEN;
+				trait = traitData = TRAIT_ALIEN;
 				break;
 			case DECO_BASE_CURSE:
 				trait = TRAIT_RELIC;
-				traitData = BASE_RELIC;
+				traitData = TRAIT_RELIC - 1;//Aku exists
 				break;
 			default:
 				return ans;
@@ -300,14 +294,14 @@ public class Treasure extends Data {
 		return ans;
 	}
 
-	public double getDecorationMagnification(int id, int type) {
+	public double getDecorationMagnification(int id) {
 		if(deco[id - 1] == 0)
 			return 1.0;
 		CannonLevelCurve clc = decorationData.get(id);
 
 		if(clc == null)
 			return 1.0;
-		return clc.applyFormula(type, deco[id - 1]);
+		return clc.applyFormula(id - 1, deco[id - 1]);
 	}
 
 	/**

@@ -24,10 +24,7 @@ public class FieldOrder implements Comparable<FieldOrder> {
 	@StaticPermitted(StaticPermitted.Type.TEMP)
 	private static final Map<Class<?>, Field[]> MAP = new HashMap<>();
 
-	public static Field[] getDeclaredFields(Class<?> cls) {
-		if (MAP.containsKey(cls))
-			return MAP.get(cls);
-		Field[] fs = cls.getDeclaredFields();
+	private static Field[] orderFields(Class<?> cls, Field[] fs) {
 		FieldOrder[] fos = new FieldOrder[fs.length];
 		for (int i = 0; i < fs.length; i++)
 			fos[i] = new FieldOrder(fs[i]);
@@ -36,6 +33,18 @@ public class FieldOrder implements Comparable<FieldOrder> {
 			fs[i] = fos[i].field;
 		MAP.put(cls, fs);
 		return fs;
+	}
+
+	public static Field[] getDeclaredFields(Class<?> cls) {
+		if (MAP.containsKey(cls))
+			return MAP.get(cls);
+		return orderFields(cls, cls.getDeclaredFields());
+	}
+
+	public static Field[] getFields(Class<?> cls) {
+		if (MAP.containsKey(cls))
+			return MAP.get(cls);
+		return orderFields(cls, cls.getFields());
 	}
 
 	private final Field field;

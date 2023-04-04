@@ -44,6 +44,7 @@ public class ContVolcano extends ContAb {
 
 	@Override
 	public void update() {
+		v.attacked = false;
 		updateProc();
 		if (t >= VOLC_PRE && t <= VOLC_PRE + aliveTime && anim.type != VolcEff.DURING) {
 			anim.changeAnim(VolcEff.DURING, false);
@@ -132,12 +133,10 @@ public class ContVolcano extends ContAb {
 		int y = (int) p.y;
 		int w = (int) (ra * rat * siz);
 
-		if (v.attacked) {
+		if (v.attacked)
 			gra.fillRect(x, y, w, h);
-			v.attacked = !v.attacked;
-		} else {
+		else
 			gra.drawRect(x, y, w, h);
-		}
 	}
 
 	@Override

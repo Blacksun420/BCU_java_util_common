@@ -13,36 +13,35 @@ public class AttackWave extends AttackAb {
 
 	public AttackWave(Entity e, AttackSimple a, double p0, double wid, int wt) {
 		super(e, a, p0 - wid / 2, p0 + wid / 2, false);
-		waveType = wt;
-		isCounter = a.isCounter;
 		incl = new HashSet<>();
+		waveType = wt;
+		if(wt != WT_MOVE && dire == 1 && model.b.canon.deco == DECO_BASE_WALL)
+			atk *= model.b.b.t().getDecorationMagnification(model.b.canon.deco);
 	}
 
 	public AttackWave(Entity e, AttackWave a, double p0, double wid) {
 		super(e, a, p0 - wid / 2, p0 + wid / 2, false);
-		waveType = a.waveType;
-		isCounter = a.isCounter;
 		incl = a.incl;
+		waveType = a.waveType;
 	}
 
 	public AttackWave(Entity e, AttackWave a, double pos, double start, double end) {
 		super(e, a, pos - start, pos + end, false);
-		waveType = a.waveType;
-		isCounter = a.isCounter;
 		incl = a.incl;
+		waveType = a.waveType;
 	}
 
 	@Override
 	public void capture() {
 		List<AbEntity> le = model.b.inRange(touch, attacker != null && attacker.status.rage > 0 ? 2 : dire, sta, end, excludeLastEdge);
-		if (incl != null)
-			le.removeIf(incl::contains);
+		le.remove(dire == 1 ? model.b.ubase : model.b.ebase);
+		le.removeIf(incl::contains);
 		capt.clear();
 		if ((abi & AB_ONLY) == 0)
 			capt.addAll(le);
 		else
 			for (AbEntity e : le)
-				if (e.isBase() || e.ctargetable(trait, attacker))
+				if (e.ctargetable(trait, attacker))
 					capt.add(e);
 	}
 
@@ -50,14 +49,9 @@ public class AttackWave extends AttackAb {
 	public void excuse() {
 		process();
 
-		if(attacker != null) {
+		if(attacker != null)
 			atk = ((AtkModelEntity)model).getEffAtk(matk);
-		}
-
 		for (AbEntity e : capt) {
-			if (e.isBase())
-				continue;
-
 			if (e instanceof Entity) {
 				e.damaged(this);
 				incl.add((Entity) e);

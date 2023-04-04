@@ -59,7 +59,9 @@ public abstract class AbEntity extends BattleObj {
 
 	public abstract boolean targetable(Entity ent);
 
-	public abstract boolean ctargetable(SortedPackSet<Trait> t, Entity attacker);
+	public boolean ctargetable(SortedPackSet<Trait> t, Entity attacker) {
+		return true;
+	}
 
 	public abstract int touchable();
 

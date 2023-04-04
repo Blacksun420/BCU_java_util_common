@@ -29,6 +29,15 @@ public class Data {
 		public static class PROB extends ProcItem {
 			@Order(0)
 			public int prob;
+
+			@Override
+			public boolean perform(CopRand r) {
+				return exists() && (prob == 100 || r.nextDouble() * 100 < prob);
+			}
+			@Override
+			public boolean exists() {
+				return prob != 0;
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -38,55 +47,37 @@ public class Data {
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
-		public static class PM extends ProcItem {
-			@Order(0)
-			public int prob;
+		public static class PM extends PROB {
 			@Order(1)
 			public int mult;
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
-		public static class PT extends ProcItem {
-			@Order(0)
-			public int prob;
+		public static class PT extends PROB {
 			@Order(1)
 			public int time;
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
-		public static class PTD extends ProcItem {
-			@Order(0)
-			public int prob;
-			@Order(1)
-			public int time;
+		public static class PTD extends PT {
 			@Order(2)
 			public int dis;
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
-		public static class PTM extends ProcItem {
-			@Order(0)
-			public int prob;
-			@Order(1)
-			public int time;
+		public static class PTM extends PT {
 			@Order(2)
 			public int mult;
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
-		public static class IMU extends ProcItem {
-			@Order(0)
-			public int mult;
+		public static class IMU extends MULT {
 			@Order(1)
 			public int block;
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
-		public static class IMUAD extends ProcItem {
-			@Order(0)
-			public int mult;
-			@Order(1)
-			public int block;
+		public static class IMUAD extends IMU {
 			@Order(2)
 			public int smartImu;
 		}
@@ -122,16 +113,8 @@ public class Data {
 			public TYPE type = new TYPE();
 		}
 
-		@JsonClass(noTag = NoTag.LOAD) //Used for procs that lack the block reformat
-		public static class WAVEI extends ProcItem {
-			@Order(0)
-			public int mult;
-		}
-
 		@JsonClass(noTag = NoTag.LOAD)
-		public static class CANNI extends ProcItem {
-			@Order(0)
-			public int mult;
+		public static class CANNI extends MULT {
 			@Order(1)
 			public int type;
 		}
@@ -278,18 +261,12 @@ public class Data {
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
-		public static class LETHARGY extends ProcItem {
+		public static class LETHARGY extends PTM {
 			@JsonClass(noTag = NoTag.LOAD)
 			public static class TYPE extends IntType {
 				@Order(0)
 				public boolean percentage;
 			}
-			@Order(0)
-			public int prob;
-			@Order(1)
-			public int time;
-			@Order(2)
-			public int mult;
 			@Order(3)
 			public TYPE type = new TYPE();
 		}
@@ -339,21 +316,13 @@ public class Data {
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
-		public static class TIME extends ProcItem {
-			@Order(0)
-			public int prob;
-			@Order(1)
-			public int time;
+		public static class TIME extends PT {
 			@Order(2)
 			public int intensity;
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
-		public static class SPEED extends ProcItem {
-			@Order(0)
-			public int prob;
-			@Order(1)
-			public int time;
+		public static class SPEED extends PT {
 			@Order(2)
 			public int speed;
 			@Order(3)
@@ -410,18 +379,13 @@ public class Data {
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
-		public static class THEME extends ProcItem {
+		public static class THEME extends PT {
 
 			@JsonClass(noTag = NoTag.LOAD)
 			public static class TYPE extends IntType {
 				@Order(0)
 				public boolean kill;
 			}
-
-			@Order(0)
-			public int prob;
-			@Order(1)
-			public int time;
 			@Order(2)
 			public Identifier<Background> id;
 			@Order(3)
@@ -559,7 +523,7 @@ public class Data {
 			}
 
 			public Field[] getDeclaredFields() {
-				return FieldOrder.getDeclaredFields(this.getClass());
+				return FieldOrder.getFields(this.getClass());
 			}
 
 			public IntType load(int val) throws Exception {
@@ -677,7 +641,7 @@ public class Data {
 			}
 
 			public Field[] getDeclaredFields() {
-				return FieldOrder.getDeclaredFields(this.getClass());
+				return FieldOrder.getFields(this.getClass());
 			}
 
 			@Deprecated
@@ -698,7 +662,7 @@ public class Data {
 
 			public boolean perform(CopRand r) {
 				try {
-					Field f = this.getClass().getDeclaredField("prob");
+					Field f = this.getClass().getField("prob");
 					int prob = f.getInt(this);
 					if (prob == 0)
 						return false;
@@ -754,7 +718,7 @@ public class Data {
 		}
 
 		public static Field[] getDeclaredFields() {
-			return FieldOrder.getDeclaredFields(Proc.class);
+			return FieldOrder.getFields(Proc.class);
 		}
 
 		public static String getName(int i) {
@@ -857,7 +821,7 @@ public class Data {
 		@Order(37)
 		public final IMU IMUPOIATK = new IMU();
 		@Order(38)
-		public final WAVEI IMUMOVING = new WAVEI();
+		public final MULT IMUMOVING = new MULT();
 		@Order(39)
 		public final CANNI IMUCANNON = new CANNI();
 		@Order(40)
@@ -1548,16 +1512,6 @@ public class Data {
 	public static final byte BASE_CURSE = 7;
 	public static final byte BASE_TOT = 8;
 
-	// decoration/base level
-	public static final byte DECO_BASE_SLOW = 1;
-	public static final byte DECO_BASE_WALL = 2;
-	public static final byte DECO_BASE_STOP = 3;
-	public static final byte DECO_BASE_WATER = 4;
-	public static final byte DECO_BASE_GROUND = 5;
-	public static final byte DECO_BASE_BARRIER = 6;
-	public static final byte DECO_BASE_CURSE = 7;
-	public static final byte DECO_BASE_TOT = 7;
-
 	// base type
 	public static final byte BASE_ATK_MAGNIFICATION = 0;
 	public static final byte BASE_SLOW_TIME = 1;
@@ -1573,21 +1527,17 @@ public class Data {
 	//Figure out type 11
 	public static final byte BASE_CURSE_TIME = 12;
 
-	public static final byte BASE_FLOAT = 1;
-	public static final byte BASE_BLACK = 2;
-	public static final byte BASE_ANGEL = 4;
-	public static final byte BASE_RED = 0;
-	public static final byte BASE_ZOMBIE = 6;
-	public static final byte BASE_ALIEN = 5;
-	public static final byte BASE_RELIC = 7;
+	// decoration/base level
+	public static final byte DECO_BASE_SLOW = 1;
+	public static final byte DECO_BASE_WALL = 2;
+	public static final byte DECO_BASE_STOP = 3;
+	public static final byte DECO_BASE_WATER = 4;
+	public static final byte DECO_BASE_GROUND = 5;
+	public static final byte DECO_BASE_BARRIER = 6;
+	public static final byte DECO_BASE_CURSE = 7;
+	public static final byte DECO_BASE_TOT = 7;
 
-	public static final byte DECO_SLOW = 0;
-	public static final byte DECO_WAVE = 1;
-	public static final byte DECO_FREEZE = 2;
-	public static final byte DECO_SURGE = 3;
-	public static final byte DECO_WEAK = 4;
-	public static final byte DECO_TOXIC = 5;
-	public static final byte DECO_CURSE = 6;
+	public static final byte[] DECOS = new byte[]{P_SLOW, -1, P_STOP, -1, P_WEAK, P_POIATK, P_CURSE}; //-1s are wave and surge (in that order)
 
 	// touchable ID
 	public static final byte TCH_N = 1;

@@ -674,6 +674,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		}
 
 		private void stopAtk() {
+			tempAtk = -1;
 			if (atkTime > 0)
 				atkTime = preTime = 0;
 		}
@@ -682,6 +683,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		 * update attack state
 		 */
 		private void updateAttack() {
+			tempAtk = -1; //set tempAtk to -1, as axis display isn't needed anymore
 			atkTime--;
 			if (preTime >= 0) {
 				if (preTime == 0) {
@@ -1580,10 +1582,6 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				return;
 			else
 				dmg = dmg * (100 - getProc().IMUWAVE.mult) / 100;
-
-			if(dire == - 1 && basis.canon.deco == DECO_BASE_WALL) {
-				dmg = (int) (dmg * basis.b.t().getDecorationMagnification(basis.canon.deco, Data.DECO_WAVE));
-			}
 		}
 
 		if ((atk.waveType & WT_MOVE) > 0) {
@@ -1602,9 +1600,6 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				return;
 			else
 				dmg = dmg * (100 - getProc().IMUVOLC.mult) / 100;
-
-			if(dire == - 1 && basis.canon.deco == DECO_BASE_WATER)
-				dmg *= basis.b.t().getDecorationMagnification(basis.canon.deco, Data.DECO_SURGE);
 		}
 
 		Proc.PT imuatk = getProc().IMUATK;
@@ -1854,8 +1849,6 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			} else {
 				double poiDmg = atk.getProc().POIATK.mult * (100 - rst) / 10000.0;
 
-				if(basis.canon.deco == DECO_BASE_BARRIER)
-					poiDmg *= basis.b.t().getDecorationMagnification(basis.canon.deco, Data.DECO_TOXIC);
 				damage += maxH * poiDmg;
 				basis.lea.add(new EAnimCont(pos, layer, effas().A_POISON.getEAnim(DefEff.DEF)));
 				CommonStatic.setSE(SE_POISON);
@@ -1872,8 +1865,6 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			int rst = getProc().IMUSTOP.mult;
 			if (rst < 100) {
 				val = val * (100 - rst) / 100;
-				if(dire == - 1 && basis.canon.deco == DECO_BASE_STOP)
-					val *= basis.b.t().getDecorationMagnification(basis.canon.deco, Data.DECO_FREEZE);
 				if (val < 0)
 					status.stop = Math.max(status.stop, Math.abs(val));
 				else
@@ -1887,8 +1878,6 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			int rst = getProc().IMUSLOW.mult;
 			if (rst < 100) {
 				val = val * (100 - rst) / 100;
-				if(dire == -1 && basis.canon.deco == DECO_BASE_SLOW)
-					val *= basis.b.t().getDecorationMagnification(basis.canon.deco, Data.DECO_SLOW);
 				if (val < 0)
 					status.slow = Math.max(status.slow, Math.abs(val));
 				else
@@ -1902,9 +1891,6 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			int rst = checkAIImmunity(atk.getProc().WEAK.mult - 100, getProc().IMUWEAK.smartImu, getProc().IMUWEAK.mult > 0) ? getProc().IMUWEAK.mult : 0;
 			val = val * (100 - rst) / 100;
 			if (rst < 100) {
-				if(dire == - 1 && basis.canon.deco == DECO_BASE_GROUND)
-					val *= basis.b.t().getDecorationMagnification(basis.canon.deco, Data.DECO_WEAK);
-
 				if (val < 0)
 					status.weak[0] = Math.max(status.weak[0], Math.abs(val));
 				else
@@ -1943,9 +1929,6 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			int rst = getProc().IMUCURSE.mult;
 			if (rst < 100) {
 				val = val * (100 - rst) / 100;
-				if(dire == - 1 && basis.canon.deco == DECO_BASE_CURSE)
-					val *= basis.b.t().getDecorationMagnification(basis.canon.deco, Data.DECO_CURSE);
-
 				if (val < 0)
 					status.curse = Math.max(status.curse, Math.abs(val));
 				else
@@ -2687,7 +2670,6 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		gra.drawRect(bx, (int) p.y, bw, h);
 		gra.setColor(FakeGraphics.CYAN);
 		gra.drawLine((int) (pos * rat * siz + poa), py, (int) (pos * rat * siz + poa), py + h);
-		atkm.tempAtk = -1;
 	}
 
 	/**

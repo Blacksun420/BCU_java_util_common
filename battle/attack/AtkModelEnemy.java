@@ -23,6 +23,14 @@ public class AtkModelEnemy extends AtkModelEntity {
 			if (!matk.canProc())
 				for (int j : BCShareable) proc.getArr(j).set(e.getProc().getArr(j));
 		}
+		if (b.canon.deco > 0 && DECOS[b.canon.deco - 1] != -1) {
+			Proc.PROB arr = (Proc.PROB)proc.getArr(DECOS[b.canon.deco - 1]);
+			if (arr.prob > 0)
+				if (arr instanceof Proc.PM)
+					((Proc.PM) arr).mult *= b.b.t().getDecorationMagnification(b.canon.deco);
+				else
+					((Proc.PT) arr).time *= b.b.t().getDecorationMagnification(b.canon.deco);
+		}
 
 		extraAtk(matk);
 		return atk;

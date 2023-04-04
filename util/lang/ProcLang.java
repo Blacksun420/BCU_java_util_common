@@ -75,7 +75,7 @@ public class ProcLang {
 		}
 
 		private void fill(JsonObject ans, String pre, Class<?> c) {
-			for (Field f : FieldOrder.getDeclaredFields(c)) {
+			for (Field f : FieldOrder.getFields(c)) {
 				if (IntType.class.isAssignableFrom(f.getType()))
 					fill(ans, f.getName() + ".", f.getType());
 				else
@@ -84,7 +84,7 @@ public class ProcLang {
 		}
 
 		private void fill(String pre, Class<?> c, JsonObject obj) {
-			for (Field f : FieldOrder.getDeclaredFields(c)) {
+			for (Field f : FieldOrder.getFields(c)) {
 				if (IntType.class.isAssignableFrom(f.getType())) {
 					fill(f.getName() + ".", f.getType(), obj);
 				} else {

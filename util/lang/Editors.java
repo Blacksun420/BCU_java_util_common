@@ -281,7 +281,7 @@ public class Editors {
 				t.smartImu = 0;
 		});
 
-		EditControl<Proc.WAVEI> wavei = new EditControl<>(Proc.WAVEI.class, (t) -> t.mult = Math.min(t.mult, 100));
+		EditControl<Proc.MULT> wavei = new EditControl<>(Proc.MULT.class, (t) -> t.mult = Math.min(t.mult, 100));
 
 		map().put("KB", new EditControl<>(Proc.PTD.class, (t) -> {
 			t.prob = MathUtil.clip(t.prob, 0, 100);

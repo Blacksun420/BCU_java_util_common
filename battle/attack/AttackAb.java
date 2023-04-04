@@ -68,6 +68,7 @@ public abstract class AttackAb extends BattleObj {
 		duration = 1;
 		matk = a.matk;
 		layer = a.layer;
+		isCounter = a.isCounter;
 		this.isLongAtk = isLongAtk;
 	}
 
