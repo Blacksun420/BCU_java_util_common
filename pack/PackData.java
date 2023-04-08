@@ -589,5 +589,4 @@ public abstract class PackData implements IndexContainer {
 			def = func.reduce(def, combos);
 		return def;
 	}
-
 }
