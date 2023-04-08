@@ -180,18 +180,12 @@ public abstract class PackData implements IndexContainer {
 			int soulNumber = 0;
 
 			VFile soulFolder = VFile.get(pre);
-
 			if(soulFolder == null)
 				return;
 
-			for(VFile vf : soulFolder.list()) {
-				if(vf == null)
-					continue;
-
-				if(vf.getData() == null && vf.name.matches("\\d{3}")) {
+			for(VFile vf : soulFolder.list())
+				if(vf != null && vf.getData() == null && vf.name.matches("\\d{3}"))
 					soulNumber = Math.max(soulNumber, CommonStatic.safeParseInt(vf.name));
-				}
-			}
 
 			String mid = "/battle_";
 			for (int i = 0; i < soulNumber; i++) {
@@ -221,16 +215,16 @@ public abstract class PackData implements IndexContainer {
 				u.maxp = Integer.parseInt(strs[51]);
 				u.info.fillBuy(strs);
 
-
 				int tf =  Integer.parseInt(strs[20]);
-				if (tf != -1) {
+				if (tf != -1)
 					u.info.tfLevel = tf;
-				} else {
-					tf = Integer.parseInt(strs[25]);
-					if (tf != -1) {
-						u.info.tfLevel = tf;
-					}
-				}
+
+				tf = Integer.parseInt(strs[25]);
+				if (tf != -1)
+					u.info.tfLevel = tf;
+				else if (u.info.tfLevel == -1)
+					u.info.tfLevel = 20;
+
 				strs = qt.poll().split(",");
 				int[] lv = new int[20];
 				for (int i = 0; i < 20; i++)
