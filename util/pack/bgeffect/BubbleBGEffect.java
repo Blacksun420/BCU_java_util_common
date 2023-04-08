@@ -58,12 +58,12 @@ public class BubbleBGEffect extends BackgroundEffect {
     }
 
     @Override
-    public void draw(FakeGraphics g, double x, double y, double siz, int groundH, int skyH) {
+    public void draw(FakeGraphics g, double y, double siz, double midH) {
         for(int i = 0; i < bubblePosition.size(); i++) {
             g.drawImage(
                     bubble,
-                    BackgroundEffect.convertP(bubblePosition.get(i).x + Data.BG_EFFECT_BUBBLE_FACTOR * Math.sin(differentiator.get(i) + bubblePosition.get(i).y / Data.BG_EFFECT_BUBBLE_STABILIZER), siz) + (int) x,
-                    (int) (bubblePosition.get(i).y * siz - y + skyH * siz),
+                    BackgroundEffect.convertP(bubblePosition.get(i).x + Data.BG_EFFECT_BUBBLE_FACTOR * Math.sin(differentiator.get(i) + bubblePosition.get(i).y / Data.BG_EFFECT_BUBBLE_STABILIZER), siz),
+                    (int) (bubblePosition.get(i).y * siz - y + midH * siz),
                     bw * siz, bh * siz
             );
         }

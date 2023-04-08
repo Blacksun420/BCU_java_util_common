@@ -506,7 +506,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 				e.status.weak[0] = 0;
 				e.status.weak[1] = 100;
-				soul = UserProfile.getBCData().demonSouls.get((1 - e.getDire()) / 2).getEAnim(AnimU.SOUL[0]);
+				soul = CommonStatic.getBCAssets().demonSouls.get((1 - e.getDire()) / 2).getEAnim(AnimU.SOUL[0]);
 				dead = soul.len();
 				CommonStatic.setSE(SE_DEATH_SURGE);
 			} else {

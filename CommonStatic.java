@@ -13,6 +13,7 @@ import common.system.fake.FakeImage;
 import common.util.Data;
 import common.util.anim.ImgCut;
 import common.util.anim.MaModel;
+import common.util.pack.DemonSoul;
 import common.util.pack.EffAnim.EffAnimStore;
 import common.util.pack.NyCastle;
 import common.util.stage.Music;
@@ -62,6 +63,7 @@ public class CommonStatic {
 		// Map<Type, Map<Trait, Grades>>
 		public final Map<Integer, Map<Integer, List<Integer>>> ORB = new TreeMap<>();
 		public final Map<Integer, Integer> DATA = new HashMap<>();
+		public final SortedPackSet<DemonSoul> demonSouls = new SortedPackSet<>();
 
 		public FakeImage[] TYPES;
 		public FakeImage[] TRAITS;

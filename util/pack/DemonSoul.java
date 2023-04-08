@@ -1,19 +1,18 @@
 package common.util.pack;
 
+import common.util.Animable;
 import common.util.anim.AnimU;
-import common.pack.Identifier;
-import common.pack.IndexContainer;
-import common.pack.PackData;
+import common.util.anim.EAnimI;
+import org.jetbrains.annotations.NotNull;
 
-@IndexContainer.IndexCont(PackData.class)
-public class DemonSoul extends AbSoul implements IndexContainer.Indexable<PackData, DemonSoul> {
+public class DemonSoul extends Animable<AnimU<?>, AnimU.UType> implements Comparable<DemonSoul> {
 
-    private final Identifier<DemonSoul> id;
+    private final int id;
     boolean e;
 
     public DemonSoul(int id, AnimU<?> animS, boolean enemy) {
-        super(animS);
-        this.id = new Identifier<>(Identifier.DEF, DemonSoul.class, id);
+        anim = animS;
+        this.id = id;
         e = enemy;
 
         if (!enemy) {
@@ -23,12 +22,17 @@ public class DemonSoul extends AbSoul implements IndexContainer.Indexable<PackDa
     }
 
     @Override
-    public Identifier<DemonSoul> getID() {
-        return id;
+    public String toString() {
+        return (e ? "enemy " : "") + "demonsoul " + id;
     }
 
     @Override
-    public String toString() {
-        return (e ? "enemy " : "") + "demonsoul " + id;
+    public int compareTo(@NotNull DemonSoul o) {
+        return Integer.compare(id, o.id);
+    }
+
+    @Override
+    public EAnimI getEAnim(AnimU.UType uType) {
+        return anim.getEAnim(uType);
     }
 }

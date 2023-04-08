@@ -95,7 +95,7 @@ public class RockBGEffect extends BackgroundEffect {
     }
 
     @Override
-    public void draw(FakeGraphics g, double x, double y, double siz, int groundH, int skyH) {
+    public void draw(FakeGraphics g, double y, double siz, double midH) {
         FakeTransform at = g.getTransform();
         for(int i = 0; i < rockPosition.size(); i++) {
             if(layer.get(i) == 0) {
@@ -104,7 +104,7 @@ public class RockBGEffect extends BackgroundEffect {
                 FakeImage img = isRock.get(i) ? rock : segment;
                 double s = size.get(i);
 
-                g.translate(BackgroundEffect.convertP(rockPosition.get(i).x, siz) + (int) x, (int) (rockPosition.get(i).y * siz - y));
+                g.translate(BackgroundEffect.convertP(rockPosition.get(i).x, siz), (int) (rockPosition.get(i).y * siz - y));
                 g.rotate(angle.get(i));
                 g.drawImage(img, 0, 0, img.getWidth() * s * siz, img.getHeight() * s * siz);
 
@@ -117,7 +117,7 @@ public class RockBGEffect extends BackgroundEffect {
                 FakeImage img = isRock.get(i) ? rock : segment;
                 double s = size.get(i);
 
-                g.translate(BackgroundEffect.convertP(rockPosition.get(i).x + (vibrate ? 2 : -2), siz) + (int) x, (int) (rockPosition.get(i).y * siz - y + skyH * siz));
+                g.translate(BackgroundEffect.convertP(rockPosition.get(i).x + (vibrate ? 2 : -2), siz), (int) (rockPosition.get(i).y * siz - y + midH * siz));
                 g.rotate(angle.get(i));
                 g.drawImage(img, 0, 0, img.getWidth() * s * siz, img.getHeight() * s * siz);
 

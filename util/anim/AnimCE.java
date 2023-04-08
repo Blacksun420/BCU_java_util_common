@@ -160,6 +160,48 @@ public class AnimCE extends AnimCI {
 		parts = imgcut.cut(getNum());
 	}
 
+	public final void addAttack() {
+		int ind = 2 + getAtkCount();
+		MaAnim[] newMaAnim = new MaAnim[anims.length + 1];
+		UType[] newUType = new UType[newMaAnim.length];
+
+		for (int i = 0; i < newMaAnim.length; i++) {
+			if (i == ind)
+				i++;
+			if (i < ind) {
+				newMaAnim[i] = anims[i];
+				newUType[i] = types[i];
+			} else {
+				newMaAnim[i] = anims[i - 1];
+				newUType[i] = types[i - 1];
+			}
+		}
+		anims = newMaAnim;
+		types = newUType;
+		anims[ind] = new MaAnim();
+		types[ind] = new UType("attack" + (ind - 2), true);
+	}
+
+	public final void remAttack(int atk) {
+		MaAnim[] newMaAnim = new MaAnim[anims.length - 1];
+		UType[] newUType = new UType[newMaAnim.length];
+
+		for (int i = 0; i < newMaAnim.length; i++) {
+			if (i < atk) {
+				newMaAnim[i] = anims[i];
+				newUType[i] = types[i];
+			} else {
+				newMaAnim[i] = anims[i + 1];
+				newUType[i] = types[i + 1];
+			}
+		}
+		newUType[2] = TYPEDEF[2];
+		for (int i = 3; i < newUType.length - 6; i++)
+			newUType[i].changeName("attack" + (i - 2));
+		anims = newMaAnim;
+		types = newUType;
+	}
+
 	public boolean inPool() {
 		return id.pack != null && id.pack.equals("_local");
 	}

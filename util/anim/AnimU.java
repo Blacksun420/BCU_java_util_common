@@ -76,7 +76,7 @@ public abstract class AnimU<T extends AnimU.ImageKeeper> extends AnimD<AnimU<?>,
 		loader = load;
 	}
 
-	public int getAtkCount() {
+	public final int getAtkCount() {
 		if (types == null)
 			partial();
 
@@ -87,69 +87,27 @@ public abstract class AnimU<T extends AnimU.ImageKeeper> extends AnimD<AnimU<?>,
 		return types.length - TYPEDEF.length + 1;
 	}
 
-	public int getAtkLen(int atk) {
+	public final int getAtkLen(int atk) {
 		partial();
 		return anims[2 + atk].len + 1;
 	}
 
-	public void addAttack() {
-		int ind = 2 + getAtkCount();
-		MaAnim[] newMaAnim = new MaAnim[anims.length + 1];
-		UType[] newUType = new UType[newMaAnim.length];
-
-		for (int i = 0; i < newMaAnim.length; i++) {
-			if (i == ind)
-				i++;
-			if (i < ind) {
-				newMaAnim[i] = anims[i];
-				newUType[i] = types[i];
-			} else {
-				newMaAnim[i] = anims[i - 1];
-				newUType[i] = types[i - 1];
-			}
-		}
-		anims = newMaAnim;
-		types = newUType;
-		anims[ind] = new MaAnim();
-		types[ind] = new UType("attack" + (ind - 2), true);
-	}
-
-	public void remAttack(int atk) {
-		MaAnim[] newMaAnim = new MaAnim[anims.length - 1];
-		UType[] newUType = new UType[newMaAnim.length];
-
-		for (int i = 0; i < newMaAnim.length; i++) {
-			if (i < atk) {
-				newMaAnim[i] = anims[i];
-				newUType[i] = types[i];
-			} else {
-				newMaAnim[i] = anims[i + 1];
-				newUType[i] = types[i + 1];
-			}
-		}
-		newUType[2] = TYPEDEF[2];
-		for (int i = 3; i < newUType.length - 6; i++)
-			newUType[i].changeName("attack" + (i - 2));
-		anims = newMaAnim;
-		types = newUType;
-	}
-
 	@Override
-	public EAnimU getEAnim(UType t) {
+	public final EAnimU getEAnim(UType t) {
 		check();
 		return new EAnimU(this, t);
 	}
 
-	public VImg getEdi() {
+	public final VImg getEdi() {
 		return loader.getEdi();
 	}
 
 	@Override
-	public FakeImage getNum() {
+	public final FakeImage getNum() {
 		return loader.getNum();
 	}
 
-	public VImg getUni() {
+	public final VImg getUni() {
 		return loader.getUni();
 	}
 
@@ -171,17 +129,16 @@ public abstract class AnimU<T extends AnimU.ImageKeeper> extends AnimD<AnimU<?>,
 	}
 
 	@Override
-	public final String[] names() {
+	public String[] names() {
 		check();
 		String[] str = translate(types);
-		for (int i = 3; i < str.length - 6; i++) {
+		for (int i = 3; i < str.length - 6; i++)
 			str[i] = str[2] + " " + (i - 2);
-		}
 		return str;
 	}
 
 	@Override
-	public void unload() {
+	public final void unload() {
 		loader.unload();
 		super.unload();
 	}

@@ -62,13 +62,13 @@ public class BalloonBGEffect extends BackgroundEffect {
     }
 
     @Override
-    public void draw(FakeGraphics g, double x, double y, double siz, int groundH, int skyH) {
+    public void draw(FakeGraphics g, double y, double siz, double midH) {
         for(int i = 0; i < balloonPosition.size(); i++) {
             FakeImage img = isBigBalloon.get(i) ? bigBalloon : balloon;
             g.drawImage(
                     img,
-                    BackgroundEffect.convertP(balloonPosition.get(i).x + Data.BG_EFFECT_BALLOON_FACTOR * Math.sin(balloonPosition.get(i).y / Data.BG_EFFECT_BALLOON_STABILIZER), siz) + (int) x,
-                    (int) (balloonPosition.get(i).y * siz - y + skyH * siz),
+                    BackgroundEffect.convertP(balloonPosition.get(i).x + Data.BG_EFFECT_BALLOON_FACTOR * Math.sin(balloonPosition.get(i).y / Data.BG_EFFECT_BALLOON_STABILIZER), siz),
+                    (int) (balloonPosition.get(i).y * siz - y + midH * siz),
                     img.getWidth() * siz,
                     img.getHeight() * siz
             );

@@ -51,19 +51,16 @@ public class SnowBGEffect extends BackgroundEffect {
     @Override
     public void postDraw(FakeGraphics g, P rect, double siz, double midH) {
         g.setComposite(FakeGraphics.TRANS, 127, 0);
-
-        for(int i = 0; i < snowPosition.size(); i++) {
+        for(int i = 0; i < snowPosition.size(); i++)
             g.drawImage(snow, BackgroundEffect.convertP(snowPosition.get(i).x, siz) + (int) rect.x, (int) (snowPosition.get(i).y * siz - rect.y + midH * siz), sw * siz, sh * siz);
-        }
-
         g.setComposite(FakeGraphics.DEF, 255, 0);
     }
 
     @Override
-    public void draw(FakeGraphics g, double x, double y, double siz, int groundH, int skyH) {
+    public void draw(FakeGraphics g, double y, double siz, double midH) {
         g.setComposite(FakeGraphics.TRANS, 127, 0);
         for(int i = 0; i < snowPosition.size(); i++)
-            g.drawImage(snow, BackgroundEffect.convertP(snowPosition.get(i).x, siz) + (int) x, (int) (snowPosition.get(i).y * siz - y + skyH * siz), sw * siz, sh * siz);
+            g.drawImage(snow, BackgroundEffect.convertP(snowPosition.get(i).x, siz), (int) (snowPosition.get(i).y * siz - y + midH * siz), sw * siz, sh * siz);
         g.setComposite(FakeGraphics.DEF, 255, 0);
     }
 

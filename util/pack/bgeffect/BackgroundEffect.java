@@ -178,7 +178,7 @@ public abstract class BackgroundEffect extends Data implements IndexContainer.In
     /**
      * Used for Background preview only. Draws everything at once with no battle scaling
      */
-    public abstract void draw(FakeGraphics g, double x, double y, double siz, int groundH, int skyH);
+    public abstract void draw(FakeGraphics g, double y, double siz, double midH);
 
     /**
      * Update data here

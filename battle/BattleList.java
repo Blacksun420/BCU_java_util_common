@@ -31,6 +31,10 @@ public class BattleList<T extends Comparable<? super T>> implements Collection<T
         initCapacity(1);
     }
 
+    public BattleList(int cap) {
+        initCapacity(cap);
+    }
+
     public void initCapacity(int num) {
         arr = new Object[num];
     }

@@ -18,7 +18,7 @@ public abstract class AnimD<A extends AnimD<A, T>, T extends AnimI.AnimType<A, T
 	}
 
 	@Override
-	public void check() {
+	public final void check() {
 		if (!loaded)
 			load();
 	}
@@ -56,14 +56,14 @@ public abstract class AnimD<A extends AnimD<A, T>, T extends AnimI.AnimType<A, T
 	}
 
 	@Override
-	public FakeImage parts(int i) {
+	public final FakeImage parts(int i) {
 		check();
 		if (i < 0 || i >= parts.length)
 			return null;
 		return parts[i];
 	}
 
-	public void reorderModel(int[] inds) {
+	public final void reorderModel(int[] inds) {
 		for (int[] ints : mamodel.parts)
 			if (ints != null && ints[0] >= 0)
 				ints[0] = inds[ints[0]];
@@ -84,7 +84,7 @@ public abstract class AnimD<A extends AnimD<A, T>, T extends AnimI.AnimType<A, T
 	}
 
 	@Override
-	public final T[] types() {
+	public T[] types() {
 		check();
 		return types;
 	}
@@ -102,7 +102,7 @@ public abstract class AnimD<A extends AnimD<A, T>, T extends AnimI.AnimType<A, T
 		loaded = false;
 	}
 
-	public void validate() {
+	public final void validate() {
 		check();
 		mamodel.check(this);
 		for (MaAnim ma : anims) {

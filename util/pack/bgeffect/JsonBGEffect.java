@@ -115,10 +115,8 @@ public class JsonBGEffect extends BackgroundEffect {
     }
 
     @Override
-    public void draw(FakeGraphics g, double x, double y, double siz, int groundH, int skyH) {
-        //FIXME
-        siz *= 0.8;
-        P pee = new P(x, 1530 * siz - skyH);
+    public void draw(FakeGraphics g, double y, double siz, double midH) {
+        P pee = new P(0, y);
         for(int i = 0; i < handlers.size(); i++) {
             handlers.get(i).draw(g, pee, siz, false);
             handlers.get(i).draw(g, pee, siz, true);

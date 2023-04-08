@@ -8,6 +8,8 @@ import common.system.VImg;
 import common.system.fake.FakeImage;
 import common.system.fake.FakeImage.Marker;
 
+import java.util.ArrayList;
+
 @JsonClass.JCGeneric(ResourceLocation.class)
 public class AnimCI extends AnimU<AnimCI.AnimCIKeeper> {
 
@@ -122,6 +124,38 @@ public class AnimCI extends AnimU<AnimCI.AnimCIKeeper> {
 	public AnimCI(Source.AnimLoader acl) {
 		super(new AnimCIKeeper(acl));
 		id = loader.getName();
+	}
+
+	@Override
+	public final String[] names() {
+		String[] names = rawNames();
+		ArrayList<String> list = new ArrayList<>(types.length);
+		boolean adAll = true;
+		for (int i = 0; i < names.length; i++) {
+			if (adAll || anims[i].n > 0)
+				list.add(names[i]);
+			if (adAll && types[i].toString().equals("kb"))
+				adAll = false;
+		}
+		return list.toArray(new String[0]);
+	}
+
+	@Override
+	public final UType[] types() {
+		check();
+		ArrayList<UType> list = new ArrayList<>(types.length);
+		boolean adAll = true;
+		for (int i = 0; i < types.length; i++) {
+			if (adAll || anims[i].n > 0)
+				list.add(types[i]);
+			if (adAll && types[i].toString().equals("kb"))
+				adAll = false;
+		}
+		return list.toArray(new UType[0]);
+	}
+
+	public String[] rawNames() {
+		return super.names();
 	}
 
 	@Override

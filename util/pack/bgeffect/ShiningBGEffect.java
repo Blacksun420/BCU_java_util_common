@@ -53,22 +53,19 @@ public class ShiningBGEffect extends BackgroundEffect {
     @Override
     public void postDraw(FakeGraphics g, P rect, double siz, double midH) {
         g.setComposite(FakeGraphics.BLEND, 255, 1);
-
         for(int i = 0; i < shinePosition.size(); i++) {
             double size = Math.sin(Math.PI * time.get(i) / Data.BG_EFFECT_SHINING_TIME);
-
             g.drawImage(shine, BackgroundEffect.convertP(shinePosition.get(i).x, siz) + (int) (rect.x - sw * size * siz / 2), (int) (shinePosition.get(i).y * siz - rect.y - sh * size * siz / 2), sw * size * siz, sh * size * siz);
         }
-
         g.setComposite(FakeGraphics.DEF, 255, 0);
     }
 
     @Override
-    public void draw(FakeGraphics g, double x, double y, double siz, int groundH, int skyH) {
+    public void draw(FakeGraphics g, double y, double siz, double midH) {
         g.setComposite(FakeGraphics.BLEND, 255, 1);
         for(int i = 0; i < shinePosition.size(); i++) {
             double size = Math.sin(Math.PI * time.get(i) / Data.BG_EFFECT_SHINING_TIME);
-            g.drawImage(shine, BackgroundEffect.convertP(shinePosition.get(i).x, siz) + (int) (x - sw * size * siz / 2), (int) (shinePosition.get(i).y * siz - y - sh * size * siz / 2), sw * size * siz, sh * size * siz);
+            g.drawImage(shine, BackgroundEffect.convertP(shinePosition.get(i).x, siz) + (int) (-sw * size * siz / 2), (int) (shinePosition.get(i).y * siz - y - sh * size * siz / 2), sw * size * siz, sh * size * siz);
         }
         g.setComposite(FakeGraphics.DEF, 255, 0);
     }
@@ -78,20 +75,18 @@ public class ShiningBGEffect extends BackgroundEffect {
         capture.clear();
 
         for(int i = 0; i < shinePosition.size(); i++) {
-            if(time.get(i) <= 0) {
+            if(time.get(i) <= 0)
                 capture.add(i);
-            } else {
+            else
                 time.set(i, (byte) (time.get(i) - 1));
-            }
         }
 
-        if(!capture.isEmpty()) {
+        if(!capture.isEmpty())
             for(int i = 0; i < capture.size(); i++) {
                 shinePosition.get(capture.get(i)).x = r.nextInt(w + battleOffset);
                 shinePosition.get(capture.get(i)).y = r.nextInt(BGHeight * 3 - BGHeight);
-                time.set(capture.get(i), (byte) Data.BG_EFFECT_SHINING_TIME);
+                time.set(capture.get(i), Data.BG_EFFECT_SHINING_TIME);
             }
-        }
     }
 
     @Override

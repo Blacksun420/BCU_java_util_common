@@ -71,12 +71,13 @@ public class CustomBGEffect extends BackgroundEffect {
     }
 
     @Override
-    public void draw(FakeGraphics g, double x, double y, double siz, int groundH, int skyH) {
+    public void draw(FakeGraphics g, double y, double siz, double midH) {
         siz *= 0.8;
         FakeTransform at = g.getTransform();
-        g.translate(convertP(1024, siz) + x, convertP(7000 - skyH, siz) - y);
-        ebg[0].draw(g, P.newP(x, y), siz);
-        ebg[1].draw(g, P.newP(x, y), siz);
+        g.translate(convertP(1024, siz), convertP(7000 - midH, siz) - y);
+        P pee = new P(0, y);
+        ebg[0].drawBGEffect(g, pee, siz, 255, 1, 1);
+        ebg[1].drawBGEffect(g, pee, siz, 255, 1, 1);
         g.setTransform(at);
         g.delete(at);
     }

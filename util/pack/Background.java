@@ -413,7 +413,7 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 	}
 
 	@Override
-	public String[] names() {
+	public final String[] names() {
 		return new String[] { toString(), "enemy wave", "unit wave" };
 	}
 

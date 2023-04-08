@@ -201,8 +201,8 @@ public abstract class PackData implements IndexContainer {
 				souls.add(new Soul(identifier, anim));
 			}
 			String dem = "demonsoul"; // TODO identify if anim is enemy or not in demon soul name in effect page
-			demonSouls.add(new DemonSoul(0, new AnimUD(pre + dem + mid, "demonsoul_" + Data.duo(0), null, null), true));
-			demonSouls.add(new DemonSoul(0, new AnimUD(pre + dem + mid, "demonsoul_" + Data.duo(0), null, null), false));
+			CommonStatic.getBCAssets().demonSouls.add(new DemonSoul(0, new AnimUD(pre + dem + mid, "demonsoul_" + Data.duo(0), null, null), true));
+			CommonStatic.getBCAssets().demonSouls.add(new DemonSoul(0, new AnimUD(pre + dem + mid, "demonsoul_" + Data.duo(0), null, null), false));
 		}
 
 		private void loadUnits(Consumer<Double> bar) {
@@ -546,18 +546,16 @@ public abstract class PackData implements IndexContainer {
 	@Order(6)
 	public final FixIndexMap<Soul> souls = new FixIndexMap<>(Soul.class);
 	@Order(7)
-	public final FixIndexMap<DemonSoul> demonSouls = new FixIndexMap<>(DemonSoul.class);
-	@Order(8)
 	public final FixIndexMap<Background> bgs = new FixIndexMap<>(Background.class);
-	@Order(9)
+	@Order(8)
 	public final FixIndexMap<BackgroundEffect> bgEffects = new FixIndexMap<>(BackgroundEffect.class);
-	@Order(10)
+	@Order(9)
 	public final FixIndexMap<CharaGroup> groups = new FixIndexMap<>(CharaGroup.class);
-	@Order(11)
+	@Order(10)
 	public final FixIndexMap<LvRestrict> lvrs = new FixIndexMap<>(LvRestrict.class);
-	@Order(12)
+	@Order(11)
 	public final FixIndexMap<Music> musics = new FixIndexMap<>(Music.class);
-	@Order(13)
+	@Order(12)
 	public final FixIndexMap<Combo> combos = new FixIndexMap<>(Combo.class);
 
 	@Override
