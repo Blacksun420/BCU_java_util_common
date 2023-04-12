@@ -13,8 +13,16 @@ public interface AbUnit extends Comparable<AbUnit>, IndexContainer.Indexable<Pac
 
     Form[] getForms();
 
+    default int getMaxLv() {
+        return 200;
+    }
+
+    default int getMaxPLv() {
+        return 0;
+    }
+
     default int getCap() {
-        return Integer.MAX_VALUE;
+        return getMaxLv() + getMaxPLv();
     }
 
     Level getPrefLvs();

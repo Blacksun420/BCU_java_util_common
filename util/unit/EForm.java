@@ -39,7 +39,7 @@ public class EForm extends Data implements IForm {
 		if(b.st.isAkuStage())
 			getAkuStageLevel();
 
-		double d = f.unit.lv.getMult(level.getLv() + level.getPlusLv());
+		double d = f.unit.lv.getMult(level.getTotalLv());
 		EAnimU anim = getEntryAnim();
 		return new EUnit(b, du, anim, d, du.getFront(), du.getBack(), level, f.du.getPCoin(), index, isBase);
 	}

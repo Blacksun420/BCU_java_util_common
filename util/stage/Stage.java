@@ -237,16 +237,18 @@ public class Stage extends Data
 		if (info != null) {
 			CustomStageInfo csi = new CustomStageInfo(ans);
 			csi.stages.addAll(Arrays.asList(ans.info.getExStages()));
-			float[] chances = ans.info.getExChances();
-			if (chances[0] == -1) {
-				for (int i = 0; i < csi.stages.size(); i++)
-					csi.chances.add(chances[1] / csi.stages.size());
-				csi.checkChances();
-			} else
-				for (float chance : chances) {
-					csi.chances.add(chance);
-					csi.totalChance += chance;
-				}
+			if (csi.stages.size() > 0) {
+				float[] chances = ans.info.getExChances();
+				if (chances[0] == -1) {
+					for (int i = 0; i < csi.stages.size(); i++)
+						csi.chances.add(chances[1] / csi.stages.size());
+					csi.checkChances();
+				} else
+					for (float chance : chances) {
+						csi.chances.add(chance);
+						csi.totalChance += chance;
+					}
+			}
 			if (info instanceof CustomStageInfo && ((CustomStageInfo)info).ubase != null) {
 				csi.ubase = ((CustomStageInfo)info).ubase;
 				csi.lv = ((CustomStageInfo)info).lv;

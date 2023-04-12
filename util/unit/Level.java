@@ -33,24 +33,17 @@ public class Level implements BattleStatic, LevelInterface {
 
 		Level lv = new Level(talentNumber);
 
-		if (u instanceof Unit) {
-			if (arr.length > 0) {
-				lv.level = Math.max(1, Math.min(arr[0], ((Unit) u).max));
-				if (arr.length > 1)
-					lv.plusLevel = Math.max(0, Math.min(arr[1], ((Unit) u).maxp));
-			}
-		} else if (arr.length > 0) {
-			lv.level = Math.max(1, arr[0]);
-			if (arr.length > 1)
-				lv.plusLevel = Math.max(0, arr[1]);
+		if (arr.length > 0) {
+			lv.level = Math.max(1, Math.min(arr[0], u.getMaxLv()));
+			if (u.getMaxPLv() != 0 && arr.length > 1)
+				lv.plusLevel = Math.max(0, Math.min(arr[1], u.getMaxPLv()));
 		}
 
 		if(coin != null) {
 			int[] talents = new int[coin.max.length];
-
-			if(arr.length > 2) {
-				System.arraycopy(arr, 2, talents, 0, Math.min(talents.length, arr.length - 2));
-			}
+			int min = u.getMaxPLv() != 0 ? 2 : 1;
+			if(arr.length > min)
+				System.arraycopy(arr, min, talents, 0, Math.min(talents.length, arr.length - min));
 
 			lv.setTalents(talents);
 		}
@@ -126,6 +119,10 @@ public class Level implements BattleStatic, LevelInterface {
 
 	public int getPlusLv() {
 		return plusLevel;
+	}
+
+	public int getTotalLv() {
+		return level + plusLevel;
 	}
 
 	public int[][] getOrbs() {

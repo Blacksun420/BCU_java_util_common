@@ -46,7 +46,8 @@ public class CustomStageInfo implements StageInfo {
     public CustomStageInfo(Stage st) {
         this.st = st;
         st.info = this;
-        ((PackMapColc)st.getCont().getCont()).si.add(this);
+        if (st.getCont().getCont() instanceof PackMapColc)
+            ((PackMapColc)st.getCont().getCont()).si.add(this);
     }
 
     @Override

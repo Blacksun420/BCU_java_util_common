@@ -88,7 +88,7 @@ public class Unit extends Data implements AbUnit {
 	public Unit(Identifier<AbUnit> id, AnimU<?> ce, CustomUnit cu) {
 		this.id = id;
 		forms = new Form[] { new Form(this, 0, "new unit", ce, cu) };
-		max = 60;
+		max = 50;
 		maxp = 0;
 		rarity = 2;
 		lv = CommonStatic.getBCAssets().defLv;
@@ -141,8 +141,13 @@ public class Unit extends Data implements AbUnit {
 	}
 
 	@Override
-	public int getCap() {
-		return max + maxp;
+	public int getMaxLv() {
+		return max;
+	}
+
+	@Override
+	public int getMaxPLv() {
+		return maxp;
 	}
 
 	public List<Combo> allCombo() {

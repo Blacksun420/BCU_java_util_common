@@ -205,9 +205,7 @@ public class PackLoader {
 
 			byte[] res = new byte[data.length - pad];
 
-			if (res.length >= 0)
-				System.arraycopy(data, 0, res, 0, res.length);
-
+			System.arraycopy(data, 0, res, 0, res.length);
 			return res;
 		}
 
