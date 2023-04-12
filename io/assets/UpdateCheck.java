@@ -204,8 +204,11 @@ public class UpdateCheck {
 	}
 
 	public static List<Downloader> checkNewMusic(int count) {
-		boolean[] exi = new boolean[count];
+		if (count == -1)
+			return null;
+
 		File music = CommonStatic.ctx.getAssetFile("./music/");
+		boolean[] exi = new boolean[count];
 		if (music.exists())
 			for (File m : music.listFiles())
 				if (m.getName().length() == 7 && m.getName().endsWith(".ogg")) {
@@ -226,58 +229,46 @@ public class UpdateCheck {
 
 	public static Context.SupExc<List<Downloader>> checkMusic(int count) {
 		return () -> {
-			boolean[] exi = new boolean[count];
+			if (count == -1)
+				return null;
 
+			boolean[] exi = new boolean[count];
 			File music = CommonStatic.ctx.getAssetFile("./music/");
 
 			JsonElement je0 = WebFileIO.directRead(URL_MUSIC_CHECK);
 			ContentJson[] contents = JsonDecoder.decode(je0, ContentJson[].class);
 
 			Map<String, ContentJson> map = new HashMap<>();
-
 			for(ContentJson content : contents)
 				map.put(content.name, content);
 
 			HashMap<Integer, String> local = CommonStatic.getConfig().localMusicMap;
-
 			File[] musicList = music.listFiles();
-
-			if (music.exists() && musicList != null) {
-				for (File m : musicList) {
+			if (music.exists() && musicList != null)
+				for (File m : musicList)
 					if (m.getName().matches("\\d{3}\\.ogg") && m.getName().endsWith(".ogg")) {
 						Integer id = Data.ignore(() -> Integer.parseInt(m.getName().substring(0, 3)));
 
-						if (id != null && id < count && id >= 0) {
-							if(local.containsKey(id) && map.containsKey(m.getName())) {
+						if (id != null && id < count && id >= 0)
+							if(local.containsKey(id) && map.containsKey(m.getName()))
 								exi[id] = local.get(id).equals(map.get(m.getName()).sha);
-							}
-						}
 					}
-				}
-			}
 
 			List<Downloader> ans = new ArrayList<>();
-
 			for (int i = 0; i < count; i++)
 				if (!exi[i]) {
 					final int id = i;
-
 					ContentJson content = map.get(Data.trio(id) + ".ogg");
-
 					if(content == null)
 						continue;
 
 					File target = CommonStatic.ctx.getAssetFile("./music/" + Data.trio(i) + ".ogg");
 					File temp = CommonStatic.ctx.getAssetFile("./music/.ogg.temp");
 					String url = URL_MUSIC + Data.trio(i) + ".ogg";
-
 					Downloader downloader = new Downloader(target, temp, "music " + Data.trio(i), false, url);
-
 					downloader.post = () -> local.put(id, content.sha);
-
 					ans.add(downloader);
 				}
-
 			return ans;
 		};
 	}
@@ -303,10 +294,8 @@ public class UpdateCheck {
 	public static UpdateJson checkUpdate() throws Exception {
 		JsonElement update = WebFileIO.read(URL_UPDATE);
 
-		if (update == null) {
+		if (update == null)
 			return null;
-		}
-
 		return JsonDecoder.decode(update, UpdateJson.class);
 	}
 

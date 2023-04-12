@@ -1021,11 +1021,11 @@ public class Data {
 	public static final short SE_SHIELD_BREAKER = 139;
 	public static final short SE_DEATH_SURGE = 143;
 
-	public static final int[][] SE_CANNON = { { 25, 26 }, { 60 }, { 61 }, { 36, 37 }, { 65, 83 }, { 84, 85 }, { 86 },
+	public static final byte[][] SE_CANNON = { { 25, 26 }, { 60 }, { 61 }, { 36, 37 }, { 65, 83 }, { 84, 85 }, { 86 },
 			{ 124 } };
 
-	public static final int[] SE_ALL = { 15, 19, 20, 21, 22, 23, 24, 25, 26, 27, 36, 37, 44, 45, 50, 59, 60, 61, 65, 73,
-			74, 83, 84, 85, 86, 90, 110, 111, 112, 124 };
+	public static final short[] SE_ALL = { 15, 19, 20, 21, 22, 23, 24, 25, 26, 27, 36, 37, 44, 45, 50, 59, 60, 61, 65, 73,
+			74, 83, 84, 85, 86, 90, 110, 111, 112, 124, 136, 137, 138, 139, 143 };
 
 	public static final byte RARITY_TOT = 6;
 
