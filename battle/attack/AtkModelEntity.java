@@ -328,6 +328,8 @@ public abstract class AtkModelEntity extends AtkModelAb {
 			b.lea.add(new EAnimCont(e.pos, e.layer, effas().A_SHOCKWAVE.getEAnim(DefEff.DEF)));
 		if (proc.MINIWAVE.exists() && proc.MINIWAVE.multi == 0)
 			proc.MINIWAVE.multi = 20;
+		if (proc.MINIVOLC.exists() && proc.MINIVOLC.mult == 0)
+			proc.MINIVOLC.mult = 20;
 	}
 
 	public double getBlindSpot() {

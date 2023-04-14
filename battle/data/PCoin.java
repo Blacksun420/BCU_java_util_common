@@ -77,7 +77,9 @@ public class PCoin extends Data {
 	}
 
 	public void update() {
-		if (max.length < info.size()) {
+		// Apparently, if max is null, since we will update full var anyway
+		// we can just re-generate whole array
+		if (max == null || max.length < info.size()) {
 			max = new int[info.size()];
 
 			for (int i = 0; i < info.size(); i++) {
@@ -162,6 +164,9 @@ public class PCoin extends Data {
 						tar.set(2, Math.max(modifs[1], modifs[2]));
 						tar.set(3, modifs[3]);
 					}
+				} else if (type[1] == P_BSTHUNT) {
+					tar.set(1, modifs[0]);
+					tar.set(2, modifs[1]);
 				} else
 					for (int j = 0; j < 4; j++)
 						if (modifs[j] > 0)

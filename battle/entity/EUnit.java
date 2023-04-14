@@ -6,7 +6,6 @@ import common.battle.Treasure;
 import common.battle.attack.AtkModelEnemy;
 import common.battle.attack.AtkModelUnit;
 import common.battle.attack.AttackAb;
-import common.battle.attack.AttackWave;
 import common.battle.data.MaskAtk;
 import common.battle.data.MaskUnit;
 import common.battle.data.Orb;
@@ -176,9 +175,7 @@ public class EUnit extends Entity {
 
 	@Override
 	protected int getDamage(AttackAb atk, int ans) {
-		if (atk instanceof AttackWave && atk.waveType == WT_MINI) {
-			ans = (int) ((double) ans * atk.getProc().MINIWAVE.multi / 100.0);
-		}
+		ans = super.getDamage(atk, ans);
 		if (atk.model instanceof AtkModelEnemy) {
 			SortedPackSet<Trait> sharedTraits = traits.inCommon(atk.trait);
 			boolean isAntiTraited = targetTraited(atk.trait);
@@ -215,8 +212,6 @@ public class EUnit extends Entity {
 			if (atk.trait.contains(UserProfile.getBCData().traits.get(Data.TRAIT_BEAST)) && getProc().BSTHUNT.type.active)
 				ans *= 0.6; //Not sure
 		}
-		if (isBase)
-			ans *= 1 + atk.getProc().ATKBASE.mult / 100.0;
 		ans = critCalc((getAbi() & AB_METALIC) != 0, ans, atk);
 
 		// Perform orb

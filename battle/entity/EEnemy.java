@@ -4,7 +4,6 @@ import common.CommonStatic;
 import common.battle.StageBasis;
 import common.battle.attack.AtkModelUnit;
 import common.battle.attack.AttackAb;
-import common.battle.attack.AttackWave;
 import common.battle.data.MaskAtk;
 import common.battle.data.MaskEnemy;
 import common.battle.data.MaskUnit;
@@ -98,9 +97,7 @@ public class EEnemy extends Entity {
 
 	@Override
 	protected int getDamage(AttackAb atk, int ans) {
-		if (atk instanceof AttackWave && atk.waveType == WT_MINI) {
-			ans = (int) ((double) ans * atk.getProc().MINIWAVE.multi / 100.0);
-		}
+		ans = super.getDamage(atk, ans);
 		if (atk.model instanceof AtkModelUnit) {
 			SortedPackSet<Trait> sharedTraits = traits.inCommon(atk.trait);
 			boolean isAntiTraited = targetTraited(atk.trait);
@@ -138,8 +135,6 @@ public class EEnemy extends Entity {
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_BEAST)) && atk.getProc().BSTHUNT.type.active)
 				ans *= 2.5;
 		}
-		if (isBase)
-			ans *= 1 + atk.getProc().ATKBASE.mult / 100.0;
 		if (atk.canon == 16)
 			if ((touchable() & TCH_UG) > 0)
 				ans = (int) (maxH * basis.b.t().getCannonMagnification(5, BASE_HOLY_ATK_UNDERGROUND));

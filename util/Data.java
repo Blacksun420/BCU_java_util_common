@@ -139,7 +139,7 @@ public class Data {
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
-		public static class MINISURGE extends ProcItem {
+		public static class MINIVOLC extends ProcItem {
 			@JsonClass(noTag = NoTag.LOAD)
 			public static class TYPE extends IntType {
 				@Order(0)
@@ -900,7 +900,7 @@ public class Data {
 		@Order(65)
 		public final IMU IMUHYPNO = new IMU();
 		@Order(66)
-		public final MINISURGE MINISURGE = new MINISURGE();
+		public final MINIVOLC MINIVOLC = new MINIVOLC();
 
 		@Override
 		public Proc clone() {
@@ -1269,7 +1269,7 @@ public class Data {
 	public static final byte P_HYPNO = 64;
 	public static final byte P_IMURAGE = 65;
 	public static final byte P_IMUHYPNO = 66;
-	public static final byte P_MINISURGE = 67;
+	public static final byte P_MINIVOLC = 67;
 	public static final byte PROC_TOT = 68;// 68
 
 	public static final boolean[] procSharable = {
@@ -1327,20 +1327,20 @@ public class Data {
 			true,  //death surge
 			false, //2x money
 			false, //base destroyer
-			true, //beast hunter
+			true,  //beast hunter
 			false, //Worker change
 			false, //Cooldown change
-			true, //Weaken Aura
-			true, //Strengthen Aura
+			true,  //Weaken Aura
+			true,  //Strengthen Aura
 			false, //Lethargy
-			true, //Imu.Lethargy
-			true, //Remote shield
-			true, //AI
+			true,  //Imu.Lethargy
+			true,  //Remote shield
+			true,  //AI
 			false, //Rage
 			false, //Hypno
-			true, //Imu. Rage
-			true, // Imu Hypno
-			false //Minisurge
+			true,  //Imu. Rage
+			true,  // Imu Hypno
+			true   //Mini surge
 	};
 
 	/**
@@ -1353,7 +1353,7 @@ public class Data {
 	public static final byte WT_CANN = 2;
 	public static final byte WT_VOLC = 4;
 	public static final byte WT_MINI = 8;
-	public static final byte WT_MINISURGE = 16;
+	public static final byte WT_MIVC = 16;
 	public static final byte PC_P = 0, PC_AB = 1, PC_BASE = 2, PC_IMU = 3, PC_TRAIT = 4;
 	public static final byte PC2_HP = 0;
 	public static final byte PC2_ATK = 1;
@@ -1432,7 +1432,9 @@ public class Data {
 			{ 1, AB_CKILL }, //59 : corpse killer
 			{ 0, P_CURSE }, //60 : curse
 			{ 2, PC2_TBA }, //61 : tba
-			{ 0, P_MINIWAVE } //62 : mini-wave
+			{ 0, P_MINIWAVE }, //62 : mini-wave
+			{ 1, AB_BAKILL }, //63 : baron killer
+			{ 0, P_BSTHUNT }
 	};
 
 	// foot icon index used in battle

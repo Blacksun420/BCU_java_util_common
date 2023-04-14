@@ -203,7 +203,7 @@ public class Res extends ImgCore {
 		aux.icon[1][P_SATK] = new VImg(parts[229]);
 		aux.icon[1][P_IMUATK] = new VImg(parts[231]);
 		aux.icon[1][P_VOLC] = new VImg(parts[239]);
-		aux.icon[1][P_MINISURGE] = new VImg(parts[239]); //TODO replace with BC asset
+		aux.icon[1][P_MINIVOLC] = new VImg(parts[239]); //TODO replace with BC asset
 		aux.icon[1][P_IMUPOIATK] = new VImg(parts[237]);
 		aux.icon[1][P_IMUVOLC] = new VImg(parts[243]);
 		aux.icon[1][P_CURSE] = new VImg(parts[289]);
