@@ -1759,7 +1759,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					Proc reflectProc = Proc.blank();
 					if (counter.type.procType == 1 || counter.type.procType == 3)
 						for (String s0 : AtkModelEntity.par)
-							if (s0.equals("VOLC") || s0.equals("WAVE") || s0.equals("MINIWAVE")) {
+							if (s0.equals("VOLC") || s0.equals("WAVE") || s0.equals("MINIWAVE") || s0.equals("MINIVOLC")) {
 								if (isWave && counter.type.counterWave == 2)
 									reflectProc.get(s0).set(atk.getProc().get(s0));
 							} else
@@ -1798,7 +1798,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 						if (counter.type.procType >= 2) {
 							Proc p = data.getAllProc();
 							for (String s0 : AtkModelEntity.par) {
-								if ((s0.equals("VOLC") || s0.equals("WAVE") || s0.equals("MINIWAVE")) && (!isWave || counter.type.counterWave != 2))
+								if ((s0.equals("VOLC") || s0.equals("WAVE") || s0.equals("MINIWAVE") || s0.equals("MINIVOLC")) && (!isWave || counter.type.counterWave != 2))
 									continue;
 
 								if (p.get(s0).perform(e.basis.r))
