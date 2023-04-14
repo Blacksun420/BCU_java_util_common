@@ -134,7 +134,28 @@ public class Data {
 			public int dis_1;
 			@Order(3)
 			public int time;
+			@Order(4)
+			public TYPE type = new TYPE();
+		}
+
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class MINISURGE extends ProcItem {
+			@JsonClass(noTag = NoTag.LOAD)
+			public static class TYPE extends IntType {
+				@Order(0)
+				public boolean hitless;
+			}
+			@Order(0)
+			public int prob;
+			@Order(1)
+			public int dis_0;
+			@Order(2)
+			public int dis_1;
 			@Order(3)
+			public int time;
+			@Order(4)
+			public int mult;
+			@Order(5)
 			public TYPE type = new TYPE();
 		}
 
@@ -878,6 +899,8 @@ public class Data {
 		public final IMU IMURAGE = new IMU();
 		@Order(65)
 		public final IMU IMUHYPNO = new IMU();
+		@Order(66)
+		public final MINISURGE MINISURGE = new MINISURGE();
 
 		@Override
 		public Proc clone() {
@@ -1145,81 +1168,81 @@ public class Data {
 	public static final byte ABI_TOT = 18;// 20 currently
 
 	// proc index
-	public static final int P_KB = 0;
-	public static final int P_STOP = 1;
-	public static final int P_SLOW = 2;
-	public static final int P_CRIT = 3;
-	public static final int P_WAVE = 4;
-	public static final int P_MINIWAVE = 5;
-	public static final int P_MOVEWAVE = 6;
-	public static final int P_VOLC = 7;
-	public static final int P_WEAK = 8;
-	public static final int P_BREAK = 9;
-	public static final int P_SHIELDBREAK = 10;
-	public static final int P_WARP = 11;
-	public static final int P_CURSE = 12;
-	public static final int P_SEAL = 13;
+	public static final byte P_KB = 0;
+	public static final byte P_STOP = 1;
+	public static final byte P_SLOW = 2;
+	public static final byte P_CRIT = 3;
+	public static final byte P_WAVE = 4;
+	public static final byte P_MINIWAVE = 5;
+	public static final byte P_MOVEWAVE = 6;
+	public static final byte P_VOLC = 7;
+	public static final byte P_WEAK = 8;
+	public static final byte P_BREAK = 9;
+	public static final byte P_SHIELDBREAK = 10;
+	public static final byte P_WARP = 11;
+	public static final byte P_CURSE = 12;
+	public static final byte P_SEAL = 13;
 	/**
 	 * 0:prob, 1:ID, 2:location, 3: buff, 4:conf, 5:time
 	 *
 	 * +0: direct, +1: warp, +2:burrow, +4:disregard limit, +8: fix buff, +16: same
 	 * health, +32: diff layer, +64 on hit, +128 on kill
 	 */
-	public static final int P_SUMMON = 14;
+	public static final byte P_SUMMON = 14;
 	/**
 	 * 0:prob, 1:speed, 2:width (left to right), 3:time, 4:origin (center), 5:itv
 	 */
-	public static final int P_TIME = 15;
-	public static final int P_SNIPER = 16;
+	public static final byte P_TIME = 15;
+	public static final byte P_SNIPER = 16;
 	/**
 	 * 0:prob, 1:time (-1 means infinite), 2:ID, 3: type 0 : Change only BG 1 : Kill
 	 * all and change BG
 	 */
-	public static final int P_THEME = 17;
-	public static final int P_BOSS = 18;
+	public static final byte P_THEME = 17;
+	public static final byte P_BOSS = 18;
 	/**
 	 * 0:prob, 1:time, 2:dmg, 3:itv, 4: conf +0: normal, +1: of total, +2: of
 	 * current, +3: of lost, +4: unstackable
 	 */
-	public static final int P_POISON = 19;
-	public static final int P_SATK = 20;
+	public static final byte P_POISON = 19;
+	public static final byte P_SATK = 20;
 	/**
 	 * official poison
 	 */
-	public static final int P_POIATK = 21;
+	public static final byte P_POIATK = 21;
 	/**
 	 * Make target receive n% damage more/less 0: chance, 1: duration, 2: debuff
 	 */
-	public static final int P_ARMOR = 22;
+	public static final byte P_ARMOR = 22;
 	/**
 	 * Make target move faster/slower 0: chance, 1: duration, 2: speed, 3: type type
 	 * 0: Current speed * (100 + n)% type 1: Current speed + n type 2: Fixed speed
 	 */
-	public static final int P_SPEED = 23;
-	public static final int P_STRONG = 24;
-	public static final int P_LETHAL = 25;
-	public static final int P_IMUKB = 26;
-	public static final int P_IMUSTOP = 27;
-	public static final int P_IMUSLOW = 28;
-	public static final int P_IMUWAVE = 29;
-	public static final int P_IMUVOLC = 30;
-	public static final int P_IMUWEAK = 31;
-	public static final int P_IMUWARP = 32;
-	public static final int P_IMUCURSE = 33;
-	public static final int P_IMUSEAL = 34;
-	public static final int P_IMUSUMMON = 35;
-	public static final int P_IMUPOI = 36;
-	public static final int P_IMUPOIATK = 37;
-	public static final int P_IMUMOVING = 38;
-	public static final int P_IMUCANNON = 39;
-	public static final int P_IMUARMOR = 40;
-	public static final int P_IMUSPEED = 41;
-	public static final int P_CRITI = 42;
-	public static final int P_COUNTER = 43;
-	public static final int P_IMUATK = 44;
-	public static final int P_DMGCUT = 45;
-	public static final int P_DMGCAP = 46;
-	public static final int P_BURROW = 47;
+	public static final byte P_SPEED = 23;
+	public static final byte P_STRONG = 24;
+	public static final byte P_LETHAL = 25;
+	public static final byte P_IMUKB = 26;
+	public static final byte P_IMUSTOP = 27;
+	public static final byte P_IMUSLOW = 28;
+	public static final byte P_IMUWAVE = 29;
+	public static final byte P_IMUVOLC = 30;
+	public static final byte P_IMUWEAK = 31;
+	public static final byte P_IMUWARP = 32;
+	public static final byte P_IMUCURSE = 33;
+	public static final byte P_IMUSEAL = 34;
+	public static final byte P_IMUSUMMON = 35;
+	public static final byte P_IMUPOI = 36;
+	public static final byte P_IMUPOIATK = 37;
+	public static final byte P_IMUMOVING = 38;
+	public static final byte P_IMUCANNON = 39;
+	public static final byte P_IMUARMOR = 40;
+	public static final byte P_IMUSPEED = 41;
+	public static final byte P_CRITI = 42;
+	public static final byte P_COUNTER = 43;
+	public static final byte P_IMUATK = 44;
+	public static final byte P_DMGCUT = 45;
+	public static final byte P_DMGCAP = 46;
+	public static final byte P_BURROW = 47;
 	/**
 	 * body proc: 0: add revive time for zombies, -1 to make it infinite, revivable
 	 * zombies only 1: revive time 2: revive health 3: point 1 4: point 2 5: type:
@@ -1227,26 +1250,27 @@ public class Data {
 	 * +4: make Z-kill unusable +8: revive non-zombie also +16: applicapable to
 	 * others
 	 */
-	public static final int P_REVIVE = 48;
-	public static final int P_BARRIER = 49;
-	public static final int P_DEMONSHIELD = 50;
-	public static final int P_DEATHSURGE = 51;
-	public static final int P_BOUNTY = 52;
-	public static final int P_ATKBASE = 53;
-	public static final int P_BSTHUNT = 54; //Beast Killer
-	public static final int P_WORKERLV = 55;
-	public static final int P_CDSETTER = 56;
-	public static final int P_WEAKAURA = 57;
-	public static final int P_STRONGAURA = 58;
-	public static final int P_LETHARGY = 59;
-	public static final int P_IMULETHARGY = 60;
-	public static final int P_REMOTESHIELD = 61;
-	public static final int P_AI = 62;
-	public static final int P_RAGE = 63;
-	public static final int P_HYPNO = 64;
-	public static final int P_IMURAGE = 65;
-	public static final int P_IMUHYPNO = 66;
-	public static final byte PROC_TOT = 67;// 67
+	public static final byte P_REVIVE = 48;
+	public static final byte P_BARRIER = 49;
+	public static final byte P_DEMONSHIELD = 50;
+	public static final byte P_DEATHSURGE = 51;
+	public static final byte P_BOUNTY = 52;
+	public static final byte P_ATKBASE = 53;
+	public static final byte P_BSTHUNT = 54; //Beast Killer
+	public static final byte P_WORKERLV = 55;
+	public static final byte P_CDSETTER = 56;
+	public static final byte P_WEAKAURA = 57;
+	public static final byte P_STRONGAURA = 58;
+	public static final byte P_LETHARGY = 59;
+	public static final byte P_IMULETHARGY = 60;
+	public static final byte P_REMOTESHIELD = 61;
+	public static final byte P_AI = 62;
+	public static final byte P_RAGE = 63;
+	public static final byte P_HYPNO = 64;
+	public static final byte P_IMURAGE = 65;
+	public static final byte P_IMUHYPNO = 66;
+	public static final byte P_MINISURGE = 67;
+	public static final byte PROC_TOT = 68;// 68
 
 	public static final boolean[] procSharable = {
 			false, //kb
@@ -1315,7 +1339,8 @@ public class Data {
 			false, //Rage
 			false, //Hypno
 			true, //Imu. Rage
-			true // Imu Hypno
+			true, // Imu Hypno
+			false //Minisurge
 	};
 
 	/**
@@ -1328,6 +1353,7 @@ public class Data {
 	public static final byte WT_CANN = 2;
 	public static final byte WT_VOLC = 4;
 	public static final byte WT_MINI = 8;
+	public static final byte WT_MINISURGE = 16;
 	public static final byte PC_P = 0, PC_AB = 1, PC_BASE = 2, PC_IMU = 3, PC_TRAIT = 4;
 	public static final byte PC2_HP = 0;
 	public static final byte PC2_ATK = 1;

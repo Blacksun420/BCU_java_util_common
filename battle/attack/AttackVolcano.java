@@ -13,11 +13,11 @@ public class AttackVolcano extends AttackAb {
 
 	protected final List<Entity> vcapt = new ArrayList<>();
 
-	public AttackVolcano(Entity e, AttackSimple a, double sta, double end) {
+	public AttackVolcano(Entity e, AttackSimple a, double sta, double end, int type) {
 		super(e, a, sta, end, false);
 		this.sta = sta;
 		this.end = end;
-		this.waveType = WT_VOLC;
+		this.waveType = type;
 
 		if(dire == 1 && model.b.canon.deco == DECO_BASE_WATER)
 			atk *= model.b.b.t().getDecorationMagnification(model.b.canon.deco);
