@@ -1374,15 +1374,15 @@ public class Data {
 			{ 0, P_WEAK }, // 1: weak, reversed health or relic-weak
 			{ 0, P_STOP }, // 2: stop
 			{ 0, P_SLOW }, // 3: slow
-			{ 1, AB_ONLY, 0 }, // 4:
-			{ 1, AB_GOOD, 0 }, // 5:
-			{ 1, AB_RESIST, 0 }, // 6:
-			{ 1, AB_MASSIVE, 0 }, // 7:
+			{ 1, AB_ONLY }, // 4:
+			{ 1, AB_GOOD }, // 5:
+			{ 1, AB_RESIST }, // 6:
+			{ 1, AB_MASSIVE }, // 7:
 			{ 0, P_KB }, // 8: kb
-			{ 0, P_WARP, 0 }, // 9:
+			{ 0, P_WARP }, // 9:
 			{ 0, P_STRONG }, // 10: berserker, reversed health
 			{ 0, P_LETHAL }, // 11: lethal
-			{ 0, P_ATKBASE, 0 }, // 12: Base Destroyer
+			{ 0, P_ATKBASE }, // 12: Base Destroyer
 			{ 0, P_CRIT }, // 13: crit
 			{ 1, AB_ZKILL }, // 14: zkill
 			{ 0, P_BREAK }, // 15: break
@@ -1393,8 +1393,8 @@ public class Data {
 			{ 0, P_IMUSLOW }, // 20: res slow
 			{ 0, P_IMUKB }, // 21: res kb
 			{ 0, P_IMUWAVE }, // 22: res wave
-			{ 5, P_IMUWAVE, 0 }, // 23: waveblock
-			{ 0, P_IMUWARP, 0 }, // 24: res warp
+			{ 5, P_IMUWAVE }, // 23: waveblock
+			{ 0, P_IMUWARP }, // 24: res warp
 			{ 2, PC2_COST }, // 25: reduce cost
 			{ 2, PC2_CD }, // 26: reduce cooldown
 			{ 2, PC2_SPEED }, // 27: inc speed
@@ -1403,15 +1403,15 @@ public class Data {
 			{ 0, P_IMUCURSE }, // 30: res curse
 			{ 2, PC2_ATK }, // 31: inc ATK
 			{ 2, PC2_HP }, // 32: inc HP
-			{ 4, TRAIT_RED, 0 }, // 33: targeting red
-			{ 4, TRAIT_FLOAT, 0 }, // 34: targeting floating
-			{ 4, TRAIT_BLACK, 0 }, // 35: targeting black
-			{ 4, TRAIT_METAL, 0 }, // 36: targeting metal
-			{ 4, TRAIT_ANGEL, 0 }, // 37: targeting angel
-			{ 4, TRAIT_ALIEN, 0 }, // 38: targeting alien
-			{ 4, TRAIT_ZOMBIE, 0 }, // 39: targeting zombie
-			{ 4, TRAIT_RELIC, 0 }, // 40: targeting relic
-			{ 4, TRAIT_WHITE, 0 }, // 41: targeting white
+			{ 4, TRAIT_RED }, // 33: targeting red
+			{ 4, TRAIT_FLOAT }, // 34: targeting floating
+			{ 4, TRAIT_BLACK }, // 35: targeting black
+			{ 4, TRAIT_METAL }, // 36: targeting metal
+			{ 4, TRAIT_ANGEL }, // 37: targeting angel
+			{ 4, TRAIT_ALIEN }, // 38: targeting alien
+			{ 4, TRAIT_ZOMBIE }, // 39: targeting zombie
+			{ 4, TRAIT_RELIC }, // 40: targeting relic
+			{ 4, TRAIT_WHITE }, // 41: targeting white
 			{ -1, 0 }, // 42:
 			{ -1, 0 }, // 43:
 			{ 3, P_IMUWEAK }, // 44: immune to weak
@@ -1427,14 +1427,14 @@ public class Data {
 			{ 0, P_IMUVOLC }, // 54: resist to surge ?
 			{ 3, P_IMUVOLC }, // 55: immune to surge
 			{ 0, P_VOLC }, // 56: surge, level up to chance up
-			{ 4, TRAIT_DEMON, 0 }, // 57: Targetting Aku
+			{ 4, TRAIT_DEMON }, // 57: Targetting Aku
 			{ 0, P_SHIELDBREAK }, //58 : shield piercing
 			{ 1, AB_CKILL }, //59 : corpse killer
 			{ 0, P_CURSE }, //60 : curse
 			{ 2, PC2_TBA }, //61 : tba
 			{ 0, P_MINIWAVE }, //62 : mini-wave
 			{ 1, AB_BAKILL }, //63 : baron killer
-			{ 0, P_BSTHUNT }
+			{ 0, P_BSTHUNT, 1 } //64 : behemoth slayer
 	};
 
 	// foot icon index used in battle

@@ -151,6 +151,7 @@ public class PCoin extends Data {
 
 			if (type[0] == PC_P) {
 				ProcItem tar = ans.getProc().getArr(type[1]);
+				int offset = type.length >= 3 ? type[2] : 0;
 
 				if (type[1] == P_VOLC) {
 					if (du instanceof DataUnit) {
@@ -164,13 +165,12 @@ public class PCoin extends Data {
 						tar.set(2, Math.max(modifs[1], modifs[2]));
 						tar.set(3, modifs[3]);
 					}
-				} else if (type[1] == P_BSTHUNT) {
-					tar.set(1, modifs[0]);
-					tar.set(2, modifs[1]);
 				} else
-					for (int j = 0; j < 4; j++)
+					for (int j = 0; j < 4 - offset; j++)
 						if (modifs[j] > 0)
-							tar.set(j, tar.get(j) + modifs[j]);
+							tar.set(j + offset, tar.get(j + offset) + modifs[j]);
+				if (type[1] == P_BSTHUNT)
+					ans.getProc().BSTHUNT.type.active = modifs[0] > 0;
 
 				if (du instanceof DataUnit) {
 					if (type[1] == P_STRONG && modifs[0] != 0)
@@ -224,9 +224,8 @@ public class PCoin extends Data {
 
 				if (!ans.getTraits().contains(types))
 					ans.getTraits().add(types);
-			} else if (type[0] == 5) { //waveblock
+			} else if (type[0] == 5) //waveblock
 				ans.getProc().getArr(type[1]).set(1, 100);
-			}
 		}
 
 		return ans;
