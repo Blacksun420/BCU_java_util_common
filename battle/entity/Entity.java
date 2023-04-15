@@ -1915,7 +1915,14 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					status.lethargy[0] = Math.max(status.lethargy[0], Math.abs(val));
 				else
 					status.lethargy[0] = val;
-				status.lethargy[1] = Math.min(status.lethargy[1], atk.getProc().LETHARGY.mult);
+
+				if (atk.getProc().LETHARGY.mult > 0)
+					status.lethargy[1] = Math.max(status.lethargy[1], atk.getProc().LETHARGY.mult);
+				else if (val < 0)
+					status.lethargy[1] = Math.min(status.lethargy[1], atk.getProc().LETHARGY.mult);
+				else
+					status.lethargy[1] = atk.getProc().LETHARGY.mult;
+
 				boolean t = atk.getProc().LETHARGY.type.percentage;
 				if (status.lethargy[2] == -1 || (t && status.lethargy[1] * data.getTBA() > status.lethargy[1] + data.getTBA()) ||
 						(!t && status.lethargy[1] * data.getTBA() < status.lethargy[1] + data.getTBA()))
