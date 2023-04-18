@@ -54,20 +54,28 @@ public class CustomBGEffect extends BackgroundEffect {
     }
     @Override
     public void preDraw(FakeGraphics g, P rect, double siz, double midH) {
-        FakeTransform at = g.getTransform();
-        g.translate(convertP(1024, siz) + rect.x, convertP(7000 - midH, siz) - rect.y);
-        ebg[0].drawBGEffect(g, origin, siz * 0.8, 255, 1, 1);
-        g.setTransform(at);
-        g.delete(at);
+        int spaced = 0;
+        while (spaced <= 7000) {
+            FakeTransform at = g.getTransform();
+            g.translate(convertP(1024 + spaced, siz) + rect.x, convertP(7000 - midH, siz) - rect.y);
+            ebg[0].drawBGEffect(g, origin, siz * 0.8, 255, 1, 1);
+            g.setTransform(at);
+            g.delete(at);
+            spaced += spacer == 0 ? 7001 : spacer;
+        }
     }
 
     @Override
     public void postDraw(FakeGraphics g, P rect, double siz, double midH) {
-        FakeTransform at = g.getTransform();
-        g.translate(convertP(1024, siz) + rect.x, convertP(7000 - midH, siz) - rect.y);
-        ebg[1].drawBGEffect(g, origin, siz * 0.8, 255, 1, 1);
-        g.setTransform(at);
-        g.delete(at);
+        int spaced = 0;
+        while (spaced <= 7000) {
+            FakeTransform at = g.getTransform();
+            g.translate(convertP(1024, siz) + rect.x, convertP(7000 - midH, siz) - rect.y);
+            ebg[1].drawBGEffect(g, origin, siz * 0.8, 255, 1, 1);
+            g.setTransform(at);
+            g.delete(at);
+            spaced += fspacer == 0 ? 7001 : fspacer;
+        }
     }
 
     @Override
