@@ -19,6 +19,7 @@ import common.util.pack.Background;
 public class CustomBGEffect extends BackgroundEffect {
 
     private static final P origin = new P(0, 0);
+    private static int sw = 0;
     @JsonField
     public String name;
     @JsonField
@@ -55,39 +56,57 @@ public class CustomBGEffect extends BackgroundEffect {
     @Override
     public void preDraw(FakeGraphics g, P rect, double siz, double midH) {
         int spaced = 0;
-        while (spaced <= 7000) {
+        while (spaced <= sw) {
             FakeTransform at = g.getTransform();
             g.translate(convertP(1024 + spaced, siz) + rect.x, convertP(7000 - midH, siz) - rect.y);
             ebg[0].drawBGEffect(g, origin, siz * 0.8, 255, 1, 1);
             g.setTransform(at);
             g.delete(at);
-            spaced += spacer == 0 ? 7001 : spacer;
+
+            if (spacer == 0)
+                break;
+            spaced += spacer;
         }
     }
 
     @Override
     public void postDraw(FakeGraphics g, P rect, double siz, double midH) {
         int spaced = 0;
-        while (spaced <= 7000) {
+        while (spaced <= sw) {
             FakeTransform at = g.getTransform();
-            g.translate(convertP(1024, siz) + rect.x, convertP(7000 - midH, siz) - rect.y);
+            g.translate(convertP(1024 + spaced, siz) + rect.x, convertP(7000 - midH, siz) - rect.y);
             ebg[1].drawBGEffect(g, origin, siz * 0.8, 255, 1, 1);
             g.setTransform(at);
             g.delete(at);
-            spaced += fspacer == 0 ? 7001 : fspacer;
+
+            if (fspacer == 0)
+                break;
+            spaced += fspacer;
         }
     }
 
     @Override
     public void draw(FakeGraphics g, double y, double siz, double midH) {
-        siz *= 0.8;
-        FakeTransform at = g.getTransform();
-        g.translate(convertP(1024, siz), convertP(7000 - midH, siz) - y);
-        P pee = new P(0, y);
-        ebg[0].drawBGEffect(g, pee, siz, 255, 1, 1);
-        ebg[1].drawBGEffect(g, pee, siz, 255, 1, 1);
-        g.setTransform(at);
-        g.delete(at);
+        int spaced = 0, fspaced = 0;
+        while (spaced <= sw || fspaced <= sw) {
+            FakeTransform at = g.getTransform();
+            P pee = new P(0, y);
+            if (spaced <= sw) {
+                g.translate(convertP(1024 + spaced, siz), convertP(7000 - midH, siz) - y);
+                ebg[0].drawBGEffect(g, pee, siz * 0.8, 255, 1, 1);
+            }
+            if (fspaced <= sw) {
+                g.translate(convertP(1024 + fspaced, siz), convertP(7000 - midH, siz) - y);
+                ebg[1].drawBGEffect(g, pee, siz * 0.8, 255, 1, 1);
+            }
+            g.setTransform(at);
+            g.delete(at);
+
+            if (spacer == 0 && fspacer == 0)
+                break;
+            spaced += spacer;
+            fspaced += fspacer;
+        }
     }
 
     @Override
@@ -100,6 +119,7 @@ public class CustomBGEffect extends BackgroundEffect {
     @Override
     public void initialize(int w, double h, double midH, Background bg) {
         check();
+        sw = w;
         ebg[0].setTime(0);
         ebg[1].setTime(0);
     }
