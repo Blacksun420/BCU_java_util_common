@@ -58,7 +58,7 @@ public class CustomBGEffect extends BackgroundEffect {
         int spaced = 0;
         while (spaced <= sw) {
             FakeTransform at = g.getTransform();
-            g.translate(convertP(1024 + spaced, siz) + rect.x, convertP(7000 - midH, siz) - rect.y);
+            g.translate(convertP(1024 + spaced * 2, siz) + rect.x, convertP(7000 - midH, siz) - rect.y);
             ebg[0].drawBGEffect(g, origin, siz * 0.8, 255, 1, 1);
             g.setTransform(at);
             g.delete(at);
@@ -74,7 +74,7 @@ public class CustomBGEffect extends BackgroundEffect {
         int spaced = 0;
         while (spaced <= sw) {
             FakeTransform at = g.getTransform();
-            g.translate(convertP(1024 + spaced, siz) + rect.x, convertP(7000 - midH, siz) - rect.y);
+            g.translate(convertP(1024 + spaced * 2, siz) + rect.x, convertP(7000 - midH, siz) - rect.y);
             ebg[1].drawBGEffect(g, origin, siz * 0.8, 255, 1, 1);
             g.setTransform(at);
             g.delete(at);
@@ -87,26 +87,9 @@ public class CustomBGEffect extends BackgroundEffect {
 
     @Override
     public void draw(FakeGraphics g, double y, double siz, double midH) {
-        int spaced = 0, fspaced = 0;
-        while (spaced <= sw || fspaced <= sw) {
-            FakeTransform at = g.getTransform();
-            P pee = new P(0, y);
-            if (spaced <= sw) {
-                g.translate(convertP(1024 + spaced, siz), convertP(7000 - midH, siz) - y);
-                ebg[0].drawBGEffect(g, pee, siz * 0.8, 255, 1, 1);
-            }
-            if (fspaced <= sw) {
-                g.translate(convertP(1024 + fspaced, siz), convertP(7000 - midH, siz) - y);
-                ebg[1].drawBGEffect(g, pee, siz * 0.8, 255, 1, 1);
-            }
-            g.setTransform(at);
-            g.delete(at);
-
-            if (spacer == 0 && fspacer == 0)
-                break;
-            spaced += spacer;
-            fspaced += fspacer;
-        }
+        P pee = new P(0, y);
+        preDraw(g, pee, siz, midH);
+        postDraw(g, pee, siz, midH);
     }
 
     @Override
