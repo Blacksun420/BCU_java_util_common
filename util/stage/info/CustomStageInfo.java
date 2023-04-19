@@ -1,5 +1,6 @@
 package common.util.stage.info;
 
+import common.CommonStatic;
 import common.io.json.JsonClass;
 import common.io.json.JsonDecoder;
 import common.io.json.JsonField;
@@ -8,7 +9,6 @@ import common.util.stage.MapColc.PackMapColc;
 import common.util.stage.Stage;
 import common.util.unit.Form;
 import common.util.unit.Level;
-import utilpc.UtilPC;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -65,7 +65,7 @@ public class CustomStageInfo implements StageInfo {
                         .append("%</td></tr>");
         }
         if (ubase != null)
-            ans.append("Unit Base: ").append(ubase).append(" (").append(UtilPC.lvText(ubase, lv)[0]).append(")");
+            ans.append("Unit Base: ").append(ubase).append(" (").append(CommonStatic.def.lvText(ubase, lv)[0]).append(")");
 
         return ans.toString();
     }

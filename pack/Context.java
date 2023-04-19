@@ -125,7 +125,7 @@ public interface Context {
 
 	void printErr(ErrType t, String str);
 
-	void loadProg(String str);
+	void loadProg(double d, String str);
 
 	boolean restore(Backup b, Consumer<Double> prog);
 }

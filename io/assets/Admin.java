@@ -110,7 +110,7 @@ public class Admin {
 		}
 
 		@Override
-		public void loadProg(String str) {
+		public void loadProg(double d, String str) {
 			System.out.println(str);
 		}
 

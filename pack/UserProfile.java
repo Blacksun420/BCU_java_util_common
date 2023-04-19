@@ -353,7 +353,7 @@ public class UserProfile {
 		if (!canAdd(deps))
 			return false;
 
-		CommonStatic.def.loadProgress(1.0 * packmap.size() / pending.size(), "Reading " + (pack.desc.names.toString().equals("") ? pack.desc.name.equals("") ? pack.desc.id : pack.desc.name : pack.desc.names.toString()) + " data...");
+		CommonStatic.ctx.loadProg(1.0 * packmap.size() / pending.size(), "Reading " + (pack.desc.names.toString().equals("") ? pack.desc.name.equals("") ? pack.desc.id : pack.desc.name : pack.desc.names.toString()) + " data...");
 		if (CommonStatic.ctx.noticeErr(pack::load, ErrType.WARN, "failed to load pack " + pack.desc, () -> setStatic(CURRENT_PACK, null))) {
 			packmap.put(pack.desc.id, pack);
 			if (pack.combos.size() > 0 && !CommonStatic.getConfig().packCombos.containsKey(pack.desc.id))
