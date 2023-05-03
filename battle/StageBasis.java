@@ -750,6 +750,13 @@ public class StageBasis extends BattleObj {
 		for (int i = 0; i < lw.size(); i++)
 			if (time || lw.get(i).IMUTime())
 				lw.get(i).update();
+
+		if (!time)
+			for (int i = 0; i < tlw.size(); i++)
+				if (tlw.get(i).IMUTime()) {
+					lw.add(tlw.get(i));
+					tlw.remove(i--);
+				}
 	}
 
 	private void updateTheme() {
