@@ -111,9 +111,8 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 
 	public MaskUnit maxu() {
 		PCoin pc = du.getPCoin();
-		if (pc != null) {
+		if (pc != null)
 			return pc.full;
-		}
 		return du;
 	}
 

@@ -39,6 +39,7 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 
 	protected AtkDataModel(CustomEntity ene, AtkDataModel adm) {
 		ce = ene;
+		str = adm.str;
 		checkAvail(adm.str);
 		atk = adm.atk;
 		pre = adm.pre;

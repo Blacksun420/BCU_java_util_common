@@ -251,7 +251,7 @@ public class DataUnit extends DefaultData implements MaskUnit, Cloneable {
 	public void improve(int[] type, int mod) {
 		if (type[0] == PC_AB)
 			abi |= type[1];
-		else {
+		else
 			switch (type[1]) {
 				case PC2_SPEED:
 					speed += mod;
@@ -268,7 +268,6 @@ public class DataUnit extends DefaultData implements MaskUnit, Cloneable {
 				case PC2_TBA:
 					tba = (int) (tba * (100 - mod) / 100.0);
 			}
-		}
 	}
 
 	@Override

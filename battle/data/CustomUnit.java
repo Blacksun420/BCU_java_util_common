@@ -78,7 +78,7 @@ public class CustomUnit extends CustomEntity implements MaskUnit, Cloneable {
 	public void improve(int[] type, int mod) {
 		if (type[0] == PC_AB)
 			abi |= type[1];
-		else {
+		else
 			switch (type[1]) {
 				case PC2_SPEED:
 					speed += mod;
@@ -95,7 +95,6 @@ public class CustomUnit extends CustomEntity implements MaskUnit, Cloneable {
 				case PC2_TBA:
 					tba = (int) (tba * (100 - mod) / 100.0);
 			}
-		}
 	}
 
 	@Override
@@ -118,7 +117,7 @@ public class CustomUnit extends CustomEntity implements MaskUnit, Cloneable {
 
 				for (int[] i : p.info) {
 					int[] j = new int[14];
-					System.arraycopy(i, 0, j, 0, 13);
+					System.arraycopy(i, 0, j, 0, 14);
 					j[1] = Math.max(1, j[1]);
 
 					pcoin.info.add(j);

@@ -692,7 +692,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 						if (e.data.getAtkModel(e.aam.atkType, preID).getName().toLowerCase().startsWith("combo"))
 							e.basis.getAttack(e.aam.getAttack(atk0++));
 
-					tempAtk = preID - 1 != atk0 ? (int) (atk0 + e.basis.r.nextDouble() * (preID - atk0)) : atk0;
+					tempAtk = preID - 1 > atk0 ? (int) (atk0 + e.basis.r.nextDouble() * (preID - atk0)) : atk0;
 					e.basis.getAttack(e.aam.getAttack(tempAtk));
 					if (preID < multi) {
 						preTime = pres[preID];
