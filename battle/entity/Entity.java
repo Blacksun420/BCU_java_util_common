@@ -1770,14 +1770,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					if (data.getCounter() != null) {
 						if (counter.type.useOwnDamage)
 							reflectAtk = data.getCounter().atk;
-						else {
+						else
 							reflectAtk = reflectAtk * counter.damage / 100;
-							if (status.weak[0] > 0)
-								reflectAtk = reflectAtk * status.weak[1] / 100;
-							if (status.strengthen != 0)
-								reflectAtk += reflectAtk * status.strengthen / 100;
-							reflectAtk *= auras.getAtkAura();
-						}
 
 						if (counter.type.procType >= 2) {
 							Proc p = data.getCounter().getProc();
@@ -1788,26 +1782,30 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					} else {
 						if (counter.type.useOwnDamage)
 							reflectAtk = getAtk();
-						else {
+						else
 							reflectAtk = reflectAtk * counter.damage / 100;
-							if (status.weak[0] > 0)
-								reflectAtk = reflectAtk * status.weak[1] / 100;
-							if (status.strengthen != 0)
-								reflectAtk += reflectAtk * status.strengthen / 100;
-							reflectAtk *= auras.getAtkAura();
-						}
 
 						if (counter.type.procType >= 2) {
 							Proc p = data.getAllProc();
 							for (String s0 : AtkModelEntity.par) {
 								if ((s0.equals("VOLC") || s0.equals("WAVE") || s0.equals("MINIWAVE") || s0.equals("MINIVOLC")) && (!isWave || counter.type.counterWave != 2))
 									continue;
-
 								if (p.get(s0).perform(e.basis.r))
 									reflectProc.get(s0).set(p.get(s0));
 							}
 						}
 					}
+					if (status.weak[0] > 0)
+						reflectAtk = reflectAtk * status.weak[1] / 100;
+					if (status.strengthen != 0)
+						reflectAtk += reflectAtk * status.strengthen / 100;
+					reflectAtk *= auras.getAtkAura();
+					if (!isBase)
+						if (atk.getProc().ARMOR.prob > 0 && checkAIImmunity(atk.getProc().ARMOR.mult, getProc().IMUARMOR.smartImu, getProc().IMUARMOR.mult < 0) && getProc().IMUARMOR.mult < 100)
+							reflectAtk *= (100 + atk.getProc().ARMOR.mult) / 100.0;
+						else if (status.armor[0] > 0)
+							reflectAtk *= (100 + status.armor[1]) / 100.0;
+					reflectAtk *= auras.getDefAura();
 
 					AttackSimple as = new AttackSimple(this, aam, reflectAtk, traits, getAbi(), reflectProc, ds[0], ds[1],
 							e.data.getCounter() != null ? e.data.getCounter() : e.data.getAtkModel(0, 0), e.layer, false);
@@ -1824,6 +1822,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					d *= (100 + atk.getProc().ARMOR.mult) / 100.0;
 				else if (status.armor[0] > 0)
 					d *= (100 + status.armor[1]) / 100.0;
+			d *= auras.getDefAura();
 
 			e.damageGiven += Math.min(d, health);
 			sumDamage(d, false);
