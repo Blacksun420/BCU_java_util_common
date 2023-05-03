@@ -1786,7 +1786,7 @@ public class Data {
 	public static int reorderAbi(int ab, int ver) {
 		int newAbi = 0, abiAdd = 0;
 		switch (ver) {
-			case 0:
+			case 0: //Reformat moving attack, seal, and poison (not toxic) immunity
 				for (int i = 0; i + abiAdd < ABI_TOT + 3; i++) {
 					if (i == 7 || i == 12 || i == 18)
 						abiAdd++;
@@ -1806,7 +1806,7 @@ public class Data {
 						newAbi |= 1 << i;
 				}
 				break;
-			case 2: //Reofrmat waveblock
+			case 2: //Reformat waveblock
 				for (int i = 0; i + abiAdd < ABI_TOT; i++) {
 					if (i == 5)
 						abiAdd++;

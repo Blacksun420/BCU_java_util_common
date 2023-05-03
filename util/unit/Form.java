@@ -134,34 +134,35 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 		if((unit != null || uid != null)) {
 			Unit u = unit == null ? (Unit) uid.get() : unit;
 			PackData.UserPack pack = (PackData.UserPack) u.getCont();
-			if (pack.desc.FORK_VERSION < 4) {
-				JsonObject jdu = jobj.getAsJsonObject("du");
-				inject(pack, jdu, form);
-				AtkDataModel[] atks = form.getAllAtkModels();
+			if (pack.desc.FORK_VERSION < 6) {
+				inject(pack, jobj.getAsJsonObject("du"), form);
+				if (pack.desc.FORK_VERSION < 4) {
+					AtkDataModel[] atks = form.getAllAtkModels();
 
-				if (pack.desc.FORK_VERSION < 1) {
-					if (UserProfile.isOlderPack(pack, "0.6.4.0")) {
-						if (UserProfile.isOlderPack(pack, "0.6.0.0"))
-							form.limit = CommonStatic.customFormMinPos(anim.loader.getMM());
-						//Finish 0.6.0.0 check
-						names.put(jobj.get("name").getAsString());
-						if (jobj.has("explanation"))
-							description.put(jobj.get("explanation").getAsString().replace("<br>", "\n"));
-					} //Finish 0.6.4.0 check
-					for (AtkDataModel atk : atks)
-						if (atk.getProc().SUMMON.prob > 0) {
-							if (atk.getProc().SUMMON.id != null && !Unit.class.isAssignableFrom(atk.getProc().SUMMON.id.cls))
+					if (pack.desc.FORK_VERSION < 1) {
+						if (UserProfile.isOlderPack(pack, "0.6.4.0")) {
+							if (UserProfile.isOlderPack(pack, "0.6.0.0"))
+								form.limit = CommonStatic.customFormMinPos(anim.loader.getMM());
+							//Finish 0.6.0.0 check
+							names.put(jobj.get("name").getAsString());
+							if (jobj.has("explanation"))
+								description.put(jobj.get("explanation").getAsString().replace("<br>", "\n"));
+						} //Finish 0.6.4.0 check
+						for (AtkDataModel atk : atks)
+							if (atk.getProc().SUMMON.prob > 0) {
+								if (atk.getProc().SUMMON.id != null && !Unit.class.isAssignableFrom(atk.getProc().SUMMON.id.cls))
+									atk.getProc().SUMMON.type.fix_buff = true;
+								atk.getProc().SUMMON.amount = 1;
+							}
+						for (AtkDataModel atk : atks)
+							if (atk.getProc().SUMMON.prob > 0 && atk.getProc().SUMMON.form == 0) {
+								atk.getProc().SUMMON.form = 1;
+								atk.getProc().SUMMON.mult = 1;
 								atk.getProc().SUMMON.type.fix_buff = true;
-							atk.getProc().SUMMON.amount = 1;
-						}
-					for (AtkDataModel atk : atks)
-						if (atk.getProc().SUMMON.prob > 0 && atk.getProc().SUMMON.form == 0) {
-							atk.getProc().SUMMON.form = 1;
-							atk.getProc().SUMMON.mult = 1;
-							atk.getProc().SUMMON.type.fix_buff = true;
-						}
-				} //Finish FORK_VERSION 1 checks
-			}
+							}
+					} //Finish FORK_VERSION 1 checks
+				} //Finish FORK_VERSION 4 checks
+			} //Finish FORK_VERSION 6 checks
 		}
 		if (form.getPCoin() != null)
 			form.pcoin.update();

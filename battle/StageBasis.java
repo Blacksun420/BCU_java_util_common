@@ -392,9 +392,12 @@ public class StageBasis extends BattleObj {
 				CommonStatic.setBGM(st.mus1);
 			else
 				CommonStatic.setBGM(st.mus0);
-			money = Integer.MAX_VALUE;
-			while (work_lv < 8)
-				act_mon();
+			if (work_lv < 8) {
+				work_lv = 8;
+				upgradeCost = -1;
+				maxMoney = b.t().getMaxMon(8);
+			}
+
 			money = maxMoney;
 			cannon = maxCannon;
 
@@ -559,9 +562,8 @@ public class StageBasis extends BattleObj {
 						respawnTime = 1;
 					else if(st.minSpawn == st.maxSpawn)
 						respawnTime = st.minSpawn;
-					else {
+					else
 						respawnTime = st.minSpawn + (int) ((st.maxSpawn - st.minSpawn) * r.nextDouble());
-					}
 				}
 			}
 

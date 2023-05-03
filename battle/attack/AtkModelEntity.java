@@ -99,7 +99,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		int ans = 0, temp = 0, c = 1;
 		MaskAtk[] atks = data.getAtks(atkType);
 		for (int i = 0; i < atks.length; i++)
-			if (atks[i].getPre() > 0) {
+			if (atks[i].getPre() > 0 || atks[i].getName().toLowerCase().startsWith("combo")) {
 				ans += temp / c;
 				temp = atks[i].getDire() > 0 ? getEffAtk(i) : 0;
 				c = 1;

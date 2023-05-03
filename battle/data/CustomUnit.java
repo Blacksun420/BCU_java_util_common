@@ -75,6 +75,30 @@ public class CustomUnit extends CustomEntity implements MaskUnit, Cloneable {
 	public PCoin getPCoin() { return pcoin; }
 
 	@Override
+	public void improve(int[] type, int mod) {
+		if (type[0] == PC_AB)
+			abi |= type[1];
+		else {
+			switch (type[1]) {
+				case PC2_SPEED:
+					speed += mod;
+					break;
+				case PC2_CD:
+					resp -= mod;
+					break;
+				case PC2_COST:
+					price -= mod;
+					break;
+				case PC2_HB:
+					hb += mod;
+					break;
+				case PC2_TBA:
+					tba = (int) (tba * (100 - mod) / 100.0);
+			}
+		}
+	}
+
+	@Override
 	public void importData(MaskEntity de) {
 		super.importData(de);
 

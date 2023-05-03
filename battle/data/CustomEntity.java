@@ -55,7 +55,7 @@ public abstract class CustomEntity extends DataEntity {
 	public int allAtk(int atk) {
 		int ans = 0, temp = 0, c = 1;
 		for (AtkDataModel adm : hits.get(atk))
-			if (adm.pre > 0) {
+			if (adm.pre > 0 || adm.str.toLowerCase().startsWith("combo")) {
 				ans += temp / c;
 				temp = adm.getDire() > 0 ? adm.atk : 0;
 				c = 1;

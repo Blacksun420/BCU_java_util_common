@@ -212,12 +212,9 @@ public class PCoin extends Data {
 										atkp.set(j, atkp.get(j) + modifs[j]);
 						}
 				}
-			} else if (type[0] == PC_AB || type[0] == PC_BASE) {
-				if (du instanceof DataUnit)
-					improve((DataUnit)ans,type,modifs);
-				else
-					improve((CustomUnit)ans,type,modifs);
-			} else if (type[0] == PC_IMU)
+			} else if (type[0] == PC_AB || type[0] == PC_BASE)
+				ans.improve(type, modifs[0]);
+			else if (type[0] == PC_IMU)
 				ans.getProc().getArr(type[1]).set(0, 100);
 			else if (type[0] == PC_TRAIT) {
 				Trait types = UserProfile.getBCData().traits.get(type[1]);
@@ -229,52 +226,6 @@ public class PCoin extends Data {
 		}
 
 		return ans;
-	}
-
-	private void improve(DataUnit ans, int[] type, int[] modifs) {
-		if (type[0] == PC_AB)
-			ans.abi |= type[1];
-		else {
-			switch (type[1]) {
-				case PC2_SPEED:
-					ans.speed += modifs[0];
-					break;
-				case PC2_CD:
-					ans.respawn -= modifs[0];
-					break;
-				case PC2_COST:
-					ans.price -= modifs[0];
-					break;
-				case PC2_HB:
-					ans.hb += modifs[0];
-					break;
-				case PC2_TBA:
-					ans.tba = (int) (ans.tba * (100 - modifs[0]) / 100.0);
-			}
-		}
-	}
-
-	private void improve(CustomUnit ans, int[] type, int[] modifs) {
-		if (type[0] == PC_AB)
-			ans.abi |= type[1];
-		else {
-			switch (type[1]) {
-				case PC2_SPEED:
-					ans.speed += modifs[0];
-					break;
-				case PC2_CD:
-					ans.resp -= modifs[0];
-					break;
-				case PC2_COST:
-					ans.price -= modifs[0];
-					break;
-				case PC2_HB:
-					ans.hb += modifs[0];
-					break;
-				case PC2_TBA:
-					ans.tba = (int) (ans.tba * (100 - modifs[0]) / 100.0);
-			}
-		}
 	}
 
 	public double getStatMultiplication(int mult, int[] talents) {

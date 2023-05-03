@@ -494,11 +494,6 @@ public abstract class Source {
 				anim.id.pack = anim.id.pack.substring(6);
 		}
 
-		private void addAnim(UserPack pack, Character e, HashSet<AnimCE> anims) {
-			if (e.anim instanceof AnimUD)
-				return;
-		}
-
 		public File getBGFile(Identifier<Background> id) {
 			return getFile("./" + BasePath.BG + "/" + Data.trio(id.id) + ".png");
 		}

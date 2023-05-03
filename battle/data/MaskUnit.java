@@ -18,6 +18,8 @@ public interface MaskUnit extends MaskEntity {
 
 	PCoin getPCoin();
 
+	void improve(int[] type, int mod);
+
 	MaskUnit clone();
 
 	int getLimit();

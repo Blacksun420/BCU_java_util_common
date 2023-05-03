@@ -71,6 +71,6 @@ public class ContMove extends ContAb {
 
 	@Override
 	public boolean IMUTime() {
-		return (atk.attacker.getAbi() & AB_TIMEI) != 0;
+		return atk.attacker != null && (atk.attacker.getAbi() & AB_TIMEI) != 0;
 	}
 }

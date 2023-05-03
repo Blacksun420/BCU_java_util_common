@@ -58,4 +58,8 @@ public interface MaskAtk extends BattleStatic {
 	default Identifier<Music> getAudio(boolean sec) {
 		return null;
 	}
+
+	default String getName() {
+		return "";
+	}
 }

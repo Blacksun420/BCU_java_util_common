@@ -161,6 +161,11 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 		return name;
 	}
 
+	@Override
+	public String getName() {
+		return str;
+	}
+
 	public void checkAvail() {
 		checkAvail(str);
 	}
