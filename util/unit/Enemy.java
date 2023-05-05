@@ -22,10 +22,7 @@ import common.util.stage.MapColc;
 import common.util.stage.Stage;
 import common.util.stage.StageMap;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 @JsonClass.JCGeneric(Identifier.class)
 @JsonClass
@@ -78,21 +75,19 @@ public class Enemy extends Character implements AbEnemy {
 		return ans;
 	}
 
-	public List<MapColc> findMap() {
-		List<MapColc> ans = new ArrayList<>();
+	public Map<MapColc.DefMapColc, Integer> findMap() {
+		Map<MapColc.DefMapColc, Integer> ans = new HashMap<>();
 		for (MapColc mc : MapColc.values()) {
-			if (mc instanceof MapColc.PackMapColc)
+			if (!(mc instanceof MapColc.DefMapColc))
 				continue;
-			boolean col = false;
-			for (StageMap sm : mc.maps) {
+			for (StageMap sm : mc.maps)
 				for (Stage st : sm.list)
-					if (col = st.contains(this)) {
-						ans.add(mc);
-						break;
+					if (st.contains(this)) {
+						if (ans.containsKey(mc))
+							ans.replace((MapColc.DefMapColc)mc, ans.get(mc) + 1);
+						else
+							ans.put((MapColc.DefMapColc)mc, 1);
 					}
-				if (col)
-					break;
-			}
 		}
 		return ans;
 	}

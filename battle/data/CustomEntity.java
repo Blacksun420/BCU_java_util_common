@@ -32,11 +32,6 @@ public abstract class CustomEntity extends DataEntity {
 	public int base, touch = TCH_N;
 	public boolean common = true, kbBounce = true, bossBounce = true;
 
-	/**
-	 * This field is used to filter all the procs of units if common is false,
-	 * Also used for counter
-	 */
-
 	public CustomEntity() {
 		rep = new AtkDataModel(this);
 		hits.add(new AtkDataModel[1]);
@@ -48,6 +43,10 @@ public abstract class CustomEntity extends DataEntity {
 		death = new Identifier<>(Identifier.DEF, Soul.class, 0);
 	}
 
+	/**
+	 * This field is used to filter all the procs of units if common is false,
+	 * Also used for counter
+	 */
 	@JsonField(block = true)
 	private Proc all;
 

@@ -410,8 +410,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				effs[A_CURSE] = null;
 			if (e.status.inv == 0 && e.status.wild == 0)
 				effs[A_IMUATK] = null;
-			if (e.status.poison == 0)
-				for(int i = 0; i < A_POIS.length; i++)
+			for (int i = 0; i < A_POIS.length; i++)
+				if ((e.status.poison & (1 << i)) == 0)
 					effs[A_POIS[i]] = null;
 			if (e.status.seal == 0)
 				effs[A_SEAL] = null;
@@ -561,11 +561,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 					if ((soul == null && !e.dead) || (soul != null && adm.pre == soul.len() - dead))
 						e.basis.getAttack(e.aam.getSpAttack(RES, i));
-
-					if (soul != null && dead == 0 && adm.pre >= soul.len() && !e.dead) {
-						System.out.println("##");
+					else if (soul != null && dead == 0 && adm.pre >= soul.len() && !e.dead)
 						e.basis.getAttack(e.aam.getSpAttack(RES, i));
-					}
 				}
 			}
 			if(smoke != null) {
@@ -1172,7 +1169,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			}
 			if (aura.dmult != 0) {
 				defAuras.push((weak ? 100 + aura.dmult : aura.dmult) / 100f);
-				aff[weak ? 0 : 1] *= defAuras.peek();
+				aff[weak ? 0 : 1] /= defAuras.peek();
 			}
 			if (aura.smult != 0) {
 				spdAuras.push((weak ? aura.smult : 100 + aura.smult) / 100f);
