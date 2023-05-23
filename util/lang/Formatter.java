@@ -1,13 +1,17 @@
 package common.util.lang;
 
 import common.CommonStatic;
-import common.util.pack.Background;
+import common.battle.BasisSet;
 import common.io.assets.Admin.StaticPermitted;
 import common.io.json.JsonClass;
 import common.io.json.JsonEncoder;
 import common.io.json.JsonField;
 import common.pack.Context.ErrType;
 import common.pack.Identifier;
+import common.pack.SortedPackSet;
+import common.util.pack.Background;
+import common.util.unit.AbEnemy;
+import common.util.unit.Trait;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -17,7 +21,6 @@ import java.util.List;
 import java.util.Stack;
 
 public class Formatter {
-
 	@JsonClass
 	public static class Context {
 
@@ -34,13 +37,15 @@ public class Formatter {
 		public final boolean useSecond;
         @JsonField
         public final double[] magnification;
+		public final SortedPackSet<Trait> traits;
 
 		public DecimalFormat df = new DecimalFormat("#.##");
 
-		public Context(boolean ene, boolean sec, double[] magnif) {
+		public Context(boolean ene, boolean sec, double[] magnif, SortedPackSet<Trait> trs) {
 			isEnemy = ene;
 			useSecond = sec;
 			magnification = magnif;
+			traits = trs;
 		}
 
 		public String abs(int v) {
@@ -52,6 +57,14 @@ public class Formatter {
 		}
 
 		public String dispTime(int time) {
+			if (traits != null) {
+				int frt = (int) (time * BasisSet.current().t().getFruit(traits));
+				if (frt > time) {
+					if (useSecond)
+						return toSecond(time) + "s <" + toSecond(frt) + ">";
+					return time + "f <" + frt + ">";
+				}
+			}
 			if (useSecond)
 				return toSecond(time) + "s";
 			return time + "f";
@@ -65,12 +78,18 @@ public class Formatter {
 			return df.format(time / 30.0);
 		}
 
-		public String summonMagnification(int buff) {
+		public String summonMagnification(boolean fix_buff, int buff, Identifier<?> id) {
+			boolean isEnemy = Identifier.get(id) instanceof AbEnemy;
 			if (!isEnemy) {
+				if (fix_buff)
+					return "Lv " + buff;
 				if (magnification.length == 1)
-					return "Level " + (int) (magnification[0] + buff); //Because entityAbilities is a thing
-				return "Level " + (int) (magnification[1] + buff);
-			} else if (magnification[0] == magnification[1])
+					return "Lv " + (int) (magnification[0] + buff); //Because entityAbilities is a thing
+				return "Lv " + (int) (magnification[1] + buff);
+			}
+			if (fix_buff)
+				return buff + "%";
+			if (magnification.length == 1 || magnification[0] == magnification[1])
 				return (int) (buff * magnification[0]) + "%";
 			return "{" + (int) (buff * magnification[0]) + "%, " + (int) (buff * magnification[1]) + "%}";
 		}
