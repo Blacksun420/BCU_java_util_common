@@ -227,7 +227,7 @@ public class CommonStatic {
 
 		void setBGM(Identifier<Music> mus);
 
-		String getBtnName(int m, String s);
+		String getUILang(int m, String s);
 
 		String[] lvText(AbForm f, Level lv);
 	}

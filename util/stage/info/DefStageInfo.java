@@ -93,27 +93,25 @@ public class DefStageInfo implements StageInfo {
 
     @Override
     public String getHTML() {
-        StringBuilder ans = new StringBuilder("<html>energy cost: " + energy + "<br> xp: " + xp);
+        StringBuilder ans = new StringBuilder("<html>Energy Cost: " + energy + "<br> XP: " + xp);
 
-        ans.append("<br> Will be hidden upon full clear : ")
-                .append(st.getCont().info.hiddenUponClear);
+        if (st.getCont().info.hiddenUponClear)
+            ans.append("<br>").append(CommonStatic.def.getUILang(0,"clrhide"));
 
-        if (st.getCont().info.resetMode != -1) {
+        if (st.getCont().info.resetMode != -1)
             switch (st.getCont().info.resetMode) {
                 case 1:
-                    ans.append("<br> This map's reward will get reset upon each appearance");
+                    ans.append("<br> ").append(CommonStatic.def.getUILang(0, "maprwdres"));
                     break;
                 case 2:
-                    ans.append("<br> This map's clear status will be reset upon each appearance");
+                    ans.append("<br> ").append(CommonStatic.def.getUILang(0, "mapclrres"));
                     break;
                 case 3:
-                    ans.append("<br> This map's number of plays can be done will be reset upon each appearance");
+                    ans.append("<br> ").append(CommonStatic.def.getUILang(0, "maplayres"));
                     break;
                 default:
-                    ans.append("<br> Reset mode flag ")
-                            .append(st.getCont().info.resetMode);
+                    ans.append("<br> Reset mode flag ").append(st.getCont().info.resetMode);
             }
-        }
 
         if (st.getCont().info.waitTime != -1) {
             ans.append("<br> You have to wait for ")
@@ -122,22 +120,17 @@ public class DefStageInfo implements StageInfo {
         }
 
         if (st.getCont().info.clearLimit != -1) {
-            ans.append("<br> number that you can play this stage : ")
+            ans.append("<br> Times you can play this stage: ")
                     .append(st.getCont().info.clearLimit);
         }
 
-        ans.append("<br><br> EX stage existing : ")
-                .append(exConnection || (exStages != null && exChances != null));
-
         if (exConnection) {
-            ans.append("<br> EX stage appearance chance : ")
-                    .append(exChance)
-                    .append("%<br> EX Map Name : ")
+            ans.append("<br><br> EX Map Name: ")
                     .append(MultiLangCont.get(MapColc.get("000004").maps.get(exMapID)))
-                    .append("<br> EX Stage ID Min : ")
-                    .append(Data.duo(exStageIDMin))
-                    .append("<bR> EX Stage ID Max : ")
-                    .append(Data.duo(exStageIDMax))
+                    .append("<br> EX stage appearance chance: ")
+                    .append(exChance)
+                    .append("<br> EX Stage ID range: ")
+                    .append(Data.duo(exStageIDMin)).append(" ~ ").append(Data.duo(exStageIDMax))
                     .append("<br>");
         }
 
@@ -175,7 +168,7 @@ public class DefStageInfo implements StageInfo {
             ans.append("<br>");
         }
 
-        ans.append("<br> drop rewards");
+        ans.append("<br> Drop rewards");
 
         if(drop == null || drop.length == 0) {
             ans.append(" : none");
@@ -185,7 +178,7 @@ public class DefStageInfo implements StageInfo {
         }
 
         if (time.length > 0) {
-            ans.append("<br> time scores: count: ").append(time.length).append("<br>");
+            ans.append("<br> Time scores").append("<br>");
             ans.append("<table><tr><th>score</th><th>item name</th><th>number</th></tr>");
             for (int[] tm : time)
                 ans.append("<tr><td>").append(tm[0]).append("</td><td>").append(MultiLangCont.getStatic().RWNAME.getCont(tm[1])).append("</td><td>").append(tm[2]).append("</td><tr>");
@@ -206,13 +199,12 @@ public class DefStageInfo implements StageInfo {
         StageMap sm = MapColc.DefMapColc.getMap(exMapID + 4000);
         ArrayList<Stage> sts = new ArrayList<>(exStageIDMax - exStageIDMin + 1);
 
-        if (sm != null) {
+        if (sm != null)
             for (int i = exStageIDMin; i <= exStageIDMax; i++) {
                 Stage st = sm.list.get(i);
                 if (st != null)
                     sts.add(st);
             }
-        }
         return sts.toArray(new Stage[0]);
     }
 

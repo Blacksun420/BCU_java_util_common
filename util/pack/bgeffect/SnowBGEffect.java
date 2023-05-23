@@ -125,6 +125,6 @@ public class SnowBGEffect extends BackgroundEffect {
 
     @Override
     public String toString() {
-        return CommonStatic.def.getBtnName(0, "bgeff" + id.id);
+        return CommonStatic.def.getUILang(0, "bgeff" + id.id);
     }
 }

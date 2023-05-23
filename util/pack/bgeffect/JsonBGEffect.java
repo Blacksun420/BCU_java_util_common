@@ -146,10 +146,10 @@ public class JsonBGEffect extends BackgroundEffect {
 
     @Override
     public String toString() {
-        String temp = CommonStatic.def.getBtnName(0, "bgjson" + id.id);
+        String temp = CommonStatic.def.getUILang(0, "bgjson" + id.id);
 
         if (temp.equals("bgjson" + id.id))
-            temp = CommonStatic.def.getBtnName(0, "bgeffdum").replace("_", "" + id.id);
+            temp = CommonStatic.def.getUILang(0, "bgeffdum").replace("_", "" + id.id);
         return temp;
     }
 }

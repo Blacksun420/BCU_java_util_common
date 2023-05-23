@@ -84,12 +84,12 @@ public class MixedBGEffect extends BackgroundEffect {
     public String toString() {
         if (id.pack.equals(Identifier.DEF)) {
             if (id.id == Data.BG_EFFECT_SNOWSTAR)
-                return CommonStatic.def.getBtnName(0, "bgeff5");
+                return CommonStatic.def.getUILang(0, "bgeff5");
 
 
-            String temp = CommonStatic.def.getBtnName(0, "bgjson" + id.id);
+            String temp = CommonStatic.def.getUILang(0, "bgjson" + id.id);
             if (temp.equals("bgjson" + id.id))
-                temp = CommonStatic.def.getBtnName(0, "bgeffdum").replace("_", "" + id.id);
+                temp = CommonStatic.def.getUILang(0, "bgeffdum").replace("_", "" + id.id);
             return temp;
         }
         if (getName().length() == 0)
