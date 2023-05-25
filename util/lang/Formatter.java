@@ -37,7 +37,7 @@ public class Formatter {
 		public final boolean useSecond;
         @JsonField
         public final double[] magnification;
-		public final SortedPackSet<Trait> traits;
+		public final double fruitMag;
 
 		public DecimalFormat df = new DecimalFormat("#.##");
 
@@ -45,7 +45,11 @@ public class Formatter {
 			isEnemy = ene;
 			useSecond = sec;
 			magnification = magnif;
-			traits = trs;
+
+			if (isEnemy || trs == null)
+				fruitMag = 1;
+			else
+				fruitMag = 1 + BasisSet.current().t().getFruit(trs) * 0.2 / 3;
 		}
 
 		public String abs(int v) {
@@ -57,17 +61,19 @@ public class Formatter {
 		}
 
 		public String dispTime(int time) {
-			if (traits != null) {
-				int frt = (int) (time * BasisSet.current().t().getFruit(traits));
-				if (frt > time) {
-					if (useSecond)
-						return toSecond(time) + "s <" + toSecond(frt) + ">";
-					return time + "f <" + frt + ">";
-				}
-			}
 			if (useSecond)
 				return toSecond(time) + "s";
 			return time + "f";
+		}
+
+		public String dispTimeF(int time) {
+			String tim = dispTime(time);
+			if (fruitMag > 1) {
+				if (useSecond)
+					return tim + " [" + toSecond((int)(time * fruitMag)) + "s]";
+				return tim + " [" + (int)(time * fruitMag) + "f]";
+			}
+			return tim;
 		}
 
 		public String entity(Identifier<?> id) {
@@ -448,9 +454,9 @@ public class Formatter {
 				Field f = parent.getClass().getField(name);
 				return f.get(parent);
 			} catch (NoSuchFieldException nse) {
-				if (CommonStatic.parseIntsN(name).length == 0)
-					throw new Exception("Unrecognized field: " + name);
-				return new IntExp(ind, p1).eval();
+				if (CommonStatic.parseIntsN(name).length > 0)
+					return new IntExp(ind, p1).eval();
+				throw new Exception("Unrecognized field: " + name);
 			}
 		}
 

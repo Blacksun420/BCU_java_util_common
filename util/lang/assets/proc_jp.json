@@ -26,7 +26,7 @@
     "abbr_name": "止める",
     "full_name": "動きを止める",
     "tooltip": null,
-    "format": "(prob)%の確率で(_dispTime(time))の間動きを止める",
+    "format": "(prob)%の確率で(_dispTimeF(time))の間動きを止める",
     "class": {
       "prob": {
         "name": "確率",
@@ -42,7 +42,7 @@
     "abbr_name": "遅くする",
     "full_name": "動きを遅くする",
     "tooltip": null,
-    "format": "(prob)%の確率で(_dispTime(time))の間動きを遅くする",
+    "format": "(prob)%の確率で(_dispTimeF(time))の間動きを遅くする",
     "class": {
       "prob": {
         "name": "確率",
@@ -97,7 +97,7 @@
     "abbr_name": "攻撃力低減",
     "full_name": "攻撃力ダウン",
     "tooltip": null,
-    "format": "(prob)%の確率で(_dispTime(time))の間攻撃力を(mult)%にダウンさせる",
+    "format": "(prob)%の確率で(_dispTimeF(time))の間攻撃力を(mult)%にダウンさせる",
     "class": {
       "prob": {
         "name": "確率",
@@ -117,7 +117,7 @@
     "abbr_name": "無気力",
     "full_name": "無気力",
     "tooltip": null,
-    "format": "(prob)%の確率で(_dispTime(time))の間TBAを[(type.percentage){(_abs(mult)%)}(!type.percentage){(_dispTime(time))}]でに増加る",
+    "format": "(prob)%の確率で(_dispTimeF(time))の間TBAを[(type.percentage){(_abs(mult)%)}(!type.percentage){(_dispTime(time))}]でに増加る",
     "class": {
       "prob": {
         "name": "確率",
@@ -173,7 +173,7 @@
     "abbr_name": "呪い",
     "full_name": "呪い",
     "tooltip": "特殊能力封印",
-    "format": "(prob)%の確率で(_dispTime(time))の間[(_isEnemy){古代の}]呪う",
+    "format": "(prob)%の確率で(_dispTimeF(time))の間[(_isEnemy){古代の}]呪う",
     "class": {
       "prob": {
         "name": "確率",
@@ -513,7 +513,7 @@
     "abbr_name": "封印",
     "full_name": "封印の呪い",
     "tooltip": "封印は地中移動、メタル、自滅、ターゲット、基本的な蘇生(範囲蘇生は無効化される)を除く全ての能力を無効にします。",
-    "format": "(prob)%の確率で(_dispTime(time))の間封印",
+    "format": "(prob)%の確率で(_dispTimeF(time))の間封印",
     "class": {
       "prob": {
         "name": "確率",
@@ -530,7 +530,7 @@
     "full_name": "召喚",
     "tooltip": null,
     "format": [
-      "(prob)%の確率で(_dispTime(time))後に(amount)匹の[(!type.fix_buff){(_summonMagnification(mult))}(type.fix_buff){[(_isEnemy){(mult)%}(!_isEnemy){Lv(mult)}]}](_entity(id))を召喚、",
+      "(prob)%の確率で(_dispTime(time))後に(amount)匹の(_summonMagnification(type.fix_buff,mult,id))(_entity(id))を召喚、",
       "[(!type.on_hit&!type.on_kill){召喚者から1つの召喚(dis)範囲離れている}",
       "(type.on_hit){各ターゲットの命中時に召喚された(dis)の範囲が1つ離れる}",
       "(type.on_kill){対象が倒れるたびに1回召喚(dis)の範囲が離れる}]",
@@ -807,7 +807,7 @@
     "abbr_name": "攻撃無効",
     "full_name": "攻撃無効",
     "tooltip": null,
-    "format": "(prob)%の確率で(_dispTime(time))の間攻撃を無効にする",
+    "format": "(prob)%の確率で(_dispTimeF(time))の間攻撃を無効にする",
     "class": {
       "prob": {
         "name": "確率",
@@ -926,7 +926,7 @@
     "abbr_name": "アーマーブレイク",
     "full_name": "アーマーブレイク",
     "tooltip": null,
-    "format": "(prob)%の確率で(_dispTime(time))の間受けるダメージを(_abs(mult))%[(mult<0){軽減する}(mult>=0){増加させる}]",
+    "format": "(prob)%の確率で(_dispTimeF(time))の間受けるダメージを(_abs(mult))%[(mult<0){軽減する}(mult>=0){増加させる}]",
     "class": {
       "prob": {
         "name": "確率",
@@ -947,7 +947,7 @@
     "full_name": "軽率",
     "tooltip": null,
     "format": [
-      "(prob)%の確率で(_dispTime(time))の間",
+      "(prob)%の確率で(_dispTimeF(time))の間",
       "[(type==2){移動速度を(speed)に固定する。}(type!=2){対象の移動速度を",
       "(_abs(speed))[(type==1){%}][(speed>=0){増加させる}(speed<0){下げる}]}]"
     ],
@@ -1516,7 +1516,7 @@
     "abbr_name": "怒り",
     "full_name": "怒り",
     "tooltip": "対象を激怒させ、敵と味方の両方を攻撃させる。",
-    "format": "(prob)%の確率で(_dispTime(time))の間を怒りる",
+    "format": "(prob)%の確率で(_dispTimeF(time))の間を怒りる",
     "class": {
       "prob": {
         "name": "確率",
@@ -1532,7 +1532,7 @@
     "abbr_name": "催眠術",
     "full_name": "催眠術",
     "tooltip": "対象が味方を裏切るようにする",
-    "format": "(prob)%の確率で(_dispTime(time))の間を催眠術をかける",
+    "format": "(prob)%の確率で(_dispTimeF(time))の間を催眠術をかける",
     "class": {
       "prob": {
         "name": "確率",

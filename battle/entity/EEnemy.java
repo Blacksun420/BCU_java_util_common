@@ -9,7 +9,9 @@ import common.battle.data.MaskEnemy;
 import common.battle.data.MaskUnit;
 import common.pack.SortedPackSet;
 import common.pack.UserProfile;
+import common.util.anim.AnimU;
 import common.util.anim.EAnimU;
+import common.util.stage.Revival;
 import common.util.unit.Enemy;
 import common.util.unit.Trait;
 
@@ -20,6 +22,7 @@ public class EEnemy extends Entity {
 	public final int mark;
 	public final double mult, mula;
 
+	public Revival rev;
 	public float door;
 
 	public EEnemy(StageBasis b, MaskEnemy de, EAnimU ea, double magnif, double atkMagnif, int d0, int d1, int m) {
@@ -40,6 +43,12 @@ public class EEnemy extends Entity {
 		if (!basis.st.trail && !atk) {
 			double mul = basis.b.t().getDropMulti() * (1 + (status.money / 100.0));
 			basis.money += mul * ((MaskEnemy) data).getDrop();
+		}
+
+		if (rev != null) {
+			rev.triggerRevival(basis, basis.est.mul, layer, group, pos);
+			if (!anim.deathSurge && rev.soul != null)
+				anim.dead = rev.soul.get().getEAnim(AnimU.SOUL[0]).len();
 		}
 	}
 

@@ -489,7 +489,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			}
 		}
 
-		private boolean deathSurge = false;
+		protected boolean deathSurge = false;
 
 		/**
 		 * set kill anim

@@ -46,30 +46,13 @@ public class MultiLangCont<I, T> extends Lang {
 				loaded_anim[lang] = true;
 				AnimTypeLocale.read();
 			}
-
 			return ANIMNAME.getCont(type);
 		}
 
 	}
 
 	public static String get(Object o) {
-		if (o == null)
-			return null;
-
-		if (o instanceof MapColc)
-			return getStatic().MCNAME.getCont((MapColc) o);
-		if (o instanceof StageMap)
-			return getStatic().SMNAME.getCont((StageMap) o);
-		if (o instanceof Stage)
-			return getStatic().STNAME.getCont((Stage) o);
-		if (o instanceof Form)
-			return getStatic().FNAME.getCont((Form) o);
-		if (o instanceof Enemy)
-			return getStatic().ENAME.getCont((Enemy) o);
-		if (o instanceof Combo)
-			return getStatic().COMNAME.getCont((Combo) o);
-
-		return null;
+		return get(o, CommonStatic.getConfig().lang);
 	}
 
 	public static String get(Object o, int lang) {
@@ -120,7 +103,6 @@ public class MultiLangCont<I, T> extends Lang {
 			return getStatic().FEXP.getCont((Form) o);
 		if (o instanceof Enemy)
 			return getStatic().EEXP.getCont((Enemy) o);
-
 		return null;
 	}
 
@@ -129,12 +111,7 @@ public class MultiLangCont<I, T> extends Lang {
 	}
 
 	public static String getStageDrop(int id) {
-		String trial = getStatic().RWSTNAME.getCont(id);
-
-		if(trial == null || trial.isEmpty())
-			trial = getStatic().RWNAME.getCont(id);
-
-		return trial;
+		return getStageDrop(id, CommonStatic.getConfig().lang);
 	}
 
 	public static String getStageDrop(int id, int lang) {
@@ -147,12 +124,7 @@ public class MultiLangCont<I, T> extends Lang {
 	}
 
 	public static String getServerDrop(int id) {
-		String trial = getStatic().RWSVNAME.getCont(id);
-
-		if(trial == null || trial.isEmpty())
-			trial = getStatic().RWNAME.getCont(id);
-
-		return trial;
+		return getServerDrop(id, CommonStatic.getConfig().lang);
 	}
 
 	public static String getServerDrop(int id, int lang) {
@@ -171,15 +143,7 @@ public class MultiLangCont<I, T> extends Lang {
 	}
 
 	public T getCont(I x) {
-		int lang = Math.max(0, Math.min(pref.length, CommonStatic.getConfig().lang));
-
-		for (int i = 0; i < pref[lang].length; i++) {
-			T ans = getSub(LOC_CODE[pref[lang][i]]).get(x);
-			if (ans != null)
-				return ans;
-		}
-		
-		return null;
+		return getCont(x, CommonStatic.getConfig().lang);
 	}
 
 	public T getCont(I x, int lang) {
@@ -191,7 +155,6 @@ public class MultiLangCont<I, T> extends Lang {
 			if (ans != null)
 				return ans;
 		}
-
 		return null;
 	}
 

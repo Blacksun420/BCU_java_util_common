@@ -83,6 +83,7 @@ public class EStage extends BattleObj {
 				if (data.doorchance > 0 && b.r.nextDouble() * 100 < data.doorchance)
 					ee.door = data.doordis_0 == data.doordis_1 ? data.doordis_0 : (float) ((data.doordis_1 - data.doordis_0) * b.r.nextDouble()) + data.doordis_0;
 				ee.group = data.group;
+				ee.rev = data.rev;
 				return ee;
 			}
 		}

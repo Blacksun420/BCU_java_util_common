@@ -27,7 +27,7 @@
         "abbr_name": "stop",
         "full_name": "Freeze",
         "tooltip": null,
-        "format": "(prob)% chance to freeze for (_dispTime(time))",
+        "format": "(prob)% chance to freeze for (_dispTimeF(time))",
         "class": {
             "prob": {
                 "name": "chance",
@@ -43,7 +43,7 @@
         "abbr_name": "slow",
         "full_name": "Slow",
         "tooltip": null,
-        "format": "(prob)% chance to slow for (_dispTime(time))",
+        "format": "(prob)% chance to slow for (_dispTimeF(time))",
         "class": {
             "prob": {
                 "name": "chance",
@@ -99,7 +99,7 @@
         "abbr_name": "weak",
         "full_name": "Weaken",
         "tooltip": null,
-        "format": "(prob)% chance to [(mult>100){strengthen}(mult<=100){weaken}] target's attack to (mult)% for (_dispTime(time))",
+        "format": "(prob)% chance to [(mult>100){strengthen}(mult<=100){weaken}] target's attack to (mult)% for (_dispTimeF(time))",
         "class": {
             "prob": {
                 "name": "chance",
@@ -119,7 +119,7 @@
         "abbr_name": "Lethargy",
         "full_name": "Lethargy",
         "tooltip": null,
-        "format": "(prob)% chance to [(mult>0){increase}(mult<0){decrease}] target's TBA by [(type.percentage){(_abs(mult))%}(!type.percentage){(_dispTime(time))}] for (_dispTime(time))",
+        "format": "(prob)% chance to [(mult>0){increase}(mult<0){decrease}] target's TBA by [(type.percentage){(_abs(mult))%}(!type.percentage){(_dispTime(time))}] for (_dispTimeF(time))",
         "class": {
             "prob": {
                 "name": "chance",
@@ -175,7 +175,7 @@
         "abbr_name": "curse",
         "full_name": "Curse",
         "tooltip": "Disable trait related abilities",
-        "format": "(prob)% chance to curse for (_dispTime(time))",
+        "format": "(prob)% chance to curse for (_dispTimeF(time))",
         "class": {
             "prob": {
                 "name": "chance",
@@ -530,7 +530,7 @@
         "abbr_name": "seal",
         "full_name": "Seal",
         "tooltip": "Seal will disable all abilities except Burrow, Metal, Self-Destruct, Only-Attack, and basic Revive",
-        "format": "(prob)% chance to seal target for (_dispTime(time))",
+        "format": "(prob)% chance to seal target for (_dispTimeF(time))",
         "class": {
             "prob": {
                 "name": "chance",
@@ -547,7 +547,7 @@
         "full_name": "Summon",
         "tooltip": null,
         "format": [
-            "(prob)% chance to summon (amount) [(!type.fix_buff){(_summonMagnification(mult))}(type.fix_buff){[(_isEnemy){(mult)%}(!_isEnemy){Lv(mult)}]}] (_entity(id)) after (_dispTime(time)), ",
+            "(prob)% chance to summon (amount) (_summonMagnification(type.fix_buff,mult,id)) (_entity(id)) after (_dispTime(time)), ",
             "each summoned (dis)[(max_dis!=dis){ ~ (max_dis)}] range away from ",
             "[(type.on_kill|type.on_hit){each target}",
             "(!type.on_hit&!type.on_kill){the summoner}] ",
@@ -856,7 +856,7 @@
         "abbr_name": "Invi.",
         "full_name": "Invincibility",
         "tooltip": null,
-        "format": "(prob)% chance to gain invincibility for (_dispTime(time))",
+        "format": "(prob)% chance to gain invincibility for (_dispTimeF(time))",
         "class": {
             "prob": {
                 "name": "chance",
@@ -954,7 +954,7 @@
         "abbr_name": "armor break",
         "full_name": "Armor Break",
         "tooltip": null,
-        "format": "(prob)% chance to [(mult<0){enchance}(mult>=0){break}] target's armor for (_dispTime(time)) (_left)Makes target take (_abs(mult))% [(mult<0){less}(mult>=0){more}] damage(_right)",
+        "format": "(prob)% chance to [(mult<0){enchance}(mult>=0){break}] target's armor for (_dispTimeF(time)) (_left)Makes target take (_abs(mult))% [(mult<0){less}(mult>=0){more}] damage(_right)",
         "class": {
             "prob": {
                 "name": "chance",
@@ -979,7 +979,7 @@
             "[(type==2){set}(type!=2){[(speed>=0){increase}(speed<0){decrease}]}]",
             " target's speed ",
             "[(type!=2){by}(type==2){to}] [(type==2){(speed)}(type!=2){(_abs(speed))}][(type==1){%}]",
-            " for (_dispTime(time))"
+            " for (_dispTimeF(time))"
         ],
         "class": {
             "prob": {
@@ -1536,7 +1536,7 @@
         "abbr_name": "rage",
         "full_name": "Rage",
         "tooltip": "Enrages the target, making it's attacks hurt both enemies and it's own allies",
-        "format": "(prob)% chance to enrage target for (_dispTime(time))",
+        "format": "(prob)% chance to enrage target for (_dispTimeF(time))",
         "class": {
             "prob": {
                 "name": "chance",
@@ -1552,7 +1552,7 @@
         "abbr_name": "hypno",
         "full_name": "Hypnotize",
         "tooltip": "Turns the target against its own allies",
-        "format": "(prob)% chance to hypnotize target for (_dispTime(time))",
+        "format": "(prob)% chance to hypnotize target for (_dispTimeF(time))",
         "class": {
             "prob": {
                 "name": "chance",

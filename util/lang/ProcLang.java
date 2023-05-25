@@ -106,20 +106,13 @@ public class ProcLang {
 		private final ProcLang[] langs = new ProcLang[CommonStatic.Lang.LOC_CODE.length];
 
 		private ProcLang getLang() {
-			int lang = CommonStatic.getConfig().lang;
-			if (langs[lang] == null)
-				Data.err(() -> read());
-			return langs[lang];
+			return getLang(CommonStatic.getConfig().lang);
 		}
 
 		private ProcLang getLang(int lang) {
 			if (langs[lang] == null)
 				Data.err(() -> read(lang));
 			return langs[lang];
-		}
-
-		private void setLang(ProcLang lang) {
-			langs[CommonStatic.getConfig().lang] = lang;
 		}
 
 		private void setLang(ProcLang lang, int l) {
@@ -153,29 +146,6 @@ public class ProcLang {
 
 	public static ProcLang getWithLang(int lang) {
 		return store().getLang(lang);
-	}
-
-	private static void read() throws Exception {
-		InputStream f;
-
-		switch (CommonStatic.getConfig().lang) {
-			case 2:
-				f = CommonStatic.ctx.getLangFile("proc_kr.json");
-				break;
-			case 3:
-				f = CommonStatic.ctx.getLangFile("proc_jp.json");
-				break;
-			case 8:
-				f = CommonStatic.ctx.getLangFile("proc_es.json");
-				break;
-			default:
-				f = CommonStatic.ctx.getLangFile("proc.json");
-		}
-
-		JsonElement elem = JsonParser.parseReader(new InputStreamReader(f, StandardCharsets.UTF_8));
-		f.close();
-		ProcLang proc = JsonDecoder.decode(elem, ProcLang.class);
-		store().setLang(proc);
 	}
 
 	private static void read(int lang) throws Exception {

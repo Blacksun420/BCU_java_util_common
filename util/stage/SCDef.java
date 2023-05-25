@@ -30,6 +30,7 @@ public class SCDef implements Copable<SCDef> {
 		public int mult_atk;
 		public int kill_count;
 		public byte doorchance, doordis_0, doordis_1;
+		public Revival rev;
 
 		@JCConstructor
 		public Line() {

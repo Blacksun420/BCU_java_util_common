@@ -27,7 +27,7 @@
         "abbr_name": "para",
         "full_name": "Parálisis",
         "tooltip": null,
-        "format": "Probabilidad del (prob)% de paralizar por (_dispTime(time))",
+        "format": "Probabilidad del (prob)% de paralizar por (_dispTimeF(time))",
         "class": {
             "prob": {
                 "name": "probabilidad",
@@ -43,7 +43,7 @@
         "abbr_name": "ralent.",
         "full_name": "Ralentización",
         "tooltip": null,
-        "format": "Probabilidad del (prob)% de ralentizar por (_dispTime(time))",
+        "format": "Probabilidad del (prob)% de ralentizar por (_dispTimeF(time))",
         "class": {
             "prob": {
                 "name": "probabilidad",
@@ -99,7 +99,7 @@
         "abbr_name": "desgaste",
         "full_name": "Desgaste",
         "tooltip": null,
-        "format": "Probabilidad del (prob)% de [(mult>100){fortalecer}(mult<=100){desgastar}] el ataque del objetivo al [(mult>100){(mult)}(mult<=100){(mult)}]% durante (_dispTime(time))",
+        "format": "Probabilidad del (prob)% de [(mult>100){fortalecer}(mult<=100){desgastar}] el ataque del objetivo al [(mult>100){(mult)}(mult<=100){(mult)}]% durante (_dispTimeF(time))",
         "class": {
             "prob": {
                 "name": "probabilidad",
@@ -492,7 +492,7 @@
         "full_name": "Invocación",
         "tooltip": null,
         "format": [
-            "Probabilidad del (prob)% de invocar (amount) (_entity(id)) con una fuerza de [(!type.fix_buff){(_summonMagnification(mult))}(type.fix_buff){[(_isEnemy){(mult)%}(!_isEnemy){Nv(mult)}]}] tras (_dispTime(time)), ",
+            "Probabilidad del (prob)% de invocar (amount) (_summonMagnification(type.fix_buff,mult,id)) (_entity(id)) tras (_dispTime(time)), ",
             "invocadas a un alcance de (dis) alejado de",
             "[(type.on_kill|type.on_hit){ cada objetivo}",
             "(!type.on_hit&!type.on_kill){l invocador}] ",

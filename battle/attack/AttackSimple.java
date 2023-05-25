@@ -166,21 +166,4 @@ public class AttackSimple extends AttackAb {
 				attacker.summoned.add(volcano);
 		}
 	}
-
-	/**
-	 * If this attack has a custom sound effect, it is played over the in-game sound effects
-	 * @param isBase If attacked entity is base
-	 * @param alt Plays SE 0 if true, SE 1 if false
-	 */
-	@Override
-	public void playSound(boolean isBase, boolean alt) {
-		Identifier<Music> sfx0 = matk == null ? null : matk.getAudio(false);
-		Identifier<Music> sfx1 = matk == null ? null : matk.getAudio(true);
-		if (sfx0 == null && sfx1 == null || isBase)
-			super.playSound(isBase, alt);
-		else if (alt || sfx1 == null)
-			CommonStatic.setSE(sfx0);
-		else
-			CommonStatic.setSE(sfx1);
-	}
 }
