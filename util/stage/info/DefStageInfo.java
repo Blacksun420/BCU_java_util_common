@@ -129,7 +129,7 @@ public class DefStageInfo implements StageInfo {
                     .append(MultiLangCont.get(MapColc.get("000004").maps.get(exMapID)))
                     .append("<br> EX stage appearance chance: ")
                     .append(exChance)
-                    .append("<br> EX Stage ID range: ")
+                    .append("%<br> EX Stage ID range: ")
                     .append(Data.duo(exStageIDMin)).append(" ~ ").append(Data.duo(exStageIDMax))
                     .append("<br>");
         }
