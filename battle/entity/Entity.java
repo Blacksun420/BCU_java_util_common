@@ -1534,6 +1534,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 	}
 
+	private final HashSet<AttackVolcano> counteredvolcs = new HashSet<>();
+
 	/**
 	 * accept attack
 	 */
@@ -1599,10 +1601,16 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				return;
 			else
 				dmg = dmg * (100 - getProc().IMUVOLC.mult) / 100;
+
+			Proc.PM volcounter = getProc().DEMONVOLC;
+			if (!counteredvolcs.contains(atk) && (volcounter.prob == 100 || (volcounter.prob > 0 && basis.r.nextDouble() * 100 < volcounter.prob))) {
+				new DemonCont(this, atk);
+				counteredvolcs.add((AttackVolcano)atk);
+			}
 		}
 
 		Proc.PT imuatk = getProc().IMUATK;
-		if (imuatk.prob > 0 && (atk.dire == -1 || receive(-1)) || ctargetable(atk.trait, atk.attacker)) {
+		if (imuatk.prob > 0 && ((atk.dire == -1 || receive(-1)) && ctargetable(atk.trait, atk.attacker))) {
 			if (status.inv == 0 && (imuatk.prob == 100 || basis.r.nextDouble() * 100 < imuatk.prob)) {
 				status.inv = (int) (imuatk.time * (1 + 0.2 / 3 * getFruit(atk.trait, atk.dire, -1)));
 				anim.getEff(P_IMUATK);
@@ -2196,6 +2204,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		}
 		if (health > 0)
 			status.money = 0;
+
+		counteredvolcs.removeIf(v -> !v.active);
 	}
 
 	/**

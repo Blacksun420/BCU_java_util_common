@@ -207,24 +207,30 @@ public class UpdateCheck {
 		if (count == -1)
 			return null;
 
-		File music = CommonStatic.ctx.getAssetFile("./music/");
-		boolean[] exi = new boolean[count];
-		if (music.exists())
-			for (File m : music.listFiles())
-				if (m.getName().length() == 7 && m.getName().endsWith(".ogg")) {
-					Integer id = Data.ignore(() -> Integer.parseInt(m.getName().substring(0, 3)));
-					if (id != null)
-						exi[id] = id < count && id >= 0;
+		try {
+			File music = CommonStatic.ctx.getAssetFile("./music/");
+			boolean[] exi = new boolean[count];
+			if (music.exists())
+				for (File m : music.listFiles())
+					if (m.getName().length() == 7 && m.getName().endsWith(".ogg")) {
+						Integer id = Data.ignore(() -> Integer.parseInt(m.getName().substring(0, 3)));
+						if (id != null)
+							exi[id] = id < count && id >= 0;
+					}
+			List<Downloader> ans = new ArrayList<>();
+			for (int i = 0; i < count; i++)
+				if (!exi[i]) {
+					File target = CommonStatic.ctx.getAssetFile("./music/" + Data.trio(i) + ".ogg");
+					File temp = CommonStatic.ctx.getAssetFile("./music/.ogg.temp");
+					String url = URL_MUSIC + Data.trio(i) + ".ogg";
+					ans.add(new Downloader(target, temp, "music " + Data.trio(i), false, url));
 				}
-		List<Downloader> ans = new ArrayList<>();
-		for (int i = 0; i < count; i++)
-			if (!exi[i]) {
-				File target = CommonStatic.ctx.getAssetFile("./music/" + Data.trio(i) + ".ogg");
-				File temp = CommonStatic.ctx.getAssetFile("./music/.ogg.temp");
-				String url = URL_MUSIC + Data.trio(i) + ".ogg";
-				ans.add(new Downloader(target, temp, "music " + Data.trio(i), false, url));
-			}
-		return ans;
+			return ans;
+		} catch (Exception e) {
+			CommonStatic.ctx.printErr(ErrType.ERROR, "Failed music update check");
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	public static Context.SupExc<List<Downloader>> checkMusic(int count) {

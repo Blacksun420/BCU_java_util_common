@@ -178,7 +178,7 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
         }
         boolean ch = false, unsorted = false;
         for (Object elem : c) {
-            if (contains(elem))
+            if (elem == null || contains(elem))
                 continue;
             ch = true;
             unsorted |= size > 0 && compareCheck((T) elem,(T) arr[size - 1]) < 0;

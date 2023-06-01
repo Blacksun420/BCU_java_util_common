@@ -410,6 +410,10 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 		public EffAnim<VolcEff> A_MINIVOLC;
 		@Order(83)
 		public EffAnim<VolcEff> A_E_MINIVOLC;
+		@Order(84)
+		public EffAnim<DefEff> A_DEMONVOLC;
+		@Order(85)
+		public EffAnim<DefEff> A_E_DEMONVOLC;
 
 		public EffAnim<?>[] values() {
 			Field[] fld = FieldOrder.getDeclaredFields(EffAnimStore.class);
@@ -516,6 +520,12 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 		vmv = new VImg("./org/battle/s16/skill016.png");
 		icmv = ImgCut.newIns("./org/battle/s16/skill016.imgcut");
 		effas.A_E_MINIVOLC = new EffAnim<>("./org/battle/s16/skill_smallvolcano_e", vmv, icmv, VolcEff.values());
+		String path = "./org/battle/skill_demonsummon/skill_demonsummon";
+		VImg vdem = new VImg(path + ".png");
+		ImgCut icdem = ImgCut.newIns(path + ".imgcut");
+		effas.A_E_DEMONVOLC = new EffAnim<>(path, vdem, icdem, DefEff.values());
+		effas.A_DEMONVOLC = new EffAnim<>(path, vdem, icdem, DefEff.values());
+		effas.A_DEMONVOLC.rev = true;
 	}
 
 	private static void excColor(FakeImage fimg, Function<int[], Integer> f) {

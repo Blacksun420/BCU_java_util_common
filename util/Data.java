@@ -901,6 +901,8 @@ public class Data {
 		public final IMU IMUHYPNO = new IMU();
 		@Order(66)
 		public final MINIVOLC MINIVOLC = new MINIVOLC();
+		@Order(67)
+		public final PM DEMONVOLC = new PM();
 
 		@Override
 		public Proc clone() {
@@ -1043,12 +1045,13 @@ public class Data {
 	public static final short SE_SHIELD_REGEN = 138;
 	public static final short SE_SHIELD_BREAKER = 137;
 	public static final short SE_DEATH_SURGE = 143;
+	public static final short SE_COUNTERVOLC = 159;
 
 	public static final byte[][] SE_CANNON = { { 25, 26 }, { 60 }, { 61 }, { 36, 37 }, { 65, 83 }, { 84, 85 }, { 86 },
 			{ 124 } };
 
 	public static final short[] SE_ALL = { 15, 19, 20, 21, 22, 23, 24, 25, 26, 27, 36, 37, 44, 45, 50, 59, 60, 61, 65, 73,
-			74, 83, 84, 85, 86, 90, 110, 111, 112, 124, 136, 137, 138, 139, 143 };
+			74, 83, 84, 85, 86, 90, 110, 111, 112, 124, 136, 137, 138, 139, 143, 159 };
 
 	public static final byte RARITY_TOT = 6;
 
@@ -1434,7 +1437,8 @@ public class Data {
 			{ 2, PC2_TBA }, //61 : tba
 			{ 0, P_MINIWAVE }, //62 : mini-wave
 			{ 1, AB_BAKILL }, //63 : baron killer
-			{ 0, P_BSTHUNT, 1 } //64 : behemoth slayer
+			{ 0, P_BSTHUNT, 1 }, //64 : behemoth slayer
+			{ 0, P_MINIVOLC } //65 : MiniSurge
 	};
 
 	// foot icon index used in battle

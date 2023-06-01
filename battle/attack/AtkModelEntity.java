@@ -193,6 +193,21 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		new ContVolcano(new AttackVolcano(e, as, sta, end, WT_VOLC), p0, e.layer, ds.time);
 	}
 
+	/**
+	 * Generate counter surge
+	 */
+	public void getCounterSurge(double pos, Proc.ProcItem itm) { //Item will always be either minisurge or surge, so no worries
+		Proc p = Proc.blank();
+		int atk = (int)(getAttack(data.getAtkModel(0, 0), p) * (e.getProc().DEMONVOLC.mult / 100.0));
+		AttackSimple as = new AttackSimple(e, this, atk, e.traits, getAbi(), p, 0, 0, e.data.getAtkModel(0, 0), 0, false);
+		int addp = itm.get(1) == itm.get(2) ? itm.get(1) : itm.get(1) + (int) (b.r.nextDouble() * (itm.get(2) - itm.get(1)));
+		double p0 = pos + getDire() * addp;
+		double sta = p0 + (getDire() == 1 ? W_VOLC_PIERCE : W_VOLC_INNER);
+		double end = p0 - (getDire() == 1 ? W_VOLC_INNER : W_VOLC_PIERCE);
+
+		new ContVolcano(new AttackVolcano(e, as, sta, end, WT_VOLC), p0, e.layer, itm.get(3));
+	}
+
 	@Override
 	public int getDire() {
 		return e.getDire();

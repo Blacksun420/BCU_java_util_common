@@ -52,7 +52,8 @@ public class Enemy extends Character implements AbEnemy {
 		String str = "./org/enemy/" + Data.trio(id.id) + "/";
 		de = new DataEnemy(this, ints);
 		anim = new AnimUD(str, Data.trio(id.id) + "_e", "edi_" + Data.trio(id.id) + ".png", null);
-		anim.getEdi().check();
+		if (anim.getEdi() != null)
+			anim.getEdi().check();
 		MaModel model = anim.loader.getMM();
 		((DataEnemy) de).limit = CommonStatic.dataEnemyMinPos(model);
 	}

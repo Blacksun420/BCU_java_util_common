@@ -12,6 +12,7 @@ public class AttackVolcano extends AttackAb {
 	private byte volcTime = VOLC_ITV;
 
 	protected final List<Entity> vcapt = new ArrayList<>();
+	public boolean active = true;
 
 	public AttackVolcano(Entity e, AttackSimple a, double sta, double end, int vt) {
 		super(e, a, sta, end, false);

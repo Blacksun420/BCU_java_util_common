@@ -68,6 +68,7 @@ public class ContVolcano extends ContAb {
 					if (volcs == 100) {
 
 						activate = false;
+						v.active = false;
 						return;
 					} else
 						v.atk = v.atk * (100 - volcs) / 100;
@@ -75,6 +76,7 @@ public class ContVolcano extends ContAb {
 			}
 		if (t >= aliveTime + VOLC_POST + VOLC_PRE) {
 			activate = false;
+			v.active = false;
 		} else {
 			if (t >= VOLC_PRE && t < VOLC_PRE + aliveTime)
 				sb.getAttack(v);
