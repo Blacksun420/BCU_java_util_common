@@ -1610,7 +1610,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		}
 
 		Proc.PT imuatk = getProc().IMUATK;
-		if (imuatk.prob > 0 && ((atk.dire == -1 || receive(-1)) && ctargetable(atk.trait, atk.attacker))) {
+		if (imuatk.prob > 0 && (atk.dire == -1 || receive(-1) || ctargetable(atk.trait, atk.attacker))) {
 			if (status.inv == 0 && (imuatk.prob == 100 || basis.r.nextDouble() * 100 < imuatk.prob)) {
 				status.inv = (int) (imuatk.time * (1 + 0.2 / 3 * getFruit(atk.trait, atk.dire, -1)));
 				anim.getEff(P_IMUATK);
