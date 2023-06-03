@@ -10,7 +10,12 @@ import common.system.fake.FakeTransform;
 import common.util.anim.EAnimD;
 import common.util.pack.EffAnim.VolcEff;
 
+import java.util.HashSet;
+
 public class ContVolcano extends ContAb {
+	public final HashSet<AbEntity> surgeSummoned = new HashSet<>();
+	public final boolean reflected;
+
 	protected final EAnimD<VolcEff> anim;
 	protected final AttackVolcano v;
 	private final Proc defProc;
@@ -21,12 +26,19 @@ public class ContVolcano extends ContAb {
 	private final boolean[] performed = new boolean[4]; // [0,1] - check if curse/seal rng has passed, [2,3] - check if unit process needs to be updated
 
 	protected ContVolcano(AttackVolcano v, double p, int lay, int alive) {
+		this(v, p, lay, alive, false);
+	}
+
+	protected ContVolcano(AttackVolcano v, double p, int lay, int alive, boolean reflect) {
 		super(v.model.b, p, lay);
 		if(v.waveType == WT_VOLC)
 			anim = (v.dire == 1 ? effas().A_E_VOLC : effas().A_VOLC).getEAnim(VolcEff.START);
 		else
 			anim = (v.dire == 1 ? effas().A_E_MINIVOLC : effas().A_MINIVOLC).getEAnim(VolcEff.START);
 		this.v = v;
+		v.handler = this;
+
+		reflected = reflect;
 		aliveTime = alive;
 		defProc = v.getProc().clone();
 		CommonStatic.setSE(SE_VOLC_START);

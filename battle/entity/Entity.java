@@ -1531,10 +1531,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 	public void altAbi(int alt) {
 		altAbi ^= alt;
-
 	}
-
-	private final HashSet<AttackVolcano> counteredvolcs = new HashSet<>();
 
 	/**
 	 * accept attack
@@ -1602,10 +1599,11 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			else
 				dmg = dmg * (100 - getProc().IMUVOLC.mult) / 100;
 
+			AttackVolcano volc = (AttackVolcano) atk;
 			Proc.PM volcounter = getProc().DEMONVOLC;
-			if (!counteredvolcs.contains(atk) && (volcounter.prob == 100 || (volcounter.prob > 0 && basis.r.nextDouble() * 100 < volcounter.prob))) {
+			if (volc.handler != null && !volc.handler.reflected && !volc.handler.surgeSummoned.contains(this) && (volcounter.prob == 100 || (volcounter.prob > 0 && basis.r.nextDouble() * 100 < volcounter.prob))) {
 				new DemonCont(this, atk);
-				counteredvolcs.add((AttackVolcano)atk);
+				volc.handler.surgeSummoned.add(this);
 			}
 		}
 
@@ -2204,8 +2202,6 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		}
 		if (health > 0)
 			status.money = 0;
-
-		counteredvolcs.removeIf(v -> !v.active);
 	}
 
 	/**

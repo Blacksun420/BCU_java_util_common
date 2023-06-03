@@ -132,6 +132,10 @@ public abstract class Character extends Animable<AnimU<?>, AnimU.UType> {
                         } //Finish 0.6.6.0 check
                         if ((ent.abi & 32) > 0)
                             proc.IMUWAVE.block = 100;
+                        if ((ent.abi & 524288) > 0) {
+                            proc.DEMONVOLC.prob = 100;
+                            proc.DEMONVOLC.mult = 100;
+                        }
                         ent.abi = Data.reorderAbi(ent.abi, 2);
                         for (AtkDataModel atk : atks)
                             atk.alt = Data.reorderAbi(atk.alt, 2);

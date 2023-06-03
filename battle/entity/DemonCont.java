@@ -10,7 +10,7 @@ public class DemonCont extends EAnimCont {
     private final Proc.ProcItem volc;
 
     public DemonCont(Entity e, AttackAb atk) {
-        super(e.pos, e.layer, (e.dire == -1 ? effas().A_DEMONVOLC : effas().A_E_DEMONVOLC).getEAnim(EffAnim.DefEff.DEF));
+        super(e.pos, e.layer, (e.dire == -1 ? effas().A_COUNTERSURGE : effas().A_E_COUNTERSURGE).getEAnim(EffAnim.DefEff.DEF));
         if ((atk.waveType & WT_VOLC) > 0)
             volc = atk.getProc().VOLC;
         else
@@ -22,9 +22,9 @@ public class DemonCont extends EAnimCont {
     @Override
     public void update() {
         super.update();
-        if (getAnim().ind() == 43)
+        if (getAnim().ind() == COUNTER_SURGE_FORESWING)
             ent.aam.getCounterSurge(pos, volc);
-        else if (getAnim().ind() == 18)
-            CommonStatic.setSE(SE_COUNTERVOLC);
+        else if (getAnim().ind() == COUNTER_SURGE_SOUND)
+            CommonStatic.setSE(SE_COUNTER_SURGE);
     }
 }

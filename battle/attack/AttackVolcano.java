@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AttackVolcano extends AttackAb {
-
+	public ContVolcano handler;
 	protected boolean attacked = false;
 	private byte volcTime = VOLC_ITV;
 

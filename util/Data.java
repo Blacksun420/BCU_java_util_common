@@ -3,16 +3,16 @@ package common.util;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import common.CommonStatic;
-import common.util.pack.Background;
+import common.pack.Context.ErrType;
+import common.pack.Context.RunExc;
+import common.pack.Context.SupExc;
 import common.util.pack.EffAnim;
+import common.util.pack.Background;
 import common.util.stage.Music;
 import common.io.assets.Admin.StaticPermitted;
 import common.io.json.*;
 import common.io.json.FieldOrder.Order;
 import common.io.json.JsonClass.NoTag;
-import common.pack.Context.ErrType;
-import common.pack.Context.RunExc;
-import common.pack.Context.SupExc;
 import common.pack.Identifier;
 
 import java.lang.annotation.*;
@@ -1045,7 +1045,7 @@ public class Data {
 	public static final short SE_SHIELD_REGEN = 138;
 	public static final short SE_SHIELD_BREAKER = 137;
 	public static final short SE_DEATH_SURGE = 143;
-	public static final short SE_COUNTERVOLC = 159;
+	public static final short SE_COUNTER_SURGE = 159;
 
 	public static final byte[][] SE_CANNON = { { 25, 26 }, { 60 }, { 61 }, { 36, 37 }, { 65, 83 }, { 84, 85 }, { 86 },
 			{ 124 } };
@@ -1273,7 +1273,8 @@ public class Data {
 	public static final byte P_IMURAGE = 65;
 	public static final byte P_IMUHYPNO = 66;
 	public static final byte P_MINIVOLC = 67;
-	public static final byte PROC_TOT = 68;// 68
+	public static final byte P_DEMONVOLC = 68;
+	public static final byte PROC_TOT = 69;// 69 (The funny number)
 
 	public static final boolean[] procSharable = {
 			false, //kb
@@ -1343,7 +1344,8 @@ public class Data {
 			false, //Hypno
 			true,  //Imu. Rage
 			true,  // Imu Hypno
-			true   //Mini surge
+			true,  //Mini surge
+			false  //Counter Volc
 	};
 
 	/**
@@ -1673,6 +1675,8 @@ public class Data {
 	public static final byte SHAKE_END = 2;
 	public static final byte SHAKE_COOL_DOWN = 3;
 	public static final float SHAKE_STABILIZER = 2.5f;
+	public static final int COUNTER_SURGE_FORESWING = 50;
+	public static final int COUNTER_SURGE_SOUND = 18;
 
 	public static final char[] SUFX = new char[]{'f', 'c', 's'};
 
@@ -1810,16 +1814,17 @@ public class Data {
 						newAbi |= 1 << i;
 				}
 				break;
-			case 2: //Reformat waveblock
+			case 2: //Reformat waveblock and (in the future) countersurge
 				for (int i = 0; i + abiAdd < ABI_TOT; i++) {
-					if (i == 5)
+					if (i == 5 || i == 19)
 						abiAdd++;
 					int i1 = i + abiAdd;
+					if (i1 == 19)
+						continue;
 					if (((ab >> i1) & 1) > 0)
 						newAbi |= 1 << i;
 				}
 				break;
-
 		}
 		return newAbi;
 	}

@@ -145,6 +145,8 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 		else if (m == 50)
 			return extendX;
 		else if (m == 51)
+			return extendX;
+		else if (m == 52)
 			return extendY;
 		else
 			System.out.println("EPart modification can be: " + m);
