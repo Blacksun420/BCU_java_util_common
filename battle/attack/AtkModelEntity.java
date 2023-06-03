@@ -198,14 +198,21 @@ public abstract class AtkModelEntity extends AtkModelAb {
 	 */
 	public void getCounterSurge(double pos, Proc.ProcItem itm) { //Item will always be either minisurge or surge, so no worries
 		Proc p = Proc.blank();
-		int atk = (int)(getAttack(data.getAtkModel(0, 0), p) * (e.getProc().DEMONVOLC.mult / 100.0));
+		int mult = e.getProc().DEMONVOLC.mult;
+
+		int atk = (int)(getAttack(data.getAtkModel(0, 0), p) * (mult / 100.0));
+		if (itm instanceof Proc.MINIVOLC) {
+			mult *= ((Proc.MINIVOLC) itm).mult / 100.0;
+			atk *= ((Proc.MINIVOLC) itm).mult / 100.0;
+		}
+
 		AttackSimple as = new AttackSimple(e, this, atk, e.traits, getAbi(), p, 0, 0, e.data.getAtkModel(0, 0), 0, false);
 		int addp = itm.get(1) == itm.get(2) ? itm.get(1) : itm.get(1) + (int) (b.r.nextDouble() * (itm.get(2) - itm.get(1)));
 		double p0 = pos + getDire() * addp;
 		double sta = p0 + (getDire() == 1 ? W_VOLC_PIERCE : W_VOLC_INNER);
 		double end = p0 - (getDire() == 1 ? W_VOLC_INNER : W_VOLC_PIERCE);
 
-		e.summoned.add(new ContVolcano(new AttackVolcano(e, as, sta, end, e.getProc().DEMONVOLC.mult >= 100 ? WT_VOLC : WT_MIVC), p0, e.layer, itm.get(3), true));
+		e.summoned.add(new ContVolcano(new AttackVolcano(e, as, sta, end, mult >= 100 ? WT_VOLC : WT_MIVC), p0, e.layer, itm.get(3), true));
 	}
 
 	@Override
