@@ -739,6 +739,12 @@ public class Editors {
 			if (t.retreatDist == 0)
 				t.retreatSpeed = 0;
 		}));
+
+		map().put("DEMONVOLC", new EditControl<>(Proc.PM.class, (t) -> {
+			t.prob = MathUtil.clip(t.prob, 0, 100);
+			if (t.prob == 0)
+				t.mult = 0;
+		}));
 	}
 
 	private static void setComponentVisibility(EditorGroup egg, boolean boo, int... fields) {

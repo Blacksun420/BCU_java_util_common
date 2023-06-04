@@ -683,7 +683,7 @@ public class Data {
 
 			public boolean perform(CopRand r) {
 				try {
-					Field f = this.getClass().getField("prob");
+					Field f = get("prob");
 					int prob = f.getInt(this);
 					if (prob == 0)
 						return false;
@@ -692,6 +692,14 @@ public class Data {
 					return r.nextDouble() * 100 < prob;
 				} catch (Exception e) {
 					return exists();
+				}
+			}
+
+			public Field get(String name) {
+				try {
+					return this.getClass().getField(name);
+				} catch (Exception ignored) {
+					return null;
 				}
 			}
 
@@ -1185,12 +1193,6 @@ public class Data {
 	public static final byte P_WARP = 11;
 	public static final byte P_CURSE = 12;
 	public static final byte P_SEAL = 13;
-	/**
-	 * 0:prob, 1:ID, 2:location, 3: buff, 4:conf, 5:time
-	 *
-	 * +0: direct, +1: warp, +2:burrow, +4:disregard limit, +8: fix buff, +16: same
-	 * health, +32: diff layer, +64 on hit, +128 on kill
-	 */
 	public static final byte P_SUMMON = 14;
 	/**
 	 * 0:prob, 1:speed, 2:width (left to right), 3:time, 4:origin (center), 5:itv
@@ -1367,13 +1369,15 @@ public class Data {
 	public static final byte PC2_CD = 4;
 	public static final byte PC2_HB = 5;
 	public static final byte PC2_TBA = 6;
-	public static final byte PC2_TOT = 7;
+	public static final byte PC2_RNG = 7;
+	public static final byte PC2_TOT = 8;
 	// -1 for None
 	// 0 for Proc
 	// 1 for Ability
 	// 2 for Base stat
 	// 3 for Immune
 	// 4 for Trait
+	// 5 for special cases
 	public static final int[][] PC_CORRES = new int[][] { // NP value table
 			{ -1, 0 }, // 0:
 			{ 0, P_WEAK }, // 1: weak, reversed health or relic-weak
@@ -1442,6 +1446,42 @@ public class Data {
 			{ 0, P_BSTHUNT, 1 }, //64 : behemoth slayer
 			{ 0, P_MINIVOLC } //65 : MiniSurge
 	};
+	public static final int[][] PC_CUSTOM = new int[][] { //Use negative ints to handle (it would be so awesome, it would be so cool)
+			{ -1, 0 }, // 0:
+			{ 0, P_BURROW}, // 1: Burrow
+			{ 0, P_REVIVE, 0, 2}, //2: Revive
+			{ 0, P_BARRIER}, //3: Barrier
+			{ 0, P_DEMONSHIELD}, //4: Aku Shield
+			{ 0, P_DEATHSURGE}, //5: Death Surge
+			{ 0, P_DEMONVOLC}, //6: Surge Counter
+			{ 0, P_SEAL}, // 7: Seal
+			{ 0, P_COUNTER}, // 8: Counter
+			{ 0, P_DMGCUT, 0, 3}, // 9: Super Armor
+			{ 0, P_DMGCAP, 0, 3}, // 10: Mystic Shield
+			{ 0, P_REMOTESHIELD}, // 11: Remote Shield
+			{ 0, P_ARMOR}, // 12: Armor break
+			{ 0, P_SPEED}, // 13: Haste
+			{ 0, P_RAGE}, // 14: Rage
+			{ 0, P_HYPNO}, // 15: Hypno
+			{ 0, P_CRITI}, // 16: Criti
+			{ 0, P_IMUSUMMON}, // 17: Summon immune
+			{ 0, P_IMUSEAL}, // 18: Seal immune
+			{ 0, P_IMUARMOR}, // 19: Armor Break immune
+			{ 0, P_IMUSPEED}, // 20: Haste immune
+			{ 0, P_IMULETHARGY}, // 21: Lethargy Immunity
+			{ 0, P_IMURAGE}, // 22: Rage Immunity
+			{ 0, P_IMUHYPNO}, // 23: Hypno Immunity
+			{ 2, PC2_RNG} // 24: Range
+	};
+
+	public static int[] get_CORRES(int ind) {
+		if (ind < 0) {
+			return PC_CUSTOM[Math.abs(ind)];
+		}
+		if (ind >= PC_CORRES.length)
+			return PC_CORRES[0];
+		return PC_CORRES[ind];
+	}
 
 	// foot icon index used in battle
 	public static final byte INV = -1;

@@ -94,6 +94,9 @@ public class CustomUnit extends CustomEntity implements MaskUnit, Cloneable {
 					break;
 				case PC2_TBA:
 					tba = (int) (tba * (100 - mod) / 100.0);
+					break;
+				case PC2_RNG:
+					range += mod;
 			}
 	}
 

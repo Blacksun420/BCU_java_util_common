@@ -110,13 +110,7 @@ public class PCoin extends Data {
 		talents = temp;
 
 		for (int i = 0; i < info.size(); i++) {
-			if (info.get(i)[0] >= PC_CORRES.length) {
-				CommonStatic.ctx.printErr(ErrType.NEW, "new PCoin ability not yet handled by BCU: " + info.get(i)[0] + "\nText ID is " + info.get(i)[10]+"\nData is "+Arrays.toString(info.get(i)));
-				continue;
-			}
-
-			int[] type = PC_CORRES[info.get(i)[0]];
-
+			int[] type = get_CORRES(info.get(i)[0]);
 			if (type[0] == -1) {
 				CommonStatic.ctx.printErr(ErrType.NEW, "new PCoin ability not yet handled by BCU: " + info.get(i)[0] + "\nText ID is " + info.get(i)[10]+"\nData is "+Arrays.toString(info.get(i)));
 				continue;
@@ -232,7 +226,7 @@ public class PCoin extends Data {
 
 	public double getStatMultiplication(int mult, int[] talents) {
 		for(int i = 0; i < info.size(); i++) {
-			if(talents[i] == 0 || info.get(i)[0] >= PC_CORRES.length)
+			if(talents[i] == 0 || info.get(i)[0] >= PC_CORRES.length || info.get(i)[0] < 0)
 				continue;
 
 			int[] type = PC_CORRES[info.get(i)[0]];

@@ -1523,7 +1523,7 @@
         "tooltip": null
       },
       "time": {
-        "name": "duration",
+        "name": "継続期間",
         "tooltip": null
       }
     }
@@ -1539,7 +1539,7 @@
         "tooltip": null
       },
       "time": {
-        "name": "duration",
+        "name": "継続期間",
         "tooltip": null
       }
     }
@@ -1583,8 +1583,8 @@
     }
   },
   "MINIVOLC": {
-    "abbr_name": "m. surge",
-    "full_name": "Mini Surge",
+    "abbr_name": "小烈波",
+    "full_name": "小烈波",
     "tooltip": "Creates small surge that does exactly same behavior of normal surge, but with less damage",
     "format": "(prob)% chance to make a Lv (time/20) mini surge attack (_left)Lasts (_dispTime(time)), created within (dis_0) ~ (dis_1) range, with (mult)% damage of attacker(_right)",
     "class": {
@@ -1593,19 +1593,35 @@
         "tooltip": null
       },
       "dis_0": {
-        "name": "point near",
+        "name": "最小距離",
         "tooltip": null
       },
       "dis_1": {
-        "name": "point far",
+        "name": "最大距離",
         "tooltip": null
       },
       "time": {
-        "name": "duration",
+        "name": "継続期間",
         "tooltip": null
       },
       "mult": {
-        "name": "multiplier",
+        "name": "割合",
+        "tooltip": null
+      }
+    }
+  },
+  "DEMONVOLC" : {
+    "abbr_name": "反撃烈波",
+    "full_name": "反撃烈波",
+    "tooltip": "烈波の体力を持つ烈波に当たると烈波を生成する",
+    "format": "(prob)%の確率で烈波の攻撃を受けたとき烈波を作る(_left)烈波のダメージの(mult)%を持つ(_right)",
+    "class": {
+      "prob": {
+        "name": "確率",
+        "tooltip": null
+      },
+      "mult": {
+        "name": "割合",
         "tooltip": null
       }
     }

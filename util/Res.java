@@ -248,7 +248,7 @@ public class Res extends ImgCore {
 		aux.icon[1][P_IMURAGE] = new VImg("./org/page/icons/ImuRage.png");
 		aux.icon[1][P_HYPNO] = new VImg("./org/page/icons/Hypno.png");
 		aux.icon[1][P_IMUHYPNO] = new VImg("./org/page/icons/ImuHypno.png");
-		aux.icon[0][P_DEMONVOLC] = new VImg("./org/page/icons/CounterSurge.png");
+		aux.icon[1][P_DEMONVOLC] = new VImg("./org/page/icons/CounterSurge.png");
 
 		aux.icon[2][ATK_SINGLE] = new VImg(parts[217]);
 		aux.icon[2][ATK_AREA] = new VImg(parts[211]);
@@ -279,6 +279,7 @@ public class Res extends ImgCore {
 		aux.icon[4][PC2_CD] = new VImg(parts[94]);
 		aux.icon[4][PC2_HB] = new VImg(parts[98]);
 		aux.icon[4][PC2_TBA] = new VImg(parts[305]);
+		aux.icon[4][PC2_RNG] = new VImg("./org/page/icons/PlusRange.png");
 
 		aux.waveShield = new VImg(parts[218]);
 		CommonStatic.getConfig().icon = false;
