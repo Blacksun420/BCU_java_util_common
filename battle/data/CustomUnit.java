@@ -123,6 +123,7 @@ public class CustomUnit extends CustomEntity implements MaskUnit, Cloneable {
 				for (int[] i : p.info) {
 					int[] j = Arrays.copyOf(i, i.length);
 					j[1] = Math.max(1, j[1]);
+					j[j.length - 1] = Math.max(0, j[j.length - 1]);
 
 					pcoin.info.add(j);
 				}
