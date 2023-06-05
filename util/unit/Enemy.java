@@ -134,35 +134,33 @@ public class Enemy extends Character implements AbEnemy {
 		PackData.UserPack pack = (PackData.UserPack) getCont();
 		if (pack.desc.FORK_VERSION < 6) {
 			inject(pack, jobj.getAsJsonObject("de"), enemy);
-			if (pack.desc.FORK_VERSION < 4) {
+			//Updates stuff to match this fork without core version issues
+			if (pack.desc.FORK_VERSION < 1) {
 				Proc proc = enemy.getProc();
 				AtkDataModel[] atks = enemy.getAllAtkModels();
 
-				//Updates stuff to match this fork without core version issues
-				if (pack.desc.FORK_VERSION < 1) {
-					if (UserProfile.isOlderPack(pack, "0.6.4.0")) {
-						if (UserProfile.isOlderPack(pack, "0.6.1.0")) {
-							if (UserProfile.isOlderPack(pack, "0.5.4.0"))
-								enemy.limit = CommonStatic.customEnemyMinPos(anim.loader.getMM());
-							//Finish 0.5.4.0 check
-							proc.DMGCUT.type.traitIgnore = true;
-							proc.DMGCAP.type.traitIgnore = true;
-						} //Finish 0.6.1.0 check
-						names.put(jobj.get("name").getAsString());
-						if (jobj.has("desc"))
-							description.put(jobj.get("desc").getAsString().replace("<br>", "\n"));
-					} //Finish 6.4.0 check
-					for (AtkDataModel ma : atks)
-						if (ma.getProc().SUMMON.prob > 0) {
-							if (ma.getProc().SUMMON.id != null && !AbEnemy.class.isAssignableFrom(ma.getProc().SUMMON.id.cls))
-								ma.getProc().SUMMON.type.fix_buff = true;
-							ma.getProc().SUMMON.amount = 1;
-						}
-					for (AtkDataModel ma : atks)
-						if (ma.getProc().SUMMON.prob > 0 && (ma.getProc().SUMMON.id == null || !AbEnemy.class.isAssignableFrom(ma.getProc().SUMMON.id.cls)))
-							ma.getProc().SUMMON.form = 1; //There for imports
-				} //Finish FORK_VERSION 1 checks
-			} //Finish FORK_VERSION 4 checks
+				if (UserProfile.isOlderPack(pack, "0.6.4.0")) {
+					if (UserProfile.isOlderPack(pack, "0.6.1.0")) {
+						if (UserProfile.isOlderPack(pack, "0.5.4.0"))
+							enemy.limit = CommonStatic.customEnemyMinPos(anim.loader.getMM());
+						//Finish 0.5.4.0 check
+						proc.DMGCUT.type.traitIgnore = true;
+						proc.DMGCAP.type.traitIgnore = true;
+					} //Finish 0.6.1.0 check
+					names.put(jobj.get("name").getAsString());
+					if (jobj.has("desc"))
+						description.put(jobj.get("desc").getAsString().replace("<br>", "\n"));
+				} //Finish 6.4.0 check
+				for (AtkDataModel ma : atks)
+					if (ma.getProc().SUMMON.prob > 0) {
+						if (ma.getProc().SUMMON.id != null && !AbEnemy.class.isAssignableFrom(ma.getProc().SUMMON.id.cls))
+							ma.getProc().SUMMON.type.fix_buff = true;
+						ma.getProc().SUMMON.amount = 1;
+					}
+				for (AtkDataModel ma : atks)
+					if (ma.getProc().SUMMON.prob > 0 && (ma.getProc().SUMMON.id == null || !AbEnemy.class.isAssignableFrom(ma.getProc().SUMMON.id.cls)))
+						ma.getProc().SUMMON.form = 1; //There for imports
+			} //Finish FORK_VERSION 1 checks
 		} //Finish FORK_VERSION 6 checks
 	}
 

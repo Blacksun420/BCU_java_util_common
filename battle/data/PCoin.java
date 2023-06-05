@@ -48,45 +48,50 @@ public class PCoin extends Data {
 	}
 
 	private PCoin(String[] strs) {
-		int id = CommonStatic.parseIntN(strs[0]);
+		du = Identifier.parseInt(CommonStatic.parseIntN(strs[0]), Unit.class).get().getForms()[2].du;
 		trait = Trait.convertType(CommonStatic.parseIntN(strs[1]));
 
 		for (int i = 0; i < 8; i++)
 			if(!strs[2 + i * 14].equals("0")) {
-				int[] data = new int[14];
-
+				int[] data = new int[14]; //Default length of BC
 				for (int j = 0; j < 14; j++)
 					data[j] = CommonStatic.parseIntN(strs[2 + i * 14 + j]);
 				if (data[13] == 1) //Super Talent
 					data[13] = 60;
-
 				if(data[0] == 62) //Miniwave
 					if(data[6] == 0 && data[7] == 0) {
 						data[6] = 20;
 						data[7] = 20;
 					}
-				info.add(data);
+
+				int[] corres = Data.get_CORRES(data[0]);
+				if (corres[0] == -1) {
+					CommonStatic.ctx.printErr(ErrType.WARN, "new PCoin ability for " + du.getPack() + " not yet handled by BCU: " + data[0] + "\nData is " + Arrays.toString(data));
+					continue;
+				}
+				int[] trueArr;
+				switch (corres[0]) {
+					case Data.PC_P:
+						trueArr = Arrays.copyOf(data, 3 + (du.getProc().getArr(corres[1]).getDeclaredFields().length - (corres.length >= 3 ? corres[2] : 0)) * 2); //The Math.min is for testing
+						break;
+					case Data.PC_BASE:
+						trueArr = Arrays.copyOf(data, 4);
+						break;
+					default:
+						trueArr = Arrays.copyOf(data, 3);
+				}
+				trueArr[trueArr.length - 1] = Math.max(0, data[13]);
+				info.add(trueArr);
 			}
 		max = new int[info.size()];
 		for (int i = 0; i < info.size(); i++)
 			max[i] = Math.max(1, info.get(i)[1]);
-		du = Identifier.parseInt(id, Unit.class).get().getForms()[2].du;
 		((DataUnit)du).pcoin = this;
 
 		full = improve(max);
 	}
 
 	public void update() {
-		// Apparently, if max is null, since we will update full var anyway
-		// we can just re-generate whole array
-		if (max == null || max.length < info.size()) {
-			max = new int[info.size()];
-
-			for (int i = 0; i < info.size(); i++) {
-				max[i] = Math.max(1, info.get(i)[1]);
-			}
-		}
-
 		full = improve(max);
 	}
 
@@ -98,54 +103,45 @@ public class PCoin extends Data {
 
 		if (talents.length < max.length) {
 			temp = new int[max.length];
-
 			System.arraycopy(talents, 0, temp, 0, talents.length);
-
-			if (max.length > talents.length)
-				System.arraycopy(max, talents.length, temp, talents.length, max.length - talents.length);
-		} else {
+			System.arraycopy(max, talents.length, temp, talents.length, max.length - talents.length);
+		} else
 			temp = talents.clone();
-		}
 
 		talents = temp;
-
 		for (int i = 0; i < info.size(); i++) {
 			int[] type = get_CORRES(info.get(i)[0]);
-			if (type[0] == -1) {
-				CommonStatic.ctx.printErr(ErrType.NEW, "new PCoin ability not yet handled by BCU: " + info.get(i)[0] + "\nText ID is " + info.get(i)[10]+"\nData is "+Arrays.toString(info.get(i)));
-				continue;
-			}
 
-			if (talents[i] == 0) {
-				if (type[0] == PC_TRAIT) {
-					Trait types = UserProfile.getBCData().traits.get(type[1]);
-					ans.getTraits().remove(types);
-				}
+			if (talents[i] == 0)
 				continue;
-			}
 
 			//Targettings that come with a talent, such as Hyper Mr's
 			if (this.trait.size() > 0)
 				if (!ans.getTraits().contains(this.trait.get(0)))
 					ans.getTraits().add(this.trait.get(0));
 
-			int maxlv = info.get(i)[1];
+			int offset = type.length >= 3 ? type[2] : 0;
+			int fieldTOT = -offset;
+			if (type[0] == PC_P)
+				fieldTOT += ans.getProc().getArr(type[1]).getDeclaredFields().length; //The Math.min is for testing
+			else if (type[0] == PC_BASE)
+				fieldTOT = 1;
 
-			int[] modifs = new int[4];
+			int maxlv = info.get(i)[1];
+			int[] modifs = new int[fieldTOT];
 
 			if (maxlv > 1) {
-				for (int j = 0; j < 4; j++) {
+				for (int j = 0; j < fieldTOT; j++) {
 					int v0 = info.get(i)[2 + j * 2];
 					int v1 = info.get(i)[3 + j * 2];
 					modifs[j] = (v1 - v0) * (talents[i] - 1) / (maxlv - 1) + v0;
 				}
 			} else
-				for (int j = 0; j < 4; j++)
+				for (int j = 0; j < fieldTOT; j++)
 					modifs[j] = info.get(i)[3 + j * 2];
 
 			if (type[0] == PC_P) {
 				ProcItem tar = ans.getProc().getArr(type[1]);
-				int offset = type.length >= 3 ? type[2] : 0;
 
 				if (type[1] == P_VOLC || type[1] == P_MINIVOLC) {
 					if (du instanceof DataUnit) {
@@ -162,7 +158,7 @@ public class PCoin extends Data {
 					if (type[1] == P_MINIVOLC && tar.get(4) == 0)
 						tar.set(4, 20);
 				} else
-					for (int j = 0; j < 4 - offset; j++)
+					for (int j = 0; j < fieldTOT; j++)
 						if (modifs[j] > 0)
 							tar.set(j + offset, tar.get(j + offset) + modifs[j]);
 				if (type[1] == P_BSTHUNT)
@@ -188,7 +184,7 @@ public class PCoin extends Data {
 								atks.set(2, Math.max(modifs[1], modifs[2]));
 								atks.set(3, modifs[3]);
 							} else
-								for (int j = 0; j < 4; j++)
+								for (int j = 0; j < fieldTOT; j++)
 									if (modifs[j] > 0)
 										atks.set(j, atks.get(j) + modifs[j]);
 						}
@@ -203,13 +199,13 @@ public class PCoin extends Data {
 								atkp.set(2, Math.max(modifs[1], modifs[2]));
 								atkp.set(3, modifs[3]);
 							} else
-								for (int j = 0; j < 4; j++)
+								for (int j = 0; j < fieldTOT; j++)
 									if (modifs[j] > 0)
 										atkp.set(j, atkp.get(j) + modifs[j]);
 						}
 				}
 			} else if (type[0] == PC_AB || type[0] == PC_BASE)
-				ans.improve(type, modifs[0]);
+				ans.improve(type, type[0] == PC_BASE ? modifs[0] : 0);
 			else if (type[0] == PC_IMU)
 				ans.getProc().getArr(type[1]).set(0, 100);
 			else if (type[0] == PC_TRAIT) {
@@ -244,21 +240,15 @@ public class PCoin extends Data {
 		return 1.0;
 	}
 
+	public int getReqLv(int i) {
+		int[] tal = info.get(i);
+		return tal[tal.length - 1];
+	}
+
 	@OnInjected
 	public void onInjected() {
-		info.replaceAll(data -> {
-			if(data.length == 14) {
-				return data;
-			} else {
-				int[] newData = new int[14];
-				System.arraycopy(data, 0, newData, 0, data.length);
-				return newData;
-			}
-		});
-
 		max = new int[info.size()];
-		for (int i = 0; i < info.size(); i++) {
+		for (int i = 0; i < info.size(); i++)
 			max[i] = Math.max(1, info.get(i)[1]);
-		}
 	}
 }

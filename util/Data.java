@@ -1471,13 +1471,26 @@ public class Data {
 			{ 0, P_IMULETHARGY}, // 21: Lethargy Immunity
 			{ 0, P_IMURAGE}, // 22: Rage Immunity
 			{ 0, P_IMUHYPNO}, // 23: Hypno Immunity
-			{ 2, PC2_RNG} // 24: Range
+			{ 2, PC2_RNG}, // 24: Range
+			{ 0, P_POIATK}, // 25: Toxic
+			{ 0, P_IMUPOI}, // 26: Imu. BCU Poison
+			{ 1, AB_SNIPERI}, // 27: IMU.Sniper
+			{ 1, AB_TIMEI}, // 28: IMU.TimeStop
+			{ 1, AB_THEMEI}, // 29: IMU.Theme
+			{ 1, AB_IMUSW}, // 30: IMU.BossWave
+			{ 0, P_LETHARGY}, // 31: Lethargy
+			{ 0, P_SNIPER}, // 32: Sniper KB
+			{ 0, P_BOSS}, // 33: Bosswave
+			{ 0, P_TIME}, // 34: Timestop
+			{ 0, P_IMUMOVING}, // 35: IMU.MoveATK
+			{ 0, P_WEAKAURA}, // 36: WeakenAura
+			{ 0, P_STRONGAURA} // 37: StrengthAura
 	};
 
 	public static int[] get_CORRES(int ind) {
-		if (ind < 0) {
+		if (ind < 0)
 			return PC_CUSTOM[Math.abs(ind)];
-		}
+
 		if (ind >= PC_CORRES.length)
 			return PC_CORRES[0];
 		return PC_CORRES[ind];

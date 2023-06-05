@@ -9,17 +9,20 @@ import common.io.json.JsonClass.JCGeneric;
 import common.io.json.JsonClass.RType;
 import common.io.json.JsonDecoder.OnInjected;
 import common.io.json.JsonField;
+import common.pack.Context;
 import common.pack.Identifier;
 import common.pack.PackData;
 import common.pack.UserProfile;
 import common.system.BasedCopable;
 import common.system.VImg;
+import common.util.Data;
 import common.util.anim.AnimU;
 import common.util.anim.AnimUD;
 import common.util.anim.MaModel;
 import common.util.lang.MultiLangCont;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 
 @JCGeneric(AbForm.AbFormJson.class)
 @JsonClass(read = RType.FILL)
@@ -130,15 +133,14 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 		CustomUnit form = (CustomUnit) du;
 		form.pack = this;
 
-		if((unit != null || uid != null)) {
+		if ((unit != null || uid != null)) {
 			Unit u = unit == null ? (Unit) uid.get() : unit;
 			PackData.UserPack pack = (PackData.UserPack) u.getCont();
-			if (pack.desc.FORK_VERSION < 6) {
-				inject(pack, jobj.getAsJsonObject("du"), form);
-				if (pack.desc.FORK_VERSION < 4) {
-					AtkDataModel[] atks = form.getAllAtkModels();
-
+			if (pack.desc.FORK_VERSION < 7) {
+				if (pack.desc.FORK_VERSION < 6) {
+					inject(pack, jobj.getAsJsonObject("du"), form);
 					if (pack.desc.FORK_VERSION < 1) {
+						AtkDataModel[] atks = form.getAllAtkModels();
 						if (UserProfile.isOlderPack(pack, "0.6.4.0")) {
 							if (UserProfile.isOlderPack(pack, "0.6.0.0"))
 								form.limit = CommonStatic.customFormMinPos(anim.loader.getMM());
@@ -160,8 +162,27 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 								atk.getProc().SUMMON.type.fix_buff = true;
 							}
 					} //Finish FORK_VERSION 1 checks
-				} //Finish FORK_VERSION 4 checks
-			} //Finish FORK_VERSION 6 checks
+				} //Finish FORK_VERSION 6 checks
+				if (form.getPCoin() != null) {
+					form.pcoin.info.replaceAll(data -> {
+						int[] corres = Data.get_CORRES(data[0]);
+						int[] trueArr;
+						switch (corres[0]) {
+							case Data.PC_P:
+								trueArr = Arrays.copyOf(data, 3 + (du.getProc().getArr(corres[1]).getDeclaredFields().length - (corres.length >= 3 ? corres[2] : 0)) * 2); //The Math.min is for testing
+								break;
+							case Data.PC_BASE:
+								trueArr = Arrays.copyOf(data, 4);
+								break;
+							default:
+								trueArr = Arrays.copyOf(data, 3);
+						}
+						if (data.length == 14)
+							trueArr[trueArr.length - 1] = Math.max(0, data[13]); //super talent lv
+						return trueArr;
+					});
+				}
+			} //Finish FORK_VERSION 7 checks
 		}
 		if (form.getPCoin() != null)
 			form.pcoin.update();

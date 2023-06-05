@@ -73,7 +73,7 @@ public class AssetLoader {
 	}
 
 	public static final String CORE_VER = "0.7.4.0";
-	public static final byte FORK_VER = 6;
+	public static final byte FORK_VER = 7;
 
 	private static final String[] ANIMFL = { ".imgcut", ".mamodel", ".maanim" };
 	private static final String[] NONPRE = { "\\./org/img/../.....\\.png", "\\./org/enemy/.../..._.\\.png",
