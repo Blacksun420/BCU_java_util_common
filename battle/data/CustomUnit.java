@@ -116,7 +116,6 @@ public class CustomUnit extends CustomEntity implements MaskUnit, Cloneable {
 			limit = mu.getLimit();
 
 			PCoin p = mu.getPCoin();
-
 			if (p != null) {
 				pcoin = new PCoin(this);
 
