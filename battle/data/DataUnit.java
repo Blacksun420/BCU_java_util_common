@@ -276,9 +276,8 @@ public class DataUnit extends DefaultData implements MaskUnit, Cloneable {
 		ans.traits = new SortedPackSet<>(this.traits);
 		ans.proc = proc.clone();
 		ans.datks = new DataAtk[ans.getAtkCount(0)];
-		for (int i = 0; i < ans.getAtkCount(0); i++) {
+		for (int i = 0; i < ans.getAtkCount(0); i++)
 			ans.datks[i] = new DataAtk(ans, i);
-		}
 		return ans;
 	}
 

@@ -100,7 +100,6 @@ public class PCoin extends Data {
 		MaskUnit ans = du.clone();
 
 		int[] temp;
-
 		if (talents.length < max.length) {
 			temp = new int[max.length];
 			System.arraycopy(talents, 0, temp, 0, talents.length);
