@@ -137,6 +137,7 @@ public class AttackSimple extends AttackAb {
 			double p0 = model.getPos() + dire * addp;
 
 			ContWaveDef wave = new ContWaveDef(new AttackWave(attacker, this, p0, wid, WT_MINI), p0, layer, false);
+			wave.atk.raw = (int) ((double) wave.atk.raw * getProc().MINIWAVE.multi / 100.0);
 
 			if(attacker != null)
 				attacker.summoned.add(wave);
@@ -162,6 +163,8 @@ public class AttackSimple extends AttackAb {
 			double end = p0 - (dire == 1 ? W_VOLC_INNER : W_VOLC_PIERCE);
 
 			ContVolcano volcano = new ContVolcano(new AttackVolcano(attacker, this, sta, end, WT_MIVC), p0, layer, volc.time);
+			volcano.v.raw = (int) ((double) volcano.v.raw * getProc().MINIVOLC.mult / 100.0);
+
 			if(attacker != null)
 				attacker.summoned.add(volcano);
 		}

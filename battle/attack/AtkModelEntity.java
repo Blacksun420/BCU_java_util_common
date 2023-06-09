@@ -125,13 +125,14 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		return getEffAtk(getMAtk(ind));
 	}
 	public int getEffAtk(MaskAtk matk) {
-		int dmg = (int) (Math.round(matk.getAtk() * d0) * d1);
+		return getEffMult((int) (Math.round(matk.getAtk() * d0) * d1));
+	}
+	public int getEffMult(int dmg) {
 		if (e.status.weak[0] > 0)
 			dmg = dmg * e.status.weak[1] / 100;
 		if (e.status.strengthen != 0)
 			dmg += dmg * e.status.strengthen / 100;
 		dmg *= e.auras.getAtkAura();
-
 		return dmg;
 	}
 

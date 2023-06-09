@@ -78,12 +78,11 @@ public class ContVolcano extends ContAb {
 					if (volcs > 0)
 						((Entity) e).anim.getEff(STPWAVE);
 					if (volcs == 100) {
-
 						activate = false;
 						v.active = false;
 						return;
 					} else
-						v.atk = v.atk * (100 - volcs) / 100;
+						v.raw = v.raw * (100 - volcs) / 100;
 				}
 			}
 		if (t >= aliveTime + VOLC_POST + VOLC_PRE) {

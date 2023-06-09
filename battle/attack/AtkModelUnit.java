@@ -17,13 +17,15 @@ public class AtkModelUnit extends AtkModelEntity {
 
 	@Override
 	public int getEffAtk(MaskAtk matk) {
-		int dmg = (int) (Math.round(matk.getAtk() * d1) * d0);
+		return getEffMult((int) (Math.round(matk.getAtk() * d1) * d0));
+	}
+	@Override
+	public int getEffMult(int dmg) {
 		if (e.status.weak[0] > 0)
 			dmg = dmg * e.status.weak[1] / 100;
 		if (e.status.strengthen != 0)
 			dmg += dmg * (e.status.strengthen + bas.getInc(C_STRONG)) / 100;
 		dmg *= e.auras.getAtkAura();
-
 		return dmg;
 	}
 

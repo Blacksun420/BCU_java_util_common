@@ -10,6 +10,7 @@ import java.util.Set;
 public class AttackWave extends AttackAb {
 
 	protected final Set<Entity> incl;
+	public int raw;
 
 	public AttackWave(Entity e, AttackSimple a, double p0, double wid, int wt) {
 		super(e, a, p0 - wid / 2, p0 + wid / 2, false);
@@ -17,18 +18,21 @@ public class AttackWave extends AttackAb {
 		waveType = wt;
 		if(wt != WT_MOVE && dire == 1 && model.b.canon.deco == DECO_BASE_WALL)
 			atk *= model.b.b.t().getDecorationMagnification(model.b.canon.deco);
+		raw = atk;
 	}
 
 	public AttackWave(Entity e, AttackWave a, double p0, double wid) {
 		super(e, a, p0 - wid / 2, p0 + wid / 2, false);
 		incl = a.incl;
 		waveType = a.waveType;
+		raw = atk;
 	}
 
 	public AttackWave(Entity e, AttackWave a, double pos, double start, double end) {
 		super(e, a, pos - start, pos + end, false);
 		incl = a.incl;
 		waveType = a.waveType;
+		raw = atk;
 	}
 
 	@Override
@@ -50,7 +54,7 @@ public class AttackWave extends AttackAb {
 		process();
 
 		if(attacker != null)
-			atk = ((AtkModelEntity)model).getEffAtk(matk);
+			atk = ((AtkModelEntity)model).getEffMult(raw);
 		for (AbEntity e : capt) {
 			if (e instanceof Entity) {
 				e.damaged(this);

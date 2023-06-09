@@ -51,7 +51,7 @@ public class ContWaveDef extends ContWaveAb {
 							deactivate();
 							return;
 						} else
-							atk.atk = atk.atk * (100 - waves) / 100;
+							atk.raw = atk.raw * (100 - waves) / 100;
 					}
 				}
 		}

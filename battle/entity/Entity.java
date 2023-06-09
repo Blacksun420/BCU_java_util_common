@@ -2479,10 +2479,6 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 * determine the amount of damage received from this attack
 	 */
 	protected int getDamage(AttackAb atk, int ans) {
-		if (atk instanceof AttackWave && atk.waveType == WT_MINI)
-			ans = (int) ((double) ans * atk.getProc().MINIWAVE.multi / 100.0);
-		else if (atk instanceof AttackVolcano && atk.waveType == WT_MIVC)
-			ans = (int) ((double) ans * atk.getProc().MINIVOLC.mult / 100.0);
 		if (isBase)
 			ans *= 1 + atk.getProc().ATKBASE.mult / 100.0;
 		return ans;

@@ -744,6 +744,8 @@ public class Editors {
 			t.prob = MathUtil.clip(t.prob, 0, 100);
 			if (t.prob == 0)
 				t.mult = 0;
+			else if (t.mult == 0)
+				t.mult = 100;
 		}));
 	}
 

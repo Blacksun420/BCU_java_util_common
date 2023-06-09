@@ -9,6 +9,7 @@ import java.util.List;
 public class AttackVolcano extends AttackAb {
 	public ContVolcano handler;
 	protected boolean attacked = false;
+	public int raw;
 	private byte volcTime = VOLC_ITV;
 
 	protected final List<Entity> vcapt = new ArrayList<>();
@@ -19,6 +20,7 @@ public class AttackVolcano extends AttackAb {
 		this.sta = sta;
 		this.end = end;
 		this.waveType = vt;
+		raw = atk;
 
 		if(dire == 1 && model.b.canon.deco == DECO_BASE_WATER)
 			atk *= model.b.b.t().getDecorationMagnification(model.b.canon.deco);
@@ -45,7 +47,7 @@ public class AttackVolcano extends AttackAb {
 			volcTime--;
 
 		if(attacker != null)
-			atk = ((AtkModelEntity)model).getEffAtk(matk);
+			atk = ((AtkModelEntity)model).getEffMult(raw);
 
 		for (AbEntity e : capt) {
 			e.damaged(this);

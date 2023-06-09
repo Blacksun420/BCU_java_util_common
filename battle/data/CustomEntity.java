@@ -260,7 +260,7 @@ public abstract class CustomEntity extends DataEntity {
 
 		base = de.touchBase();
 		rep = new AtkDataModel(this);
-		rep.proc = de.getRepAtk().getProc().clone();
+		rep.proc = de.getProc().clone();
 		int m = de.getAtkCount(0);
 		hits.set(0, new AtkDataModel[m]);
 		for (int i = 0; i < m; i++) {
