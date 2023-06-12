@@ -3,17 +3,20 @@ package common.util;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import common.CommonStatic;
+import common.io.assets.Admin.StaticPermitted;
+import common.io.json.FieldOrder;
+import common.io.json.FieldOrder.Order;
+import common.io.json.JsonClass;
+import common.io.json.JsonClass.NoTag;
+import common.io.json.JsonDecoder;
+import common.io.json.JsonEncoder;
 import common.pack.Context.ErrType;
 import common.pack.Context.RunExc;
 import common.pack.Context.SupExc;
-import common.util.pack.EffAnim;
-import common.util.pack.Background;
-import common.util.stage.Music;
-import common.io.assets.Admin.StaticPermitted;
-import common.io.json.*;
-import common.io.json.FieldOrder.Order;
-import common.io.json.JsonClass.NoTag;
 import common.pack.Identifier;
+import common.util.pack.Background;
+import common.util.pack.EffAnim;
+import common.util.stage.Music;
 
 import java.lang.annotation.*;
 import java.lang.reflect.Field;
@@ -544,7 +547,19 @@ public class Data {
 			}
 
 			public Field[] getDeclaredFields() {
-				return FieldOrder.getFields(this.getClass());
+				return FieldOrder.getDeclaredFields(this.getClass());
+			}
+
+			public void set(int i, int v) {
+				try {
+					Field fs = getDeclaredFields()[i];
+					if (fs.getType() == int.class)
+						fs.set(this, v);
+					else if (fs.getType() == boolean.class)
+						fs.set(this, v != 0);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 
 			public IntType load(int val) throws Exception {
@@ -665,22 +680,6 @@ public class Data {
 				return FieldOrder.getFields(this.getClass());
 			}
 
-			@Deprecated
-			public ProcItem load(int[] data) throws Exception {
-				System.out.println("test");
-				Field[] fs = getDeclaredFields();
-				for (int i = 0; i < Math.min(data.length, fs.length); i++)
-					if (fs[i].getType() == int.class)
-						fs[i].set(this, data[i]);
-					else if (IntType.class.isAssignableFrom(fs[i].getType()))
-						fs[i].set(this, ((IntType) fs[i].getType().newInstance()).load(data[i]));
-					else if (fs[i].getType() == Identifier.class)
-						fs[i].set(this, Identifier.parseIntRaw(data[i], this.getClass()));
-					else
-						throw new Exception("unknown field " + fs[i].getType() + " " + fs[i].getName());
-				return this;
-			}
-
 			public boolean perform(CopRand r) {
 				try {
 					Field f = get("prob");
@@ -704,14 +703,27 @@ public class Data {
 			}
 
 			/**
-			 * should not modify IntType and Identifier
+			 * should not modify Identifier, used for talents only
 			 */
 			@Deprecated
 			public void set(int i, int v) {
 				try {
-					Field f = getDeclaredFields()[i];
+					Field[] fs = getDeclaredFields();
+					int loc = 0, lastloc = 0;
+					for (int j = 0; j < fs.length && loc < i; j++)
+						if (IntType.class.isAssignableFrom(fs[j].getType())) {
+							int len = ((IntType) fs[j].get(this)).getDeclaredFields().length - 1;
+							if (j + loc + len >= i) {
+								lastloc = i - j - loc;
+								break;
+							}
+							loc += len;
+						}
+					Field f = fs[i - loc];
 					if (f.getType() == int.class)
 						f.set(this, v);
+					else if (IntType.class.isAssignableFrom(f.getType()))
+						((IntType)f.get(this)).set(lastloc, v);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -752,25 +764,6 @@ public class Data {
 
 		public static String getName(int i) {
 			return getDeclaredFields()[i].getName();
-		}
-
-		public static Proc load(int[][] data) {
-			Proc ans = new Proc();
-			try {
-				Field[] fs = getDeclaredFields();
-				for (int i = 0; i < fs.length; i++) {
-					fs[i].setAccessible(true);
-
-					if(i < data.length) {
-						fs[i].set(ans, ((ProcItem) fs[i].getType().getDeclaredConstructor().newInstance()).load(data[i]));
-					} else {
-						fs[i].set(ans, ((ProcItem) fs[i].getType().getDeclaredConstructor().newInstance()).clear());
-					}
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			return ans;
 		}
 
 		@Order(0)

@@ -1599,10 +1599,10 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			else
 				dmg = dmg * (100 - getProc().IMUVOLC.mult) / 100;
 
-			AttackVolcano volc = (AttackVolcano) atk;
+			AttackVolcano volc = (AttackVolcano)atk;
 			Proc.PM volcounter = getProc().DEMONVOLC;
 			if (volc.handler != null && !volc.handler.reflected && !volc.handler.surgeSummoned.contains(this) && (volcounter.prob == 100 || (volcounter.prob > 0 && basis.r.nextDouble() * 100 < volcounter.prob))) {
-				new DemonCont(this, atk);
+				new DemonCont(this, volc);
 				volc.handler.surgeSummoned.add(this);
 			}
 		}

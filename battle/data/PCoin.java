@@ -149,23 +149,20 @@ public class PCoin extends Data {
 						tar.set(2, (modifs[2] + modifs[3]) / 4);
 						tar.set(3, modifs[1] * 20);
 
-						if (type[1] == P_MINIVOLC) {
+						if (type[1] == P_MINIVOLC && tar.get(4) == 0)
 							tar.set(4, 20);
-						}
 					} else {
 						tar.set(0, modifs[0]);
 						tar.set(1, Math.min(modifs[1], modifs[2]));
 						tar.set(2, Math.max(modifs[1], modifs[2]));
 						tar.set(3, modifs[3]);
 					}
-					if (type[1] == P_MINIVOLC && tar.get(4) == 0)
-						tar.set(4, 20);
 				} else
 					for (int j = 0; j < fieldTOT; j++)
 						if (modifs[j] > 0)
 							tar.set(j + offset, tar.get(j + offset) + modifs[j]);
 				if (type[1] == P_BSTHUNT)
-					ans.getProc().BSTHUNT.type.active = modifs[0] > 0;
+					ans.getProc().BSTHUNT.type.active |= modifs[0] > 0;
 
 				if (du instanceof DataUnit) {
 					if (type[1] == P_STRONG && modifs[0] != 0)
@@ -181,7 +178,7 @@ public class PCoin extends Data {
 						for (AtkDataModel atk : atkss) {
 							ProcItem atks = atk.proc.getArr(type[1]);
 
-							if (type[1] == P_VOLC) {
+							if (type[1] == P_VOLC || type[1] == P_MINIVOLC) {
 								atks.set(0, modifs[0]);
 								atks.set(1, Math.min(modifs[1], modifs[2]));
 								atks.set(2, Math.max(modifs[1], modifs[2]));
@@ -196,7 +193,7 @@ public class PCoin extends Data {
 						for (AtkDataModel atk : atks) {
 							ProcItem atkp = atk.proc.getArr(type[1]);
 
-							if (type[1] == P_VOLC) {
+							if (type[1] == P_VOLC || type[1] == P_MINIVOLC) {
 								atkp.set(0, modifs[0]);
 								atkp.set(1, Math.min(modifs[1], modifs[2]));
 								atkp.set(2, Math.max(modifs[1], modifs[2]));

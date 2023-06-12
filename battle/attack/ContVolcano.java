@@ -15,6 +15,7 @@ import java.util.HashSet;
 public class ContVolcano extends ContAb {
 	public final HashSet<AbEntity> surgeSummoned = new HashSet<>();
 	public final boolean reflected;
+	public boolean ds = false;//Mark true if death surge
 
 	protected final EAnimD<VolcEff> anim;
 	protected final AttackVolcano v;
@@ -27,6 +28,7 @@ public class ContVolcano extends ContAb {
 
 	protected ContVolcano(AttackVolcano v, double p, int lay, int alive) {
 		this(v, p, lay, alive, false);
+		ds = true;
 	}
 
 	protected ContVolcano(AttackVolcano v, double p, int lay, int alive, boolean reflect) {

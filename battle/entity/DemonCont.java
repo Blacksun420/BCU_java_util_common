@@ -1,7 +1,7 @@
 package common.battle.entity;
 
 import common.CommonStatic;
-import common.battle.attack.AttackAb;
+import common.battle.attack.AttackVolcano;
 import common.util.pack.EffAnim;
 
 public class DemonCont extends EAnimCont {
@@ -9,10 +9,10 @@ public class DemonCont extends EAnimCont {
     private final Entity ent;
     private final Proc.ProcItem volc;
 
-    public DemonCont(Entity e, AttackAb atk) {
+    public DemonCont(Entity e, AttackVolcano atk) {
         super(e.pos, e.layer, (e.dire == -1 ? effas().A_COUNTERSURGE : effas().A_E_COUNTERSURGE).getEAnim(EffAnim.DefEff.DEF));
         if ((atk.waveType & WT_VOLC) > 0)
-            volc = atk.getProc().VOLC;
+            volc = atk.handler.ds ? atk.attacker.getProc().DEATHSURGE : atk.getProc().VOLC;
         else
             volc = atk.getProc().MINIVOLC;
         ent = e;

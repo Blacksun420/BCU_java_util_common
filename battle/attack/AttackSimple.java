@@ -150,7 +150,7 @@ public class AttackSimple extends AttackAb {
 			double sta = p0 + (dire == 1 ? W_VOLC_PIERCE : W_VOLC_INNER);
 			double end = p0 - (dire == 1 ? W_VOLC_INNER : W_VOLC_PIERCE);
 
-			ContVolcano volcano = new ContVolcano(new AttackVolcano(attacker, this, sta, end, WT_VOLC), p0, layer, volc.time);
+			ContVolcano volcano = new ContVolcano(new AttackVolcano(attacker, this, sta, end, WT_VOLC), p0, layer, volc.time, false);
 			if(attacker != null)
 				attacker.summoned.add(volcano);
 		}
@@ -162,7 +162,7 @@ public class AttackSimple extends AttackAb {
 			double sta = p0 + (dire == 1 ? W_VOLC_PIERCE : W_VOLC_INNER);
 			double end = p0 - (dire == 1 ? W_VOLC_INNER : W_VOLC_PIERCE);
 
-			ContVolcano volcano = new ContVolcano(new AttackVolcano(attacker, this, sta, end, WT_MIVC), p0, layer, volc.time);
+			ContVolcano volcano = new ContVolcano(new AttackVolcano(attacker, this, sta, end, WT_MIVC), p0, layer, volc.time, false);
 			volcano.v.raw = (int) ((double) volcano.v.raw * getProc().MINIVOLC.mult / 100.0);
 
 			if(attacker != null)
