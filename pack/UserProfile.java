@@ -330,6 +330,7 @@ public class UserProfile {
 
 	public final DefPack def = new DefPack();
 	public final Map<String, UserPack> packmap = new HashMap<>();
+	public final Map<String, SaveData> packSave = new HashMap<>();
 
 	public final Set<UserPack> packlist = new HashSet<>();
 
