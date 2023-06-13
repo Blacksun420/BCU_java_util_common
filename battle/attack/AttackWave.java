@@ -25,14 +25,14 @@ public class AttackWave extends AttackAb {
 		super(e, a, p0 - wid / 2, p0 + wid / 2, false);
 		incl = a.incl;
 		waveType = a.waveType;
-		raw = atk;
+		raw = a.raw;
 	}
 
 	public AttackWave(Entity e, AttackWave a, double pos, double start, double end) {
 		super(e, a, pos - start, pos + end, false);
 		incl = a.incl;
 		waveType = a.waveType;
-		raw = atk;
+		raw = a.raw;
 	}
 
 	@Override

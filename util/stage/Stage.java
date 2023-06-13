@@ -25,6 +25,7 @@ import common.util.stage.info.CustomStageInfo;
 import common.util.stage.info.DefStageInfo;
 import common.util.stage.info.StageInfo;
 import common.util.unit.AbEnemy;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -32,7 +33,7 @@ import java.util.*;
 @JsonClass.JCGeneric(Identifier.class)
 @JsonClass(noTag = NoTag.LOAD)
 public class Stage extends Data
-		implements BasedCopable<Stage, StageMap>, BattleStatic, IndexContainer.Indexable<StageMap, Stage> {
+		implements Comparable<Stage>, BasedCopable<Stage, StageMap>, BattleStatic, IndexContainer.Indexable<StageMap, Stage> {
 
 	@StaticPermitted
 	public static final MapColc CLIPMC = new MapColc.ClipMapColc();
@@ -337,6 +338,11 @@ public class Stage extends Data
 			if (st != this && st.names.toString().equals(str))
 				return false;
 		return true;
+	}
+
+	@Override
+	public int compareTo(@NotNull Stage o) {
+		return id.compareTo(o.id);
 	}
 
 	@JsonDecoder.OnInjected

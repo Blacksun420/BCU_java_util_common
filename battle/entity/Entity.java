@@ -2303,7 +2303,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 * @param targets The list of traits the unit targets
 	 * @return true if the unit is anti-traited
 	 */
-	protected static boolean targetTraited(SortedPackSet<Trait> targets) {
+	public static boolean targetTraited(SortedPackSet<Trait> targets) {
 		SortedPackSet<Trait> temp = new SortedPackSet<>(BCTraits.subList(TRAIT_RED,TRAIT_WHITE));
 		temp.remove(TRAIT_METAL);
 		return targets.containsAll(temp);

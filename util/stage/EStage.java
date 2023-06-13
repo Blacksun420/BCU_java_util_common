@@ -165,7 +165,7 @@ public class EStage extends BattleObj {
 	public boolean hasBoss() {
 		for (int i = 0; i < rem.length; i++) {
 			SCDef.Line data = s.data.getSimple(i);
-			if (data.boss == 1 && num[i] > 0)
+			if (data.boss >= 1 && num[i] > 0)
 				return true;
 		}
 		return false;

@@ -1442,15 +1442,15 @@ public class Data {
 	public static final int[][] PC_CUSTOM = new int[][] { //Use negative ints to handle (it would be so awesome, it would be so cool)
 			{ -1, 0 }, // 0:
 			{ 0, P_BURROW}, // 1: Burrow
-			{ 0, P_REVIVE, 0, 2}, //2: Revive
+			{ 0, P_REVIVE}, //2: Revive
 			{ 0, P_BARRIER}, //3: Barrier
 			{ 0, P_DEMONSHIELD}, //4: Aku Shield
 			{ 0, P_DEATHSURGE}, //5: Death Surge
 			{ 0, P_DEMONVOLC}, //6: Surge Counter
 			{ 0, P_SEAL}, // 7: Seal
 			{ 0, P_COUNTER}, // 8: Counter
-			{ 0, P_DMGCUT, 0, 3}, // 9: Super Armor
-			{ 0, P_DMGCAP, 0, 3}, // 10: Mystic Shield
+			{ 0, P_DMGCUT}, // 9: Super Armor
+			{ 0, P_DMGCAP}, // 10: Mystic Shield
 			{ 0, P_REMOTESHIELD}, // 11: Remote Shield
 			{ 0, P_ARMOR}, // 12: Armor break
 			{ 0, P_SPEED}, // 13: Haste
