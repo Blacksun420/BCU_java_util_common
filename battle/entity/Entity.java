@@ -1811,7 +1811,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					reflectAtk *= auras.getDefAura();
 
 					AttackSimple as = new AttackSimple(this, aam, reflectAtk, traits, getAbi(), reflectProc, ds[0], ds[1],
-							e.data.getCounter() != null ? e.data.getCounter() : e.data.getAtkModel(0, 0), e.layer, false);
+							data.getCounter() != null ? data.getCounter() : data.getAtkModel(0, 0), e.layer, false);
 					if (counter.type.areaAttack)
 						as.capture();
 					if (as.counterEntity(counter.type.outRange || (e.pos - ds[0]) * (e.pos - ds[1]) <= 0 ? e : null))

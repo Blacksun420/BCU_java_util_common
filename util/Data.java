@@ -1339,8 +1339,8 @@ public class Data {
 			false, //Hypno
 			true,  //Imu. Rage
 			true,  // Imu Hypno
-			true,  //Mini surge
-			false  //Counter Volc
+			false, //Mini surge
+			true   //Counter Volc
 	};
 
 	/**
