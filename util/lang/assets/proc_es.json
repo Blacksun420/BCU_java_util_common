@@ -4,7 +4,7 @@
         "full_name": "Repulsión",
         "tooltip": null,
         "format": [
-            "Probabilidad del (prob)% de repeler al objetivo",
+            "(prob)% de probabilidad de repeler al objetivo",
             "[(dis>0&dis!=165){ a una distancia de (dis)}(dis<0){ atrayéndolo una distancia de (_abs(dis))}]",
             "[(time>0&time!=11){ por (_dispTime(time))}]"
         ],
@@ -27,7 +27,7 @@
         "abbr_name": "para",
         "full_name": "Parálisis",
         "tooltip": null,
-        "format": "Probabilidad del (prob)% de paralizar por (_dispTimeF(time))",
+        "format": "(prob)% de probabilidad de paralizar por (_dispTimeF(time))",
         "class": {
             "prob": {
                 "name": "probabilidad",
@@ -43,7 +43,7 @@
         "abbr_name": "ralent.",
         "full_name": "Ralentización",
         "tooltip": null,
-        "format": "Probabilidad del (prob)% de ralentizar por (_dispTimeF(time))",
+        "format": "(prob)% de probabilidad de ralentizar por (_dispTimeF(time))",
         "class": {
             "prob": {
                 "name": "probabilidad",
@@ -57,12 +57,12 @@
     },
     "CRIT": {
         "abbr_name": "crít",
-        "full_name": "Daño crítico",
+        "full_name": "Daño Crítico",
         "tooltip": "Inflige más daño a enemigos. Véase el campo mult para realizar un ataque similar a la chorrimanguera.",
         "format": [
-            "Probabilidad del (prob)% de infligir un golpe crítico",
+            "(prob)% de probabilidad de infligir un golpe crítico",
             "[(mult>0&mult!=200){ que inflige un daño de (mult)% al objetivo}",
-            "(mult<0){ que inflige un (_abs(mult))% del HP de los enemigos metálicos}]"
+            "(mult<0){ que inflige (_abs(mult))% de vitalidad de daño los enemigos metálicos}]"
         ],
         "class": {
             "prob": {
@@ -79,7 +79,7 @@
         "abbr_name": "oleada",
         "full_name": "Oleada",
         "tooltip": null,
-        "format": "Probabilidad del (prob)% de crear una oleada de Nv.(lv)[(type.hitless){, even if this attack misses}]",
+        "format": "(prob)% de probabilidad de crear una oleada de Nv.(lv)[(type.hitless){, incluso si este ataque falla}]",
         "class": {
             "prob": {
                 "name": "probabilidad",
@@ -90,8 +90,8 @@
                 "tooltip": null
             },
             "type.hitless": {
-                "name": "Miss Trigger",
-                "tooltip": "Wave will spawn even if this attack misses"
+                "name": "Antifalla",
+                "tooltip": "La oleada sera creada incluso si el ataque falla"
             }
         }
     },
@@ -99,7 +99,7 @@
         "abbr_name": "desgaste",
         "full_name": "Desgaste",
         "tooltip": null,
-        "format": "Probabilidad del (prob)% de [(mult>100){fortalecer}(mult<=100){desgastar}] el ataque del objetivo al [(mult>100){(mult)}(mult<=100){(mult)}]% durante (_dispTimeF(time))",
+        "format": "(prob)% de probabilidad de [(mult>100){fortalecer}(mult<=100){desgastar}] el ataque del objetivo al [(mult>100){(mult)}(mult<=100){(mult)}]% durante (_dispTimeF(time))",
         "class": {
             "prob": {
                 "name": "probabilidad",
@@ -116,10 +116,10 @@
         }
     },
     "BREAK": {
-        "abbr_name": "romper",
+        "abbr_name": "Rompe B",
         "full_name": "Rompebarreras",
         "tooltip": null,
-        "format": "Probabilidad del (prob)% de romper barreras",
+        "format": "(prob)% de probabilidad de romper barreras",
         "class": {
             "prob": {
                 "name": "probabilidad",
@@ -131,7 +131,7 @@
         "abbr_name": "abducción",
         "full_name": "Abducción",
         "tooltip": null,
-        "format": "Probabilidad del (prob)% de abducir al objetivo hacia [(dis<0){delante}(dis>=0){atrás}] por (_dispTime(time)) a una distancia de (_abs(dis))",
+        "format": "(prob)% de probabilidad de abducir al objetivo hacia [(dis<0){delante}(dis>=0){atrás}] por (_dispTime(time)) a una distancia de (_abs(dis))",
         "class": {
             "prob": {
                 "name": "probabilidad",
@@ -151,7 +151,7 @@
         "abbr_name": "maldición",
         "full_name": "Maldición",
         "tooltip": "Elimina habilidades relacionadas con los rasgos",
-        "format": "Probabilidad del (prob)% de maldecir por (_dispTime(time))",
+        "format": "(prob)% de probabilidad de maldecir por (_dispTime(time))",
         "class": {
             "prob": {
                 "name": "probabilidad",
@@ -167,7 +167,7 @@
         "abbr_name": "inc. atq",
         "full_name": "Arrebato",
         "tooltip": null,
-        "format": "El ataque es aumentado un (mult)% después de que la salud se reduzca por debajo del (health)%",
+        "format": "El ataque aumenta un (mult)% después de perder (health)% vitalidad",
         "class": {
             "health": {
                 "name": "salud",
@@ -183,7 +183,7 @@
         "abbr_name": "sobrevivir",
         "full_name": "Supervivencia",
         "tooltip": null,
-        "format": "Probabilidad del (prob)% de sobrevivir un golpe letal",
+        "format": "(prob)% de probabilidad de sobrevivir un golpe letal",
         "class": {
             "prob": {
                 "name": "probabilidad",
@@ -195,10 +195,10 @@
         "abbr_name": "escarbar",
         "full_name": "Escarbar",
         "tooltip": null,
-        "format": "Escarba [(count<0){una cantidad infinita de veces}(count==0){(count) time}(count==1){una vez}(count==2){dos veces}(count>2){(count) veces}] hasta una distancia de (dis)",
+        "format": "Escarba [(count<0){una cantidad infinita de veces}(count==1){una vez}(count>1){(count) veces}] hasta una distancia de (dis)",
         "class": {
             "count": {
-                "name": "suma de escarb.",
+                "name": "total de escarb.",
                 "tooltip": "Ingresa -1 para escarbar infinitas veces"
             },
             "dis": {
@@ -212,7 +212,7 @@
         "full_name": "Revivir",
         "tooltip": "El Revivir básico sólo incluye los tres primeros parámetros. El resto se emplea para Revivir a Distancia",
         "format": [
-            "Revive [(count<0){infinitamente}(count==0){(count) time}(count==1){una vez}(count==2){dos veces}(count>2){(count) veces}]",
+            "Revive [(count<0){infinitamente}(count==1){una vez}(count>1){(count) veces}]",
             " tras (_dispTime(time)) con un (health)% de la salud máxima.",
             "[(type.imu_zkill){ Inmune ante la abilidad Matazombis.}]",
             "[(type.revive_others){ Esta habilidad se aplicará a otros ",
@@ -331,11 +331,18 @@
         "abbr_name": "imu. Oleada",
         "full_name": "Inmune/Resistente ante Oleadas",
         "tooltip": null,
-        "format": "[(mult==100){Inmune}(mult<100&mult>0){Resistente}(mult<0){Débil}] ante Oleadas[(mult<100&mult>0){ (_left)Reduce el daño recibido un (mult)%(_right)}(mult<0){ (_left)Aumenta el daño recibido un (_abs(mult))%(_right)}]",
+        "format": ["[(mult==100&block!=100){Inmune}(mult<100&mult>0){Resistente}(mult<0){Débil}] ante Oleadas",
+            "[(mult<100&mult>0){ (_left)Reduce el daño recibido un (mult)%(_right)}(mult<0){ (_left)Aumenta el daño recibido un (_abs(mult))%(_right)}]",
+            "[(block!=0&block<100){ & }]}][(block!=0){[(block==100){Bloquea}(block<100&block>0){Absorbedor de}(block<0){Aumentador de}] Oleadas",
+            "[(block<100&block>0){ (_left)Reduce el daño por (block)%(_right)}(block<0){ (_left)Aumenta el daño por (_abs(block))%(_right)}]}]"],
         "class": {
             "mult": {
                 "name": "porcentaje",
                 "tooltip": null
+            },
+            "block": {
+                "name": "Bloqueador",
+                "tooltip": "Establece de 1 a 99 para reducir la duración entre todas las unidades. Fija a 100 para bloquear oleadas"
             }
         }
     },
@@ -443,7 +450,7 @@
         "abbr_name": "francotir.",
         "full_name": "Repulsión estilo Gatotirador",
         "tooltip": "Esta habilidad ignora la Inmunidad ante Repulsión.",
-        "format": "Probabilidad del (prob)% de repeler al objetivo estilo gatotirador",
+        "format": "(prob)% de probabilidad de repeler al objetivo estilo gatotirador",
         "class": {
             "prob": {
                 "name": "probabilidad",
@@ -455,7 +462,7 @@
         "abbr_name": "tiempo",
         "full_name": "Detener Tiempo",
         "tooltip": "A diferencia de la Parálisis, esta habilidad paraliza el combate, incluyendo oleadas, la obtención de dinero, los enfriamientos de gatos y enemigos, etc.",
-        "format": "Probabilidad del (prob)% de detener el tiempo por (_dispTime(time))",
+        "format": "(prob)% de probabilidad de detener el tiempo por (_dispTime(time)), con una consistencia de (intensity)",
         "class": {
             "prob": {
                 "name": "probabilidad",
@@ -466,8 +473,8 @@
                 "tooltip": null
             },
             "intensity": {
-                "name": "intensity",
-                "tooltip": "The power of the timestop. If the intensity is lower than the duration, there will be certain intervals where units will be able to move. Set to negative to speed up entities with time stop immunity"
+                "name": "consistencia",
+                "tooltip": "Si el valor es menor que la duración, habran intervalos de tiempo en el que toda unidad podra moverse. Si el valor es negativo, toda entidad immune a la detencion de tiempo ira mas rapido"
             }
         }
     },
@@ -475,7 +482,7 @@
         "abbr_name": "sellar",
         "full_name": "Sellado",
         "tooltip": "El Sellado desactivará todas las habilidades exceptuando Escarbar, Metal, Autodestrucción, Sólo Ataca y Revivir básico",
-        "format": "Probabilidad del (prob)% de sellar al objetivo por (_dispTime(time))",
+        "format": "(prob)% de probabilidad de sellar al objetivo por (_dispTime(time))",
         "class": {
             "prob": {
                 "name": "probabilidad",
@@ -492,7 +499,7 @@
         "full_name": "Invocación",
         "tooltip": null,
         "format": [
-            "Probabilidad del (prob)% de invocar (amount) (_summonMagnification(type.fix_buff,mult,id)) (_entity(id)) tras (_dispTime(time)), ",
+            "(prob)% de probabilidad de invocar (amount) (_summonMagnification(type.fix_buff,mult,id)) (_entity(id)) tras (_dispTime(time)), ",
             "invocadas a un alcance de (dis) alejado de",
             "[(type.on_kill|type.on_hit){ cada objetivo}",
             "(!type.on_hit&!type.on_kill){l invocador}] ",
@@ -504,7 +511,8 @@
             "Las entidades invocadas estarán en [(min_layer==max_layer){la misma capa que esta entidad}",
             "(min_layer!=max_layer){una capa aleatoria}]. ",
             "La invocación mostrará [(type.anim_type==0){cero animaciones}(type.anim_type==1){la animación de abducción}(type.anim_type>=2){la animación de escarbar}]",
-            "[(type.anim_type==3){ y desactivará escarbar para las entidades invocadas}]."
+            "[(type.anim_type==3){ y desactivará escarbar para las entidades invocadas}].",
+            "[(type.bond_hp){El invocante conecta con las entidades invocadas.}]"
         ],
         "class": {
             "prob": {
@@ -563,8 +571,8 @@
                 "tooltip": "Establece que la unidad invocada tenga la misma salud que esta entidad."
             },
             "type.bond_hp": {
-                "name": "Bond health",
-                "tooltip": "When activated, the summoner will receive all damage and procs the summoned entity receives"
+                "name": "Coneccion",
+                "tooltip": "Al activar, el invocante tambien recibira todo ataque que la entidad invocada reciba"
             },
             "type.on_hit": {
                 "name": "tras golpear",
@@ -583,12 +591,12 @@
                 ]
             },
             "type.pass_proc": {
-                "name": "Pass procs",
-                "tooltip": "Passes all inflicted status to summoned units. 0 = none, 1 = from summoner, 2 = from attacked entities, 3 = from both"
+                "name": "Pasaefectos",
+                "tooltip": "Pasa efectos inflingidos a entidades invocadas. 0 = no, 1 = del invocador, 2 = de entidades atacadas, 3 = de ambos"
             },
             "amount": {
                 "name": "Amount",
-                "tooltip": "The amount to be summoned."
+                "tooltip": "La cantidad a invocar."
             },
             "form": {
                 "name": "Forma",
@@ -601,7 +609,7 @@
         "full_name": "Ataque Móvil",
         "tooltip": null,
         "format": [
-            "Probabilidad del (prob)% de crear una caja de golpe móvil, ",
+            "(prob)% de probabilidad de crear una caja de golpe móvil, ",
             "originada a una distancia de (dis) de esta entidad ",
             "con una anchura de (width), ",
             " velocidad de (speed), e intervalo de (_dispTime(itv)) por (_dispTime(time))"
@@ -650,7 +658,7 @@
         "full_name": "Cambio de Fondo",
         "tooltip": null,
         "format": [
-            "Probabilidad del (prob)% de cambiar el fondo a (_bg(id)) por (_dispTime(time))",
+            "(prob)% de probabilidad de cambiar el fondo a (_bg(id)) por (_dispTime(time))",
             "[(type.kill){ y eliminar a todas las entidades del campo}]"
         ],
         "class": {
@@ -681,7 +689,7 @@
         "full_name": "Veneno",
         "tooltip": null,
         "format": [
-            "Probabilidad del (prob)% de [(type.damage_type==0){quemar}(type.damage_type==1){envenenar}",
+            "(prob)% de probabilidad de [(type.damage_type==0){quemar}(type.damage_type==1){envenenar}",
             "(type.damage_type==2){hacer sangrar}(type.damage_type==3){corroer}] al objetivo por (_dispTime(time)), ",
             "realizando [(type.damage_type==0){un daño de (damage) cada }",
             "(type.damage_type>0){un daño igual al (damage)% de la salud ",
@@ -752,7 +760,7 @@
         "abbr_name": "jefe",
         "full_name": "Onda de Jefe",
         "tooltip": null,
-        "format": "Probabilidad del (prob)% de crear una onda de jefe",
+        "format": "(prob)% de probabilidad de crear una onda de jefe",
         "class": {
             "prob": {
                 "name": "probabilidad",
@@ -783,7 +791,7 @@
         "abbr_name": "Golpetazo",
         "full_name": "Golpetazo",
         "tooltip": null,
-        "format": "Probabilidad del (prob)% de asestar un golpetazo. (_left)Inflige un (mult)% más de daño(_right)",
+        "format": "(prob)% de probabilidad de asestar un golpetazo. (_left)Inflige un (mult)% más de daño(_right)",
         "class": {
             "prob": {
                 "name": "probabilidad",
@@ -831,7 +839,7 @@
         "abbr_name": "réplica",
         "full_name": "Réplica",
         "tooltip": null,
-        "format": "Probabilidad del (prob)% de crear una réplica por (_dispTime(time)) (_left)Creada desde una distancia de (dis_0) a (dis_1)(_right)[(type.hitless){, even if this attack misses}]",
+        "format": "(prob)% de probabilidad de crear una réplica por (_dispTime(time)) (_left)Creada desde una distancia de (dis_0) a (dis_1)(_right)[(type.hitless){, incluso si este ataque falla}]",
         "class": {
             "prob": {
                 "name": "probabilidad",
@@ -850,8 +858,8 @@
                 "tooltip": null
             },
             "type.hitless": {
-                "name": "Miss Trigger",
-                "tooltip": "Wave will spawn even if this attack misses"
+                "name": "Antifalla",
+                "tooltip": "La replica sera creada incluso si el ataque falla"
             }
         }
     },
@@ -878,11 +886,18 @@
         "abbr_name": "imu. Réplica",
         "full_name": "Inmune/Resistente ante Réplicas",
         "tooltip": null,
-        "format": "[(mult==100){Inmune}(mult<100&mult>0){Resistente}(mult<0){Débil}] ante Réplicas[(mult<100&mult>0){ (_left)Reduce el daño recibido un (mult)%(_right)}(mult<0){ (_left)Aumenta el daño recibido un (_abs(mult))%(_right)}]",
+        "format": ["[(mult==100&block!=100){Inmune}(mult<100&mult>0){Resistente}(mult<0){Débil}] ante Réplicas",
+            "[(mult<100&mult>0){ (_left)Reduce el daño recibido un (mult)%(_right)}(mult<0){ (_left)Aumenta el daño recibido un (_abs(mult))%(_right)}]",
+            "[(block!=0&block<100){ & }]}][(block!=0){[(block==100){Bloqueador}(block<100&block>0){Absorbedor}(block<0){Aumentador}] de Réplicas",
+            "[(block<100&block>0){ (_left)Reduce el daño recibido un (block)%(_right)}(block<0){ (_left)Aumenta el daño recibido un (_abs(block))%(_right)}]}]"],
         "class": {
             "mult": {
                 "name": "porcentaje",
                 "tooltip": null
+            },
+            "block": {
+                "name": "Bloqueador",
+                "tooltip": "Establece de 1 a 99 para reducir el daño. Fija a 100 para bloquear Réplica"
             }
         }
     },
@@ -890,7 +905,7 @@
         "abbr_name": "rompearmadura",
         "full_name": "RompeArmadura",
         "tooltip": null,
-        "format": "Probabilidad del (prob)% de [(mult<0){mejorar}(mult>=0){romper}] la armadura del objetivo por (_dispTime(time)) (_left)El objetivo recibirá (_abs(mult))% [(mult<0){menos}(mult>=0){más}] daño(_right)",
+        "format": "(prob)% de probabilidad de [(mult<0){mejorar}(mult>=0){romper}] la armadura del objetivo por (_dispTime(time)) (_left)El objetivo recibirá (_abs(mult))% [(mult<0){menos}(mult>=0){más}] daño(_right)",
         "class": {
             "prob": {
                 "name": "probabilidad",
@@ -911,7 +926,7 @@
         "full_name": "Prisa",
         "tooltip": null,
         "format": [
-            "Probabilidad del (prob)% de ",
+            "(prob)% de probabilidad de ",
             "[(type==2){fijar}(type!=2){[(speed>=0){aumentar}(speed<0){disminuir}]}]",
             " la velocidad del objetivo ",
             "[(type!=2){por}(type==2){a}] [(type==2){(speed)}(type!=2){(_abs(speed))}][(type==1){%}]",
@@ -988,7 +1003,7 @@
         "abbr_name": "minioleada",
         "full_name": "Minioleada",
         "tooltip": "Crea una oleada pequeña que se mueve al doble de velocidad de la normal con un parámetro dinámico de multiplicación de daño",
-        "format": "Probabilidad del (prob)% de crear una minioleada de Nv.(lv) [(multi!=20){(_left)Le inflige al objetivo un (multi)% del ataque del activador(_right)}][(type.hitless){, even if this attack misses}]",
+        "format": "(prob)% de probabilidad de crear una minioleada de Nv.(lv) [(multi!=20){(_left)Le inflige al objetivo un (multi)% del ataque del activador(_right)}][(type.hitless){, incluso si este ataque falla}]",
         "class": {
             "prob": {
                 "name": "probabilidad",
@@ -1003,8 +1018,8 @@
                 "tooltip": "Porcentaje de ataque del activador.<br>Si multi es 20, tendrá el 20% del ataque del activador. Los valores negativos están permitidos."
             },
             "type.hitless": {
-                "name": "Miss Trigger",
-                "tooltip": "Wave will spawn even if this attack misses"
+                "name": "Antifalla",
+                "tooltip": "La oleada sera creada incluso si el ataque falla"
             }
         }
     },
@@ -1273,18 +1288,18 @@
         }
     },
     "WORKERLV": {
-        "abbr_name": "Worker Lv",
-        "full_name": "Efficiency Bonus",
-        "tooltip": "Increases worker level by a given amount",
-        "format": "(prob)% chance to [(mult>0){increase}(mult<0){decrease}] Worker Cat's level by (mult)",
+        "abbr_name": "Nv Trabajo",
+        "full_name": "Bono de Eficiencia",
+        "tooltip": "Aumenta el nivel del gato trabajador por la cantidad provenida",
+        "format": "(prob)% de probabilidad de [(mult>0){aumentar}(mult<0){reducir}] el nivel del gato trabajador por (mult)",
         "class": {
             "prob": {
-                "name": "Chance",
+                "name": "probabilidad",
                 "tooltip": null
             },
             "mult": {
-                "name": "Lv increase",
-                "tooltip": "The amount to add. Use negative numbers to decrease worker lv instead"
+                "name": "Aumento",
+                "tooltip": "El numero a anadir"
             }
         }
     },
