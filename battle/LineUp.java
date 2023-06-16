@@ -25,8 +25,8 @@ public class LineUp extends Data {
 	@JsonField(alias = AbForm.AbFormJson.class)
 	public final AbForm[][] fs = new AbForm[2][5];
 	public final IForm[][] efs = new IForm[2][5];
-	public int[] inc = new int[C_TOT], loc = new int[5];
 
+	public int[] inc = new int[C_TOT], loc = new int[5];
 	public SortedPackSet<Combo> coms = new SortedPackSet<>();
 
 	private boolean updating = false;

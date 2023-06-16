@@ -9,6 +9,7 @@ import common.io.json.JsonField;
 import common.pack.FixIndexList.FixIndexMap;
 import common.pack.IndexContainer;
 import common.pack.PackData.UserPack;
+import common.pack.SaveData;
 import common.pack.UserProfile;
 import common.system.files.VFile;
 import common.util.Data;
@@ -459,6 +460,11 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 			return str;
 		}
 
+		@Override
+		public SaveData getSave() {
+			return pack.getSave();
+		}
+
 		@JsonDecoder.OnInjected
 		public void onInjected() {
 			if (pack.desc.FORK_VERSION < 5)
@@ -571,4 +577,7 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 		return func.reduce(def, maps);
 	}
 
+	public SaveData getSave() {
+		return null;
+	}
 }

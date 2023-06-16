@@ -134,9 +134,9 @@ public class StageBasis extends BattleObj {
 		maxCannon = bas.t().CanonTime(sttime);
 		le.initCapacity(max_num + st.max);
 
-		work_lv = 1 + bas.getInc(C_M_LV);
-		money = bas.getInc(C_M_INI) * 100;
-		cannon = maxCannon * bas.getInc(C_C_INI) / 100;
+		work_lv = 1 + elu.getInc(C_M_LV);
+		money = elu.getInc(C_M_INI) * 100;
+		cannon = maxCannon * elu.getInc(C_C_INI) / 100;
 		canon = new Cannon(this, nyc);
 		conf = ints;
 
@@ -580,7 +580,7 @@ public class StageBasis extends BattleObj {
 			if (active) {
 				cannon++;
 				maxMoney = b.t().getMaxMon(work_lv);
-				money += b.t().getMonInc(work_lv) * (b.getInc(C_M_INC) / 100 + 1);
+				money += b.t().getMonInc(work_lv) * (elu.getInc(C_M_INC) / 100 + 1);
 			}
 
 			if (active)

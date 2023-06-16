@@ -164,6 +164,13 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 		updateLUs();
 	}
 
+	public boolean containsForm(Form f) {
+		for (Form cf : forms)
+			if (f.unit == cf.unit && f.fid >= cf.fid)
+				return true;
+		return false;
+	}
+
 	public void unload() {
 		for (BasisLU blu : BasisLU.allLus()) {
 			blu.lu.coms.remove(this);
@@ -183,22 +190,16 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 	@JsonDecoder.OnInjected
 	public void onInjected() {
 		boolean broken = false;
-
-		for (Form form : forms) {
+		for (Form form : forms)
 			if (form == null) {
 				broken = true;
 				break;
 			}
-		}
-
 		if(broken) {
 			List<Form> f = new ArrayList<>();
-
-			for(int i = 0; i < forms.length; i++) {
-				if(forms[i] != null)
-					f.add(forms[i]);
-			}
-
+			for (Form form : forms)
+				if (form != null)
+					f.add(form);
 			forms = f.toArray(new Form[0]);
 		}
 	}

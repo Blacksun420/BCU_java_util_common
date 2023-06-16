@@ -71,7 +71,7 @@ public class EUnit extends Entity {
 		this.index = index;
 		this.isBase = isBase;
 		if (isBase) {
-			maxH *= (100 + b.b.getInc(C_BASE)) * 0.01;
+			maxH *= (100 + b.elu.getInc(C_BASE)) * 0.01;
 			health = maxH;
 		}
 
@@ -111,12 +111,7 @@ public class EUnit extends Entity {
 		if (e instanceof EEnemy) {
 			SortedPackSet<Trait> sharedTraits = traits.inCommon(matk.getATKTraits());
 			boolean isAntiTraited = targetTraited(matk.getATKTraits());
-			for (Trait t : traits) {
-				if (t.BCTrait() || sharedTraits.contains(t))
-					continue;
-				if ((t.targetType && isAntiTraited) || t.others.contains(((MaskUnit)e.data).getPack()))
-					sharedTraits.add(t);
-			}
+			sharedTraits.addIf(traits, t -> !t.BCTrait() && ((t.targetType && isAntiTraited) || t.others.contains(e.data.getPack())));//Ignore the warning, atk.attacker will always be an unit
 
 			if (!sharedTraits.isEmpty()) {
 				if (status.curse == 0) {
@@ -179,12 +174,7 @@ public class EUnit extends Entity {
 		if (atk.model instanceof AtkModelEnemy) {
 			SortedPackSet<Trait> sharedTraits = traits.inCommon(atk.trait);
 			boolean isAntiTraited = targetTraited(atk.trait);
-			for (Trait t : atk.trait) {
-				if (t.BCTrait() || sharedTraits.contains(t))
-					continue;
-				if ((t.targetType && isAntiTraited) || t.others.contains(((MaskUnit)data).getPack()))
-					sharedTraits.add(t);
-			}
+			sharedTraits.addIf(traits, t -> !t.BCTrait() && ((t.targetType && isAntiTraited) || t.others.contains(atk.attacker.data.getPack())));//Ignore the warning, atk.attacker will always be an unit
 			if (!sharedTraits.isEmpty()) {
 				if (status.curse == 0) {
 					if ((getAbi() & AB_GOOD) != 0)
@@ -228,14 +218,14 @@ public class EUnit extends Entity {
 	@Override
 	protected double updateMove(double extmov) {
 		if (status.slow == 0)
-			extmov += data.getSpeed() * basis.b.getInc(C_SPE) / 200.0;
+			extmov += data.getSpeed() * basis.elu.getInc(C_SPE) / 200.0;
 		return super.updateMove(extmov);
 	}
 
 	@Override
 	protected double getMov(double extmov) {
 		if (status.slow == 0)
-			extmov += data.getSpeed() * basis.b.getInc(C_SPE) / 200.0;
+			extmov += data.getSpeed() * basis.elu.getInc(C_SPE) / 200.0;
 		return super.getMov(extmov);
 	}
 

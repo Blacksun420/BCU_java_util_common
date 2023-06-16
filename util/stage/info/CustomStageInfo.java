@@ -37,6 +37,8 @@ public class CustomStageInfo implements StageInfo {
     public Form ubase;
     @JsonField
     public Level lv;
+    @JsonField(alias = Form.AbFormJson.class)
+    public Form reward;
 
     @JsonClass.JCConstructor
     public CustomStageInfo() {
@@ -95,12 +97,9 @@ public class CustomStageInfo implements StageInfo {
     public void remove(int ind) {
         if (ind == -1 || ind >= stages.size())
             return;
-        if (stages.size() == 1 && ubase == null) {
-            destroy();
-        } else {
-            stages.remove(ind);
-            chances.remove(ind);
-        }
+        stages.remove(ind);
+        chances.remove(ind);
+        destroy(true);
     }
 
     public void checkChances() {
@@ -126,11 +125,15 @@ public class CustomStageInfo implements StageInfo {
 
     /**
      * Called to detach the followup from the stage and remove it from the list storing it
+     * @param checkFirst Verify if the StageInfo doesn't have anything that can contribute to the stage before destroying it
      */
-    public void destroy() {
+    public void destroy(boolean checkFirst) {
+        if (checkFirst && (!stages.isEmpty() || ubase != null || reward != null))
+            return;
         stages.clear();
         chances.clear();
         ubase = null;
+        reward = null;
         ((PackMapColc)st.getCont().getCont()).si.remove(this);
         st.info = null;
     }

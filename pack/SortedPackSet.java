@@ -3,6 +3,7 @@ package common.pack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 @SuppressWarnings("unchecked")
 public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, Cloneable, java.io.Serializable {
@@ -187,6 +188,31 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
         if (unsorted)
             sort();
         return ch;
+    }
+
+    /**
+     * Adds all objects from a given collection that pass a specific predicate to this set
+     * @param c The collection
+     * @param filter The condition to test all the elements with
+     * @return True if anything got added to the list
+     */
+    public boolean addIf(Collection<T> c, Predicate<? super T> filter) {
+        if (c.size() + size >= arr.length) {
+            int mul = 1;
+            while (++mul * arr.length <= c.size() + size);
+            arr = Arrays.copyOf(arr, arr.length * mul);
+        }
+        boolean res = false, unsorted = false;
+        for (T elem : c) {
+            if (elem == null || contains(elem) || !filter.test(elem))
+                continue;
+            res = true;
+            unsorted |= size > 0 && compareCheck(elem,(T) arr[size - 1]) < 0;
+            arr[size++] = elem;
+        }
+        if (unsorted)
+            sort();
+        return res;
     }
 
     @Override

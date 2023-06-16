@@ -6,7 +6,6 @@ import common.battle.attack.AtkModelUnit;
 import common.battle.attack.AttackAb;
 import common.battle.data.MaskAtk;
 import common.battle.data.MaskEnemy;
-import common.battle.data.MaskUnit;
 import common.pack.SortedPackSet;
 import common.pack.UserProfile;
 import common.util.anim.AnimU;
@@ -14,8 +13,6 @@ import common.util.anim.EAnimU;
 import common.util.stage.Revival;
 import common.util.unit.Enemy;
 import common.util.unit.Trait;
-
-import java.util.ArrayList;
 
 public class EEnemy extends Entity {
 
@@ -58,15 +55,9 @@ public class EEnemy extends Entity {
 		if (ans == 0)
 			return 0;
 		if (e instanceof EUnit) {
-			ArrayList<Trait> sharedTraits = new ArrayList<>(matk.getATKTraits());
-			sharedTraits.retainAll(traits);
+			SortedPackSet<Trait> sharedTraits = traits.inCommon(matk.getATKTraits());
 			boolean isAntiTraited = targetTraited(matk.getATKTraits());
-			for (Trait t : traits) {
-				if (t.BCTrait() || sharedTraits.contains(t))
-					continue;
-				if ((t.targetType && isAntiTraited) || t.others.contains(((MaskUnit)e.data).getPack()))
-					sharedTraits.add(t);
-			}
+			sharedTraits.addIf(traits, t -> !t.BCTrait() && ((t.targetType && isAntiTraited) || t.others.contains(e.data.getPack())));//Ignore the warning, atk.attacker will always be an unit
 
 			if (!sharedTraits.isEmpty()) {
 				if (e.status.curse == 0) {
@@ -110,12 +101,7 @@ public class EEnemy extends Entity {
 		if (atk.model instanceof AtkModelUnit) {
 			SortedPackSet<Trait> sharedTraits = traits.inCommon(atk.trait);
 			boolean isAntiTraited = targetTraited(atk.trait);
-			for (Trait t : traits) {
-				if (t.BCTrait() || sharedTraits.contains(t))
-					continue;
-				if ((t.targetType && isAntiTraited) || t.others.contains(((MaskUnit)atk.attacker.data).getPack()))
-					sharedTraits.add(t);
-			}
+			sharedTraits.addIf(traits, t -> !t.BCTrait() && ((t.targetType && isAntiTraited) || t.others.contains(atk.attacker.data.getPack())));//Ignore the warning, atk.attacker will always be an unit
 
 			if (!sharedTraits.isEmpty()) {
 				if (atk.attacker.status.curse == 0) {

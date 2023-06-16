@@ -116,8 +116,7 @@ public class PCoin extends Data {
 
 			//Targettings that come with a talent, such as Hyper Mr's
 			if (this.trait.size() > 0)
-				if (!ans.getTraits().contains(this.trait.get(0)))
-					ans.getTraits().add(this.trait.get(0));
+				ans.getTraits().addAll(this.trait);
 
 			int offset = type.length >= 3 ? type[2] : 0;
 			int fieldTOT = -offset;
@@ -208,12 +207,9 @@ public class PCoin extends Data {
 				ans.improve(type, type[0] == PC_BASE ? modifs[0] : 0);
 			else if (type[0] == PC_IMU)
 				ans.getProc().getArr(type[1]).set(0, 100);
-			else if (type[0] == PC_TRAIT) {
-				Trait types = UserProfile.getBCData().traits.get(type[1]);
-
-				if (!ans.getTraits().contains(types))
-					ans.getTraits().add(types);
-			} else if (type[0] == 5) //waveblock
+			else if (type[0] == PC_TRAIT)
+				ans.getTraits().add(UserProfile.getBCData().traits.get(type[1]));
+			else if (type[0] == 5) //waveblock
 				ans.getProc().getArr(type[1]).set(1, 100);
 		}
 

@@ -19,8 +19,6 @@ import common.util.unit.Form;
 import common.util.unit.Trait;
 import common.util.unit.Unit;
 
-import java.util.Comparator;
-
 public class Cannon extends AtkModelAb {
 
 	public final int id, base, deco;
@@ -189,7 +187,7 @@ public class Cannon extends AtkModelAb {
 					new ContWaveCanon(new AttackWave(eatk.attacker, eatk, p, wid, WT_CANN | WT_WAVE), p, 0);
 				} else if (id == 1) {
 					// slow canon
-					proc.SLOW.time = (int) (b.b.t().getCannonMagnification(id, Data.BASE_SLOW_TIME) * (100 + b.b.getInc(C_SLOW)) / 100);
+					proc.SLOW.time = (int) (b.b.t().getCannonMagnification(id, Data.BASE_SLOW_TIME) * (100 + b.elu.getInc(C_SLOW)) / 100);
 					int wid = NYRAN[1];
 					int spe = 137;
 					double p = b.ubase.pos - wid / 2.0 + spe;
@@ -203,7 +201,7 @@ public class Cannon extends AtkModelAb {
 				} else if (id == 3) {
 					// freeze canon
 					duration = 1;
-					proc.STOP.time = (int) (b.b.t().getCannonMagnification(id, Data.BASE_TIME) * (100 + b.b.getInc(C_STOP)) / 100.0);
+					proc.STOP.time = (int) (b.b.t().getCannonMagnification(id, Data.BASE_TIME) * (100 + b.elu.getInc(C_STOP)) / 100.0);
 					int atk = (int) (b.b.t().getCanonAtk() * b.b.t().getCannonMagnification(id, Data.BASE_ATK_MAGNIFICATION) / 100.0);
 					int rad = NYRAN[3] / 2;
 					b.getAttack(new AttackCanon(this, atk, CTrait, 0, proc, pos - rad, pos + rad, duration));
@@ -217,7 +215,7 @@ public class Cannon extends AtkModelAb {
 					// zombie canon
 					proc.WAVE.lv = b.b.t().tech[LV_CRG] + 2;
 					double wid = NYRAN[5];
-					proc.STOP.time = (int) (b.b.t().getCannonMagnification(id, Data.BASE_TIME) * (100 + b.b.getInc(C_STOP)) / 100);
+					proc.STOP.time = (int) (b.b.t().getCannonMagnification(id, Data.BASE_TIME) * (100 + b.elu.getInc(C_STOP)) / 100);
 					proc.SNIPER.prob = 1;
 					double p = b.ubase.pos - wid / 2 + 100;
 					CTrait.set(0, UserProfile.getBCData().traits.get(TRAIT_ZOMBIE));

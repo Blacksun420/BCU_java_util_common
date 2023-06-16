@@ -6,7 +6,7 @@ import java.lang.annotation.*;
 
 public interface IndexContainer {
 
-	public static interface Constructor<T extends R, R extends Indexable<?, R>> {
+	interface Constructor<T extends R, R extends Indexable<?, R>> {
 
 		T get(Identifier<R> id);
 
@@ -44,7 +44,7 @@ public interface IndexContainer {
 
 	}
 
-	public static interface SingleIC<T extends Indexable<?, T>> extends IndexContainer {
+	interface SingleIC<T extends Indexable<?, T>> extends IndexContainer {
 
 		default T add(Constructor<T, T> con) {
 			int ind = getFIM().nextInd();
@@ -69,7 +69,7 @@ public interface IndexContainer {
 		}
 
 		default Identifier<T> getID(int ind) {
-			return new Identifier<T>(getSID(), getFIM().cls, ind);
+			return new Identifier<>(getSID(), getFIM().cls, ind);
 		}
 
 		@Override
@@ -80,7 +80,7 @@ public interface IndexContainer {
 		}
 
 		default Identifier<T> getNextID() {
-			return new Identifier<T>(getSID(), getFIM().cls, getFIM().nextInd());
+			return new Identifier<>(getSID(), getFIM().cls, getFIM().nextInd());
 		}
 
 		@SuppressWarnings("unchecked")
@@ -106,7 +106,7 @@ public interface IndexContainer {
 	}
 
 	default <T extends R, R extends Indexable<?, R>> Identifier<R> getID(Class<T> cls, int ind) {
-		return new Identifier<R>(getSID(), cls, ind);
+		return new Identifier<>(getSID(), cls, ind);
 	}
 
 	@SuppressWarnings("rawtypes")

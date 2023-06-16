@@ -185,6 +185,11 @@ public class CommonStatic {
 		 */
 		@JsonField(generic = { String.class, Boolean.class })
 		public HashMap<String, Boolean> packCombos = new HashMap<>();
+
+		/**
+		 * Use progression mode to store save data
+		 */
+		public boolean prog = false;
 	}
 
 	@JsonClass

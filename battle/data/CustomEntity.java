@@ -240,12 +240,7 @@ public abstract class CustomEntity extends DataEntity {
 		abi = de.getAbi();
 		loop = de.getAtkLoop();
 		traits = new SortedPackSet<>();
-		for(Trait t : de.getTraits()) {
-			if(!t.BCTrait())
-				traits.add(t);
-			else if(t.id.id != Data.TRAIT_EVA && t.id.id != Data.TRAIT_WITCH)
-				traits.add(t);
-		}
+		traits.addIf(de.getTraits(), t -> (!t.BCTrait()) || (t.id.id != Data.TRAIT_EVA && t.id.id != Data.TRAIT_WITCH));
 		width = de.getWidth();
 		tba = de.getTBA();
 		touch = de.getTouch();

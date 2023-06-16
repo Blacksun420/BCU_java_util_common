@@ -2,20 +2,21 @@ package common.util.stage;
 
 import com.google.gson.JsonObject;
 import common.CommonStatic;
-import common.io.json.JsonDecoder;
-import common.util.stage.info.DefStageInfo;
 import common.io.json.JsonClass;
 import common.io.json.JsonClass.JCConstructor;
+import common.io.json.JsonDecoder;
 import common.io.json.JsonField;
 import common.pack.FixIndexList.FixIndexMap;
 import common.pack.Identifier;
 import common.pack.IndexContainer;
+import common.pack.SortedPackSet;
 import common.system.BasedCopable;
 import common.system.files.FileData;
 import common.system.files.VFile;
 import common.util.Data;
 import common.util.lang.MultiLangCont;
 import common.util.lang.MultiLangData;
+import common.util.stage.info.DefStageInfo;
 
 import java.util.ArrayList;
 import java.util.Queue;
@@ -102,6 +103,8 @@ public class StageMap extends Data implements BasedCopable<StageMap, MapColc>,
 
 	@JsonField(generic = MultiLangData.class, gen = JsonField.GenType.FILL)
 	public final MultiLangData names = new MultiLangData();
+	@JsonField(generic = Identifier.class)
+	public final SortedPackSet<Identifier<StageMap>> unlockReq = new SortedPackSet<>();
 
 	@JsonField
 	public int price = 1, cast = -1;
@@ -120,7 +123,6 @@ public class StageMap extends Data implements BasedCopable<StageMap, MapColc>,
 	public StageMap(Identifier<StageMap> id) {
 		this.id = id;
 		names.put("new stage map");
-
 	}
 
 	protected StageMap(Identifier<StageMap> id, FileData m) {
@@ -179,6 +181,7 @@ public class StageMap extends Data implements BasedCopable<StageMap, MapColc>,
 
 	@JsonDecoder.OnInjected
 	public void onInjected(JsonObject jobj) {
+		unlockReq.removeIf(id -> id.safeGet() == null);
 		if (jobj.has("name"))
 			names.put(jobj.get("name").getAsString());
 	}

@@ -368,6 +368,9 @@ public abstract class PackData implements IndexContainer {
 		private JsonElement elem;
 		@JsonField(block = true)
 		public VImg icon, banner;
+		@JsonField(block = true)
+		public SaveData save; //TODO
+		public SaveData.DefaultPackSave defVals; //TODO
 
 		public UserPack(Source s, PackDesc desc, JsonElement elem) {
 			this.desc = desc;
@@ -388,6 +391,10 @@ public abstract class PackData implements IndexContainer {
 			mc = new PackMapColc(this);
 			editable = true;
 			loaded = true;
+		}
+
+		public SaveData getSave() {
+			return CommonStatic.getConfig().prog ? save : null;
 		}
 
 		public void delete() {

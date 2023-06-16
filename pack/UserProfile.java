@@ -330,7 +330,6 @@ public class UserProfile {
 
 	public final DefPack def = new DefPack();
 	public final Map<String, UserPack> packmap = new HashMap<>();
-	public final Map<String, SaveData> packSave = new HashMap<>();
 
 	public final Set<UserPack> packlist = new HashSet<>();
 
@@ -359,6 +358,9 @@ public class UserProfile {
 			packmap.put(pack.desc.id, pack);
 			if (pack.combos.size() > 0 && !CommonStatic.getConfig().packCombos.containsKey(pack.desc.id))
 				CommonStatic.getConfig().packCombos.put(pack.desc.id, true);
+			//for testing
+			if (pack.editable)
+				pack.save = new SaveData(pack);
 		} else
 			failed.add(pack);
 

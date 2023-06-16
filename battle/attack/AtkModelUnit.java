@@ -1,6 +1,6 @@
 package common.battle.attack;
 
-import common.battle.BasisLU;
+import common.battle.ELineUp;
 import common.battle.data.MaskAtk;
 import common.battle.data.PCoin;
 import common.battle.entity.Entity;
@@ -8,11 +8,11 @@ import common.util.unit.Level;
 
 public class AtkModelUnit extends AtkModelEntity {
 
-	private final BasisLU bas;
+	private final ELineUp elu;
 
 	protected AtkModelUnit(Entity ent, double d0, double d1, PCoin pcoin, Level lv) {
 		super(ent, d0, d1, pcoin, lv);
-		bas = ent.basis.b;
+		elu = ent.basis.elu;
 	}
 
 	@Override
@@ -24,7 +24,7 @@ public class AtkModelUnit extends AtkModelEntity {
 		if (e.status.weak[0] > 0)
 			dmg = dmg * e.status.weak[1] / 100;
 		if (e.status.strengthen != 0)
-			dmg += dmg * (e.status.strengthen + bas.getInc(C_STRONG)) / 100;
+			dmg += dmg * (e.status.strengthen + elu.getInc(C_STRONG)) / 100;
 		dmg *= e.auras.getAtkAura();
 		return dmg;
 	}
@@ -35,10 +35,10 @@ public class AtkModelUnit extends AtkModelEntity {
 
 		if (matk.getProc() != empty && matk.canProc()) {
 			setProc(matk, proc, 1);
-			proc.KB.dis = proc.KB.dis * (100 + bas.getInc(C_KB)) / 100;
-			proc.STOP.time = (proc.STOP.time * (100 + bas.getInc(C_STOP))) / 100;
-			proc.SLOW.time = (proc.SLOW.time * (100 + bas.getInc(C_SLOW))) / 100;
-			proc.WEAK.time = (proc.WEAK.time * (100 + bas.getInc(C_WEAK))) / 100;
+			proc.KB.dis = proc.KB.dis * (100 + elu.getInc(C_KB)) / 100;
+			proc.STOP.time = (proc.STOP.time * (100 + elu.getInc(C_STOP))) / 100;
+			proc.SLOW.time = (proc.SLOW.time * (100 + elu.getInc(C_SLOW))) / 100;
+			proc.WEAK.time = (proc.WEAK.time * (100 + elu.getInc(C_WEAK))) / 100;
 			proc.getArr(P_BSTHUNT).set(e.getProc().getArr(P_BSTHUNT));
 		} else {
 			if (matk.getProc().MOVEWAVE.perform(b.r)) //Movewave procs regardless of seal state
@@ -56,10 +56,10 @@ public class AtkModelUnit extends AtkModelEntity {
 	@Override
 	public Proc getProc(MaskAtk matk) {
 		Proc p = super.getProc(matk);
-		if (p.CRIT.prob == 0 || bas.getInc(C_CRIT) == 0)
+		if (p.CRIT.prob == 0 || elu.getInc(C_CRIT) == 0)
 			return p;
 		Proc pp = p.clone();
-		pp.CRIT.prob += bas.getInc(C_CRIT);
+		pp.CRIT.prob += elu.getInc(C_CRIT);
 		return pp;
 	}
 }

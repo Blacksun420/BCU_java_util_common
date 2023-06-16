@@ -9,7 +9,6 @@ import common.io.json.JsonClass.JCGeneric;
 import common.io.json.JsonClass.RType;
 import common.io.json.JsonDecoder.OnInjected;
 import common.io.json.JsonField;
-import common.pack.Context;
 import common.pack.Identifier;
 import common.pack.PackData;
 import common.pack.UserProfile;

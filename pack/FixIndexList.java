@@ -100,6 +100,14 @@ public class FixIndexList<T> extends Data {
 			return arr[order[ind]];
 		}
 
+		@Override
+		public int indexOf(T thing) {
+			for (int i = 0; i < size; i++)
+				if (arr[order[i]] != null && arr[order[i]].equals(thing))
+					return order[i];
+			return -1;
+		}
+
 		public T getRaw(int id) {
 			if (id < arr.length) {
 				if (id < 0)
@@ -108,10 +116,9 @@ public class FixIndexList<T> extends Data {
 					return arr[id];
 			}
 
-			for (int i = size - 1; i >= 0; i--) {
+			for (int i = size - 1; i >= 0; i--)
 				if (arr[order[i]].getID().id == id)
 					return arr[order[i]];
-			}
 			return null;
 		}
 

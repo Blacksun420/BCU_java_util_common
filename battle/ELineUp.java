@@ -1,29 +1,42 @@
 package common.battle;
 
 import common.CommonStatic;
+import common.pack.SortedPackSet;
 import common.util.BattleObj;
 import common.util.stage.Limit;
+import common.util.unit.Combo;
 import common.util.unit.EForm;
+import common.util.unit.Form;
 
 public class ELineUp extends BattleObj {
 
 	public final int[][] price, cool, maxC;
+	public final int[] inc;
 
 	protected ELineUp(LineUp lu, StageBasis sb) {
 		price = new int[2][5];
 		cool = new int[2][5];
 		maxC = new int[2][5];
+		inc = lu.inc.clone();
+		SortedPackSet<Combo> coms = new SortedPackSet<>(lu.coms);
 		Limit lim = sb.est.lim;
 		for (int i = 0; i < 2; i++)
 			for (int j = 0; j < 5; j++) {
-				if (lu.fs[i][j] == null) {
+				if (lu.fs[i][j] == null ||
+						(lim != null && ((lim.line > 0 && 2 - (lim.line - i) != 1) || (lu.efs[i][j] instanceof EForm && lim.unusable(((EForm) lu.efs[i][j]).du, sb.st.getCont().price))))
+						|| (sb.st.getCont().getCont().getSave() != null && sb.st.getCont().getCont().getSave().locked(lu.fs[i][j]))) {
 					price[i][j] = -1;
+					if (lu.fs[i][j] instanceof Form && sb.st.getCont().getCont().getSave() != null && sb.st.getCont().getCont().getSave().locked(lu.fs[i][j]))
+						for (int k = 0; k < coms.size(); k++)
+							if (coms.get(k).containsForm((Form)lu.fs[i][j])) {
+								Combo c = coms.get(k);
+								coms.remove(k--);
+								inc[c.type] -= CommonStatic.getBCAssets().values[c.type][c.lv];
+							}
 					continue;
 				}
 				price[i][j] = (int) (lu.efs[i][j].getPrice(sb.st.getCont().price) * 100);
 				maxC[i][j] = sb.b.t().getFinRes(lu.efs[i][j].getRespawn());
-				if (lim != null && ((lim.line > 0 && 2 - (lim.line - i) != 1) || (lu.efs[i][j] instanceof EForm && lim.unusable(((EForm) lu.efs[i][j]).du, sb.st.getCont().price))))
-					price[i][j] = -1;
 			}
 	}
 
@@ -48,4 +61,7 @@ public class ELineUp extends BattleObj {
 				}
 	}
 
+	public int getInc(int type) {
+		return inc[type];
+	}
 }
