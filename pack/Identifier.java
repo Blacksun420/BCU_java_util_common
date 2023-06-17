@@ -5,16 +5,14 @@ import common.util.Data;
 import common.util.pack.Background;
 import common.util.stage.CastleImg;
 import common.util.stage.Stage;
+import common.util.unit.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.Queue;
-
-import common.util.stage.StageMap;
-import common.util.unit.*;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 @JsonClass(noTag = JsonClass.NoTag.LOAD)
 public class Identifier<T extends IndexContainer.Indexable<?, T>> implements Comparable<Identifier<?>>, Cloneable {

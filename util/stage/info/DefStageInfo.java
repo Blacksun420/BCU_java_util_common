@@ -254,7 +254,7 @@ public class DefStageInfo implements StageInfo {
                 reward += " (Once)";
 
             if(i == 0 && drop[i][0] != 100 && rand != -4)
-                reward += " [Treasure Radar]";
+                reward += " [" + MultiLangCont.getServerDrop(1) + "]";
 
             ans.append("<tr><td>")
                     .append(chance)

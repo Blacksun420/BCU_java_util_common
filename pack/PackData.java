@@ -569,17 +569,17 @@ public abstract class PackData implements IndexContainer {
 	@SuppressWarnings({ "rawtypes" })
 	public <R> R getList(Class cls, Reductor<R, FixIndexMap> func, R def) {
 		if (cls == Trait.class)
-			def = func.reduce(def, traits);
-		else if (cls != null && Unit.class.isAssignableFrom(cls))
-			def = func.reduce(def, units);
-		else if (cls != null && UniRand.class.isAssignableFrom(cls))
+			return func.reduce(def, traits);
+		else if (UniRand.class.isAssignableFrom(cls))
 			def = func.reduce(def, randUnits);
+		else if (AbUnit.class.isAssignableFrom(cls))
+			def = func.reduce(def, units);
 		else if (cls == UnitLevel.class)
 			def = func.reduce(def, unitLevels);
-		else if (cls != null && Enemy.class.isAssignableFrom(cls))
-			def = func.reduce(def, enemies);
-		else if (cls != null && EneRand.class.isAssignableFrom(cls))
+		else if (EneRand.class.isAssignableFrom(cls))
 			def = func.reduce(def, randEnemies);
+		else if (AbEnemy.class.isAssignableFrom(cls))
+			def = func.reduce(def, enemies);
 		else if (cls == Background.class)
 			def = func.reduce(def, bgs);
 		else if (cls == BackgroundEffect.class)
