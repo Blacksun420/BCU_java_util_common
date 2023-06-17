@@ -175,15 +175,14 @@ public class UserProfile {
 					if (pack != null) {
 						UserPack p = profile.pending.put(pack.desc.id, pack);
 
-						if (p != null) {
+						if (p != null)
 							CommonStatic.ctx.printErr(ErrType.WARN, ((ZipSource) p.source).getPackFile().getName()
 									+ " has same ID with " + ((ZipSource) pack.source).getPackFile().getName());
-						}
 					}
 				}
-		} else {
+		} else
 			packs.mkdir();
-		}
+
 		if (loadWorkspace && workspace.exists())
 			for (File f : workspace.listFiles())
 				if (f.isDirectory()) {
@@ -204,6 +203,7 @@ public class UserProfile {
 
 		for (PackData.UserPack pk : queue)
 			checkMissingParents(pk);
+		loadSaveData();
 	}
 
 	public static void reloadExternalPacks() {
@@ -297,6 +297,40 @@ public class UserProfile {
 		return data;
 	}
 
+	public static void loadSaveData() {
+		File datas = CommonStatic.ctx.getAuxFile("./saves");
+		if (datas.exists()) {
+			for (File f : datas.listFiles())
+				if (f.getName().endsWith(".packsave"))
+					try {
+						loadData(f);
+					} catch (Exception e) {
+						CommonStatic.ctx.printErr(ErrType.ERROR, "Failed to load " + f.getName());
+					}
+		} else {
+			datas.mkdir();
+		}
+	}
+
+	public static void loadData(File f) throws Exception {
+		InputStreamReader isr = new InputStreamReader(Files.newInputStream(f.toPath()), StandardCharsets.UTF_8);
+		JsonElement elem = JsonParser.parseReader(isr);
+		String id = elem.getAsJsonObject().get("pack").getAsString();
+		UserPack pk = UserProfile.getUserPack(id);
+		if (pk == null) {
+			CommonStatic.ctx.printErr(ErrType.WARN, "Save data found for " + id + ", but said pack isn't found. File: " + f.getName());
+			isr.close();
+			return;
+		}
+		try {
+			pk.save = JsonDecoder.inject(elem, SaveData.class, pk.save);
+		} catch (Exception e) {
+			CommonStatic.ctx.printErr(ErrType.ERROR, "Failed to load data for " + pk.desc.names);
+		}
+
+		isr.close();
+	}
+
 	public static void setStatic(String id, Object val) {
 		getRegister(REG_STATIC).put(id, val);
 	}
@@ -358,9 +392,6 @@ public class UserProfile {
 			packmap.put(pack.desc.id, pack);
 			if (pack.combos.size() > 0 && !CommonStatic.getConfig().packCombos.containsKey(pack.desc.id))
 				CommonStatic.getConfig().packCombos.put(pack.desc.id, true);
-			//for testing
-			if (pack.editable)
-				pack.save = new SaveData(pack);
 		} else
 			failed.add(pack);
 

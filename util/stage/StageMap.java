@@ -9,7 +9,6 @@ import common.io.json.JsonField;
 import common.pack.FixIndexList.FixIndexMap;
 import common.pack.Identifier;
 import common.pack.IndexContainer;
-import common.pack.SortedPackSet;
 import common.system.BasedCopable;
 import common.system.files.FileData;
 import common.system.files.VFile;
@@ -19,10 +18,13 @@ import common.util.lang.MultiLangData;
 import common.util.stage.info.DefStageInfo;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.Queue;
 
 @IndexContainer.IndexCont(MapColc.class)
 @JsonClass
+@JsonClass.JCGeneric(Identifier.class)
 public class StageMap extends Data implements BasedCopable<StageMap, MapColc>,
 		IndexContainer.Indexable<MapColc, StageMap>, IndexContainer.SingleIC<Stage> {
 
@@ -93,6 +95,7 @@ public class StageMap extends Data implements BasedCopable<StageMap, MapColc>,
 	}
 
 	@JsonField
+	@JsonClass.JCIdentifier
 	public final Identifier<StageMap> id;
 	@JsonField(generic = Limit.class)
 	public final ArrayList<Limit> lim = new ArrayList<>();
@@ -103,8 +106,8 @@ public class StageMap extends Data implements BasedCopable<StageMap, MapColc>,
 
 	@JsonField(generic = MultiLangData.class, gen = JsonField.GenType.FILL)
 	public final MultiLangData names = new MultiLangData();
-	@JsonField(generic = Identifier.class)
-	public final SortedPackSet<Identifier<StageMap>> unlockReq = new SortedPackSet<>();
+	@JsonField(generic = StageMap.class, alias = Identifier.class, decodeLast = true)
+	public final HashSet<StageMap> unlockReq = new HashSet<>();
 
 	@JsonField
 	public int price = 1, cast = -1;
@@ -181,8 +184,13 @@ public class StageMap extends Data implements BasedCopable<StageMap, MapColc>,
 
 	@JsonDecoder.OnInjected
 	public void onInjected(JsonObject jobj) {
-		unlockReq.removeIf(id -> id.safeGet() == null);
+		PostLoad();
 		if (jobj.has("name"))
 			names.put(jobj.get("name").getAsString());
+	}
+
+	@JsonDecoder.PostLoad
+	public void PostLoad() {
+		unlockReq.removeIf(Objects::isNull);
 	}
 }

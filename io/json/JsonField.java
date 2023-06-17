@@ -148,6 +148,11 @@ public @interface JsonField {
 			return false;
 		}
 
+		@Override
+		public boolean decodeLast() {
+			return false;
+		}
+
 	};
 
 	Class<?>[] alias() default {};
@@ -188,4 +193,9 @@ public @interface JsonField {
 
 	boolean usePool() default false;
 
+	/**
+	 * Default is false. If set to true, this value will be decoded after the whole pack is decoded.
+	 * This is useful for loading things stored with an Identifier.class alias that could be null during the inject part
+	 */
+	boolean decodeLast() default false;
 }

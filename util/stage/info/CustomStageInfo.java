@@ -68,6 +68,11 @@ public class CustomStageInfo implements StageInfo {
         }
         if (ubase != null)
             ans.append("Unit Base: ").append(ubase).append(" (").append(CommonStatic.def.lvText(ubase, lv)[0]).append(")");
+        if (reward != null) {
+            if (ubase != null)
+                ans.append("\n");
+            ans.append("Clear Reward: ").append(reward);
+        }
 
         return ans.toString();
     }

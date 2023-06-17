@@ -369,8 +369,9 @@ public abstract class PackData implements IndexContainer {
 		@JsonField(block = true)
 		public VImg icon, banner;
 		@JsonField(block = true)
-		public SaveData save; //TODO
-		public SaveData.DefaultPackSave defVals; //TODO
+		public SaveData save;
+		@JsonField(generic = { Unit.class, Integer.class }, alias = Identifier.class, decodeLast = true)
+		public final TreeMap<AbUnit, Integer> defULK = new TreeMap<>();//Units unlocked from the get-go, for progression
 
 		public UserPack(Source s, PackDesc desc, JsonElement elem) {
 			this.desc = desc;
@@ -486,16 +487,14 @@ public abstract class PackData implements IndexContainer {
 		public void load() throws Exception {
 			UserProfile.setStatic(UserProfile.CURRENT_PACK, source);
 			JsonDecoder.inject(elem, UserPack.class, this);
+			JsonDecoder.finishLoading();
 			elem = null;
 			loaded = true;
 			loadMusics();
 			UserProfile.setStatic(UserProfile.CURRENT_PACK, null);
 
-			if(source instanceof Source.ZipSource) {
-				if(((Source.ZipSource) source).zip.desc.parentPassword != null) {
-					desc.parentPassword = ((Source.ZipSource) source).zip.desc.parentPassword.clone();
-				}
-			}
+			if(source instanceof Source.ZipSource && ((Source.ZipSource) source).zip.desc.parentPassword != null)
+				desc.parentPassword = ((Source.ZipSource) source).zip.desc.parentPassword.clone();
 
 			icon = source.readImage("icon");
 			banner = source.readImage("banner");
@@ -508,6 +507,8 @@ public abstract class PackData implements IndexContainer {
 					desc.creationDate = df.format(new Date());
 				}
 			}
+			if (desc.FORK_VERSION >= 8)
+				save = new SaveData(this);
 		}
 
 		public void animChanged(AnimCE anim, int del) {

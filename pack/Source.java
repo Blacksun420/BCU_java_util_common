@@ -355,7 +355,7 @@ public abstract class Source {
 
 		public static void saveWorkspace(boolean auto) {
 			AnimCE.map().values().forEach(auto ? AnimCE::autosave : AnimCE::save);
-			for (UserPack up : UserProfile.getUserPacks())
+			for (UserPack up : UserProfile.getUserPacks()) {
 				if (up.source instanceof Workspace) {
 					if (!auto) {
 						up.source.getAnims(BasePath.ANIM).forEach(a -> ((AnimCE) a).save());
@@ -365,9 +365,20 @@ public abstract class Source {
 					CommonStatic.ctx.noticeErr(() -> ((Workspace) up.source).save(up, auto), ErrType.WARN,
 							"failed to save pack " + up.desc.names);
 				}
+				if (up.save != null && (!up.save.ulkUni.isEmpty() || !up.save.cSt.isEmpty()))
+					CommonStatic.ctx.noticeErr(() -> saveData(up), ErrType.WARN, "failed to save data for " + up.desc.names);
+			}
 			for (Replay r : Replay.getMap().values())
 				if (r.unsaved)
 					r.write();
+		}
+
+		public static void saveData(UserPack up) throws Exception {
+			File f = CommonStatic.ctx.getAuxFile("./saves/" + up.desc.id + ".packsave");
+			Context.check(f);
+			OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(f), StandardCharsets.UTF_8);
+			fw.write(JsonEncoder.encode(up.save).toString());
+			fw.close();
 		}
 
 		public static void validate(ResourceLocation rl) {

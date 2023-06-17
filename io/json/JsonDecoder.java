@@ -34,6 +34,12 @@ public class JsonDecoder {
 	public @interface OnInjected {
 	}
 
+	@Documented
+	@Retention(RUNTIME)
+	@Target(METHOD)
+	public @interface PostLoad {
+	}
+
 	@StaticPermitted
 	public static final Map<Class<?>, Decoder> REGISTER = new HashMap<>();
 
@@ -58,6 +64,7 @@ public class JsonDecoder {
 
 	@StaticPermitted(StaticPermitted.Type.TEMP)
 	private static JsonDecoder current;
+	private static final LinkedList<JsonDecoder> declast = new LinkedList<>();
 
 	public static Object decode(JsonElement elem, Class<?> cls, JsonDecoder par) throws Exception {
 		if (elem.isJsonNull())
@@ -128,25 +135,25 @@ public class JsonDecoder {
 		return (T) Data.err(() -> decode(elem, cls, null));
 	}
 
-	public static boolean getBoolean(JsonElement elem) throws JsonException {
+	private static boolean getBoolean(JsonElement elem) throws JsonException {
 		if (!elem.isJsonPrimitive() || !((JsonPrimitive) elem).isBoolean())
 			throw new JsonException(Type.TYPE_MISMATCH, elem, "this element is not boolean");
 		return elem.getAsBoolean();
 	}
 
-	public static byte getByte(JsonElement elem) throws JsonException {
+	private static byte getByte(JsonElement elem) throws JsonException {
 		if (!elem.isJsonPrimitive() || !((JsonPrimitive) elem).isNumber())
 			throw new JsonException(Type.TYPE_MISMATCH, elem, "this element is not number");
 		return elem.getAsByte();
 	}
 
-	public static double getDouble(JsonElement elem) throws JsonException {
+	private static double getDouble(JsonElement elem) throws JsonException {
 		if (!elem.isJsonPrimitive() || !((JsonPrimitive) elem).isNumber())
 			throw new JsonException(Type.TYPE_MISMATCH, elem, "this element is not number");
 		return elem.getAsDouble();
 	}
 
-	public static float getFloat(JsonElement elem) throws JsonException {
+	private static float getFloat(JsonElement elem) throws JsonException {
 		if (!elem.isJsonPrimitive() || !((JsonPrimitive) elem).isNumber())
 			throw new JsonException(Type.TYPE_MISMATCH, elem, "this element is not number");
 		return elem.getAsFloat();
@@ -157,19 +164,19 @@ public class JsonDecoder {
 		return (T) getGlobal(current, cls);
 	}
 
-	public static int getInt(JsonElement elem) throws JsonException {
+	private static int getInt(JsonElement elem) throws JsonException {
 		if (!elem.isJsonPrimitive() || !((JsonPrimitive) elem).isNumber())
 			throw new JsonException(Type.TYPE_MISMATCH, elem, "this element is not number");
 		return elem.getAsInt();
 	}
 
-	public static long getLong(JsonElement elem) throws JsonException {
+	private static long getLong(JsonElement elem) throws JsonException {
 		if (!elem.isJsonPrimitive() || !((JsonPrimitive) elem).isNumber())
 			throw new JsonException(Type.TYPE_MISMATCH, elem, "this element is not number");
 		return elem.getAsLong();
 	}
 
-	public static short getShort(JsonElement elem) throws JsonException {
+	private static short getShort(JsonElement elem) throws JsonException {
 		if (!elem.isJsonPrimitive() || !((JsonPrimitive) elem).isNumber())
 			throw new JsonException(Type.TYPE_MISMATCH, elem, "this element is not number");
 		return elem.getAsShort();
@@ -195,8 +202,16 @@ public class JsonDecoder {
 		return (T) inject(null, elem.getAsJsonObject(), cls, pre);
 	}
 
+	public static void finishLoading() {
+		while (!declast.isEmpty()) {
+			JsonDecoder dc = declast.get(0);
+			Data.err(() -> dc.decodeFields(dc.tarcls, true));
+			declast.remove(0);
+		}
+	}
+
 	@SuppressWarnings("unchecked")
-	protected static List<Object> decodeList(JsonElement elem, Class<?> cls, JsonDecoder par) throws Exception {
+	private static List<Object> decodeList(JsonElement elem, Class<?> cls, JsonDecoder par) throws Exception {
 		if (par.curjfld == null || par.curjfld.generic().length != 1)
 			throw new JsonException(Type.TAG, null, "generic data structure requires typeProvider tag");
 		if (elem.isJsonNull())
@@ -380,31 +395,7 @@ public class JsonDecoder {
 		curjcls = cls.getAnnotation(JsonClass.class);
 		if (curjcls == null)
 			throw new JsonException(Type.TYPE_MISMATCH, jobj, "no annotation for class " + curcls);
-
-		Field[] fs = FieldOrder.getDeclaredFields(cls);
-		for (Field f : fs) {
-			if (Modifier.isStatic(f.getModifiers()))
-				continue;
-			curjfld = f.getAnnotation(JsonField.class);
-			if (curjfld == null && curjcls.noTag() == JsonClass.NoTag.LOAD)
-				curjfld = JsonField.DEF;
-			if (curjfld == null || curjfld.block() || curjfld.io() == JsonField.IOType.W)
-				continue;
-			String tag = curjfld.tag();
-			if (tag.length() == 0)
-				tag = f.getName();
-			if (!jobj.has(tag))
-				continue;
-			JsonElement elem = jobj.get(tag);
-			f.setAccessible(true);
-			curfld = f;
-			try {
-				f.set(obj, decode(elem, f.getType(), getInvoker()));
-			} catch (Exception e) {
-				throw new Exception("error at " + curcls + " in field " + f +" | Elem : "+elem, e);
-			}
-			curfld = null;
-		}
+		decodeFields(cls, false);
 		Method oni = null;
 		for (Method m : cls.getDeclaredMethods()) {
 			if (m.getAnnotation(OnInjected.class) != null)
@@ -428,13 +419,51 @@ public class JsonDecoder {
 			Class<?> ccls = m.getParameterTypes()[0];
 			m.invoke(obj, decode(elem, ccls, getInvoker()));
 		}
-		if (oni != null) {
+		if (oni != null)
 			if (oni.getParameterCount() == 0)
 				oni.invoke(obj);
-			else {
+			else
 				oni.invoke(obj, jobj);
+	}
+
+	public void decodeFields(Class<?> cls, boolean last) throws Exception {
+		boolean ok = last;
+		Field[] fs = FieldOrder.getDeclaredFields(cls);
+		for (Field f : fs) {
+			if (Modifier.isStatic(f.getModifiers()))
+				continue;
+			curjfld = f.getAnnotation(JsonField.class);
+			if (curjfld == null && curjcls.noTag() == JsonClass.NoTag.LOAD)
+				curjfld = JsonField.DEF;
+			if (curjfld == null || curjfld.block() || curjfld.io() == JsonField.IOType.W)
+				continue;
+			if (curjfld.decodeLast() != last) {
+				if (!ok)
+					ok = declast.add(this);
+				continue;
 			}
+			String tag = curjfld.tag();
+			if (tag.length() == 0)
+				tag = f.getName();
+			if (!jobj.has(tag))
+				continue;
+			JsonElement elem = jobj.get(tag);
+			f.setAccessible(true);
+			curfld = f;
+			try {
+				f.set(obj, decode(elem, f.getType(), getInvoker()));
+			} catch (Exception e) {
+				throw new Exception("error at " + curcls + " in field " + f +" | Elem : "+elem, e);
+			}
+			curfld = null;
 		}
+		if (last)
+			for (Method m : cls.getDeclaredMethods())
+				if (m.getAnnotation(OnInjected.class) != null)
+					if (m.getParameterCount() == 0)
+						m.invoke(obj);
+					else
+						m.invoke(obj, jobj);
 	}
 
 	private JsonDecoder getInvoker() {
