@@ -168,7 +168,7 @@ public class UserProfile {
 		File workspace = CommonStatic.ctx.getWorkspaceFile(".");
 		if (packs.exists()) {
 			for (File f : packs.listFiles())
-				if (f.getName().endsWith(".pack.bcuzip")) {
+				if (f.getName().endsWith(".pack.bcuzip") || f.getName().endsWith(".userpack")) {
 					UserPack pack = CommonStatic.ctx.noticeErr(() -> readZipPack(f), ErrType.WARN,
 							"failed to load external pack " + f, () -> setStatic(CURRENT_PACK, null));
 

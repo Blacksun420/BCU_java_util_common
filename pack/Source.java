@@ -465,8 +465,8 @@ public abstract class Source {
 
 			save(pack, false);
 			String star = id.startsWith(".temp_") ? "./packs/" : "./exports/";
-			File tar = CommonStatic.ctx.getAuxFile(star + pack.getSID() + ".pack.bcuzip");
-			File dst = CommonStatic.ctx.getAuxFile(star + ".pack.bcuzip.temp");
+			File tar = CommonStatic.ctx.getAuxFile(star + pack + ".userpack");
+			File dst = CommonStatic.ctx.getAuxFile(star + ".userpack.temp");
 			File src = CommonStatic.ctx.getWorkspaceFile("./" + id);
 			if (tar.exists())
 				Context.delete(tar);
