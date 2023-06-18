@@ -49,12 +49,12 @@ public class SaveData {
             }
         }
         LinkedList<StageMap> newMaps = new LinkedList<>();
-        if (clm + 1 == st.getCont().list.size()) //StageMap fully cleared
-            for (StageMap sm : st.getCont().getCont().maps)
+        if (clm + 1 == st.getCont().list.size()) {//StageMap fully cleared
+            for (StageMap sm : pack.mc.maps)
                 if (sm.unlockReq.size() > 0 && !cSt.containsKey(sm)) {
                     boolean addable = true;
                     for (StageMap smp : sm.unlockReq)
-                        if (!cSt.containsKey(smp)) {
+                        if (smp.id.pack.equals(pack.getSID()) && !cSt.containsKey(smp)) {
                             addable = false;
                             break;
                         }
@@ -63,12 +63,52 @@ public class SaveData {
                         newMaps.add(sm);
                     }
                 }
+            for (PackData.UserPack pac : UserProfile.getUserPacks())
+                if (pac.save != null && pac.desc.dependency.contains(pack.getSID()))
+                    for (StageMap sm : pac.mc.maps)
+                        if (sm.unlockReq.size() > 0 && !pac.save.cSt.containsKey(sm)) {
+                            boolean addable = true;
+                            for (StageMap smp : sm.unlockReq)
+                                if (smp.id.pack.equals(pac.getSID()) && !pac.save.cSt.containsKey(smp)) {
+                                    addable = false;
+                                    break;
+                                }
+                            if (addable) {
+                                pac.save.cSt.put(sm, 0);
+                                newMaps.add(sm);
+                            }
+                        }
+        }
         flags[0] = ret;
         flags[1] = newMaps;
         return flags;
     }
 
+    public LinkedList<StageMap> getUnlockableMaps(StageMap smap) {
+        LinkedList<StageMap> reqMaps = new LinkedList<>();
+        for (StageMap sm : pack.mc.maps)
+            if (sm.unlockReq.contains(smap))
+                reqMaps.add(sm);
+        for (PackData.UserPack pac : UserProfile.getUserPacks())
+            if (pac.save != null && pac.desc.dependency.contains(pack.getSID()))
+                for (StageMap sm : pac.mc.maps)
+                    if (sm.unlockReq.contains(smap))
+                        reqMaps.add(sm);
+        return reqMaps;
+    }
+
     public boolean locked(AbForm f) {
+        if (pack.syncPar.contains(f.getID().pack)) {
+            PackData.UserPack upack = UserProfile.getUserPack(f.getID().pack);
+            if ((upack.defULK.containsKey(f.unit()) && upack.defULK.get(f.unit()) >= f.getFid()) || (upack.save.ulkUni.containsKey(f.unit()) && ulkUni.get(f.unit()) >= f.getFid()))
+                return false;
+        } else if (f.getID().pack.equals(Identifier.DEF)) {
+            for (String par : pack.syncPar) {
+                PackData.UserPack upack = UserProfile.getUserPack(par);
+                if ((upack.defULK.containsKey(f.unit()) && upack.defULK.get(f.unit()) >= f.getFid()) || (upack.save.ulkUni.containsKey(f.unit()) && ulkUni.get(f.unit()) >= f.getFid()))
+                    return false;
+            }
+        }
         return (!pack.defULK.containsKey(f.unit()) || pack.defULK.get(f.unit()) < f.getFid()) &&
                 (!ulkUni.containsKey(f.unit()) || ulkUni.get(f.unit()) < f.getFid());
     }

@@ -94,7 +94,7 @@ public class Replay extends Data {
 	@JsonField
 	public BasisLU lu;
 	@JsonField
-	public boolean buttonDelay = false;
+	public boolean buttonDelay = false, sav = false;
 	public int[] action;
 	@JsonField(generic = {Integer.class, double[].class})
 	public HashMap<Integer, double[]> sniperCoords;
@@ -106,18 +106,19 @@ public class Replay extends Data {
 
 	}
 
-	public Replay(BasisLU blu, Identifier<Stage> sta, int stars, int[] con, long se, boolean buttonDelay) {
+	public Replay(BasisLU blu, Identifier<Stage> sta, int stars, int[] con, long se, boolean buttonDelay, boolean save) {
 		lu = blu;
 		st = sta;
 		star = stars;
 		conf = con;
 		seed = se;
 		this.buttonDelay = buttonDelay;
+		this.sav = save;
 	}
 
 	@Override
 	public Replay clone() {
-		return new Replay(lu.copy(), st, star, conf.clone(), seed, buttonDelay);
+		return new Replay(lu.copy(), st, star, conf.clone(), seed, buttonDelay, sav);
 	}
 
 	public int getLen() {

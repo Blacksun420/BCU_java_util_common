@@ -372,6 +372,8 @@ public abstract class PackData implements IndexContainer {
 		public SaveData save;
 		@JsonField(generic = { Unit.class, Integer.class }, alias = Identifier.class, decodeLast = true)
 		public final TreeMap<AbUnit, Integer> defULK = new TreeMap<>();//Units unlocked from the get-go, for progression
+		@JsonField(generic = String.class)
+		public final SortedPackSet<String> syncPar = new SortedPackSet<>();
 
 		public UserPack(Source s, PackDesc desc, JsonElement elem) {
 			this.desc = desc;

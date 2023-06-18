@@ -90,13 +90,13 @@ public class StageBasis extends BattleObj {
 	private THEME.TYPE themeType;
 	private boolean bgEffectInitialized = false;
 
-	public StageBasis(BattleField bf, EStage stage, BasisLU bas, int[] ints, long seed, boolean buttonDelayOn) {
+	public StageBasis(BattleField bf, EStage stage, BasisLU bas, int[] ints, long seed, boolean buttonDelayOn, boolean sav) {
 		b = bas;
 		r = new CopRand(seed);
 		nyc = bas.nyc;
 		est = stage;
 		st = est.s;
-		elu = new ELineUp(bas.lu, this);
+		elu = new ELineUp(bas.lu, this, sav);
 		est.assign(this);
 		bg = Identifier.getOr(st.bg, Background.class);
 		if (bg.bgEffect != null)

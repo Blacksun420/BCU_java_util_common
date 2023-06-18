@@ -461,8 +461,8 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 		}
 
 		@Override
-		public SaveData getSave() {
-			return pack.getSave();
+		public SaveData getSave(boolean force) {
+			return force ? pack.save : pack.getSave();
 		}
 
 		@JsonDecoder.OnInjected
@@ -577,7 +577,7 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 		return func.reduce(def, maps);
 	}
 
-	public SaveData getSave() {
+	public SaveData getSave(boolean force) {
 		return null;
 	}
 }

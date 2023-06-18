@@ -55,8 +55,9 @@ public class CustomStageInfo implements StageInfo {
     @Override
     public String getHTML() {
         StringBuilder ans = new StringBuilder();
+        ans.append("<html>");
         if (stages.size() > 0) {
-            ans.append("<html><table><tr><th>List of Followup Stages:</th></tr>");
+            ans.append("<table><tr><th>List of Followup Stages:</th></tr>");
             for (int i = 0; i < stages.size(); i++)
                 ans.append("<tr><td>")
                         .append(stages.get(i).getCont().toString())

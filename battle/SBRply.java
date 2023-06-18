@@ -65,7 +65,7 @@ class Mirror extends BattleField {
 	}
 
 	protected Mirror(Replay r) {
-		super(new EStage(r.st.get(), r.star), r.lu, r.conf, r.seed, r.buttonDelay);
+		super(new EStage(r.st.get(), r.star), r.lu, r.conf, r.seed, r.buttonDelay, r.sav);
 		rl = new Release(r.action, r.sniperCoords);
 	}
 

@@ -111,7 +111,7 @@ public class EUnit extends Entity {
 		if (e instanceof EEnemy) {
 			SortedPackSet<Trait> sharedTraits = traits.inCommon(matk.getATKTraits());
 			boolean isAntiTraited = targetTraited(matk.getATKTraits());
-			sharedTraits.addIf(traits, t -> !t.BCTrait() && ((t.targetType && isAntiTraited) || t.others.contains(e.data.getPack())));//Ignore the warning, atk.attacker will always be an unit
+			sharedTraits.addIf(traits, t -> !t.BCTrait() && ((t.targetType && isAntiTraited) || t.others.contains(data.getPack())));//Ignore the warning, atk.attacker will always be an unit
 
 			if (!sharedTraits.isEmpty()) {
 				if (status.curse == 0) {
@@ -174,7 +174,7 @@ public class EUnit extends Entity {
 		if (atk.model instanceof AtkModelEnemy) {
 			SortedPackSet<Trait> sharedTraits = traits.inCommon(atk.trait);
 			boolean isAntiTraited = targetTraited(atk.trait);
-			sharedTraits.addIf(traits, t -> !t.BCTrait() && ((t.targetType && isAntiTraited) || t.others.contains(atk.attacker.data.getPack())));//Ignore the warning, atk.attacker will always be an unit
+			sharedTraits.addIf(traits, t -> !t.BCTrait() && ((t.targetType && isAntiTraited) || t.others.contains(data.getPack())));//Ignore the warning, atk.attacker will always be an unit
 			if (!sharedTraits.isEmpty()) {
 				if (status.curse == 0) {
 					if ((getAbi() & AB_GOOD) != 0)

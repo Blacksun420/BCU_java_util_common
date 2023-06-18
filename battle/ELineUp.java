@@ -13,7 +13,7 @@ public class ELineUp extends BattleObj {
 	public final int[][] price, cool, maxC;
 	public final int[] inc;
 
-	protected ELineUp(LineUp lu, StageBasis sb) {
+	protected ELineUp(LineUp lu, StageBasis sb, boolean sav) {
 		price = new int[2][5];
 		cool = new int[2][5];
 		maxC = new int[2][5];
@@ -24,9 +24,9 @@ public class ELineUp extends BattleObj {
 			for (int j = 0; j < 5; j++) {
 				if (lu.fs[i][j] == null ||
 						(lim != null && ((lim.line > 0 && 2 - (lim.line - i) != 1) || (lu.efs[i][j] instanceof EForm && lim.unusable(((EForm) lu.efs[i][j]).du, sb.st.getCont().price))))
-						|| (sb.st.getCont().getCont().getSave() != null && sb.st.getCont().getCont().getSave().locked(lu.fs[i][j]))) {
+						|| (sav && sb.st.getCont().getCont().getSave(true).locked(lu.fs[i][j]))) {
 					price[i][j] = -1;
-					if (lu.fs[i][j] instanceof Form && sb.st.getCont().getCont().getSave() != null && sb.st.getCont().getCont().getSave().locked(lu.fs[i][j]))
+					if (sav && lu.fs[i][j] instanceof Form && sb.st.getCont().getCont().getSave(true).locked(lu.fs[i][j]))
 						for (int k = 0; k < coms.size(); k++)
 							if (coms.get(k).containsForm((Form)lu.fs[i][j])) {
 								Combo c = coms.get(k);
