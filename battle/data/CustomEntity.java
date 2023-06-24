@@ -9,7 +9,6 @@ import common.pack.Identifier;
 import common.pack.SortedPackSet;
 import common.util.Data;
 import common.util.pack.Soul;
-import common.util.unit.Trait;
 
 import java.util.ArrayList;
 import java.util.Arrays;

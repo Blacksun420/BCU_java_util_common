@@ -17,7 +17,6 @@ import common.util.unit.Trait;
 
 import java.util.*;
 
-@SuppressWarnings("ForLoopReplaceableByForEach")
 @JsonClass(read = RType.FILL)
 public class Treasure extends Data {
 	public static void readCannonCurveData() {
@@ -376,104 +375,46 @@ public class Treasure extends Data {
 	}
 
 	/**
-	 * get damage reduce multiplication from strong against ability
+	 * Get attack multiplication for Extra Damage proc, while also checking combos
+	 * @param mult The markiplier
+	 * @param traits Trait list for fruit buff
+	 * @return Multiplied value
 	 */
-	public double getGOODDEF(SortedPackSet<Trait> eTraits, SortedPackSet<Trait> traits, Orb orb, Level level) {
-		double ini = traits.isEmpty() ? 1 : 0.5 - 0.1 / 3 * getFruit(traits);
+	public double getATK(int mult, SortedPackSet<Trait> traits) {
+		double ini = (mult/100.0) + (mult >= 300 ? 1.0 : mult > 100 ? 0.3 : 0.0) / 3 * getFruit(traits);
+		if (mult > 100 && mult < 500)
+			return ini * 1 - (b.getInc(mult >= 300 ? C_MASSIVE : C_GOOD) * 0.01);
+		return ini;
+	}
 
+	public double getDEF(int mult, SortedPackSet<Trait> eTraits, SortedPackSet<Trait> traits, Orb orb, Level level) {
+		final int ORB_LV = mult < 600 && mult > 100 ? mult < 400 ? ORB_STRONG : ORB_RESISTANT : -1;
+		final byte[] ORB_MULTIS = ORB_LV == -1 ? new byte[0] : ORB_LV == ORB_STRONG ? ORB_STR_DEF_MULTI : ORB_RESISTANT_MULTI;
+
+		double ini = 1;
+		if (!traits.isEmpty()) {
+			ini = (100.0/mult);
+			if (ORB_LV != -1)
+				ini = ini - (ORB_LV == ORB_STRONG ? 0.1 : 0.05) / 3 * getFruit(traits);
+			else if (mult >= 600)
+				ini = ini - 1.0 / 126 * getFruit(traits);
+		}
 		if(orb != null && level.getOrbs() != null) {
 			int[][] orbs = level.getOrbs();
-
-			for(int i = 0; i < orbs.length; i++) {
-				if (orbs[i].length < ORB_TOT)
-					continue;
-
-				if (orbs[i][ORB_TYPE] == ORB_STRONG) {
-					List<Trait> orbType = Trait.convertOrb(orbs[i][ORB_TRAIT]);
-
-					for(int j = 0; j < orbType.size(); j++) {
-						if(eTraits.contains(orbType.get(j))) {
-							ini *= 1 - ORB_STR_DEF_MULTI[orbs[i][ORB_GRADE]] / 100.0;
-
+			for (int[] ints : orbs)
+				if (ints.length == ORB_TOT && ints[ORB_TYPE] == ORB_LV) {
+					List<Trait> orbType = Trait.convertOrb(ints[ORB_TRAIT]);
+					for (Trait trait : orbType)
+						if (eTraits.contains(trait)) {
+							ini *= 1 - ORB_MULTIS[ints[ORB_GRADE]] / 100.0;
 							break;
 						}
-					}
 				}
-			}
 		}
-
-		if (ini == 1)
+		if (ini == 1 || ORB_LV == -1)
 			return ini;
-
-		double com = 1 - b.getInc(C_GOOD) * 0.01;
-
+		double com = 1 - b.getInc(ORB_LV == ORB_STRONG ? C_GOOD : C_RESIST) * 0.01;
 		return ini * com;
-	}
-
-	/**
-	 * get attack multiplication from super massive damage ability
-	 */
-	public double getMASSIVESATK(SortedPackSet<Trait> traits) {
-		return 5 + 1.0 / 3 * getFruit(traits);
-	}
-
-	/**
-	 * get attack multiplication from massive damage ability
-	 */
-	public double getMASSIVEATK(SortedPackSet<Trait> traits) {
-		double ini = 3 + 1.0 / 3 * getFruit(traits);
-		double combo = (1 - (b.getInc(C_MASSIVE) * 0.01));
-		return ini * combo;
-	}
-
-	/**
-	 * get attack multiplication from massive damage ability
-	 */
-	public double getGOODATK(SortedPackSet<Trait> traits) {
-		double ini = 1.5 + 0.3 / 3 * getFruit(traits);
-		double combo = 1 - (b.getInc(C_GOOD) * 0.01);
-		return ini * combo;
-	}
-
-	/**
-	 * get damage reduce multiplication from resistant ability
-	 */
-	public double getRESISTDEF(SortedPackSet<Trait> eTraits, SortedPackSet<Trait> traits, Orb orb, Level level) {
-		double ini = traits.isEmpty() ? 1 : 0.25 - 0.05 / 3 * getFruit(traits);
-
-		if(orb != null && level.getOrbs() != null) {
-			int[][] orbs = level.getOrbs();
-
-			for(int i = 0; i < orbs.length; i++) {
-				if (orbs[i].length < ORB_TOT)
-					continue;
-
-				if (orbs[i][ORB_TYPE] == ORB_RESISTANT) {
-					List<Trait> orbType = Trait.convertOrb(orbs[i][ORB_TRAIT]);
-
-					for(int j = 0; j < orbType.size(); j++) {
-						if(eTraits.contains(orbType.get(j))) {
-							ini *= 1 - ORB_RESISTANT_MULTI[orbs[i][ORB_GRADE]] / 100.0;
-
-							break;
-						}
-					}
-				}
-			}
-		}
-
-		if (ini == 1)
-			return ini;
-
-		double com = 1 - b.getInc(C_RESIST) * 0.01;
-		return ini * com;
-	}
-
-	/**
-	 * get damage reduce multiplication from super resistant ability
-	 */
-	public double getRESISTSDEF(SortedPackSet<Trait> traits) {
-		return 1.0 / 6 - 1.0 / 126 * getFruit(traits);
 	}
 
 	/**

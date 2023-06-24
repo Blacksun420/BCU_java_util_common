@@ -10,10 +10,10 @@ import common.util.anim.EAnimD;
 import common.util.pack.Background;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-@SuppressWarnings("ForLoopReplaceableByForEach")
 public class BGEffectHandler {
     protected static final P origin = new P(0, 0);
 
@@ -49,7 +49,7 @@ public class BGEffectHandler {
 
     private boolean animLoaded = false;
 
-    private final List<Integer> capture = new ArrayList<>();
+    private final List<Integer> capture = new LinkedList<>();
     private final Random r = new Random();
 
     public BGEffectHandler(BGEffectSegment segment, int bgId) {
@@ -84,9 +84,8 @@ public class BGEffectHandler {
 
     public void check() {
         if(!animLoaded) {
-            for(int i = 0; i < anims.length; i++) {
-                anims[i].load();
-            }
+            for (BGEffectAnim anim : anims)
+                anim.load();
 
             animLoaded = true;
         }
@@ -312,7 +311,7 @@ public class BGEffectHandler {
     public void update(int w, double h, double midH) {
         capture.clear();
 
-        for(int i = 0; i < count; i++) {
+        for(int i = 0; i < count; i++)
             if(wait != null && wait[i] != 0) {
                 wait[i]--;
 
@@ -329,48 +328,37 @@ public class BGEffectHandler {
                         anim.update(false);
 
                         reInitialize(i, w, h, midH, time);
-                    } else {
+                    } else
                         reInitialize(i, w, h, midH, 0);
-                    }
                 }
+            } else if (checkDestroy(i)) {
+                capture.add(i);
             } else {
-                if(checkDestroy(i)) {
-                    capture.add(i);
-                } else {
-                    animation.get(i).update(false);
+                animation.get(i).update(false);
 
-                    if(v != null && moveAngle != null) {
-                        position[i].x += v[i] * Math.cos(moveAngle[i]);
-                        position[i].y += v[i] * Math.sin(moveAngle[i]);
-                    } else if(velocity != null) {
-                        position[i].x += velocity[i].x;
-                        position[i].y += velocity[i].y;
-                    }
-
-                    if(angleVelocity != null) {
-                        angle[i] += angleVelocity[i];
-                    }
-
-                    if(lifeTime != null) {
-                        lifeTime[i]--;
-                    }
+                if(v != null && moveAngle != null) {
+                    position[i].x += v[i] * Math.cos(moveAngle[i]);
+                    position[i].y += v[i] * Math.sin(moveAngle[i]);
+                } else if(velocity != null) {
+                    position[i].x += velocity[i].x;
+                    position[i].y += velocity[i].y;
                 }
+                if(angleVelocity != null)
+                    angle[i] += angleVelocity[i];
+                if(lifeTime != null)
+                    lifeTime[i]--;
             }
-        }
 
-        if(!capture.isEmpty()) {
-            for(int i = 0; i < capture.size(); i++) {
-                int ind = capture.get(i);
-
-                if(segment.wait != null || segment.startWait != null) {
-                    if(segment.wait != null && segment.startWait != null) {
-                        if(!startWaitDone[ind]) {
+        if(!capture.isEmpty())
+            for (int ind : capture) {
+                if (segment.wait != null || segment.startWait != null) {
+                    if (segment.wait != null && segment.startWait != null) {
+                        if (!startWaitDone[ind]) {
                             wait[ind] = segment.startWait.getPureRangeI();
                             startWaitDone[ind] = true;
-                        } else {
+                        } else
                             wait[ind] = segment.wait.getPureRangeI();
-                        }
-                    } else if(segment.wait != null)
+                    } else if (segment.wait != null)
                         wait[ind] = segment.wait.getPureRangeI();
                     else
                         wait[ind] = segment.startWait.getPureRangeI();
@@ -380,19 +368,17 @@ public class BGEffectHandler {
 
                     animation.set(ind, anim);
 
-                    if(segment.frame != null) {
+                    if (segment.frame != null) {
                         int time = segment.frame.getAnimFrame(anim);
 
                         anim.setTime(time - 1);
                         anim.update(false);
 
                         reInitialize(ind, w, h, midH, time);
-                    } else {
+                    } else
                         reInitialize(ind, w, h, midH, 0);
-                    }
                 }
             }
-        }
     }
 
     public void draw(FakeGraphics g, P rect, double siz, boolean post) {

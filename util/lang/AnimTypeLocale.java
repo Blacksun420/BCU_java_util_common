@@ -50,19 +50,7 @@ public class AnimTypeLocale {
 
 	public static void read() {
 		String loc = CommonStatic.Lang.LOC_CODE[CommonStatic.getConfig().lang];
-		InputStream f;
-
-		switch (CommonStatic.getConfig().lang) {
-			case 2:
-				f = CommonStatic.ctx.getLangFile("animation_type_kr.json");
-				break;
-			case 3:
-				f = CommonStatic.ctx.getLangFile("animation_type_jp.json");
-				break;
-			default:
-				f = CommonStatic.ctx.getLangFile("animation_type.json");
-				break;
-		}
+		InputStream f = CommonStatic.ctx.getLangFile("animation_type.json");
 
 		JsonElement je = JsonParser.parseReader(new InputStreamReader(f, StandardCharsets.UTF_8));
 		for (AnimI.AnimType<?, ?> type : TYPES) {

@@ -163,13 +163,8 @@ public class Res extends ImgCore {
 		aux.icon[4] = new VImg[PC2_TOT];
 		aux.icon[0][ABI_EKILL] = new VImg(parts[110]);
 		aux.icon[0][ABI_ONLY] = new VImg(parts[202]);
-		aux.icon[0][ABI_GOOD] = new VImg(parts[203]);
-		aux.icon[0][ABI_RESIST] = new VImg(parts[204]);
-		aux.icon[0][ABI_MASSIVE] = new VImg(parts[206]);
 		aux.icon[0][ABI_METALIC] = new VImg(parts[209]);
 		aux.icon[0][ABI_WKILL] = new VImg(parts[258]);
-		aux.icon[0][ABI_RESISTS] = new VImg(parts[122]);
-		aux.icon[0][ABI_MASSIVES] = new VImg(parts[114]);
 		aux.icon[0][ABI_ZKILL] = new VImg(parts[260]);
 		aux.icon[0][ABI_BAKILL] = new VImg(parts[297]);
 		aux.icon[0][ABI_CKILL] = new VImg(parts[300]);
@@ -249,6 +244,8 @@ public class Res extends ImgCore {
 		aux.icon[1][P_HYPNO] = new VImg("./org/page/icons/Hypno.png");
 		aux.icon[1][P_IMUHYPNO] = new VImg("./org/page/icons/ImuHypno.png");
 		aux.icon[1][P_DEMONVOLC] = new VImg("./org/page/icons/CounterSurge.png");
+		aux.icon[1][P_DEFINC] = new VImg(parts[204]);
+		aux.icon[1][P_DMGINC] = new VImg(parts[206]);
 
 		aux.icon[2][ATK_SINGLE] = new VImg(parts[217]);
 		aux.icon[2][ATK_AREA] = new VImg(parts[211]);
@@ -282,6 +279,9 @@ public class Res extends ImgCore {
 		aux.icon[4][PC2_RNG] = new VImg("./org/page/icons/PlusRange.png");
 
 		aux.waveShield = new VImg(parts[218]);
+		aux.dmgIcons[0] = new VImg(parts[203]); //strong vs
+		aux.dmgIcons[1] = new VImg(parts[122]); //ins resist
+		aux.dmgIcons[2] = new VImg(parts[114]); //ins massive
 		CommonStatic.getConfig().icon = false;
 	}
 

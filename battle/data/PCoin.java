@@ -118,7 +118,7 @@ public class PCoin extends Data {
 			if (this.trait.size() > 0)
 				ans.getTraits().addAll(this.trait);
 
-			int offset = type.length >= 3 ? type[2] : 0;
+			int offset = type.length >= 3 && type[0] == PC_P ? type[2] : 0;
 			int fieldTOT = -offset;
 			if (type[0] == PC_P)
 				fieldTOT += ans.getProc().getArr(type[1]).getDeclaredFields().length; //The Math.min is for testing
@@ -209,8 +209,15 @@ public class PCoin extends Data {
 				ans.getProc().getArr(type[1]).set(0, 100);
 			else if (type[0] == PC_TRAIT)
 				ans.getTraits().add(UserProfile.getBCData().traits.get(type[1]));
-			else if (type[0] == 5) //waveblock
-				ans.getProc().getArr(type[1]).set(1, 100);
+			else if (type[0] == 5) { //special cases
+				if (type[1] == P_IMUWAVE)
+					ans.getProc().getArr(type[1]).set(1, 100);
+				else {
+					if (type[2] == 150)
+						ans.getProc().DEFINC.mult = 200;
+					ans.getProc().getArr(type[1]).set(0, type[2]);
+				}
+			}
 		}
 
 		return ans;

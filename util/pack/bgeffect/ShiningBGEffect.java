@@ -11,11 +11,11 @@ import common.util.Data;
 import common.util.pack.Background;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
 @JsonClass.JCGeneric(Identifier.class)
-@SuppressWarnings("ForLoopReplaceableByForEach")
 public class ShiningBGEffect extends BackgroundEffect {
     private final FakeImage shine;
 
@@ -26,7 +26,7 @@ public class ShiningBGEffect extends BackgroundEffect {
     private final List<Byte> time = new ArrayList<>();
     private final Random r = new Random();
 
-    private final List<Integer> capture = new ArrayList<>();
+    private final List<Integer> capture = new LinkedList<>();
 
     public ShiningBGEffect(Identifier<BackgroundEffect> id) {
         super(id);
@@ -82,18 +82,17 @@ public class ShiningBGEffect extends BackgroundEffect {
         }
 
         if(!capture.isEmpty())
-            for(int i = 0; i < capture.size(); i++) {
-                shinePosition.get(capture.get(i)).x = r.nextInt(w + battleOffset);
-                shinePosition.get(capture.get(i)).y = r.nextInt(BGHeight * 3 - BGHeight);
-                time.set(capture.get(i), Data.BG_EFFECT_SHINING_TIME);
+            for (Integer capt : capture) {
+                shinePosition.get(capt).x = r.nextInt(w + battleOffset);
+                shinePosition.get(capt).y = r.nextInt(BGHeight * 3 - BGHeight);
+                time.set(capt, Data.BG_EFFECT_SHINING_TIME);
             }
     }
 
     @Override
     public void initialize(int w, double h, double midH, Background bg) {
-        for(int i = 0; i < shinePosition.size(); i++) {
-            P.delete(shinePosition.get(i));
-        }
+        for (P p : shinePosition)
+            P.delete(p);
 
         shinePosition.clear();
         time.clear();

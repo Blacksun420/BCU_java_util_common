@@ -15,7 +15,6 @@ import common.util.unit.*;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-@SuppressWarnings("ForLoopReplaceableByForEach")
 @JsonClass
 public class LineUp extends Data {
 

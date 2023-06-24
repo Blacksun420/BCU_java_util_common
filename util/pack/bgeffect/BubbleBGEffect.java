@@ -10,11 +10,11 @@ import common.util.Data;
 import common.util.pack.Background;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
 @JsonClass.JCGeneric(Identifier.class)
-@SuppressWarnings("ForLoopReplaceableByForEach")
 public class BubbleBGEffect extends BackgroundEffect {
     private final FakeImage bubble;
 
@@ -25,7 +25,7 @@ public class BubbleBGEffect extends BackgroundEffect {
     private final List<Byte> differentiator = new ArrayList<>();
     private final Random r = new Random();
 
-    private final List<Integer> capture = new ArrayList<>();
+    private final List<Integer> capture = new LinkedList<>();
 
     public BubbleBGEffect(Identifier<BackgroundEffect> i, FakeImage bubble) {
         super(i);
@@ -74,28 +74,25 @@ public class BubbleBGEffect extends BackgroundEffect {
         capture.clear();
 
         for(int i = 0; i < bubblePosition.size(); i++) {
-            if(bubblePosition.get(i).y < -bh) {
+            if(bubblePosition.get(i).y < -bh)
                 capture.add(i);
-            } else {
+            else
                 bubblePosition.get(i).y -= (BGHeight * 3.0 + bh) / Data.BG_EFFECT_BUBBLE_TIME;
-            }
         }
 
-        if(!capture.isEmpty()) {
-            for(int i = 0; i < capture.size(); i++) {
-                P.delete(bubblePosition.get(capture.get(i)));
+        if(!capture.isEmpty())
+            for (Integer capt : capture) {
+                P.delete(bubblePosition.get(capt));
 
-                bubblePosition.set(capture.get(i), P.newP(r.nextInt(w + battleOffset), BGHeight * 3));
-                differentiator.set(capture.get(i), (byte) (3 - r.nextInt(6)));
+                bubblePosition.set(capt, P.newP(r.nextInt(w + battleOffset), BGHeight * 3));
+                differentiator.set(capt, (byte) (3 - r.nextInt(6)));
             }
-        }
     }
 
     @Override
     public void initialize(int w, double h, double midH, Background bg) {
-        for(int i = 0; i < bubblePosition.size(); i++) {
-            P.delete(bubblePosition.get(i));
-        }
+        for (P p : bubblePosition)
+            P.delete(p);
 
         bubblePosition.clear();
         differentiator.clear();

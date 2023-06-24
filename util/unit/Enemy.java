@@ -60,10 +60,10 @@ public class Enemy extends Character implements AbEnemy {
 
 	public List<Stage> findApp() {
 		List<Stage> ans = new ArrayList<>();
-		for (Stage st : MapColc.getAllStage()) {
-			if (st != null && st.contains(this))
+		for (Stage st : MapColc.getAllStage())
+			if (st != null && (st.getCont().getCont().getSave(false) == null || st.getCont().unlockReq.isEmpty() || st.getCont().getCont().getSave(false).cSt.containsKey(st.getCont())) && st.contains(this))
 				ans.add(st);
-		}
+
 		return ans;
 	}
 
@@ -132,7 +132,7 @@ public class Enemy extends Character implements AbEnemy {
 		enemy.pack = this;
 
 		PackData.UserPack pack = (PackData.UserPack) getCont();
-		if (pack.desc.FORK_VERSION < 6) {
+		if (pack.desc.FORK_VERSION < 9) {
 			inject(pack, jobj.getAsJsonObject("de"), enemy);
 			//Updates stuff to match this fork without core version issues
 			if (pack.desc.FORK_VERSION < 1) {
@@ -164,7 +164,10 @@ public class Enemy extends Character implements AbEnemy {
 		} //Finish FORK_VERSION 6 checks
 	}
 
-
+	@Override
+	public PackData getPack() {
+		return getCont();
+	}
 
 	@Override
 	public String toString() {

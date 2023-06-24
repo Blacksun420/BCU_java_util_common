@@ -20,41 +20,24 @@ import common.util.unit.Trait;
 
 import java.util.List;
 
-@SuppressWarnings("ForLoopReplaceableByForEach")
 public class EUnit extends Entity {
 
 	private static final SortedPackSet<Trait> blank = new SortedPackSet<>(0);
 
 	public static class OrbHandler extends BattleObj {
+
+		protected static double getOrb(int mult, AttackAb atk, SortedPackSet<Trait> traits, Treasure t) {
+			if(atk.origin.model instanceof AtkModelUnit)
+				return ((EUnit) ((AtkModelUnit) atk.origin.model).e).getOrb(mult, atk.trait, traits, t);
+			return ((EUnit) ((AtkModelUnit)atk.model).e).getOrb(mult, atk.trait, traits, t);
+		}
+
 		protected static int getOrbAtk(AttackAb atk, EEnemy en) {
-			if (atk.matk == null) {
+			if (atk.matk == null || !(atk.origin.model instanceof AtkModelUnit))
 				return 0;
-			}
-
-			if (atk.origin.model instanceof AtkModelUnit) {
-				// Warning : Eunit.e became public now
-				EUnit unit = (EUnit) ((AtkModelUnit) atk.origin.model).e;
-
-				return unit.getOrbAtk(en.traits, atk.matk);
-			}
-
-			return 0;
-		}
-
-		protected static double getOrbMassive(AttackAb atk, SortedPackSet<Trait> traits, Treasure t) {
-			if(atk.origin.model instanceof AtkModelUnit) {
-				return ((EUnit) ((AtkModelUnit) atk.origin.model).e).getOrbMassive(atk.trait, traits, t);
-			}
-
-			return ((EUnit) ((AtkModelUnit)atk.model).e).getOrbMassive(atk.trait, traits, t);
-		}
-
-		protected static double getOrbGood(AttackAb atk, SortedPackSet<Trait> traits, Treasure t) {
-			if(atk.origin.model instanceof AtkModelUnit) {
-				return ((EUnit) ((AtkModelUnit) atk.origin.model).e).getOrbGood(atk.trait, traits, t);
-			}
-
-			return ((EUnit) ((AtkModelUnit)atk.model).e).getOrbGood(atk.trait, traits, t);
+			// Warning : Eunit.e became public now
+			EUnit unit = (EUnit)((AtkModelUnit) atk.origin.model).e;
+			return unit.getOrb(en.traits, atk.matk.getAtk(), true);
 		}
 	}
 
@@ -109,28 +92,6 @@ public class EUnit extends Entity {
 		if (ans == 0)
 			return 0;
 		if (e instanceof EEnemy) {
-			SortedPackSet<Trait> sharedTraits = traits.inCommon(matk.getATKTraits());
-			boolean isAntiTraited = targetTraited(matk.getATKTraits());
-			sharedTraits.addIf(traits, t -> !t.BCTrait() && ((t.targetType && isAntiTraited) || t.others.contains(data.getPack())));//Ignore the warning, atk.attacker will always be an unit
-
-			if (!sharedTraits.isEmpty()) {
-				if (status.curse == 0) {
-					if ((getAbi() & AB_GOOD) != 0)
-						ans *= 1.5;
-					if ((getAbi() & AB_MASSIVE) != 0)
-						ans *= 3;
-					if ((getAbi() & AB_MASSIVES) != 0)
-						ans *= 5;
-				}
-				if (e.status.curse == 0) {
-					if ((e.getAbi() & AB_GOOD) > 0)
-						ans /= 2;
-					if ((e.getAbi() & AB_RESIST) > 0)
-						ans /= 4;
-					if ((e.getAbi() & AB_RESISTS) > 0)
-						ans /= 6;
-				}
-			}
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_WITCH)) && (e.getAbi() & AB_WKILL) > 0)
 				ans *= basis.b.t().getWKDef();
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_EVA)) && (e.getAbi() & AB_EKILL) > 0)
@@ -176,22 +137,10 @@ public class EUnit extends Entity {
 			boolean isAntiTraited = targetTraited(atk.trait);
 			sharedTraits.addIf(traits, t -> !t.BCTrait() && ((t.targetType && isAntiTraited) || t.others.contains(data.getPack())));//Ignore the warning, atk.attacker will always be an unit
 			if (!sharedTraits.isEmpty()) {
-				if (status.curse == 0) {
-					if ((getAbi() & AB_GOOD) != 0)
-						ans *= basis.b.t().getGOODDEF(atk.trait, sharedTraits, ((MaskUnit) data).getOrb(), level);
-					if ((getAbi() & AB_RESIST) != 0)
-						ans *= basis.b.t().getRESISTDEF(atk.trait, sharedTraits, ((MaskUnit) data).getOrb(), level);
-					if ((getAbi() & AB_RESISTS) != 0)
-						ans *= basis.b.t().getRESISTSDEF(sharedTraits);
-				}
-				if (atk.attacker.status.curse == 0) {
-					if ((atk.abi & AB_GOOD) != 0)
-						ans *= 1.5;
-					if ((atk.abi & AB_MASSIVE) != 0)
-						ans *= 3;
-					if ((atk.abi & AB_MASSIVES) != 0)
-						ans *= 5;
-				}
+				if (status.curse == 0 && atk.attacker.getProc().DEFINC.mult != 0)
+					ans *= basis.b.t().getDEF(atk.attacker.getProc().DEFINC.mult, atk.trait,sharedTraits,((MaskUnit)data).getOrb(),level);
+				if (atk.attacker.status.curse == 0 && atk.attacker.getProc().DMGINC.mult != 0)
+					ans *= atk.attacker.getProc().DMGINC.mult / 100.0;
 			}
 			if (atk.trait.contains(UserProfile.getBCData().traits.get(TRAIT_WITCH)) && (getAbi() & AB_WKILL) > 0)
 				ans *= basis.b.t().getWKDef();
@@ -203,11 +152,19 @@ public class EUnit extends Entity {
 				ans *= 0.6; //Not sure
 		}
 		// Perform orb
-		ans = getOrbRes(atk.trait, ans);
+		ans = getOrb(atk.trait, ans, false);
 
 		if(basis.canon.base > 0)
 			ans = (int) (ans * basis.b.t().getBaseMagnification(basis.canon.base, atk.trait));
 		return critCalc((getAbi() & AB_METALIC) != 0, ans, atk);
+	}
+
+	@Override
+	protected void processProcs0(AttackAb atk, int dmg) {
+		Proc.CDSETTER cd = atk.getProc().CDSETTER;
+		if (cd.prob > 0 && index != null && index[1] < 5)
+			basis.changeUnitCooldown(cd.amount, index[0] * 5 + index[1], cd.type);
+		super.processProcs0(atk, dmg);
 	}
 
 	@Override
@@ -229,146 +186,56 @@ public class EUnit extends Entity {
 		return super.getMov(extmov);
 	}
 
-	private int getOrbAtk(SortedPackSet<Trait> trait, MaskAtk matk) {
+	private int getOrb(SortedPackSet<Trait> trait, int matk, boolean atk) {
 		Orb orb = ((MaskUnit) data).getOrb();
-
-		if (orb == null || level.getOrbs() == null) {
-			return 0;
-		}
-
-		int ans = 0;
-
-		for (int[] line : level.getOrbs()) {
-			if (line.length == 0)
-				continue;
-
-			if (line[ORB_TYPE] != Data.ORB_ATK)
-				continue;
-
-			List<Trait> orbType = Trait.convertOrb(line[ORB_TRAIT]);
-
-			boolean orbValid = false;
-
-			for(int i = 0; i < orbType.size(); i++) {
-				if (trait.contains(orbType.get(i))) {
-					orbValid = true;
-
-					break;
-				}
-			}
-
-			if (!orbValid)
-				continue;
-
-			ans += orb.getAtk(line[ORB_GRADE], matk);
-		}
-
-		return ans;
-	}
-
-	private int getOrbRes(SortedPackSet<Trait> trait, int atk) {
-		Orb orb = ((MaskUnit) data).getOrb();
-
 		if (orb == null || level.getOrbs() == null)
-			return atk;
-
-		int ans = atk;
-
+			return atk ? 0 : matk;
+		int ans = atk ? 0 : matk;
 		for (int[] line : level.getOrbs()) {
-			if (line.length == 0 || line[ORB_TYPE] != Data.ORB_RES)
+			int ORB = atk ? ORB_ATK : ORB_RES;
+			if (line.length == 0 || line[ORB_TYPE] != ORB)
 				continue;
-
 			List<Trait> orbType = Trait.convertOrb(line[ORB_TRAIT]);
-
 			boolean orbValid = false;
-
-			for(int i = 0; i < orbType.size(); i++) {
-				if (trait.contains(orbType.get(i))) {
+			for (Trait orbT : orbType)
+				if (trait.contains(orbT)) {
 					orbValid = true;
-
 					break;
 				}
+			if (orbValid) {
+				if (atk)
+					ans += orb.getAtk(line[ORB_GRADE], matk);
+				else
+					ans = orb.getRes(line[ORB_GRADE], ans);
 			}
-
-			if (!orbValid)
-				continue;
-
-			ans = orb.getRes(line[ORB_GRADE], ans);
 		}
-
 		return ans;
 	}
 
-	private double getOrbMassive(SortedPackSet<Trait> eTraits, SortedPackSet<Trait> traits, Treasure t) {
-		double ini = 1;
+	private double getOrb(int mult, SortedPackSet<Trait> eTraits, SortedPackSet<Trait> traits, Treasure t) {
+		final int ORB_LV = mult < 500 && mult > 100 ? mult < 300 ? ORB_STRONG : ORB_MASSIVE : -1;
+		final float[] ORB_MULTIS = ORB_LV == -1 ? new float[0] : ORB_LV == ORB_STRONG ? ORB_STR_ATK_MULTI : ORB_MASSIVE_MULTI;
 
+		double ini = 1;
 		if (!traits.isEmpty())
-			ini = 3 + 1.0 / 3 * t.getFruit(traits);
+			ini = (mult/100.0) + (ORB_LV == ORB_STRONG ? 0.3 : mult > 100 ? 1.0 : 0.0) / 3 * t.getFruit(traits);
 
 		Orb orbs = ((MaskUnit)data).getOrb();
-
 		if(orbs != null && level.getOrbs() != null) {
 			int[][] levelOrbs = level.getOrbs();
-
-			for(int i = 0; i < levelOrbs.length; i++) {
-				if (levelOrbs[i].length < ORB_TOT)
-					continue;
-
-				if (levelOrbs[i][ORB_TYPE] == ORB_MASSIVE) {
-					List<Trait> orbType = Trait.convertOrb(levelOrbs[i][ORB_TRAIT]);
-
-					for(int j = 0; j < orbType.size(); j++) {
-						if (eTraits.contains(orbType.get(j))) {
-							ini += ORB_MASSIVE_MULTI[levelOrbs[i][ORB_GRADE]];
-
+			for (int[] lvOrb : levelOrbs)
+				if (lvOrb.length == ORB_TOT && lvOrb[ORB_TYPE] == ORB_LV) {
+					List<Trait> orbType = Trait.convertOrb(lvOrb[ORB_TRAIT]);
+					for (Trait orbTr : orbType)
+						if (eTraits.contains(orbTr)) {
+							ini += ORB_MULTIS[lvOrb[ORB_GRADE]];
 							break;
 						}
-					}
 				}
-			}
 		}
-
-		if (ini == 1)
+		if (ini == 1 || ORB_LV == -1)
 			return ini;
-
-		double com = 1 + t.b.getInc(C_MASSIVE) * 0.01;
-
-		return ini * com;
-	}
-
-	private double getOrbGood(SortedPackSet<Trait> eTraits, SortedPackSet<Trait> traits, Treasure t) {
-		double ini = 1;
-
-		if (!traits.isEmpty())
-			ini = 1.5 * (1 + 0.2 / 3 * t.getFruit(traits));
-
-		Orb orbs = ((MaskUnit)data).getOrb();
-
-		if(orbs != null && level.getOrbs() != null) {
-			int[][] levelOrbs = level.getOrbs();
-
-			for (int i = 0; i < levelOrbs.length; i++) {
-				if (levelOrbs[i].length < ORB_TOT)
-						continue;
-
-				if (levelOrbs[i][ORB_TYPE] == ORB_STRONG) {
-					List<Trait> orbType = Trait.convertOrb(levelOrbs[i][ORB_TRAIT]);
-
-					for(int j = 0; j < orbType.size(); j++) {
-						if (eTraits.contains(orbType.get(j))) {
-							ini += ORB_STR_ATK_MULTI[levelOrbs[i][ORB_GRADE]];
-
-							break;
-						}
-					}
-				}
-			}
-		}
-
-		if (ini == 1)
-			return ini;
-
-		double com = 1 + t.b.getInc(C_GOOD) * 0.01;
+		double com = 1 + t.b.getInc(ORB_LV == ORB_STRONG ? C_GOOD : C_MASSIVE) * 0.01;
 		return ini * com;
 	}
 

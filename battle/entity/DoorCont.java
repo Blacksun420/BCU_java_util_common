@@ -7,8 +7,6 @@ import common.system.fake.FakeTransform;
 import common.util.anim.AnimU;
 import common.util.pack.EffAnim;
 
-import java.util.Comparator;
-
 public class DoorCont extends EAnimCont {
 
     private final StageBasis bas;

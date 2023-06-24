@@ -11,11 +11,11 @@ import common.util.Data;
 import common.util.pack.Background;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
 @JsonClass.JCGeneric(Identifier.class)
-@SuppressWarnings("ForLoopReplaceableByForEach")
 public class BalloonBGEffect extends BackgroundEffect {
 
     private FakeImage balloon;
@@ -26,7 +26,7 @@ public class BalloonBGEffect extends BackgroundEffect {
     private final List<Byte> speed = new ArrayList<>();
     private final Random r = new Random();
 
-    private final List<Integer> capture = new ArrayList<>();
+    private final List<Integer> capture = new LinkedList<>();
 
     public BalloonBGEffect(Identifier<BackgroundEffect> id) {
         super(id);
@@ -82,30 +82,29 @@ public class BalloonBGEffect extends BackgroundEffect {
         for(int i = 0; i < balloonPosition.size(); i++) {
             int bh = isBigBalloon.get(i) ? bigBalloon.getHeight() : balloon.getHeight();
 
-            if(balloonPosition.get(i).y < -bh) {
+            if(balloonPosition.get(i).y < -bh)
                 capture.add(i);
-            } else {
+            else
                 balloonPosition.get(i).y -= speed.get(i);
-            }
         }
 
         if(!capture.isEmpty()) {
-            for(int i = 0; i < capture.size(); i++) {
+            for (Integer integer : capture) {
                 boolean isBig = r.nextBoolean();
 
                 int bw = isBig ? bigBalloon.getWidth() : balloon.getWidth();
 
-                balloonPosition.get(capture.get(i)).x = r.nextInt(w + battleOffset + 2 * BackgroundEffect.revertP(bw)) - BackgroundEffect.revertP(bw);
-                balloonPosition.get(capture.get(i)).y = BGHeight * 3;
-                isBigBalloon.set(capture.get(i), isBig);
+                balloonPosition.get(integer).x = r.nextInt(w + battleOffset + 2 * BackgroundEffect.revertP(bw)) - BackgroundEffect.revertP(bw);
+                balloonPosition.get(integer).y = BGHeight * 3;
+                isBigBalloon.set(integer, isBig);
             }
         }
     }
 
     @Override
     public void initialize(int w, double h, double midH, Background bg) {
-        for(int i = 0; i < balloonPosition.size(); i++) {
-            P.delete(balloonPosition.get(i));
+        for (P p : balloonPosition) {
+            P.delete(p);
         }
 
         balloonPosition.clear();
@@ -116,12 +115,10 @@ public class BalloonBGEffect extends BackgroundEffect {
 
         Background background;
 
-        if(!bg.id.pack.equals(Identifier.DEF) || bg.bgEffect.id != Data.BG_EFFECT_BALLOON) {
+        if(!bg.id.pack.equals(Identifier.DEF) || bg.bgEffect.id != Data.BG_EFFECT_BALLOON)
             background = UserProfile.getBCData().bgs.get(81);
-        } else {
+        else
             background = bg;
-        }
-
         background.load();
 
         balloon = background.parts[20];
@@ -136,7 +133,7 @@ public class BalloonBGEffect extends BackgroundEffect {
 
             balloonPosition.add(P.newP(r.nextInt(w + battleOffset + 2 * BackgroundEffect.revertP(bw)) - BackgroundEffect.revertP(bw), r.nextInt(BGHeight) * 3));
             isBigBalloon.add(isBig);
-            speed.add((byte) Data.BG_EFFECT_BALLOON_SPEED);
+            speed.add(Data.BG_EFFECT_BALLOON_SPEED);
         }
     }
 

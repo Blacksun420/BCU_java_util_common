@@ -55,6 +55,7 @@ public class CommonStatic {
 		 */
 		public VImg dummyTrait;
 		public VImg waveShield;
+		public VImg[] dmgIcons = new VImg[3];
 
 		// Background resources
 		public final List<ImgCut> iclist = new ArrayList<>();

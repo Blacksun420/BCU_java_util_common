@@ -12,11 +12,11 @@ import common.util.Data;
 import common.util.pack.Background;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
 @JsonClass.JCGeneric(Identifier.class)
-@SuppressWarnings("ForLoopReplaceableByForEach")
 public class RockBGEffect extends BackgroundEffect {
     private FakeImage rock;
     private FakeImage segment;
@@ -30,7 +30,7 @@ public class RockBGEffect extends BackgroundEffect {
     private final List<Byte> layer = new ArrayList<>();
     private final List<Integer> opacity = new ArrayList<>();
 
-    private final List<Integer> capture = new ArrayList<>();
+    private final List<Integer> capture = new LinkedList<>();
     private final Random r = new Random();
 
     boolean vibrate = false;
@@ -150,31 +150,29 @@ public class RockBGEffect extends BackgroundEffect {
             }
         }
 
-        if(!capture.isEmpty()) {
-            for(int i = 0; i < capture.size(); i++) {
-                byte l = (byte) (r.nextDouble() >= 1/4.0 ? 0 : 1);
+        if(!capture.isEmpty())
+            for (Integer capt : capture) {
+                byte l = (byte) (r.nextDouble() >= 1 / 4.0 ? 0 : 1);
                 boolean isR = l != 1 && r.nextDouble() >= 0.9;
                 double siz = (Data.BG_EFFECT_ROCK_SIZE[l] - r.nextDouble() * (1 - 0.5 * l)) * (isR ? 0.8 : 1.0);
 
                 int rw = (int) ((isR ? rock.getWidth() : segment.getWidth()) * siz);
 
-                rockPosition.get(capture.get(i)).x = r.nextInt(w + battleOffset + 2 * rw) - rw;
-                rockPosition.get(capture.get(i)).y = l == 0 ? 1020 + Data.BG_EFFECT_ROCK_BEHIND_SPAWN_OFFSET : BGHeight * 3;
-                isRock.set(capture.get(i), isR);
-                angle.set(capture.get(i), r.nextDouble() * Math.PI);
-                layer.set(capture.get(i), l);
-                size.set(capture.get(i), siz);
-                speed.set(capture.get(i), Data.BG_EFFECT_ROCK_SPEED[l] - r.nextDouble() * 0.5);
-                opacity.set(capture.get(i), l == 0 ? 0 : 255);
+                rockPosition.get(capt).x = r.nextInt(w + battleOffset + 2 * rw) - rw;
+                rockPosition.get(capt).y = l == 0 ? 1020 + Data.BG_EFFECT_ROCK_BEHIND_SPAWN_OFFSET : BGHeight * 3;
+                isRock.set(capt, isR);
+                angle.set(capt, r.nextDouble() * Math.PI);
+                layer.set(capt, l);
+                size.set(capt, siz);
+                speed.set(capt, Data.BG_EFFECT_ROCK_SPEED[l] - r.nextDouble() * 0.5);
+                opacity.set(capt, l == 0 ? 0 : 255);
             }
-        }
     }
 
     @Override
     public void initialize(int w, double h, double midH, Background bg) {
-        for(int i = 0; i < rockPosition.size(); i++) {
-            P.delete(rockPosition.get(i));
-        }
+        for (P p : rockPosition)
+            P.delete(p);
 
         rockPosition.clear();
         speed.clear();

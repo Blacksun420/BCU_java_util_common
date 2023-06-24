@@ -111,8 +111,8 @@ public class UpdateCheck {
 				"120200");
 	}
 
-	public static final String REPO = "Blacksun420";
-	public static final String UPSTREAM = "battlecatsultimate";
+	public static final String REPO = "Blacksun420/sun-";
+	public static final String UPSTREAM = "battlecatsultimate/";
 	public static final String URL_UPDATE = "https://raw.githubusercontent.com/battlecatsultimate/bcu-page/master/api/updateInfo.json";
 	public static final String URL_LIB = "https://github.com/battlecatsultimate/bcu-assets/raw/master/BCU_lib/";
 	public static final String URL_MUSIC = "https://github.com/battlecatsultimate/bcu-assets/raw/master/music/";
@@ -223,6 +223,8 @@ public class UpdateCheck {
 					File target = CommonStatic.ctx.getAssetFile("./music/" + Data.trio(i) + ".ogg");
 					File temp = CommonStatic.ctx.getAssetFile("./music/.ogg.temp");
 					String url = URL_MUSIC + Data.trio(i) + ".ogg";
+					if (i == 34)
+						url = url.replace(UPSTREAM, REPO);
 					ans.add(new Downloader(target, temp, "music " + Data.trio(i), false, url));
 				}
 			return ans;
@@ -243,9 +245,13 @@ public class UpdateCheck {
 
 			JsonElement je0 = WebFileIO.directRead(URL_MUSIC_CHECK);
 			ContentJson[] contents = JsonDecoder.decode(je0, ContentJson[].class);
+			JsonElement je1 = WebFileIO.directRead(URL_MUSIC_CHECK.replace(UPSTREAM, REPO));
+			ContentJson[] fcont = JsonDecoder.decode(je1, ContentJson[].class);
 
 			Map<String, ContentJson> map = new HashMap<>();
 			for(ContentJson content : contents)
+				map.put(content.name, content);
+			for(ContentJson content : fcont)
 				map.put(content.name, content);
 
 			HashMap<Integer, String> local = CommonStatic.getConfig().localMusicMap;

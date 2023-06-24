@@ -4,7 +4,6 @@ import common.CommonStatic;
 import common.system.P;
 import common.system.fake.FakeGraphics;
 
-@SuppressWarnings("ForLoopReplaceableByForEach")
 public class EAnimD<T extends AnimI.AnimType<?, T>> extends EAnimI {
 
 	public T type;
@@ -64,9 +63,9 @@ public class EAnimD<T extends AnimI.AnimType<?, T>> extends EAnimI {
 		if(CommonStatic.getConfig().ref) {
 			g.colRect(0, 0, 2, 2, 0, 255, 0, 255);
 		}
-		for (int i = 0; i < order.length; i++) {
+		for (EPart ePart : order) {
 			P p = P.newP(siz * sizX, siz * sizY);
-			order[i].drawPartWithOpacity(g, p, opacity);
+			ePart.drawPartWithOpacity(g, p, opacity);
 			P.delete(p);
 		}
 	}

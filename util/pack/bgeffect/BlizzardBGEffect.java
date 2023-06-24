@@ -11,11 +11,11 @@ import common.util.Data;
 import common.util.pack.Background;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
 @JsonClass.JCGeneric(Identifier.class)
-@SuppressWarnings("ForLoopReplaceableByForEach")
 public class BlizzardBGEffect extends BackgroundEffect {
     private final FakeImage blizzard;
     private final int bw;
@@ -29,7 +29,7 @@ public class BlizzardBGEffect extends BackgroundEffect {
     private final List<Byte> speed = new ArrayList<>();
     private final Random r = new Random();
 
-    private final List<Integer> capture = new ArrayList<>();
+    private final List<Integer> capture = new LinkedList<>();
 
     public BlizzardBGEffect(Identifier<BackgroundEffect> id, FakeImage blizzard) {
         super(id);
@@ -95,25 +95,25 @@ public class BlizzardBGEffect extends BackgroundEffect {
         }
 
         if(!capture.isEmpty()) {
-            for(int i = 0; i < capture.size(); i++) {
+            for (Integer cap : capture) {
                 byte sizeIndex = (byte) Math.min(Data.BG_EFFECT_BLIZZARD_SIZE.length - 1, r.nextInt(Data.BG_EFFECT_BLIZZARD_SIZE.length));
 
                 double x = r.nextDouble() * (w + battleOffset + bw * Data.BG_EFFECT_BLIZZARD_SIZE[sizeIndex] + BackgroundEffect.revertP(BGHeight * 3)) - BackgroundEffect.revertP(BGHeight * 3);
                 double y = -bh * Data.BG_EFFECT_BLIZZARD_SIZE[sizeIndex];
 
-                blizzardPosition.get(capture.get(i)).x = x;
-                blizzardPosition.get(capture.get(i)).y = y;
+                blizzardPosition.get(cap).x = x;
+                blizzardPosition.get(cap).y = y;
 
-                initPos.get(capture.get(i)).x = x;
-                initPos.get(capture.get(i)).y = y;
+                initPos.get(cap).x = x;
+                initPos.get(cap).y = y;
 
-                speed.set(capture.get(i), (byte) (Data.BG_EFFECT_BLIZZARD_SPEED - r.nextInt(5)));
+                speed.set(cap, (byte) (Data.BG_EFFECT_BLIZZARD_SPEED - r.nextInt(5)));
 
                 double a = Math.toRadians(60 - r.nextInt(15));
 
-                angle.set(capture.get(i), a);
-                slope.set(capture.get(i), Math.tan(a));
-                size.set(capture.get(i), sizeIndex);
+                angle.set(cap, a);
+                slope.set(cap, Math.tan(a));
+                size.set(cap, sizeIndex);
             }
         }
     }

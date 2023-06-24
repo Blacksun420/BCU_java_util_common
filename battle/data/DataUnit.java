@@ -52,18 +52,20 @@ public class DataUnit extends DefaultData implements MaskUnit, Cloneable {
 		if (ints[22] == 1)
 			t |= TB_ZOMBIE;
 		int a = 0;
-		if (ints[23] == 1)
-			a |= AB_GOOD;
 		proc = Proc.blank();
+		if (ints[23] == 1) {
+			proc.DMGINC.mult = 150;//a |= AB_GOOD;
+			proc.DEFINC.mult = 200;
+		}
 		proc.KB.prob = ints[24];
 		proc.STOP.prob = ints[25];
 		proc.STOP.time = ints[26];
 		proc.SLOW.prob = ints[27];
 		proc.SLOW.time = ints[28];
 		if (ints[29] == 1)
-			a |= AB_RESIST;
+			proc.DEFINC.mult = 400;//a |= AB_RESIST;
 		if (ints[30] == 1)
-			a |= AB_MASSIVE;
+			proc.DMGINC.mult = 300;//a |= AB_MASSIVE;
 		proc.CRIT.prob = ints[31];
 		if (ints[32] == 1)
 			a |= AB_ONLY;
@@ -138,9 +140,9 @@ public class DataUnit extends DefaultData implements MaskUnit, Cloneable {
 			if (ints[79] == 1)
 				proc.IMUCURSE.mult = 100;
 			if (ints[80] == 1)
-				a |= AB_RESISTS;
+				proc.DEFINC.mult = 600;//a |= AB_RESISTS;
 			if (ints[81] == 1)
-				a |= AB_MASSIVES;
+				proc.DMGINC.mult = 500;//a |= AB_MASSIVES;
 			proc.SATK.prob = ints[82];
 			proc.SATK.mult = ints[83];
 			proc.IMUATK.prob = ints[84];

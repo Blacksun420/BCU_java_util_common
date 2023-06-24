@@ -10,9 +10,7 @@ import common.util.unit.AbUnit;
 import common.util.unit.Form;
 import common.util.unit.Unit;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.TreeMap;
+import java.util.*;
 
 @JsonClass
 public class SaveData {
@@ -27,29 +25,32 @@ public class SaveData {
         this.pack = pack;
     }
 
-    public Object[] validClear(Stage st) {
+    public Collection<?>[] validClear(Stage st) {
+        Collection<?>[] flags = new Collection<?>[3];
+        ArrayDeque<Form> newForms = new ArrayDeque<>();
+        ArrayDeque<Boolean> bForms = new ArrayDeque<>();
+
+        if (st.info instanceof CustomStageInfo)
+            for (Form reward : ((CustomStageInfo)st.info).rewards) {
+                Integer ind = ulkUni.get(reward.unit);
+                if (ind == null || ind < reward.fid) {
+                    ulkUni.put(reward.unit, reward.fid);
+                    newForms.add(reward);
+                    bForms.add(ind != null);
+                }
+            }
+
+        LinkedList<StageMap> newMaps = new LinkedList<>();
         Integer clm = cSt.get(st.getCont());
         if (clm == null)
             if (st.getCont().unlockReq.isEmpty())
-                cSt.put(st.getCont(), clm = 0);
+                cSt.put(st.getCont(), clm = 1);
             else
-                return null;
-        else if (clm > st.getCont().list.indexOf(st))
-            return null;
-        cSt.replace(st.getCont(), clm + 1);
-        Object[] flags = new Object[2];
+                clm = -1;
+        else if (clm == st.getCont().list.indexOf(st))
+            cSt.replace(st.getCont(), ++clm);
 
-        byte ret = 0;
-        if (st.info instanceof CustomStageInfo && ((CustomStageInfo)st.info).reward != null) {
-            Form reward = ((CustomStageInfo)st.info).reward;
-            Integer ind = ulkUni.get(reward.unit);
-            if (ind == null || ind < reward.fid) {
-                ulkUni.put(reward.unit, reward.fid);
-                ret += ind == null ? 1 : 2;
-            }
-        }
-        LinkedList<StageMap> newMaps = new LinkedList<>();
-        if (clm + 1 == st.getCont().list.size()) {//StageMap fully cleared
+        if (clm == st.getCont().list.size()) {//StageMap fully cleared
             for (StageMap sm : pack.mc.maps)
                 if (sm.unlockReq.size() > 0 && !cSt.containsKey(sm)) {
                     boolean addable = true;
@@ -79,8 +80,9 @@ public class SaveData {
                             }
                         }
         }
-        flags[0] = ret;
-        flags[1] = newMaps;
+        flags[0] = newForms;
+        flags[1] = bForms;
+        flags[2] = newMaps;
         return flags;
     }
 

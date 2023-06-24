@@ -55,28 +55,6 @@ public class EEnemy extends Entity {
 		if (ans == 0)
 			return 0;
 		if (e instanceof EUnit) {
-			SortedPackSet<Trait> sharedTraits = traits.inCommon(matk.getATKTraits());
-			boolean isAntiTraited = targetTraited(matk.getATKTraits());
-			sharedTraits.addIf(traits, t -> !t.BCTrait() && ((t.targetType && isAntiTraited) || t.others.contains(e.data.getPack())));//Ignore the warning, atk.attacker will always be an unit
-
-			if (!sharedTraits.isEmpty()) {
-				if (e.status.curse == 0) {
-					if ((e.getAbi() & AB_GOOD) != 0)
-						ans *= 1.5;
-					if ((e.getAbi() & AB_MASSIVE) != 0)
-						ans *= 3;
-					if ((e.getAbi() & AB_MASSIVES) != 0)
-						ans *= 5;
-				}
-				if (status.curse == 0) {
-					if ((getAbi() & AB_GOOD) > 0)
-						ans /= 2;
-					if ((getAbi() & AB_RESIST) > 0)
-						ans /= 4;
-					if ((getAbi() & AB_RESISTS) > 0)
-						ans /= 6;
-				}
-			}
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_WITCH)) && (e.getAbi() & AB_WKILL) > 0)
 				ans *= basis.b.t().getWKAtk();
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_EVA)) && (e.getAbi() & AB_EKILL) > 0)
@@ -104,22 +82,10 @@ public class EEnemy extends Entity {
 			sharedTraits.addIf(traits, t -> !t.BCTrait() && ((t.targetType && isAntiTraited) || t.others.contains(atk.attacker.data.getPack())));//Ignore the warning, atk.attacker will always be an unit
 
 			if (!sharedTraits.isEmpty()) {
-				if (atk.attacker.status.curse == 0) {
-					if ((atk.abi & AB_GOOD) != 0)
-						ans *= EUnit.OrbHandler.getOrbGood(atk, sharedTraits, basis.b.t());
-					if ((atk.abi & AB_MASSIVE) != 0)
-						ans *= EUnit.OrbHandler.getOrbMassive(atk, sharedTraits, basis.b.t());
-					if ((atk.abi & AB_MASSIVES) != 0)
-						ans *= basis.b.t().getMASSIVESATK(sharedTraits);
-				}
-				if (status.curse == 0) {
-					if ((getAbi() & AB_GOOD) > 0)
-						ans /= 2;
-					if ((getAbi() & AB_RESIST) > 0)
-						ans /= 4;
-					if ((getAbi() & AB_RESISTS) > 0)
-						ans /= 6;
-				}
+				if (atk.attacker.status.curse == 0 && atk.attacker.getProc().DMGINC.mult != 0)
+					ans *= EUnit.OrbHandler.getOrb(atk.attacker.getProc().DMGINC.mult, atk, sharedTraits, basis.b.t());
+				if (status.curse == 0 && atk.getProc().DEFINC.mult != 0)
+					ans /= atk.getProc().DEFINC.mult/100.0;
 			}
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_WITCH)) && (atk.abi & AB_WKILL) > 0)
 				ans *= basis.b.t().getWKAtk();

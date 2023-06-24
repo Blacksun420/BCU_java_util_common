@@ -29,6 +29,7 @@ public class localDecoder {
         String tag = "";
         boolean usePool = false;
         boolean isNull = false;
+        boolean decodeLast = false;
 
         public void setJProperties(JsonField jf) {
             if (jf == null) {
@@ -47,6 +48,7 @@ public class localDecoder {
             generator = jf.generator();
             generic = jf.generic();
             tag = jf.tag();
+            decodeLast = jf.decodeLast();
         }
 
         static class Handler {
@@ -90,14 +92,8 @@ public class localDecoder {
      * @param obj Object that acts as the parent for this object
      */
     public localDecoder(JsonElement json, Class<?> cls, Object obj) {
-        par = null;
-        jobj = json == null || json.isJsonNull() ? null : json.getAsJsonObject();
-        tarcls = cls;
-        tarjcls = null;
-        name = "";
-        this.obj = obj;
+        this(json, cls, obj, "");
     }
-
     /**
      * Creates a local decoder to decode variables without annotations. Use any of the set functions before decoding to set up the "annotation"
      * @param json The jsonobject to decode
@@ -105,9 +101,9 @@ public class localDecoder {
      * @param obj Object that acts as the parent for this object
      * @param name For debugging purposes
      */
-    public localDecoder(JsonObject json, Class<?> cls, Object obj, String name) {
+    public localDecoder(JsonElement json, Class<?> cls, Object obj, String name) {
         par = null;
-        jobj = json;
+        jobj = json == null || json.isJsonNull() ? null : json.getAsJsonObject();
         tarcls = cls;
         tarjcls = null;
         this.name = name;
@@ -136,6 +132,11 @@ public class localDecoder {
 
     public localDecoder setPool(boolean pool) {
         locfld.usePool = pool;
+        return this;
+    }
+
+    public localDecoder setAlias(Class<?>... cls) {
+        locfld.alias = cls;
         return this;
     }
 
@@ -174,13 +175,18 @@ public class localDecoder {
             }
             curfld = null;
         }
-        Method oni = null;
+        Method oni = null, lastin = null;
         for (Method m : cls.getDeclaredMethods()) {
             if (m.getAnnotation(JsonDecoder.OnInjected.class) != null)
                 if (oni == null)
                     oni = m;
                 else
                     throw new JsonException(JsonException.Type.FUNC, null, "Duplicate OnInjected. " + oni.getName() + " already exists, " + m.getName() + " merge both of them pls kthnx");
+            if (m.getAnnotation(JsonDecoder.PostLoad.class) != null)
+                if (lastin == null)
+                    lastin = m; //Toggle whether to actually PostLoad may be added in the future
+                else
+                    throw new JsonException(JsonException.Type.FUNC, null, "Duplicate PostLoad. " + lastin.getName() + " already exists, " + m.getName() + " merge both of them pls kthnx");
             locfld.setJProperties(m.getAnnotation(JsonField.class));
             if (locfld.isNull || locfld.block)
                 continue;
@@ -194,13 +200,16 @@ public class localDecoder {
             Class<?> ccls = m.getParameterTypes()[0];
             m.invoke(obj, getInvoker().decode(elem, ccls));
         }
-        if (oni != null) {
+        if (oni != null)
             if (oni.getParameterCount() == 0)
                 oni.invoke(obj);
-            else {
+            else
                 oni.invoke(obj, jobj);
-            }
-        }
+        if (lastin != null)
+            if (lastin.getParameterCount() == 0)
+                lastin.invoke(obj);
+            else
+                lastin.invoke(obj, jobj);
     }
 
     private Object decode(JsonElement elem, Class<?> cls) throws Exception {

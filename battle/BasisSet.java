@@ -80,9 +80,11 @@ public class BasisSet extends Basis implements Copable<BasisSet> {
 							boolean res = false;
 
 							for(Form f : u.forms) {
-								str |= (f.du.getAbi() & AB_GOOD) != 0;
-								mas |= (f.du.getAbi() & AB_MASSIVE) != 0;
-								res |= (f.du.getAbi() & AB_RESIST) != 0;
+								int atk = f.du.getProc().DMGINC.mult;
+								int def = f.du.getProc().DEFINC.mult;
+								str |= (atk > 100 && atk < 300) || (def > 100 && def < 400);
+								mas |= atk >= 300 && atk < 500;
+								res |= def >= 400 && def < 600;
 							}
 
 							for(int[] o : orb) {

@@ -219,18 +219,13 @@ public class StageBasis extends BattleObj {
 			slot = (int) (r.nextDouble() * totUni); //Pick random unit if chosen one isn't there
 		int i = slot >= 5 ? 1 : 0;
 
-		if (amount < 0)
-			CommonStatic.setSE(18);
-		else
-			CommonStatic.setSE(36);
-
-		if (type == 0) {
+		CommonStatic.setSE(amount < 0 ? 18 : 36);
+		if (type == 0)
 			elu.cool[i][slot % 5] += amount;
-		} else if (type == 1) {
-			elu.cool[i][slot % 5] += elu.maxC[i][slot % 5] * slot;
-		} else {
+		else if (type == 1)
+			elu.cool[i][slot % 5] += elu.maxC[i][slot % 5] * (amount/100.0);
+		else
 			elu.cool[i][slot % 5] = amount;
-		}
 		elu.cool[i][slot % 5] = Math.min(elu.maxC[i][slot % 5], elu.cool[i][slot % 5]);
 	}
 

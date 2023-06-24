@@ -1,12 +1,16 @@
 package common.util.stage.info;
 
+import com.google.gson.JsonObject;
 import common.CommonStatic;
 import common.io.json.JsonClass;
 import common.io.json.JsonDecoder;
 import common.io.json.JsonField;
+import common.io.json.localDecoder;
 import common.pack.Identifier;
+import common.pack.SortedPackSet;
 import common.util.stage.MapColc.PackMapColc;
 import common.util.stage.Stage;
+import common.util.unit.AbForm;
 import common.util.unit.Form;
 import common.util.unit.Level;
 
@@ -37,8 +41,8 @@ public class CustomStageInfo implements StageInfo {
     public Form ubase;
     @JsonField
     public Level lv;
-    @JsonField(alias = Form.AbFormJson.class)
-    public Form reward;
+    @JsonField(generic = Form.class, alias = Form.AbFormJson.class)
+    public final SortedPackSet<Form> rewards = new SortedPackSet<>();
 
     @JsonClass.JCConstructor
     public CustomStageInfo() {
@@ -69,12 +73,11 @@ public class CustomStageInfo implements StageInfo {
         }
         if (ubase != null)
             ans.append("Unit Base: ").append(ubase).append(" (").append(CommonStatic.def.lvText(ubase, lv)[0]).append(")");
-        if (reward != null) {
-            if (ubase != null)
-                ans.append("\n");
-            ans.append("Clear Reward: ").append(reward);
+        if (rewards.size() > 0) {
+            ans.append("<table><tr><th>List of Unit Rewards:</th></tr>");
+            for (int i = 0; i < rewards.size(); i++)
+                ans.append("<tr><td>").append(rewards.get(i).toString()).append("</td></tr>");
         }
-
         return ans.toString();
     }
 
@@ -134,20 +137,22 @@ public class CustomStageInfo implements StageInfo {
      * @param checkFirst Verify if the StageInfo doesn't have anything that can contribute to the stage before destroying it
      */
     public void destroy(boolean checkFirst) {
-        if (checkFirst && (!stages.isEmpty() || ubase != null || reward != null))
+        if (checkFirst && (!stages.isEmpty() || ubase != null || !rewards.isEmpty()))
             return;
         stages.clear();
         chances.clear();
+        rewards.clear();
         ubase = null;
-        reward = null;
         ((PackMapColc)st.getCont().getCont()).si.remove(this);
         st.info = null;
     }
 
     @JsonDecoder.OnInjected
-    public void onInjected() {
+    public void onInjected(JsonObject jobj) {
         st.info = this;
-        for (int i = 0; i < chances.size(); i++)
-            totalChance += chances.get(i);
+        for (Float chance : chances)
+            totalChance += chance;
+        if (jobj.has("reward"))
+            rewards.add(new localDecoder(jobj.get("reward"), Form.class, this).setAlias(AbForm.AbFormJson.class).decode());
     }
 }

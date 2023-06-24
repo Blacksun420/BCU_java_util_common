@@ -10,12 +10,11 @@ import common.system.fake.FakeTransform;
 import common.util.Data;
 import common.util.pack.Background;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
 @JsonClass.JCGeneric(Identifier.class)
-@SuppressWarnings("ForLoopReplaceableByForEach")
 public class RainBGEffect extends BackgroundEffect {
     private final FakeImage rain;
     private final FakeImage splash;
@@ -25,8 +24,8 @@ public class RainBGEffect extends BackgroundEffect {
     private final int sw;
     private final int sh;
 
-    private final List<P> rainPosition = new ArrayList<>();
-    private final List<P> splashPosition = new ArrayList<>();
+    private final List<P> rainPosition = new LinkedList<>();
+    private final List<P> splashPosition = new LinkedList<>();
     private final Random r = new Random();
 
     public RainBGEffect(Identifier<BackgroundEffect> i, FakeImage rain, FakeImage splash) {
@@ -51,9 +50,8 @@ public class RainBGEffect extends BackgroundEffect {
     public void preDraw(FakeGraphics g, P rect, double siz, double midH) {
         g.setComposite(FakeGraphics.TRANS, 96, 0);
 
-        for(int i = 0; i < splashPosition.size(); i++) {
-            g.drawImage(splash, BackgroundEffect.convertP(splashPosition.get(i).x, siz) + (int) rect.x, (int) (splashPosition.get(i).y * siz - rect.y), sw * siz * 0.8, sh * siz * 0.8);
-        }
+        for (P p : splashPosition)
+            g.drawImage(splash, BackgroundEffect.convertP(p.x, siz) + (int) rect.x, (int) (p.y * siz - rect.y), sw * siz * 0.8, sh * siz * 0.8);
 
         g.setComposite(FakeGraphics.DEF, 255, 0);
     }
@@ -64,9 +62,9 @@ public class RainBGEffect extends BackgroundEffect {
 
         FakeTransform at = g.getTransform();
 
-        for(int i = 0; i < rainPosition.size(); i++) {
+        for (P p : rainPosition) {
             //30 and 50 shifting is to draw image at center
-            g.translate(BackgroundEffect.convertP(rainPosition.get(i).x, siz) + (int) rect.x - 30 * siz * 0.8, (int) (rainPosition.get(i).y * siz - rect.y + midH * siz - 50 * siz * 0.8));
+            g.translate(BackgroundEffect.convertP(p.x, siz) + (int) rect.x - 30 * siz * 0.8, (int) (p.y * siz - rect.y + midH * siz - 50 * siz * 0.8));
             g.rotate(Math.PI / 3);
 
             g.drawImage(rain, 0, 0, rw * siz * 0.8, rh * siz * 0.8);
@@ -84,16 +82,16 @@ public class RainBGEffect extends BackgroundEffect {
     public void draw(FakeGraphics g, double y, double siz, double midH) {
         g.setComposite(FakeGraphics.TRANS, 96, 0);
 
-        for(int i = 0; i < splashPosition.size(); i++) {
-            g.drawImage(splash, BackgroundEffect.convertP(splashPosition.get(i).x, siz), (int) (splashPosition.get(i).y * siz - y + midH), sw * siz * 0.8, sh * siz * 0.8);
+        for (P p : splashPosition) {
+            g.drawImage(splash, BackgroundEffect.convertP(p.x, siz), (int) (p.y * siz - y + midH), sw * siz * 0.8, sh * siz * 0.8);
         }
         g.setComposite(FakeGraphics.TRANS, 127, 0);
 
         FakeTransform at = g.getTransform();
 
-        for(int i = 0; i < rainPosition.size(); i++) {
+        for (P p : rainPosition) {
             //30 and 50 shifting is to draw image at center
-            g.translate(BackgroundEffect.convertP(rainPosition.get(i).x, siz) - 30 * siz * 0.8, (int) (rainPosition.get(i).y * siz - y + midH * siz - 50 * siz * 0.8));
+            g.translate(BackgroundEffect.convertP(p.x, siz) - 30 * siz * 0.8, (int) (p.y * siz - y + midH * siz - 50 * siz * 0.8));
             g.rotate(Math.PI / 3);
 
             g.drawImage(rain, 0, 0, rw * siz * 0.8, rh * siz * 0.8);
@@ -109,13 +107,11 @@ public class RainBGEffect extends BackgroundEffect {
 
     @Override
     public void update(int w, double h, double midH) {
-        for(int i = 0; i < splashPosition.size(); i++) {
-            P.delete(splashPosition.get(i));
-        }
+        for (P p : splashPosition)
+            P.delete(p);
 
-        for(int i = 0; i < rainPosition.size(); i++) {
-            P.delete(rainPosition.get(i));
-        }
+        for (P p : rainPosition)
+            P.delete(p);
 
         splashPosition.clear();
         rainPosition.clear();

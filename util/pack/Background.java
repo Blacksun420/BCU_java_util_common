@@ -417,7 +417,7 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 		return new String[] { toString(), "enemy wave", "unit wave" };
 	}
 
-	@SuppressWarnings("unused")
+
 	@OnInjected
 	public void onInjected(JsonObject jbg) {
 		if (reference != null)

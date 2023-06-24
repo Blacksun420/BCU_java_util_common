@@ -7,6 +7,7 @@ import common.io.json.JsonClass.RType;
 import common.io.json.JsonDecoder;
 import common.io.json.JsonField;
 import common.pack.Identifier;
+import common.pack.PackData;
 import common.pack.SortedPackSet;
 import common.pack.UserProfile;
 import common.system.BasedCopable;
@@ -218,4 +219,17 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 		}
 	}
 
+	@JsonDecoder.PostLoad
+	public void postLoad(JsonObject jobj) {
+		if (jobj.has("specialTrait")) {
+			boolean spTrait = jobj.get("specialTrait").getAsBoolean();
+			if (ce instanceof CustomEnemy && (spTrait && dire == -1)) {
+				traits.addAll(UserProfile.getBCData().traits.getList().subList(TRAIT_RED, TRAIT_BARON));
+				PackData.UserPack p = (PackData.UserPack)ce.getPack().getPack();
+				traits.addAll(p.traits.getList());
+				for (String dep : p.desc.dependency)
+					traits.addAll(UserProfile.getUserPack(dep).traits.getList());
+			}
+		}
+	}
 }

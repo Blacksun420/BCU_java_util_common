@@ -15,7 +15,6 @@ import java.util.List;
 
 @JsonClass.JCGeneric(Identifier.class)
 @JsonClass
-@SuppressWarnings("ForLoopReplaceableByForEach")
 public class MixedBGEffect extends BackgroundEffect {
 
     @JsonField
@@ -46,38 +45,38 @@ public class MixedBGEffect extends BackgroundEffect {
 
     @Override
     public void preDraw(FakeGraphics g, P rect, double siz, double midH) {
-        for(int i = 0; i < effects.size(); i++)
-            effects.get(i).preDraw(g, rect, siz, midH);
+        for (BackgroundEffect effect : effects)
+            effect.preDraw(g, rect, siz, midH);
     }
 
     @Override
     public void postDraw(FakeGraphics g, P rect, double siz, double midH) {
-        for(int i = 0; i < effects.size(); i++)
-            effects.get(i).postDraw(g, rect, siz, midH);
+        for (BackgroundEffect effect : effects)
+            effect.postDraw(g, rect, siz, midH);
     }
 
     @Override
     public void draw(FakeGraphics g, double y, double siz, double midH) {
-        for (int i = 0; i < effects.size(); i++)
-            effects.get(i).draw(g, y, siz, midH);
+        for (BackgroundEffect effect : effects)
+            effect.draw(g, y, siz, midH);
     }
 
     @Override
     public void update(int w, double h, double midH) {
-        for(int i = 0; i < effects.size(); i++)
-            effects.get(i).update(w, h, midH);
+        for (BackgroundEffect effect : effects)
+            effect.update(w, h, midH);
     }
 
     @Override
     public void initialize(int w, double h, double midH, Background bg) {
-        for(int i = 0; i < effects.size(); i++)
-            effects.get(i).initialize(w, h, midH, bg);
+        for (BackgroundEffect effect : effects)
+            effect.initialize(w, h, midH, bg);
     }
 
     @Override
     public void release() {
-        for(int i = 0; i < effects.size(); i++)
-            effects.get(i).release();
+        for (BackgroundEffect effect : effects)
+            effect.release();
     }
 
     @Override

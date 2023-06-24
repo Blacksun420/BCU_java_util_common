@@ -2,7 +2,6 @@ package common.battle;
 
 import common.util.Data;
 
-import java.util.Arrays;
 import java.util.Map;
 
 public class CannonLevelCurve extends Data  {

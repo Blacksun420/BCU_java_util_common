@@ -403,6 +403,9 @@ public class JsonDecoder {
 					oni = m;
 				else
 					throw new JsonException(Type.FUNC, null, "duplicate OnInjected");
+			if (m.getAnnotation(PostLoad.class) != null)
+				declast.add(this);
+
 			curjfld = m.getAnnotation(JsonField.class);
 			if (curjfld == null || curjfld.io() == JsonField.IOType.W)
 				continue;
@@ -459,7 +462,7 @@ public class JsonDecoder {
 		}
 		if (last)
 			for (Method m : cls.getDeclaredMethods())
-				if (m.getAnnotation(OnInjected.class) != null)
+				if (m.getAnnotation(PostLoad.class) != null)
 					if (m.getParameterCount() == 0)
 						m.invoke(obj);
 					else

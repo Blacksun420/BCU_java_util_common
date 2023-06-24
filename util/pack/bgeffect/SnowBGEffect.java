@@ -10,11 +10,11 @@ import common.util.Data;
 import common.util.pack.Background;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
 @JsonClass.JCGeneric(Identifier.class)
-@SuppressWarnings("ForLoopReplaceableByForEach")
 public class SnowBGEffect extends BackgroundEffect {
     private final double maxSlope = Math.tan(Math.toRadians(75));
     private final FakeImage snow;
@@ -28,7 +28,7 @@ public class SnowBGEffect extends BackgroundEffect {
     private final List<Double> slope = new ArrayList<>();
     private final Random r = new Random();
 
-    private final List<Integer> capture = new ArrayList<>();
+    private final List<Integer> capture = new LinkedList<>();
 
     public SnowBGEffect(Identifier<BackgroundEffect> i, FakeImage snow) {
         super(i);
@@ -51,16 +51,16 @@ public class SnowBGEffect extends BackgroundEffect {
     @Override
     public void postDraw(FakeGraphics g, P rect, double siz, double midH) {
         g.setComposite(FakeGraphics.TRANS, 127, 0);
-        for(int i = 0; i < snowPosition.size(); i++)
-            g.drawImage(snow, BackgroundEffect.convertP(snowPosition.get(i).x, siz) + (int) rect.x, (int) (snowPosition.get(i).y * siz - rect.y + midH * siz), sw * siz, sh * siz);
+        for (P p : snowPosition)
+            g.drawImage(snow, BackgroundEffect.convertP(p.x, siz) + (int) rect.x, (int) (p.y * siz - rect.y + midH * siz), sw * siz, sh * siz);
         g.setComposite(FakeGraphics.DEF, 255, 0);
     }
 
     @Override
     public void draw(FakeGraphics g, double y, double siz, double midH) {
         g.setComposite(FakeGraphics.TRANS, 127, 0);
-        for(int i = 0; i < snowPosition.size(); i++)
-            g.drawImage(snow, BackgroundEffect.convertP(snowPosition.get(i).x, siz), (int) (snowPosition.get(i).y * siz - y + midH * siz), sw * siz, sh * siz);
+        for (P p : snowPosition)
+            g.drawImage(snow, BackgroundEffect.convertP(p.x, siz), (int) (p.y * siz - y + midH * siz), sw * siz, sh * siz);
         g.setComposite(FakeGraphics.DEF, 255, 0);
     }
 
@@ -79,30 +79,29 @@ public class SnowBGEffect extends BackgroundEffect {
         }
 
         if(!capture.isEmpty()) {
-            for(int i = 0; i < capture.size(); i++) {
+            for (Integer capt : capture) {
                 double x = r.nextInt(w + sw + battleOffset);
                 double y = -sh;
 
-                snowPosition.get(capture.get(i)).x = x;
-                snowPosition.get(capture.get(i)).y = y;
-                initPos.get(capture.get(i)).x = x;
-                initPos.get(capture.get(i)).y = y;
+                snowPosition.get(capt).x = x;
+                snowPosition.get(capt).y = y;
+                initPos.get(capt).x = x;
+                initPos.get(capt).y = y;
 
                 //0 ~ 75
                 double angle = Math.toRadians(r.nextInt(75));
 
                 //-0.5angle + 1 is stabilizer
-                speed.set(capture.get(i), (byte) ((Data.BG_EFFECT_SNOW_SPEED - r.nextInt(Data.BG_EFFECT_SNOW_SPEED - 3)) * (-0.75 * angle / maxSlope + 1)));
-                slope.set(capture.get(i), Math.tan(-angle));
+                speed.set(capt, (byte) ((Data.BG_EFFECT_SNOW_SPEED - r.nextInt(Data.BG_EFFECT_SNOW_SPEED - 3)) * (-0.75 * angle / maxSlope + 1)));
+                slope.set(capt, Math.tan(-angle));
             }
         }
     }
 
     @Override
     public void initialize(int w, double h, double midH, Background bg) {
-        for(int i = 0; i < snowPosition.size(); i++) {
+        for(int i = 0; i < snowPosition.size(); i++)
             P.delete(snowPosition.get(i));
-        }
 
         snowPosition.clear();
 

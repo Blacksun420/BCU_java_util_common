@@ -188,13 +188,12 @@ public class Orb extends Data {
 			System.arraycopy(limit, 0, temp, 0, temp.length);
 
 			this.limit = temp;
-		} else {
+		} else
 			this.limit = limit;
-		}
 	}
 
-	public int getAtk(int grade, MaskAtk atk) {
-		return ORB_ATK_MULTI[grade] * atk.getAtk() / 100;
+	public int getAtk(int grade, int atk) {
+		return ORB_ATK_MULTI[grade] * atk / 100;
 	}
 
 	public int getRes(int grade, int atk) {

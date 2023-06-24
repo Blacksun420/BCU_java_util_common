@@ -188,7 +188,7 @@ public class Editors {
 		public final EditControl<?> ctrl;
 		public final Runnable callback;
 
-		public Object obj;
+		public ProcItem obj;
 
 		public EditorGroup(String proc, boolean edit, Runnable cb) {
 			this.proc = proc;
@@ -210,7 +210,7 @@ public class Editors {
 			return new LocaleCenter.ObjBinder(disp, proc, (name) -> getItem(ctx));
 		}
 
-		public void setData(Object obj) {
+		public void setData(ProcItem obj) {
 			this.obj = obj;
 			for (Editor e : list)
 				e.setData();
@@ -225,15 +225,12 @@ public class Editors {
 				setComponentVisibility(this, item.exists(), 4);
 			else if (!(item instanceof Proc.IMU || item instanceof Proc.AI)) {
 				ArrayList<Integer> visFields = new ArrayList<>();
-				EditorSupplier edi = UserProfile.getStatic("Editor_Supplier", () -> null);
-				for (int i = 1; i < list.length; i++) {
-					if (edi.EditorVisible(list[i]))
-						visFields.add(i);
-				}
+				for (int i = 1; i < list.length; i++)
+					visFields.add(i);
 
 				if (visFields.size() == list.length - 1)
 					setComponentVisibility(this, item.exists(), 1);
-				if (visFields.size() > 0)
+				else if (visFields.size() > 0)
 					setComponentVisibility(this, item.exists(), Ints.toArray(visFields));
 			}
 		}
@@ -746,6 +743,16 @@ public class Editors {
 				t.mult = 0;
 			else if (t.mult == 0)
 				t.mult = 100;
+		}));
+
+		map().put("DMGINC", new EditControl<>(Proc.MULT.class, (t) -> {
+			if (t.mult == 100)
+				t.mult = 0;
+		}));
+
+		map().put("DEFINC", new EditControl<>(Proc.MULT.class, (t) -> {
+			if (t.mult == 100)
+				t.mult = 0;
 		}));
 	}
 

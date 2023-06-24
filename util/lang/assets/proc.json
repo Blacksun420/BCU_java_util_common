@@ -1349,10 +1349,10 @@
     },
     "CDSETTER": {
         "abbr_name": "CD Modifier",
-        "full_name": "Research Stopper",
+        "full_name": "Research Breaker",
         "tooltip": "Increases a certain unit's cooldown by a given amount",
         "format": ["(prob)% chance to [(type==2){set}(type!=2){[(amount>0){increase}(amount<0){decrease}]}] ",
-                    "[(slot<0){a random unit}(slot>=0){the unit in the lineup's (slot)th slot}]'s cooldown ",
+                    "[(slot<0){a random unit}(slot>0&slot<10){the unit in the lineup's (slot+1)th slot}(slot==10){attacked unit}]'s cooldown ",
                     "[(type==2){to}(type!=2){by}] (amount)[(type!=1){f}(type==1){%}]"],
         "class": {
             "prob": {
@@ -1365,7 +1365,7 @@
             },
             "slot": {
                 "name": "slot",
-                "tooltip": "The slot of the unit to affect. Use -1 for random"
+                "tooltip": "The slot of the unit to affect. Use -1 for random, and 10 to make the slot depend on the hit unit"
             },
             "type": {
                 "name": "type",
@@ -1640,6 +1640,30 @@
                 "name": "chance",
                 "tooltip": null
             },
+            "mult": {
+                "name": "multiplier",
+                "tooltip": null
+            }
+        }
+    },
+    "DMGINC" : {
+        "abbr_name": "Extra DMG",
+        "full_name": "Extra Damage",
+        "tooltip": "Increases damage dealt to enemies on the traits this unit targets. Pretty much Massive Damage, but adjustable",
+        "format": "[(mult<100){Pitiful}(mult>100&mult<300){Strong}(mult>=300&mult<500){Massive}(mult>=500){Insane}] Damage (_left)Deals (mult)% damage to target traits(_right)",
+        "class": {
+            "mult": {
+                "name": "multiplier",
+                "tooltip": null
+            }
+        }
+    },
+    "DEFINC" : {
+        "abbr_name": "Resistance",
+        "full_name": "Resistance",
+        "tooltip": "Decreases damage taken from enemies on the traits this unit targets. Pretty much Resistant, but adjustable",
+        "format": "[(mult<100){Fragile}(mult>100&mult<400){Sturdy}(mult>=400){[(mult>=600){Insanely }]Resistant}] (_left)Takes 1/(_resDiv(mult))x Damage(_right)",
+        "class": {
             "mult": {
                 "name": "multiplier",
                 "tooltip": null

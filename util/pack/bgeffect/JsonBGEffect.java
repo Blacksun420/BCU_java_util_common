@@ -19,15 +19,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @JsonClass.JCGeneric(Identifier.class)
-@SuppressWarnings("ForLoopReplaceableByForEach")
 public class JsonBGEffect extends BackgroundEffect {
-    private final List<BGEffectHandler> handlers = new ArrayList<>();
+    private final List<BGEffectHandler> handlers = new LinkedList<>();
     protected boolean postNeed = false;
 
     public JsonBGEffect(Identifier<BackgroundEffect> identifier, boolean post) throws IOException {
@@ -97,51 +96,47 @@ public class JsonBGEffect extends BackgroundEffect {
 
     @Override
     public void check() {
-        for(int i = 0; i < handlers.size(); i++) {
-            handlers.get(i).check();
-        }
+        for (BGEffectHandler handler : handlers)
+            handler.check();
     }
 
     @Override
     public void preDraw(FakeGraphics g, P rect, double siz, double midH) {
-        for(int i = 0; i < handlers.size(); i++)
-            handlers.get(i).draw(g, rect, siz, false);
+        for (BGEffectHandler handler : handlers)
+            handler.draw(g, rect, siz, false);
     }
 
     @Override
     public void postDraw(FakeGraphics g, P rect, double siz, double midH) {
-        for(int i = 0; i < handlers.size(); i++)
-            handlers.get(i).draw(g, rect, siz, true);
+        for (BGEffectHandler handler : handlers)
+            handler.draw(g, rect, siz, true);
     }
 
     @Override
     public void draw(FakeGraphics g, double y, double siz, double midH) {
         P pee = new P(0, y);
-        for(int i = 0; i < handlers.size(); i++) {
-            handlers.get(i).draw(g, pee, siz, false);
-            handlers.get(i).draw(g, pee, siz, true);
+        for (BGEffectHandler handler : handlers) {
+            handler.draw(g, pee, siz, false);
+            handler.draw(g, pee, siz, true);
         }
     }
 
     @Override
     public void update(int w, double h, double midH) {
-        for(int i = 0; i < handlers.size(); i++) {
-            handlers.get(i).update(w, h, midH);
-        }
+        for (BGEffectHandler handler : handlers)
+            handler.update(w, h, midH);
     }
 
     @Override
     public void initialize(int w, double h, double midH, Background bg) {
-        for(int i = 0; i < handlers.size(); i++) {
-            handlers.get(i).initialize(w, h, midH);
-        }
+        for (BGEffectHandler handler : handlers)
+            handler.initialize(w, h, midH);
     }
 
     @Override
     public void release() {
-        for(int i = 0; i < handlers.size(); i++) {
-            handlers.get(i).release();
-        }
+        for (BGEffectHandler handler : handlers)
+            handler.release();
     }
 
     @Override

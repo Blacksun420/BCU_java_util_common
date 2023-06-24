@@ -898,12 +898,16 @@ public class Data {
 		public final PT HYPNO = new PT();
 		@Order(65)
 		public final IMU IMURAGE = new IMU();
-		@Order(65)
-		public final IMU IMUHYPNO = new IMU();
 		@Order(66)
-		public final MINIVOLC MINIVOLC = new MINIVOLC();
+		public final IMU IMUHYPNO = new IMU();
 		@Order(67)
+		public final MINIVOLC MINIVOLC = new MINIVOLC();
+		@Order(68)
 		public final PM DEMONVOLC = new PM();
+		@Order(69)
+		public final MULT DMGINC = new MULT(); //Merges Strong against, Massive Damage, and Insane Damage
+		@Order(70)
+		public final MULT DEFINC = new MULT(); //Merges Strong against, Resistant, and Insane Resist
 
 		@Override
 		public Proc clone() {
@@ -1126,50 +1130,39 @@ public class Data {
 	public static final byte T_RECH = 6;
 	public static final byte T_CATK = 7;
 	public static final byte T_BASE = 8;
-	public static final int T_XP1 = 9;
-	public static final int T_XP2 = 10;
+	public static final byte T_XP1 = 9;
+	public static final byte T_XP2 = 10;
 	public static final byte T_TOT = 11;
 
 	// abi bit filter
-	public static final int AB_GOOD = 1;
-	public static final int AB_RESIST = 1 << 1;
-	public static final int AB_MASSIVE = 1 << 2;
-	public static final int AB_ONLY = 1 << 3;
-	public static final int AB_METALIC = 1 << 4;
-	public static final int AB_SNIPERI = 1 << 5;
-	public static final int AB_TIMEI = 1 << 6;
-	public static final int AB_GHOST = 1 << 7;
-	public static final int AB_ZKILL = 1 << 8;
-	public static final int AB_WKILL = 1 << 9;
-	public static final int AB_GLASS = 1 << 10;
-	public static final int AB_THEMEI = 1 << 11;
-	public static final int AB_EKILL = 1 << 12;
-	public static final int AB_IMUSW = 1 << 13;
-	public static final int AB_RESISTS = 1 << 14;
-	public static final int AB_MASSIVES = 1 << 15;
-	public static final int AB_BAKILL = 1 << 16;
-	public static final int AB_CKILL = 1 << 17;
+	public static final byte AB_ONLY = 1;
+	public static final byte AB_METALIC = 1 << 1;
+	public static final byte AB_SNIPERI = 1 << 2;
+	public static final byte AB_TIMEI = 1 << 3;
+	public static final byte AB_GHOST = 1 << 4;
+	public static final byte AB_ZKILL = 1 << 5;
+	public static final byte AB_WKILL = 1 << 6;
+	public static final short AB_GLASS = 1 << 7;
+	public static final short AB_THEMEI = 1 << 8;
+	public static final short AB_EKILL = 1 << 9;
+	public static final short AB_IMUSW = 1 << 10;
+	public static final short AB_BAKILL = 1 << 11;
+	public static final short AB_CKILL = 1 << 12;
 
-	// abi index
-	public static final byte ABI_GOOD = 0;
-	public static final byte ABI_RESIST = 1;
-	public static final byte ABI_MASSIVE = 2;
-	public static final byte ABI_ONLY = 3;
-	public static final byte ABI_METALIC = 4;
-	public static final byte ABI_SNIPERI = 5;
-	public static final byte ABI_TIMEI = 6;
-	public static final byte ABI_GHOST = 7;
-	public static final byte ABI_ZKILL = 8;
-	public static final byte ABI_WKILL = 9;
-	public static final byte ABI_GLASS = 10;
-	public static final byte ABI_THEMEI = 11;
-	public static final byte ABI_EKILL = 12;
-	public static final byte ABI_IMUSW = 13;
-	public static final byte ABI_RESISTS = 14;
-	public static final byte ABI_MASSIVES = 15;
-	public static final byte ABI_BAKILL = 16;
-	public static final byte ABI_CKILL = 17;
-	public static final byte ABI_TOT = 18;// 20 currently
+	public static final byte ABI_ONLY = 0;
+	public static final byte ABI_METALIC = 1;
+	public static final byte ABI_SNIPERI = 2;
+	public static final byte ABI_TIMEI = 3;
+	public static final byte ABI_GHOST = 4;
+	public static final byte ABI_ZKILL = 5;
+	public static final byte ABI_WKILL = 6;
+	public static final byte ABI_GLASS = 7;
+	public static final byte ABI_THEMEI = 8;
+	public static final byte ABI_EKILL = 9;
+	public static final byte ABI_IMUSW = 10;
+	public static final byte ABI_BAKILL = 11;
+	public static final byte ABI_CKILL = 12;
+	public static final byte ABI_TOT = 13;// 18 currently
 
 	// proc index
 	public static final byte P_KB = 0;
@@ -1269,7 +1262,9 @@ public class Data {
 	public static final byte P_IMUHYPNO = 66;
 	public static final byte P_MINIVOLC = 67;
 	public static final byte P_DEMONVOLC = 68;
-	public static final byte PROC_TOT = 69;// 69 (The funny number)
+	public static final byte P_DMGINC = 69; // nice
+	public static final byte P_DEFINC = 70;
+	public static final byte PROC_TOT = 71;// 71
 
 	public static final boolean[] procSharable = {
 			false, //kb
@@ -1340,7 +1335,9 @@ public class Data {
 			true,  //Imu. Rage
 			true,  // Imu Hypno
 			false, //Mini surge
-			true   //Counter Volc
+			true,  //Counter Volc
+			true,  //Massive DMG but good
+			true   //Resistant but good
 	};
 
 	/**
@@ -1377,9 +1374,9 @@ public class Data {
 			{ 0, P_STOP }, // 2: stop
 			{ 0, P_SLOW }, // 3: slow
 			{ 1, AB_ONLY }, // 4:
-			{ 1, AB_GOOD }, // 5:
-			{ 1, AB_RESIST }, // 6:
-			{ 1, AB_MASSIVE }, // 7:
+			{ 5, P_DMGINC, 150 }, // 5:
+			{ 5, P_DEFINC, 400 }, // 6:
+			{ 5, P_DMGINC, 300 }, // 7:
 			{ 0, P_KB }, // 8: kb
 			{ 0, P_WARP }, // 9:
 			{ 0, P_STRONG }, // 10: berserker, reversed health
@@ -1477,7 +1474,9 @@ public class Data {
 			{ 0, P_TIME}, // 34: Timestop
 			{ 0, P_IMUMOVING}, // 35: IMU.MoveATK
 			{ 0, P_WEAKAURA}, // 36: WeakenAura
-			{ 0, P_STRONGAURA} // 37: StrengthAura
+			{ 0, P_STRONGAURA}, // 37: StrengthAura
+			{ 0, P_DMGINC}, // 38: ExtraDmg
+			{ 0, P_DEFINC}  // 39: Resistance
 	};
 
 	public static int[] get_CORRES(int ind) {
@@ -1793,85 +1792,5 @@ public class Data {
 			return "0" + i;
 		else
 			return "" + i;
-	}
-
-	public static int reorderTrait(int oldTrait) {
-		int newTrait = 0;
-
-		for(int i = 0; i < TRAIT_TOT; i++) {
-			if(((oldTrait >> i) & 1) > 0) {
-				switch (i) {
-					case 0:
-						newTrait |= TB_WHITE;
-						break;
-					case 1:
-						newTrait |= TB_RED;
-						break;
-					case 2:
-						newTrait |= TB_FLOAT;
-						break;
-					case 3:
-						newTrait |= TB_BLACK;
-						break;
-					case 4:
-						newTrait |= TB_METAL;
-						break;
-					case 5:
-						newTrait |= TB_ANGEL;
-						break;
-					case 6:
-						newTrait |= TB_ALIEN;
-						break;
-					case 7:
-						newTrait |= TB_ZOMBIE;
-						break;
-					case 8:
-						newTrait |= TB_RELIC;
-						break;
-					default:
-						newTrait |= 1 << i;
-				}
-			}
-		}
-
-		return newTrait;
-	}
-
-	public static int reorderAbi(int ab, int ver) {
-		int newAbi = 0, abiAdd = 0;
-		switch (ver) {
-			case 0: //Reformat moving attack, seal, and poison (not toxic) immunity
-				for (int i = 0; i + abiAdd < ABI_TOT + 3; i++) {
-					if (i == 7 || i == 12 || i == 18)
-						abiAdd++;
-					int i1 = i + abiAdd;
-					if (i1 == 12 || i1 == 18)
-						continue;
-					if (((ab >> i1) & 1) > 0)
-						newAbi |= 1 << i;
-				}
-				break;
-			case 1: //Reformat Bounty and Base destroyer
-				for (int i = 0; i + abiAdd < ABI_TOT + 1; i++) {
-					if (i == 4)
-						abiAdd += 2;
-					int i1 = i + abiAdd;
-					if (((ab >> i1) & 1) > 0)
-						newAbi |= 1 << i;
-				}
-				break;
-			case 2: //Reformat waveblock and (in the future) countersurge
-				for (int i = 0; i + abiAdd < ABI_TOT; i++) {
-					if (i == 5 || i == 19)
-						abiAdd++;
-					int i1 = i + abiAdd;
-					if (i1 == 19)
-						continue;
-					if (((ab >> i1) & 1) > 0)
-						newAbi |= 1 << i;
-				}
-				break;
-		}
-		return newAbi;
 	}
 }

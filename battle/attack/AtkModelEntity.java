@@ -144,7 +144,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 			double[] ranges = inRange(atk);
 			List<AbEntity> ents = e.basis.inRange(atk.getTarget(), atk.getDire() * getDire(), ranges[0], ranges[1], false);
 			for (AbEntity ent : ents)
-				total += Math.min(e.health * atk.getDire(), dmg * ent.calcDamageMult(dmg, e, atk));
+				total += Math.min(ent.health * atk.getDire(), dmg * ent.calcDamageMult(dmg, e, atk));
 		}
 		return total;
 	}
@@ -298,9 +298,6 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		Proc.PM w = getProc(matk).WORKERLV;
 		if (w.prob != 0 && (w.prob == 100 || b.r.nextDouble() * 100 < w.prob))
 			b.changeWorkerLv(w.mult);
-		Proc.CDSETTER c = getProc(matk).CDSETTER;
-		if (c.prob != 0 && (c.prob == 100 || b.r.nextDouble() * 100 < c.prob))
-			b.changeUnitCooldown(c.amount, c.slot, c.type);
 	}
 
 	protected abstract int getAttack(MaskAtk ind, Proc proc);
@@ -339,6 +336,13 @@ public abstract class AtkModelEntity extends AtkModelAb {
 				summon(sprc, e, matk, 0);
 			else
 				proc.SUMMON.set(sprc);
+		}
+		Proc.CDSETTER c = getProc(matk).CDSETTER;
+		if (c.perform(b.r)) {
+			if (c.slot == 10)
+				proc.CDSETTER.set(c);
+			else
+				b.changeUnitCooldown(c.amount, c.slot, c.type);
 		}
 
 		if (proc.CRIT.exists() && proc.CRIT.mult == 0)

@@ -169,9 +169,7 @@ public abstract class PackData implements IndexContainer {
 			File[] fs = dict.listFiles();
 			for (File f : fs) {
 				String str = f.getName();
-				if (str.length() != 7)
-					continue;
-				if (!str.endsWith(".ogg"))
+				if (str.length() != 7 || !str.endsWith(".ogg"))
 					continue;
 				int id = CommonStatic.parseIntN(str.substring(0, 3));
 				if (id == -1)
@@ -450,7 +448,7 @@ public abstract class PackData implements IndexContainer {
 			musics.clear();
 			if (path != null)
 				for (String str : path)
-					if (str.length() == 7 && str.endsWith(".ogg")) {
+					if (str.length() == 7 && isMusic(str)) {
 						Integer ind = Data.ignore(() -> Integer.parseInt(str.substring(0, 3)));
 						if (ind != null) {
 							long loop = loopMap.getOrDefault(ind, (long) 0);
@@ -458,6 +456,10 @@ public abstract class PackData implements IndexContainer {
 						}
 					}
 			musics.reset();
+		}
+
+		private static boolean isMusic(String str) {
+			return str.endsWith(".ogg") || str.endsWith(".mp3") || str.endsWith(".wav");
 		}
 
 		public boolean relyOn(String id) {

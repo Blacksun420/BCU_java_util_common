@@ -5,17 +5,11 @@ import com.google.api.client.http.*;
 import com.google.api.client.util.ExponentialBackOff;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-
 import common.io.assets.Admin.StaticPermitted;
+import common.io.assets.UpdateCheck;
 import common.pack.Context;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
@@ -23,7 +17,22 @@ import java.util.function.Consumer;
 
 public class WebFileIO {
 
-	public static final int BUFFER = 1 << 12, SMOOTH = 1 << 16, FAST = 1 << 18, MAX = 1 << 20;
+	public static final int BUFFER = 1 << 12, SMOOTH = 1 << 16, FAST = 1 << 18;
+	public static final String token;
+	static {
+		String path = "common/Security.properties";
+		InputStreamReader strm = new InputStreamReader(ClassLoader.getSystemResourceAsStream(path));
+		BufferedReader br = new BufferedReader(strm);
+		String temp = "=";
+		try {
+			temp = br.readLine();
+			strm.close();
+			br.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		token = temp.split("=")[1];
+	}
 
 	@StaticPermitted(StaticPermitted.Type.TEMP)
 	private static HttpTransport transport;
@@ -36,10 +45,6 @@ public class WebFileIO {
 			else
 				impl(size, url, out, c, 0);
 		}
-	}
-
-	public static void download(String url, File file) throws Exception {
-		download(FAST, url, file, null, false);
 	}
 
 	public static void download(String url, File file, Consumer<Double> c, boolean direct) throws Exception {
@@ -61,9 +66,9 @@ public class WebFileIO {
 	}
 
 	private static void direct(String url, OutputStream out, Consumer<Double> prog) throws IOException {
-		URLConnection conn = new URL(url).openConnection();
+		URLConnection conn = getConnection(url);
 		InputStream is = conn.getInputStream();
-		int n, ava = 0, count = 0;
+		int n, ava, count = 0;
 		byte[] buffer = new byte[BUFFER];
 		while ((n = is.read(buffer)) != -1) {
 			out.write(buffer, 0, n);
@@ -90,18 +95,28 @@ public class WebFileIO {
 			request.setEncoding(null);
 		});
 
-		if(size == FAST) {
+		if(size == FAST)
 			downloader.setDirectDownloadEnabled(false);
-		}
 
-		if (timeout > 0) {
+		if (timeout > 0)
 			downloader.setDirectDownloadEnabled(true);
-		} else {
+		else {
 			downloader.setChunkSize(size);
 			downloader.setProgressListener(new Progress(c));
 		}
-		downloader.download(gurl, out);
+		HttpHeaders headers = null;
+		if (url.contains(UpdateCheck.REPO)) {
+			headers = new HttpHeaders();
+			headers.setAuthorization(token);
+		}
+		downloader.download(gurl, headers, out);
 		out.close();
 	}
 
+	public static URLConnection getConnection(String url) throws IOException {
+		URLConnection conn = new URL(url).openConnection();
+		if (url.contains(UpdateCheck.REPO))
+			conn.setRequestProperty("Authorization", token);
+		return conn;
+	}
 }

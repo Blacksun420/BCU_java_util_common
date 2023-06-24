@@ -33,7 +33,6 @@ import java.util.*;
 /**
  * Entity class for units and enemies
  */
-@SuppressWarnings("ForLoopReplaceableByForEach")
 public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 	/**
@@ -537,9 +536,9 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		private void update() {
 			checkEff();
 
-			for (int i = 0; i < effs.length; i++)
-				if (effs[i] != null)
-					effs[i].update(false);
+			for (EAnimD<?> eff : effs)
+				if (eff != null)
+					eff.update(false);
 
 			boolean checkKB = e.kb.kbType != INT_SW && e.kb.kbType != INT_WARP;
 			if (e.status.stop == 0 && (e.kbTime == 0 || checkKB))
@@ -896,8 +895,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 		private void getMax() {
 			int max = 0;
-			for (int i = 0; i < list.size(); i++)
-				max |= 1 << type(list.get(i));
+			for (POISON poison : list)
+				max |= 1 << type(poison);
 			e.status.poison = max;
 		}
 
@@ -906,8 +905,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		}
 
 		private void update() {
-			for (int i = 0; i < list.size(); i++) {
-				POISON ws = list.get(i);
+			for (POISON ws : list)
 				if (ws.time > 0) {
 					ws.time--;
 					ws.prob--;// used as counter for itv
@@ -919,7 +917,6 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 						ws.prob += ws.itv;
 					}
 				}
-			}
 			list.removeIf(w -> w.time <= 0);
 			getMax();
 		}
@@ -1091,10 +1088,10 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				return true;
 			});
 			List<AbEntity> lm = e.basis.inRange(TCH_ZOMBX, -e.getDire(), 0, e.basis.st.len, false);
-			for (int i = 0; i < lm.size(); i++) {
-				if (lm.get(i) == e)
+			for (AbEntity abEntity : lm) {
+				if (abEntity == e)
 					continue;
-				Entity em = ((Entity) lm.get(i));
+				Entity em = ((Entity) abEntity);
 				double d0 = em.pos + em.getProc().REVIVE.dis_0;
 				double d1 = em.pos + em.getProc().REVIVE.dis_1;
 				if ((d0 - e.pos) * (d1 - e.pos) > 0)
@@ -1217,13 +1214,13 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		}
 	}
 	private static class SummonManager extends BattleObj {
-		public List<Entity> children = new ArrayList<>();
+		public LinkedList<Entity> children = new LinkedList<>();
 
 		public void damaged(AttackAb atk, int dmg, boolean proc) {
-			for (int i = 0; i < children.size(); i++) {
+			for (Entity child : children) {
 				if (proc)
-					children.get(i).processProcs(atk);
-				children.get(i).damage += dmg;
+					child.processProcs(atk);
+				child.damage += dmg;
 			}
 		}
 		public void update() {
@@ -1447,7 +1444,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	/**
 	 * abilities that are activated after it's attacked
 	 */
-	private final List<AttackAb> tokens = new ArrayList<>();
+	private final List<AttackAb> tokens = new LinkedList<>();
 
 	/**
 	 * temp field within an update loop <br>
@@ -1836,28 +1833,42 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				basis.enemyStatistics.get((Enemy)e.data.getPack())[0] += Math.min(d, health);
 		});
 		if (proc)
-			processProcs(atk);
+			processProcs0(atk, FDmg);
 	}
 
 	protected abstract void sumDamage(int atk, boolean raw);
+
+	protected void processProcs0(AttackAb atk, int dmg) {
+		if (atk.getProc().POIATK.mult > 0) {
+			int rst = getProc().IMUPOIATK.mult;
+			if (rst == 100)
+				anim.getEff(INV);
+			else {
+				double poiDmg = atk.getProc().POIATK.mult * (100 - rst) / 10000.0;
+				damage += maxH * poiDmg;
+				basis.lea.add(new EAnimCont(pos, layer, effas().A_POISON.getEAnim(DefEff.DEF)));
+				CommonStatic.setSE(SE_POISON);
+
+				sumDamage((int)(maxH * poiDmg), false);
+				Entity e = atk.attacker;
+				if (e != null) {
+					long totDmg = Math.min((long)(maxH * poiDmg), Math.max(0, health - dmg));
+					e.damageGiven += totDmg;
+					if(e instanceof EUnit && ((EUnit) e).index != null) {
+						int[] index = ((EUnit) e).index;
+						basis.totalDamageGiven[index[0]][index[1]] += totDmg;
+					} else
+						basis.enemyStatistics.get((Enemy)e.data.getPack())[0] += totDmg;
+				}
+			}
+		}
+		processProcs(atk);
+	}
 
 	private void processProcs(AttackAb atk) {
 		// process proc part
 		if (!btargetable(atk))
 			return;
-
-		if (atk.getProc().POIATK.mult > 0) {
-			int rst = getProc().IMUPOIATK.mult;
-			if (rst == 100) {
-				anim.getEff(INV);
-			} else {
-				double poiDmg = atk.getProc().POIATK.mult * (100 - rst) / 10000.0;
-
-				damage += maxH * poiDmg;
-				basis.lea.add(new EAnimCont(pos, layer, effas().A_POISON.getEAnim(DefEff.DEF)));
-				CommonStatic.setSE(SE_POISON);
-			}
-		}
 
 		double f = getFruit(atk.trait, atk.dire, 1);
 		double time = atk instanceof AttackCanon ? 1 : 1 + f * 0.2 / 3;
@@ -2168,8 +2179,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			status.lethal = true;
 		}
 
-		for (int i = 0; i < tokens.size(); i++)
-			tokens.get(i).model.invokeLater(tokens.get(i), this);
+		for (AttackAb token : tokens)
+			token.model.invokeLater(token, this);
 		tokens.clear();
 
 		if(isBase && health <= 0)
@@ -2240,10 +2251,16 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 		for (int j = 0; j < traits.size(); j++) {
 			Trait tr = traits.get(j);
-			if (ent.traits.contains(tr) || (antiTrait && tr.targetType) ||
-					(ent.dire == -1 && tr.others.contains(((MaskUnit)ent.data).getPack())) || (dire == -1 && tr.others.contains(((MaskUnit)data).getPack())))
+			if (ent.traits.contains(tr) || (antiTrait && tr.targetType) || (ent.dire == -1 && tr.others.contains(((MaskUnit)ent.data).getPack())))
 				return true;
 		}
+		antiTrait = targetTraited(traits);
+		if (dire == -1)
+			for (int j = 0; j < ent.traits.size(); j++) {
+				Trait tr = ent.traits.get(j);
+				if ((antiTrait && tr.targetType) || tr.others.contains(((MaskUnit)data).getPack()))
+					return true;
+			}
 		return false;
 	}
 	/**
@@ -2345,8 +2362,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					List<AbEntity> le = basis.inRange(getTouch(), dir, pos + (aura.min_dis * getDire()), pos + (aura.max_dis * getDire()), false);
 					if (dir == 1 || basis.getBase(-1) instanceof ECastle)
 						le.remove(basis.getBase(dir));
-					for (int j = 0; j < le.size(); j++) {
-						Entity e = (Entity) le.get(j);
+					for (AbEntity abE : le) {
+						Entity e = (Entity) abE;
 						if (aura.type.trait || e.targetable(this))
 							e.auras.setAuras(aura, i == 0);
 					}
@@ -2533,6 +2550,19 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				return 1f * barrier.health / dmg;
 			} else {
 				return 0;
+			}
+		}
+
+		if (dire != e.dire) {
+			SortedPackSet<Trait> sharedTraits = traits.inCommon(matk.getATKTraits());
+			boolean isAntiTraited = targetTraited(matk.getATKTraits());
+			sharedTraits.addIf(traits, t -> !t.BCTrait() && ((t.targetType && isAntiTraited) || t.others.contains((e.dire == -1 ? e : this).data.getPack())));//Ignore the warning, condition dictates unit
+
+			if (!sharedTraits.isEmpty()) {
+				if (e.status.curse == 0 && e.getProc().DMGINC.mult != 0)
+					ans *= e.getProc().DMGINC.mult/100.0;
+				if (status.curse == 0 && getProc().DEFINC.mult != 0)
+					ans /= e.getProc().DEFINC.mult/100.0;
 			}
 		}
 
@@ -2808,8 +2838,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		touchEnemy = touch;
 		if ((getAbi() & AB_ONLY) > 0) {
 			touchEnemy = false;
-			for (int i = 0; i < le.size(); i++)
-				if (le.get(i).targetable(this)) {
+			for (AbEntity abE : le)
+				if (abE.targetable(this)) {
 					touchEnemy = true;
 					break;
 				}

@@ -107,6 +107,10 @@ public class Formatter {
 		public String waveRange(int lv) {
 			return df.format((isEnemy ? 467.25 : 332.5) + 200 * (lv - 1));
 		}
+
+		public String resDiv(int mult) {
+			return df.format(mult / 100.0);
+		}
 	}
 
 	private class BoolElem extends Comp {

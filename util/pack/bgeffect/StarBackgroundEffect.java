@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Random;
 
 @JsonClass.JCGeneric(Identifier.class)
-@SuppressWarnings("ForLoopReplaceableByForEach")
 public class StarBackgroundEffect extends BackgroundEffect {
     private static final int[][] starColors = {
             {233, 248, 255},
@@ -95,14 +94,14 @@ public class StarBackgroundEffect extends BackgroundEffect {
         if(capture.size() > 0) {
             int rangeH = BGHeight * 2 + range;
 
-            for(int i = 0; i < capture.size(); i++) {
-                opacities.set(capture.get(i), 0);
+            for (Integer capts : capture) {
+                opacities.set(capts, 0);
 
-                P.delete(positions.get(capture.get(i)));
+                P.delete(positions.get(capts));
 
-                positions.set(capture.get(i), P.newP(r.nextInt(w + battleOffset), r.nextInt(rangeH)));
-                colors.set(capture.get(i), (byte) (r.nextInt(starColors.length - 1)));
-                times.set(capture.get(i), Data.BG_EFFECT_STAR_TIME);
+                positions.set(capts, P.newP(r.nextInt(w + battleOffset), r.nextInt(rangeH)));
+                colors.set(capts, (byte) (r.nextInt(starColors.length - 1)));
+                times.set(capts, Data.BG_EFFECT_STAR_TIME);
             }
         }
     }
@@ -110,9 +109,9 @@ public class StarBackgroundEffect extends BackgroundEffect {
     @Override
     public void initialize(int w, double h, double midH, Background bg) {
         opacities.clear();
-        for(int i = 0; i < positions.size(); i++) {
-            P.delete(positions.get(i));
-        }
+        for (P position : positions)
+            P.delete(position);
+
         positions.clear();
         times.clear();
         colors.clear();
