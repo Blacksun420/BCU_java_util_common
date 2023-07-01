@@ -48,7 +48,7 @@ public interface MaskEntity extends BattleStatic {
 		return new AtkDataModel[0][];
 	}
 
-	default AtkDataModel[] getSpAtks(int ind) {
+	default AtkDataModel[] getSpAtks(boolean counter, int ind) {
 		return new AtkDataModel[0];
 	}
 

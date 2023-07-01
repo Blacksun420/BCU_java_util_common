@@ -101,7 +101,7 @@ public abstract class CustomEntity extends DataEntity {
 	@Override
 	public MaskAtk getAtkModel(int atk, int ind) {
 		if (atk >= hits.size() || ind >= hits.get(atk).length)
-			return getSpAtks(atk - hits.size())[ind];
+			return getSpAtks(false, atk - hits.size())[ind];
 		return hits.get(atk)[ind];
 	}
 
@@ -146,8 +146,8 @@ public abstract class CustomEntity extends DataEntity {
 	}
 
 	@Override
-	public AtkDataModel[] getSpAtks(int ind) {
-		return getSpAtks(true)[ind];
+	public AtkDataModel[] getSpAtks(boolean counter, int ind) {
+		return getSpAtks(counter)[ind];
 	}
 
 	@Override
@@ -168,7 +168,7 @@ public abstract class CustomEntity extends DataEntity {
 		int ans;
 		if (sp) {
 			ans = 0;
-			for (AtkDataModel adm : getSpAtks(atk))
+			for (AtkDataModel adm : getSpAtks(true, atk))
 				ans -= adm.pre;
 		} else {
 			ans = getAnimLen(atk);

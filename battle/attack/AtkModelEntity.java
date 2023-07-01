@@ -174,7 +174,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 			return null;
 		act[actind][ind]--;
 		Proc proc = Proc.blank();
-		MaskAtk matk = data.getSpAtks(atkind)[ind];
+		MaskAtk matk = data.getSpAtks(false, atkind)[ind];
 		int atk = getAttack(matk, proc);
 		double[] ints = inRange(matk);
 		return new AttackSimple(e, this, atk, e.traits, getAbi(), proc, ints[0], ints[1], matk, e.layer, matk.isLD() || matk.isOmni());
