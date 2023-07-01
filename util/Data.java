@@ -528,7 +528,7 @@ public class Data {
 			public int retreatDist;
 			@Order(1)
 			public int retreatSpeed;
-			@Order(0)
+			@Order(2)
 			public TYPE type = new TYPE();
 		}
 

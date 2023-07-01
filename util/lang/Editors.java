@@ -1,16 +1,14 @@
 package common.util.lang;
 
-import com.google.common.primitives.Ints;
-import common.util.unit.Unit;
 import common.pack.Identifier;
 import common.pack.UserProfile;
 import common.util.Data;
 import common.util.Data.Proc;
 import common.util.Data.Proc.ProcItem;
+import common.util.unit.Unit;
 import org.jcodec.common.tools.MathUtil;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -119,14 +117,20 @@ public class Editors {
 
 	}
 
-	public static class EditControl<T> {
+	public static class EditControl<T extends ProcItem> {
 
 		public final Class<T> cls;
 		private final Consumer<T> regulator;
+		private final Consumer<T> visibilityReg;
 
 		public EditControl(Class<T> cls, Consumer<T> func) {
+			this(cls, func, null);
+		}
+
+		public EditControl(Class<T> cls, Consumer<T> func, Consumer<T> vis) {
 			this.cls = cls;
 			regulator = func;
+			visibilityReg = vis;
 		}
 
 		public EdiField getField(String f) {
@@ -141,18 +145,22 @@ public class Editors {
 			});
 		}
 
-		@SuppressWarnings("unchecked")
 		public final void update(EditorGroup par) {
-			regulate((T) par.obj);
+			regulate(par.obj);
 			par.setData(par.obj);
 			if (par.callback != null)
 				par.callback.run();
 		}
 
-		protected void regulate(T obj) {
-			regulator.accept(obj);
+		@SuppressWarnings("unchecked")
+		protected void regulate(ProcItem obj) {
+			regulator.accept((T)obj);
 		}
 
+		@SuppressWarnings("unchecked")
+		protected void setVis(ProcItem obj) {
+			visibilityReg.accept((T)obj);
+		}
 	}
 
 	public static abstract class Editor {
@@ -173,11 +181,8 @@ public class Editors {
 		protected abstract void setData();
 
 		protected final void update() {
-			setComponentVisibility(par, true, 1);
 			par.ctrl.update(par);
-			par.updateVisibility();
 		}
-
 	}
 
 	public static class EditorGroup {
@@ -206,7 +211,7 @@ public class Editors {
 
 		public LocaleCenter.Binder getItem(Formatter.Context ctx) {
 			ProcLang.ItemLang lang = ProcLang.get().get(proc);
-			LocaleCenter.Displayable disp = new DispItem(lang, this::getProcItem, ctx);
+			LocaleCenter.Displayable disp = new DispItem(lang, this::getProc, ctx);
 			return new LocaleCenter.ObjBinder(disp, proc, (name) -> getItem(ctx));
 		}
 
@@ -217,28 +222,21 @@ public class Editors {
 			updateVisibility();
 		}
 
-		public void updateVisibility() {
-			ProcItem item = getProcItem();
-			if (item instanceof Proc.IMUAD)
-				setComponentVisibility(this, item.exists(), 2);
-			else if (item instanceof Proc.AURA)
-				setComponentVisibility(this, item.exists(), 4);
-			else if (!(item instanceof Proc.IMU || item instanceof Proc.AI)) {
-				ArrayList<Integer> visFields = new ArrayList<>();
-				for (int i = 1; i < list.length; i++)
-					visFields.add(i);
+		private ProcItem getProc() {
+			return obj;
+		}
 
-				if (visFields.size() == list.length - 1)
-					setComponentVisibility(this, item.exists(), 1);
-				else if (visFields.size() > 0)
-					setComponentVisibility(this, item.exists(), Ints.toArray(visFields));
+		public void updateVisibility() {
+			if (obj instanceof Proc.IMUAD)
+				setComponentVisibility(this, obj.exists(), 2);
+			else if (obj instanceof Proc.AURA)
+				setComponentVisibility(this, obj.exists(), 4);
+			else if (!(obj instanceof Proc.IMU)) {
+				setComponentVisibility(this, obj.exists(), 1);
+				if (ctrl.visibilityReg != null)
+					ctrl.setVis(obj);
 			}
 		}
-
-		private ProcItem getProcItem() {
-			return (ProcItem) obj;
-		}
-
 	}
 
 	public interface EditorSupplier {
@@ -246,8 +244,6 @@ public class Editors {
 		Editor getEditor(EditControl<?> ctrl, EditorGroup g, String field, boolean edit);
 
 		void setEditorVisibility(Editor e, boolean b);
-
-		boolean EditorVisible(Editor e);
 
 		boolean isEnemy();
 
@@ -383,8 +379,7 @@ public class Editors {
 					t.type.range_type = MathUtil.clip(t.type.range_type, 0, 3);
 				}
 			}
-			setComponentVisibility("REVIVE", t.type.revive_others, 3, 4, 5, 7);
-		}));
+		}, t -> setComponentVisibility("REVIVE", t.type.revive_others, 3, 4, 5, 7)));
 
 		map().put("SNIPER", prob);
 
@@ -432,14 +427,15 @@ public class Editors {
 						t.mult = MathUtil.clip(t.mult, -u.max - u.maxp, u.max + u.maxp);
 					else
 						t.mult = MathUtil.clip(t.mult, 1, u.max + u.maxp);
-					setComponentVisibility("SUMMON", true, 17);
 				} else {
 					t.form = 1;
 					t.mult = Math.max(1, t.mult);
-					setComponentVisibility("SUMMON", false, 17);
 				}
 				t.type.anim_type = MathUtil.clip(t.type.anim_type, 0, 4);
 			}
+		}, (t) -> {
+			EditorSupplier edi = UserProfile.getStatic("Editor_Supplier", () -> null);
+			setComponentVisibility("SUMMON", (!edi.isEnemy() && t.id == null) || (t.id != null && t.id.cls == Unit.class), 17);
 		}));
 
 		map().put("MOVEWAVE", new EditControl<>(Proc.MOVEWAVE.class, (t) -> {
@@ -717,25 +713,25 @@ public class Editors {
 		}));
 
 		map().put("BSTHUNT", new EditControl<>(Proc.BSTHUNT.class, (t) -> {
-			setComponentVisibility("BSTHUNT", t.type.active, 1);
 			if (t.type.active) {
 				t.prob = MathUtil.clip(t.prob, 0, 100);
 				if (t.prob == 0)
 					t.time = 0;
 				else
 					t.time = Math.max(1, t.time);
-				setComponentVisibility("BSTHUNT", t.prob != 0, 2);
 			} else {
 				t.prob = t.time = 0;
 			}
+		}, (t) -> {
+			setComponentVisibility("BSTHUNT", t.type.active, 1);
+			setComponentVisibility("BSTHUNT", t.prob != 0, 2);
 		}));
 
 		map().put("AI", new EditControl<>(Proc.AI.class, (t) -> {
-			setComponentVisibility("AI", t.retreatDist > 0, 1, 2);
 			t.retreatDist = Math.max(0, t.retreatDist);
 			if (t.retreatDist == 0)
 				t.retreatSpeed = 0;
-		}));
+		}, t -> setComponentVisibility("AI", t.retreatDist > 0, 1, 2)));
 
 		map().put("DEMONVOLC", new EditControl<>(Proc.PM.class, (t) -> {
 			t.prob = MathUtil.clip(t.prob, 0, 100);

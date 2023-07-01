@@ -84,8 +84,8 @@ public class EEnemy extends Entity {
 			if (!sharedTraits.isEmpty()) {
 				if (atk.attacker.status.curse == 0 && atk.attacker.getProc().DMGINC.mult != 0)
 					ans *= EUnit.OrbHandler.getOrb(atk.attacker.getProc().DMGINC.mult, atk, sharedTraits, basis.b.t());
-				if (status.curse == 0 && atk.getProc().DEFINC.mult != 0)
-					ans /= atk.getProc().DEFINC.mult/100.0;
+				if (status.curse == 0 && getProc().DEFINC.mult != 0)
+					ans /= getProc().DEFINC.mult/100.0;
 			}
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_WITCH)) && (atk.abi & AB_WKILL) > 0)
 				ans *= basis.b.t().getWKAtk();

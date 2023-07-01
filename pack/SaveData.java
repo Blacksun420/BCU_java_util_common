@@ -1,6 +1,7 @@
 package common.pack;
 
 import common.io.json.JsonClass;
+import common.io.json.JsonDecoder.OnInjected;
 import common.io.json.JsonField;
 import common.util.stage.Stage;
 import common.util.stage.StageMap;
@@ -55,7 +56,7 @@ public class SaveData {
                 if (sm.unlockReq.size() > 0 && !cSt.containsKey(sm)) {
                     boolean addable = true;
                     for (StageMap smp : sm.unlockReq)
-                        if (smp.id.pack.equals(pack.getSID()) && !cSt.containsKey(smp)) {
+                        if (smp.id.pack.equals(pack.getSID()) && (!cSt.containsKey(smp) || cSt.get(smp) < smp.list.size())) { //Verify if map is there AND cleared first before adding
                             addable = false;
                             break;
                         }
@@ -118,5 +119,20 @@ public class SaveData {
     @JsonField(tag = "pack", io = JsonField.IOType.W)
     public String zser() {
         return pack.desc.id;
+    }
+
+    @OnInjected //Just like every game ever, update save data if something new is added designed for a point below the one you're at
+    public void injected() {
+        for (StageMap sm : pack.mc.maps)
+            if (sm.unlockReq.size() > 0 && !cSt.containsKey(sm)) {
+                boolean addable = true;
+                for (StageMap smp : sm.unlockReq)
+                    if (smp.id.pack.equals(pack.getSID()) && (!cSt.containsKey(smp) || cSt.get(smp) < smp.list.size())) { //Verify if map is there AND cleared first before adding
+                        addable = false;
+                        break;
+                    }
+                if (addable)
+                    cSt.put(sm, 0);
+            }
     }
 }

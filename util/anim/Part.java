@@ -9,21 +9,21 @@ import java.util.Queue;
 
 public class Part extends Data implements Cloneable, Comparable<Part> {
 
-	public int[] ints = new int[5]; //0 - id, i - modif, 2 - loop, 3 - nothing, 4 - nothing
+	public int[] ints = new int[3]; //0 - id, i - modif, 2 - loop (Main BCU/BC has 5, 2 do nothing)
 	public String name;
 	public int n, max, off, fir;
 	public int frame, vd;// for editor only
 	public int[][] moves;
 
 	public Part() {
-		ints = new int[] { 0, 5, -1, 0, 0 };
+		ints = new int[] { 0, 5, -1 };
 		name = "";
 		n = 0;
 		moves = new int[0][];
 	}
 
 	public Part(int id, int modif) {
-		ints = new int[] { id, modif, -1, 0, 0 };
+		ints = new int[] { id, modif, -1 };
 		name = "";
 		n = 0;
 		moves = new int[0][];
@@ -31,10 +31,10 @@ public class Part extends Data implements Cloneable, Comparable<Part> {
 
 	protected Part(Queue<String> qs) {
 		String[] ss = qs.poll().trim().split(",");
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 3; i++)
 			ints[i] = Integer.parseInt(ss[i].trim());
-		if (ss.length == 6) //TODO Only make custom anims use 3 parts while tolerating BC's use of 5
-			name = restrict(ss[5]);
+		if (ss.length == 4 || ss.length == 6)//1st is for fork parts, 2nd for mainBCU/BC parts
+			name = restrict(ss[ss.length - 1]);
 		else
 			name = "";
 		n = Integer.parseInt(qs.poll().trim());
@@ -83,11 +83,13 @@ public class Part extends Data implements Cloneable, Comparable<Part> {
 
 	public void validate() {
 		int doff = 0;
-		if (n != 0 && (moves[0][0] - off < 0 || ints[2] != 1))
+		if (n != 0 && (moves[0][0] - off < 0 || ints[2] != 1)) {
 			doff -= moves[0][0];
+			off += doff;
+		} else
+			off = 0;
 		for (int i = 0; i < n; i++)
 			moves[i][0] += doff;
-		off += doff;
 		fir = moves.length == 0 ? 0 : moves[0][0];
 		max = n > 0 ? moves[n - 1][0] : 0;
 	}
@@ -100,11 +102,10 @@ public class Part extends Data implements Cloneable, Comparable<Part> {
 	}
 
 	protected int getMax() {
-		if(ints[2] != -1) {
+		if(ints[2] != -1)
 			return ints[2] > 1 ? fir + (max - fir) * ints[2] - off : max - off;
-		} else {
+		else
 			return max - Math.min(off, 0);
-		}
 	}
 
 	protected void restore(InStream is) {

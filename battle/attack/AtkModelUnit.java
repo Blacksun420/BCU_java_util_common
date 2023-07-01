@@ -16,8 +16,8 @@ public class AtkModelUnit extends AtkModelEntity {
 	}
 
 	@Override
-	public int getEffAtk(MaskAtk matk) {
-		return getEffMult((int) (Math.round(matk.getAtk() * d1) * d0));
+	public int getDefAtk(MaskAtk matk) {
+		return (int)(Math.round(matk.getAtk() * d1) * d0);
 	}
 	@Override
 	public int getEffMult(int dmg) {

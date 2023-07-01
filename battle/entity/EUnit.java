@@ -137,8 +137,8 @@ public class EUnit extends Entity {
 			boolean isAntiTraited = targetTraited(atk.trait);
 			sharedTraits.addIf(traits, t -> !t.BCTrait() && ((t.targetType && isAntiTraited) || t.others.contains(data.getPack())));//Ignore the warning, atk.attacker will always be an unit
 			if (!sharedTraits.isEmpty()) {
-				if (status.curse == 0 && atk.attacker.getProc().DEFINC.mult != 0)
-					ans *= basis.b.t().getDEF(atk.attacker.getProc().DEFINC.mult, atk.trait,sharedTraits,((MaskUnit)data).getOrb(),level);
+				if (status.curse == 0 && getProc().DEFINC.mult != 0)
+					ans *= basis.b.t().getDEF(getProc().DEFINC.mult, atk.trait, sharedTraits, ((MaskUnit) data).getOrb(), level);
 				if (atk.attacker.status.curse == 0 && atk.attacker.getProc().DMGINC.mult != 0)
 					ans *= atk.attacker.getProc().DMGINC.mult / 100.0;
 			}

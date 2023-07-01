@@ -147,7 +147,7 @@ public abstract class CustomEntity extends DataEntity {
 
 	@Override
 	public AtkDataModel[] getSpAtks(int ind) {
-		return  getSpAtks(false)[ind];
+		return getSpAtks(true)[ind];
 	}
 
 	@Override

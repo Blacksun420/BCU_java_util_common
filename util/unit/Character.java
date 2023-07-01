@@ -50,6 +50,7 @@ public abstract class Character extends Animable<AnimU<?>, AnimU.UType> {
      */
     protected void inject(UserPack pack, JsonObject jdu, CustomEntity ent) {
         if (pack.desc.FORK_VERSION < 9) {
+            AtkDataModel[] atks = null;
             if (pack.desc.FORK_VERSION < 6) {
                 if (pack.desc.FORK_VERSION < 4) {
                     if (pack.desc.FORK_VERSION < 3) {
@@ -76,7 +77,7 @@ public abstract class Character extends Animable<AnimU<?>, AnimU.UType> {
                         if (oldSpAtk != null)
                             ent.entrs = new AtkDataModel[]{oldSpAtk};
 
-                        AtkDataModel[] atks = ent.getAllAtkModels();
+                        atks = ent.getAllAtkModels();
                         Proc proc = ent.getProc();
                         //Updates stuff to match this fork without core version issues
                         if (pack.desc.FORK_VERSION < 1) {
@@ -162,7 +163,12 @@ public abstract class Character extends Animable<AnimU<?>, AnimU.UType> {
                 ent.getProc().DEFINC.mult *= 6;
             if ((ent.abi & 32768) != 0)//ins dmg
                 ent.getProc().DMGINC.mult *= 5;
+
             ent.abi = reorderAbi(ent.abi, 3);
+            if (atks == null)
+                atks = ent.getAllAtkModels();
+            for (AtkDataModel atk : atks)
+                atk.alt = reorderAbi(atk.alt, 3);
 
             if (ent.getProc().DMGINC.mult == 100)
                 ent.getProc().DMGINC.mult = 0;

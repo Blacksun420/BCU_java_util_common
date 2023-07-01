@@ -20,10 +20,7 @@ import common.util.unit.AbForm;
 import common.util.unit.Enemy;
 import common.util.unit.IForm;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.TreeMap;
+import java.util.*;
 
 public class StageBasis extends BattleObj {
 
@@ -648,7 +645,6 @@ public class StageBasis extends BattleObj {
 					ebaseSmoke.add(new EAnimCont(x, 0, EffAnim.effas().A_ATK_SMOKE.getEAnim(DefEff.DEF), y));
 				}
 			}
-
 			if (ubase.health <= 0) {
 				for (int i = 0; i < le.size(); i++)
 					if (le.get(i).dire == -1)
@@ -662,18 +658,16 @@ public class StageBasis extends BattleObj {
 				}
 			}
 		}
-
 		for (int i = 0; i < le.size(); i++)
 			if (s_stop == 0 || (le.get(i).getAbi() & AB_TIMEI) != 0)
 				le.get(i).postUpdate();
 
 		if (shock) {
-			for (Entity entity : le) {
+			for (Entity entity : le)
 				if (entity.dire == -1 && (entity.touchable() & TCH_N) > 0) {
 					entity.interrupt(INT_SW, KB_DIS[INT_SW]);
 					entity.postUpdate();
 				}
-			}
 			lea.add(new EAnimCont(700, 9, effas().A_SHOCKWAVE.getEAnim(DefEff.DEF)));
 			CommonStatic.setSE(SE_BOSS);
 			shock = false;
@@ -703,28 +697,22 @@ public class StageBasis extends BattleObj {
 			n_inten = 0;
 			temp_n_inten = 0;
 		}
-
 		cannon = Math.min(maxCannon, Math.max(0, cannon));
 		money = Math.min(maxMoney, Math.max(0, money));
 
 		if(changeFrame != -1) {
 			changeFrame--;
-
 			if(changeFrame == 0) {
 				changeFrame = -1;
 				changeDivision = -1;
 				lineupChanging = false;
-			} else if(changeFrame == changeDivision-1) {
+			} else if(changeFrame == changeDivision - 1)
 				frontLineup = 1 - frontLineup;
-			}
 		}
-
 		if(buttonDelay > 0) {
 			buttonDelay--;
-
 			if(buttonDelay == 0) {
 				act_spawn(selectedUnit[0], selectedUnit[1], true);
-
 				selectedUnit[0] = -1;
 				selectedUnit[1] = -1;
 			}

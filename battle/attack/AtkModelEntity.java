@@ -115,9 +115,8 @@ public abstract class AtkModelEntity extends AtkModelAb {
 	 * get damage from a specific attack, for AI only
 	 */
 	public int getAtk(int ind, int touch) {
-		if (ind < data.getAtkCount(atkType) && getMAtk(ind).getDire() > 0 && (getMAtk(ind).getTarget() & touch) != 0) {
+		if (ind < data.getAtkCount(atkType) && getMAtk(ind).getDire() > 0 && (getMAtk(ind).getTarget() & touch) != 0)
 			return getEffAtk(ind);
-		}
 		return -1;
 	}
 
@@ -125,7 +124,10 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		return getEffAtk(getMAtk(ind));
 	}
 	public int getEffAtk(MaskAtk matk) {
-		return getEffMult((int) (Math.round(matk.getAtk() * d0) * d1));
+		return getEffMult(getDefAtk(matk));
+	}
+	public int getDefAtk(MaskAtk matk) {
+		return (int)(Math.round(matk.getAtk() * d0) * d1);
 	}
 	public int getEffMult(int dmg) {
 		if (e.status.weak[0] > 0)

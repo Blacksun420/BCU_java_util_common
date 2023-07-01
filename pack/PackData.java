@@ -174,7 +174,7 @@ public abstract class PackData implements IndexContainer {
 				int id = CommonStatic.parseIntN(str.substring(0, 3));
 				if (id == -1)
 					continue;
-				musics.set(id, new Music(Identifier.parseInt(id, Music.class), 0, new FDFile(f)));
+				musics.set(id, new Music(Identifier.parseInt(id, Music.class), new FDFile(f)));
 			}
 		}
 
@@ -437,29 +437,20 @@ public abstract class PackData implements IndexContainer {
 		public void loadMusics() {
 			String[] path = source.listFile("./musics");
 
-			HashMap<Integer, Long> loopMap = new HashMap<>();
+			HashMap<Integer, Music> musMap = new HashMap<>();
 			for (Music m : musics) {
-				if (m == null || m.id == null)
+				if (m.id == null)
 					continue;
-
-				loopMap.put(m.id.id, m.loop);
+				musMap.put(m.id.id, m);
 			}
-
 			musics.clear();
 			if (path != null)
 				for (String str : path)
-					if (str.length() == 7 && isMusic(str)) {
-						Integer ind = Data.ignore(() -> Integer.parseInt(str.substring(0, 3)));
-						if (ind != null) {
-							long loop = loopMap.getOrDefault(ind, (long) 0);
-							add(musics, ind, id -> new Music(id, loop, source.getFileData("./musics/" + str)));
-						}
+					if (Music.valid(str)) {
+						int ind = Integer.parseInt(str.substring(0, 3));
+						add(musics, ind, id -> new Music(id, source.getFileData("./musics/" + str), musMap.get(ind)));
 					}
 			musics.reset();
-		}
-
-		private static boolean isMusic(String str) {
-			return str.endsWith(".ogg") || str.endsWith(".mp3") || str.endsWith(".wav");
 		}
 
 		public boolean relyOn(String id) {
