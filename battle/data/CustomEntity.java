@@ -52,6 +52,8 @@ public abstract class CustomEntity extends DataEntity {
 	@Override
 	public int allAtk(int atk) {
 		int ans = 0, temp = 0, c = 1;
+		if (share[atk] == 0)
+			return 0;
 		for (AtkDataModel adm : hits.get(atk))
 			if (adm.pre > 0 || adm.str.toLowerCase().startsWith("combo")) {
 				ans += temp / c;
@@ -74,10 +76,13 @@ public abstract class CustomEntity extends DataEntity {
 			if (Data.procSharable[i]) {
 				all.getArr(i).set(getProc().getArr(i));
 			} else
-				for (AtkDataModel[] adms : hits)
+				for (AtkDataModel[] adms : hits) {
+					if (adms == null)
+						continue;
 					for (AtkDataModel adm : adms)
 						if (!all.getArr(i).exists())
 							all.getArr(i).set(adm.proc.getArr(i));
+				}
 		}
 	}
 
@@ -95,7 +100,29 @@ public abstract class CustomEntity extends DataEntity {
 
 	@Override
 	public int getAtkCount(int atk) {
+		if (share[atk] == 0)
+			return 0;
 		return hits.get(atk).length;
+	}
+
+	@Override
+	public int firstAtk() {
+		int tot = 0;
+		for (int j : share)
+			if (j == 0)
+				tot++;
+			else
+				break;
+		return tot;
+	}
+
+	@Override
+	public int realAtkCount() {
+		int fir = firstAtk();
+		for (int i = share.length - 1; i > fir; i--)
+			if (share[i] > 0)
+				return i - fir + 1;
+		return 1;
 	}
 
 	@Override
@@ -157,6 +184,8 @@ public abstract class CustomEntity extends DataEntity {
 
 	@Override
 	public int getItv(int atk) {
+		if (share[atk] == 0)
+			return getTBA() - 1;
 		int longPre = 0;
 		for (AtkDataModel adm : hits.get(atk))
 			longPre += adm.pre;
@@ -274,7 +303,7 @@ public abstract class CustomEntity extends DataEntity {
 	@Override
 	public boolean isLD() {
 		boolean ans = false;
-		for (AtkDataModel adm : hits.get(0))
+		for (AtkDataModel adm : hits.get(firstAtk()))
 			ans |= adm.isLD();
 		for (AtkDataModel[] adms : getSpAtks(true))
 			for (AtkDataModel adm : adms)
@@ -286,7 +315,7 @@ public abstract class CustomEntity extends DataEntity {
 	@Override
 	public boolean isOmni() {
 		boolean ans = false;
-		for (AtkDataModel adm : hits.get(0))
+		for (AtkDataModel adm : hits.get(firstAtk()))
 			ans |= adm.isOmni();
 		for (AtkDataModel[] adms : getSpAtks(true))
 			for (AtkDataModel adm : adms)

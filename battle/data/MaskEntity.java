@@ -28,6 +28,14 @@ public interface MaskEntity extends BattleStatic {
 
 	int getAtkLoop();
 
+	default int firstAtk() {
+		return 0;
+	}
+
+	default int realAtkCount() {
+		return 1;
+	}
+
 	MaskAtk getAtkModel(int atk, int ind);
 
 	MaskAtk[] getAtks(int atk);

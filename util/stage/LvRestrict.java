@@ -63,17 +63,17 @@ public class LvRestrict extends Data implements Indexable<PackData, LvRestrict> 
 
 	public LvRestrict combine(LvRestrict lvr) {
 		LvRestrict ans = new LvRestrict(this);
-		for (int i = 0; i < 6; i++)
+		for (int i = 0; i < 7; i++)
 			ans.all[i] = Math.min(lvr.all[i], all[i]);
 		for (int i = 0; i < RARITY_TOT; i++)
-			for (int j = 0; j < 6; j++)
+			for (int j = 0; j < 7; j++)
 				ans.rares[i][j] = Math.min(lvr.rares[i][j], rares[i][j]);
 		for (CharaGroup cg : lvr.res.keySet())
 			if (res.containsKey(cg)) {
 				int[] lv0 = res.get(cg);
 				int[] lv1 = lvr.res.get(cg);
-				int[] lv = new int[6];
-				for (int i = 0; i < 6; i++)
+				int[] lv = new int[7];
+				for (int i = 0; i < 7; i++)
 					lv[i] = Math.min(lv0[i], lv1[i]);
 				ans.res.put(cg, lv);
 			} else
@@ -158,39 +158,28 @@ public class LvRestrict extends Data implements Indexable<PackData, LvRestrict> 
 		res.replaceAll((k, v) -> {
 			if(v == null)
 				return MAX.clone();
-
 			if(v.length == 6) {
 				int[] l = new int[7];
-
 				l[0] = v[0];
-
 				System.arraycopy(v, 1, l, 2, l.length - 2);
-
 				return l;
 			}
-
 			return v;
 		});
 
 		for(int i = 0; i < rares.length; i++) {
 			if (rares[i].length == 6) {
 				int[] l = new int[7];
-
 				l[0] = rares[i][0];
-
 				System.arraycopy(rares[i], 1, l, 2, l.length - 2);
-
 				rares[i] = l;
 			}
 		}
 
 		if (all.length == 6) {
 			int[] l = new int[7];
-
 			l[0] = all[0];
-
 			System.arraycopy(all, 1, l, 2, l.length - 2);
-
 			all = l;
 		}
 	}

@@ -186,10 +186,13 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 	}
 
 	public int[] indexOf() {
-		for (int j = 0;j < ce.hits.size(); j++)
+		for (int j = 0;j < ce.hits.size(); j++) {
+			if (ce.getAtks(j) == null)
+				continue;
 			for (int i = 0; i < ce.getAtks(j).length; i++)
 				if (ce.getAtks(j)[i] == this)
 					return new int[]{j, i};
+		}
 		return new int[0];
 	}
 

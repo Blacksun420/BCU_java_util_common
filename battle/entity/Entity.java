@@ -632,17 +632,17 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		}
 
 		private void setUp() {
-			if (e.data.getAtkTypeCount() > 1) {
+			if (e.data.realAtkCount() > 1) {
+				int old = e.aam.atkType;
 				if (e.getProc().AI.type.calcstrongest) {
 					int[] total = new int[e.data.getAtkTypeCount()];
-					for (int i = 0; i < total.length; i++) {
-						total[i] += e.aam.predictDamage(i);
-					}
 					for (int i = 0; i < total.length; i++)
+						total[i] += e.aam.predictDamage(i);
+
+					for (int i = e.data.firstAtk(); i < total.length; i++)
 						if (total[i] > total[e.aam.atkType])
 							e.aam.atkType = i;
-
-					if (total[e.aam.atkType] == 0)
+					if (total[e.aam.atkType] <= 0)
 						return;
 				} else {
 					int totShare = 0;
@@ -657,7 +657,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 						}
 					}
 				}
-				setAtk();
+				if (old != e.aam.atkType)
+					setAtk();
 			}
 			setUpAtk();
 		}
@@ -1808,7 +1809,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					reflectAtk *= auras.getDefAura();
 
 					AttackSimple as = new AttackSimple(this, aam, reflectAtk, traits, getAbi(), reflectProc, ds[0], ds[1],
-							data.getCounter() != null ? data.getCounter() : data.getAtkModel(0, 0), e.layer, false, counter.type.areaAttack);
+							data.getCounter() != null ? data.getCounter() : data.getAtkModel(data.firstAtk(), 0), e.layer, false, counter.type.areaAttack);
 					if (counter.type.areaAttack)
 						as.capture();
 					if (as.counterEntity(counter.type.outRange || (e.pos - ds[0]) * (e.pos - ds[1]) <= 0 ? e : null))

@@ -38,7 +38,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		return new AtkModelUnit(e, treasure, level, pcoin, lv);
 	}
 
-	public int atkType = 0;
+	public int atkType;
 	protected final double d0, d1;
 	protected final MaskEntity data;
 	public final Entity e;
@@ -74,7 +74,10 @@ public abstract class AtkModelEntity extends AtkModelAb {
 	}
 
 	protected void setAtks(MaskAtk[][] matks, MaskAtk[][] satks) {
+		atkType = data.firstAtk();
 		for (int i = 0; i < matks.length; i++) {
+			if (matks[i] == null)
+				continue;
 			act[i] = new int[matks[i].length];
 			for (int j = 0; j < act[i].length; j++)
 				act[i][j] = data.getAtkModel(i, j).loopCount();
@@ -141,6 +144,8 @@ public abstract class AtkModelEntity extends AtkModelAb {
 	public int predictDamage(int ind) {
 		int total = 0;
 		MaskAtk[] atks = data.getAtks(ind);
+		if (atks == null)
+			return 0;
 		for (MaskAtk atk : atks) {
 			int dmg = getEffAtk(atk) * atk.getDire();
 			double[] ranges = inRange(atk);
@@ -185,8 +190,8 @@ public abstract class AtkModelEntity extends AtkModelAb {
 	 */
 	public void getDeathSurge() {
 		Proc p = Proc.blank();
-		int atk = getAttack(data.getAtkModel(0, 0), p);
-		AttackSimple as = new AttackSimple(e, this, atk, e.traits, getAbi(), p, 0, 0, e.data.getAtkModel(0, 0), 0, false);
+		int atk = getAttack(data.getAtkModel(data.firstAtk(), 0), p);
+		AttackSimple as = new AttackSimple(e, this, atk, e.traits, getAbi(), p, 0, 0, data.getAtkModel(data.firstAtk(), 0), 0, false);
 		Proc.VOLC ds = e.getProc().DEATHSURGE;
 		int addp = ds.dis_0 == ds.dis_1 ? ds.dis_0 : ds.dis_0 + (int) (b.r.nextDouble() * (ds.dis_1 - ds.dis_0));
 		double p0 = getPos() + getDire() * addp;
@@ -203,13 +208,13 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		Proc p = Proc.blank();
 		int mult = e.getProc().DEMONVOLC.mult;
 
-		int atk = (int)(getAttack(data.getAtkModel(0, 0), p) * (mult / 100.0));
+		int atk = (int)(getAttack(data.getAtkModel(data.firstAtk(), 0), p) * (mult / 100.0));
 		if (itm instanceof Proc.MINIVOLC) {
 			mult *= ((Proc.MINIVOLC) itm).mult / 100.0;
 			atk *= ((Proc.MINIVOLC) itm).mult / 100.0;
 		}
 
-		AttackSimple as = new AttackSimple(e, this, atk, e.traits, getAbi(), p, 0, 0, e.data.getAtkModel(0, 0), 0, false);
+		AttackSimple as = new AttackSimple(e, this, atk, e.traits, getAbi(), p, 0, 0, data.getAtkModel(data.firstAtk(), 0), 0, false);
 		int addp = itm.get(1) == itm.get(2) ? itm.get(1) : itm.get(1) + (int) (b.r.nextDouble() * (itm.get(2) - itm.get(1)));
 		double p0 = pos + getDire() * addp;
 		double sta = p0 + (getDire() == 1 ? W_VOLC_PIERCE : W_VOLC_INNER);
