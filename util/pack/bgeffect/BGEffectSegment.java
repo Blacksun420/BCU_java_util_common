@@ -138,9 +138,8 @@ public class BGEffectSegment {
     public BGEffectSegment(JsonObject elem, String json, int bgID) {
         this.json = json;
 
-        if(elem.has("name")) {
+        if(elem.has("name"))
             name = elem.get("name").getAsString();
-        }
 
         if(elem.has("model")) {
             JsonObject modelObject = elem.getAsJsonObject("model");
@@ -149,269 +148,214 @@ public class BGEffectSegment {
                 JsonArray modelArray = modelObject.getAsJsonArray("values");
 
                 model = new int[modelArray.size()];
-
-                for(int i = 0; i < modelArray.size(); i++) {
+                for(int i = 0; i < modelArray.size(); i++)
                     model[i] = modelArray.get(i).getAsInt();
-                }
-            } else if(modelObject.has("value")) {
+            } else if(modelObject.has("value"))
                 model = new int[] {modelObject.get("value").getAsInt()};
-            } else {
+            else {
                 System.out.println("W/BGEffectSegment | "+ json +"/ model has weird data type : \"model\" : "+modelObject);
                 model = null;
             }
-        } else {
+        } else
             model = null;
-        }
 
         if(elem.has("file")) {
             JsonObject fileObject = elem.getAsJsonObject("file");
 
             files = new String[BGFile.values().length];
-
             if(fileObject.has("image")) {
                 String imageName = fileObject.get("image").getAsString();
 
-                if(imageName.matches("bg\\d{3}\\.png")) {
+                if(imageName.matches("bg\\d{3}\\.png"))
                     files[BGFile.IMAGE.ordinal()] = "./org/img/bg/"+imageName;
-                } else {
+                else
                     files[BGFile.IMAGE.ordinal()] = "./org/img/bgEffect/"+fileObject.get("image").getAsString();
-                }
             }
 
-            if(fileObject.has("imgcut")) {
+            if(fileObject.has("imgcut"))
                 files[BGFile.IMGCUT.ordinal()] = "./org/battle/bg/"+fileObject.get("imgcut").getAsString();
-            }
-
-            if(fileObject.has("model")) {
+            if(fileObject.has("model"))
                 files[BGFile.MODEL.ordinal()] = "./org/battle/bg/"+fileObject.get("model").getAsString();
-            }
-
-            if(fileObject.has("anime")) {
+            if(fileObject.has("anime"))
                 files[BGFile.ANIME.ordinal()] = "./org/battle/bg/"+fileObject.get("anime").getAsString();
-            }
 
-            for (String file : files) {
-                if (file == null) {
+            for (String file : files)
+                if (file == null)
                     throw new IllegalStateException("File name isn't fully specified! : " + fileObject);
-                }
-            }
-        } else {
+        } else
             files = null;
-        }
 
-        if(files == null && model == null) {
+        if(files == null && model == null)
             throw new IllegalStateException("Unhandled file/model data found, both are null");
-        } else if(files != null && model != null) {
+        else if(files != null && model != null)
             throw new IllegalStateException("Unhandled file/model data found, both aren't null");
-        }
 
-        if(elem.has("count")) {
+        if(elem.has("count"))
             count = readRangedJsonObjectI(elem, "count");
-        } else {
+        else
             count = new BattleRange<>(1, null, 1, null);
-        }
 
-        if(elem.has("x")) {
+        if(elem.has("x"))
             x = readRangedJsonObjectI(elem, "x", i -> i*4);
-        } else if(elem.has("startX")) {
+        else if(elem.has("startX"))
             x = readRangedJsonObjectI(elem, "startX", i -> i*4);
-        } else {
+        else
             x = new BattleRange<>(0, null, 0, null);
-        }
 
-        if(elem.has("y")) {
+        if(elem.has("y"))
             y = readRangedJsonObjectI(elem, "y", i -> i*4);
-        } else if(elem.has("startY")) {
+        else if(elem.has("startY"))
             y = readRangedJsonObjectI(elem, "startY", i -> i*4);
-        } else {
+        else
             y = new BattleRange<>(0, null, 0, null);
-        }
 
-        if(elem.has("startX")) {
+        if(elem.has("startX"))
             startX = readRangedJsonObjectI(elem, "startX", i -> i*4);
-        } else {
+        else
             startX = null;
-        }
 
-        if(elem.has("startY")) {
+        if(elem.has("startY"))
             startY = readRangedJsonObjectI(elem, "startY", i -> i*4);
-        } else {
+        else
             startY = null;
-        }
 
-        if(elem.has("z")) {
+        if(elem.has("z"))
             zOrder = readRangedJsonObjectI(elem, "z");
-        } else {
+        else
             zOrder = new BattleRange<>(0, BattleRange.SNAP.BACK, 0, BattleRange.SNAP.BACK);
-        }
 
-        if(elem.has("angle")) {
+        if(elem.has("angle"))
             angle = readRangedJsonObjectD(elem, "angle", Math::toRadians);
-        } else {
+        else
             angle = null;
-        }
 
-        if(elem.has("scale")) {
+        if(elem.has("scale"))
             scale = readRangedJsonObjectD(elem, "scale");
-        } else {
+        else
             scale = null;
-        }
 
-        if (elem.has("startScaleX")) {
+        if (elem.has("startScaleX"))
             startScaleX = readRangedJsonObjectD(elem, "startScaleX");
-        } else {
+        else
             startScaleX = null;
-        }
 
-        if(elem.has("scaleX")) {
+        if(elem.has("scaleX"))
             scaleX = readRangedJsonObjectD(elem, "scaleX");
-        } else {
+        else
             scaleX = null;
-        }
 
-        if(elem.has("scaleY")) {
+        if(elem.has("scaleY"))
             scaleY = readRangedJsonObjectD(elem, "scaleY");
-        } else {
+        else
             scaleY = null;
-        }
 
-        if(elem.has("startFrame")) {
+        if(elem.has("startFrame"))
             startFrame = readRangedJsonObjectI(elem, "startFrame");
-        } else {
+        else
             startFrame = null;
-        }
 
-        if(elem.has("frame")) {
+        if(elem.has("frame"))
             frame = readRangedJsonObjectI(elem, "frame");
-        } else {
+        else
             frame = null;
-        }
 
-        if(elem.has("wait")) {
+        if(elem.has("wait"))
             wait = readRangedJsonObjectI(elem, "wait");
-        } else {
+        else
             wait = null;
-        }
 
-        if(elem.has("startWait")) {
+        if(elem.has("startWait"))
             startWait = readRangedJsonObjectI(elem, "startWait");
-        } else {
+        else
             startWait = null;
-        }
 
-        if(elem.has("lifeTime")) {
+        if(elem.has("lifeTime"))
             lifeTime = readRangedJsonObjectI(elem, "lifeTime");
-        } else {
+        else
             lifeTime = null;
-        }
 
         if(elem.has("startScale")) {
             startScale = readRangedJsonObjectD(elem, "startScale");
-
-            if(elem.getAsJsonObject("startScale").has("randGroup")) {
+            if(elem.getAsJsonObject("startScale").has("randGroup"))
                 System.out.println("W/BGEffectSegment | "+json+" / Random group found in start scale -> startScale : "+elem.getAsJsonObject("startScale").get("randGroup").getAsString());
-            }
-        } else {
+        } else
             startScale = null;
-        }
 
-        if(elem.has("v")) {
+        if(elem.has("v"))
             velocity = readRangedJsonObjectD(elem, "v", d -> d * 4.0);
-        } else {
+        else
             velocity = null;
-        }
 
-        if(elem.has("vx")) {
+        if(elem.has("vx"))
             velocityX = readRangedJsonObjectD(elem, "vx", d -> d * 4.0);
-        } else {
+        else
             velocityX = null;
-        }
 
-        if(elem.has("vy")) {
+        if(elem.has("vy"))
             velocityY = readRangedJsonObjectD(elem, "vy", d -> d * 4.0);
-        } else {
+        else
             velocityY = null;
-        }
 
-        if(elem.has("startV")) {
+        if(elem.has("startV"))
             startVelocity = readRangedJsonObjectD(elem, "startV", d -> d * 4.0);
-        } else {
+        else
             startVelocity = null;
-        }
 
         if(elem.has("startVx")) {
             startVelocityX = readRangedJsonObjectD(elem, "startVx", d -> d * 4.0);
-
-            if(elem.getAsJsonObject("startVx").has("randGroup")) {
+            if(elem.getAsJsonObject("startVx").has("randGroup"))
                 System.out.println("W/BGEffectSegment | "+json+" / Random group found in start velocity x -> startVx : "+elem.getAsJsonObject("startVx").get("randGroup").getAsString());
-            }
-        } else {
+        } else
             startVelocityX = null;
-        }
 
         if(elem.has("startVy")) {
             startVelocityY = readRangedJsonObjectD(elem, "startVy", d -> d * 4.0);
-
-            if(elem.getAsJsonObject("startVy").has("randGroup")) {
+            if(elem.getAsJsonObject("startVy").has("randGroup"))
                 System.out.println("W/BGEffectSegment | "+json+" / Random group found in start velocity y -> startVy : "+elem.getAsJsonObject("startVy").get("randGroup").getAsString());
-            }
-        } else {
+        } else
             startVelocityY = null;
-        }
 
         if(elem.has("moveAngle")) {
             moveAngle = readRangedJsonObjectD(elem, "moveAngle", Math::toRadians);
-
-            if(velocity == null) {
+            if(velocity == null)
                 System.out.println("W/BGEffectSegment | "+json+" / Non-defined velocity data found while moveAngle is defined -> vx == null : "+(velocityX == null)+" | vy == null : "+(velocityY == null));
-            }
-        } else {
-            if(velocity != null) {
-                moveAngle = new BattleRange<>(0.0, null, 0.0, null);
-            } else {
-                moveAngle = null;
-            }
-        }
+        } else if(velocity != null)
+            moveAngle = new BattleRange<>(0.0, null, 0.0, null);
+        else
+            moveAngle = null;
 
-        if(elem.has("alpha")) {
+        if(elem.has("alpha"))
             opacity = readRangedJsonObjectI(elem, "alpha");
-        } else {
+        else
             opacity = null;
-        }
 
-        if(elem.has("destroyLeft")) {
+        if(elem.has("destroyLeft"))
             destroyLeft = readRangedJsonObjectI(elem, "destroyLeft");
-        } else {
+        else
             destroyLeft = null;
-        }
 
-        if(elem.has("destroyTop")) {
+        if(elem.has("destroyTop"))
             destroyTop = readRangedJsonObjectI(elem, "destroyTop");
-        } else {
+        else
             destroyTop = null;
-        }
 
-        if(elem.has("destroyRight")) {
+        if(elem.has("destroyRight"))
             destroyRight = readRangedJsonObjectI(elem, "destroyRight");
-        } else {
+        else
             destroyRight = null;
-        }
 
-        if(elem.has("destroyBottom")) {
+        if(elem.has("destroyBottom"))
             destroyBottom = readRangedJsonObjectI(elem, "destroyBottom");
-        } else {
+        else
             destroyBottom = null;
-        }
 
-        if(elem.has("angularV")) {
+        if(elem.has("angularV"))
             angleVelocity = readRangedJsonObjectD(elem, "angularV", Math::toRadians);
-        } else {
+        else
             angleVelocity = null;
-        }
 
         if(elem.has("equallySpaced")) {
             JsonObject obj = elem.getAsJsonObject("equallySpaced");
-
             BattleRange.SNAP snap;
 
             switch (obj.get("base").getAsString()) {
@@ -426,20 +370,15 @@ public class BGEffectSegment {
             }
 
             spacer = new BGEffectSpacer(obj.get("pos1").getAsInt(), obj.get("pos2").getAsInt(), obj.get("value").getAsInt(), snap, bgID);
-
-            if(count.hasRandomValue() || count.getPureRangeI() != 1) {
+            if(count.hasRandomValue() || count.getPureRangeI() != 1)
                 System.out.println("W/BGEffectSegment | "+json+" / Count isn't 1 while spacer is defined -> Has Random Value : "+ count.hasRandomValue() +" | Count gotten : "+count.getPureRangeI());
-            }
-        } else {
+        } else
             spacer = null;
-        }
 
         //Check unknown tags
-        for(String tag : elem.getAsJsonObject().keySet()) {
-            if(!tags.contains(tag)) {
+        for(String tag : elem.getAsJsonObject().keySet())
+            if(!tags.contains(tag))
                 System.out.println("W/BGEffectSegment | "+json+" / Unknown tag found -> " + tag);
-            }
-        }
     }
 
     private BattleRange.SNAP getSnap(String base) {
@@ -483,12 +422,10 @@ public class BGEffectSegment {
                 JsonObject xMinObject = xObject.getAsJsonObject("min");
 
                 min = xMinObject.get("value").getAsInt();
-
-                if (xMinObject.has("base")) {
+                if (xMinObject.has("base"))
                     minSnap = getSnap(xMinObject.get("base").getAsString());
-                } else {
+                else
                     minSnap = null;
-                }
             } else {
                 min = 0;
                 minSnap = null;
@@ -498,12 +435,10 @@ public class BGEffectSegment {
                 JsonObject xMaxObject = xObject.getAsJsonObject("max");
 
                 max = xMaxObject.get("value").getAsInt();
-
-                if (xMaxObject.has("base")) {
+                if (xMaxObject.has("base"))
                     maxSnap = getSnap(xMaxObject.get("base").getAsString());
-                } else {
+                else
                     maxSnap = null;
-                }
             } else {
                 max = 0;
                 maxSnap = null;
@@ -511,14 +446,12 @@ public class BGEffectSegment {
         } else if(xObject.has("value")) {
             min = max = xObject.get("value").getAsInt();
 
-            if(xObject.has("base")) {
+            if(xObject.has("base"))
                 minSnap = maxSnap = getSnap(xObject.get("base").getAsString());
-            } else {
+            else
                 minSnap = maxSnap = null;
-            }
-        } else {
+        } else
             throw new IllegalStateException("Unhandled situation while reading bg effect! | Caused while reading x : "+ xObject);
-        }
 
         return new BattleRange<>(min, minSnap, max, maxSnap);
     }
@@ -537,12 +470,10 @@ public class BGEffectSegment {
                 JsonObject xMinObject = xObject.getAsJsonObject("min");
 
                 min = func.apply(xMinObject.get("value").getAsInt());
-
-                if (xMinObject.has("base")) {
+                if (xMinObject.has("base"))
                     minSnap = getSnap(xMinObject.get("base").getAsString());
-                } else {
+                else
                     minSnap = null;
-                }
             } else {
                 min = 0;
                 minSnap = null;
@@ -552,12 +483,10 @@ public class BGEffectSegment {
                 JsonObject xMaxObject = xObject.getAsJsonObject("max");
 
                 max = func.apply(xMaxObject.get("value").getAsInt());
-
-                if (xMaxObject.has("base")) {
+                if (xMaxObject.has("base"))
                     maxSnap = getSnap(xMaxObject.get("base").getAsString());
-                } else {
+                else
                     maxSnap = null;
-                }
             } else {
                 max = 0;
                 maxSnap = null;
@@ -565,14 +494,12 @@ public class BGEffectSegment {
         } else if(xObject.has("value")) {
             min = max = func.apply(xObject.get("value").getAsInt());
 
-            if(xObject.has("base")) {
+            if(xObject.has("base"))
                 minSnap = maxSnap = getSnap(xObject.get("base").getAsString());
-            } else {
+            else
                 minSnap = maxSnap = null;
-            }
-        } else {
+        } else
             throw new IllegalStateException("Unhandled situation while reading bg effect! | Caused while reading x : "+ xObject);
-        }
 
         return new BattleRange<>(min, minSnap, max, maxSnap);
     }
@@ -590,12 +517,10 @@ public class BGEffectSegment {
                 JsonObject xMinObject = xObject.getAsJsonObject("min");
 
                 min = xMinObject.get("value").getAsDouble();
-
-                if (xMinObject.has("base")) {
+                if (xMinObject.has("base"))
                     minSnap = getSnap(xMinObject.get("base").getAsString());
-                } else {
+                else
                     minSnap = null;
-                }
             } else {
                 min = 0;
                 minSnap = null;
@@ -605,12 +530,10 @@ public class BGEffectSegment {
                 JsonObject xMaxObject = xObject.getAsJsonObject("max");
 
                 max = xMaxObject.get("value").getAsDouble();
-
-                if (xMaxObject.has("base")) {
+                if (xMaxObject.has("base"))
                     maxSnap = getSnap(xMaxObject.get("base").getAsString());
-                } else {
+                else
                     maxSnap = null;
-                }
             } else {
                 max = 0;
                 maxSnap = null;
@@ -618,14 +541,12 @@ public class BGEffectSegment {
         } else if(xObject.has("value")) {
             min = max = xObject.get("value").getAsDouble();
 
-            if(xObject.has("base")) {
+            if(xObject.has("base"))
                 minSnap = maxSnap = getSnap(xObject.get("base").getAsString());
-            } else {
+            else
                 minSnap = maxSnap = null;
-            }
-        } else {
+        } else
             throw new IllegalStateException("Unhandled situation while reading bg effect! | Caused while reading x : "+ xObject);
-        }
 
         return new BattleRange<>(min, minSnap, max, maxSnap);
     }
@@ -643,12 +564,10 @@ public class BGEffectSegment {
                 JsonObject xMinObject = xObject.getAsJsonObject("min");
 
                 min = func.apply(xMinObject.get("value").getAsInt());
-
-                if (xMinObject.has("base")) {
+                if (xMinObject.has("base"))
                     minSnap = getSnap(xMinObject.get("base").getAsString());
-                } else {
+                else
                     minSnap = null;
-                }
             } else {
                 min = 0;
                 minSnap = null;
@@ -658,12 +577,10 @@ public class BGEffectSegment {
                 JsonObject xMaxObject = xObject.getAsJsonObject("max");
 
                 max = func.apply(xMaxObject.get("value").getAsInt());
-
-                if (xMaxObject.has("base")) {
+                if (xMaxObject.has("base"))
                     maxSnap = getSnap(xMaxObject.get("base").getAsString());
-                } else {
+                else
                     maxSnap = null;
-                }
             } else {
                 max = 0;
                 maxSnap = null;
@@ -671,14 +588,12 @@ public class BGEffectSegment {
         } else if(xObject.has("value")) {
             min = max = func.apply(xObject.get("value").getAsInt());
 
-            if(xObject.has("base")) {
+            if(xObject.has("base"))
                 minSnap = maxSnap = getSnap(xObject.get("base").getAsString());
-            } else {
+            else
                 minSnap = maxSnap = null;
-            }
-        } else {
+        } else
             throw new IllegalStateException("Unhandled situation while reading bg effect! | Caused while reading x : "+ xObject);
-        }
 
         return new BattleRange<>(min, minSnap, max, maxSnap);
     }

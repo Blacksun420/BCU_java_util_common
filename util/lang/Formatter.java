@@ -652,7 +652,7 @@ public class Formatter {
 			Formatter f = new Formatter(pattern, obj, ctx);
 			f.root.build(sb);
 		} catch (Exception e) {
-			CommonStatic.ctx.noticeErr(e, ErrType.WARN,
+			CommonStatic.ctx.noticeErr(e, ErrType.ERROR,
 					"err during formatting " + pattern + " with " + JsonEncoder.encode(obj));
 		}
 		return sb.toString();
