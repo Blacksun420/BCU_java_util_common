@@ -132,8 +132,9 @@ public abstract class AnimU<T extends AnimU.ImageKeeper> extends AnimD<AnimU<?>,
 	public String[] names() {
 		check();
 		String[] str = translate(types);
-		for (int i = 3; i < str.length - 6; i++)
-			str[i] = str[2] + " " + (i - 2);
+		if (types.length >= TYPEDEF.length)
+			for (int i = 2; i < str.length - 6; i++)
+				str[i] = str[2] + " " + (i - 1);
 		return str;
 	}
 

@@ -346,7 +346,12 @@ public abstract class CustomEntity extends DataEntity {
 		base = ce.base;
 		rep = new AtkDataModel(this, ce.rep);
 
-		for (int j = 0; j < ce.hits.size(); j++) {
+		for (int j = 0; j < Math.min(hits.size(), ce.hits.size()); j++) {
+			if (ce.share[j] == 0) {
+				share[j] = 0;
+				hits.set(j, null);
+				continue;
+			}
 			int[] inds = new int[ce.hits.get(j).length];
 			List<AtkDataModel> temp = new ArrayList<>(inds.length);
 			List<AtkDataModel> tnew = new ArrayList<>(inds.length);
