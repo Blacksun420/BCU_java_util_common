@@ -5,6 +5,7 @@ import common.io.json.JsonClass.NoTag;
 import common.io.json.JsonDecoder;
 import common.io.json.JsonField;
 import common.io.json.JsonField.GenType;
+import common.io.json.JsonField.CompatType;
 import common.pack.Identifier;
 import common.pack.SortedPackSet;
 import common.util.Data;
@@ -19,11 +20,11 @@ public abstract class CustomEntity extends DataEntity {
 
 	@JsonField(gen = GenType.GEN)
 	public AtkDataModel rep, cntr;
-	@JsonField(gen = GenType.GEN, usePool = true)
+	@JsonField(gen = GenType.GEN, usePool = true, backCompat = CompatType.FORK)
 	public AtkDataModel[] revs = new AtkDataModel[0], ress = new AtkDataModel[0], burs = new AtkDataModel[0],
 			resus = new AtkDataModel[0], revis = new AtkDataModel[0], entrs = new AtkDataModel[0];
 
-	@JsonField(generic = AtkDataModel[].class, gen = GenType.GEN)
+	@JsonField(generic = AtkDataModel[].class, gen = GenType.GEN, backCompat = CompatType.FORK)
 	public ArrayList<AtkDataModel[]> hits = new ArrayList<>();
 	@JsonField(gen = GenType.GEN)
 	public int[] share;
@@ -421,5 +422,10 @@ public abstract class CustomEntity extends DataEntity {
 				traits.remove(i);
 				i--;
 			}
+	}
+
+	@JsonField(tag = "atks", io = IOType.W, backCompat = CompatType.UPST)
+	public AtkDataModel[] getUAtk() {
+		return hits.get(firstAtk());
 	}
 }
