@@ -50,6 +50,10 @@ public @interface JsonField {
 		SET, FILL, GEN
 	}
 
+	enum CompatType {
+		ALL, FORK, UPST
+	}
+
 	@JsonClass
 	class Handler {
 
@@ -153,6 +157,10 @@ public @interface JsonField {
 			return false;
 		}
 
+		@Override
+		public CompatType backCompat() {
+			return CompatType.ALL;
+		}
 	};
 
 	Class<?>[] alias() default {};
@@ -198,4 +206,10 @@ public @interface JsonField {
 	 * This is useful for loading things stored with an Identifier.class alias that could be null during the inject part
 	 */
 	boolean decodeLast() default false;
+
+	/**
+ 	 * Used for exporting packs compatible iwht main
+	 * ALL is fields for both, FORK is Fork-Only fields, UPST is Upsteam-Only Fields
+ 	 */
+	CompatType backCompat() default CompatType.ALL;
 }

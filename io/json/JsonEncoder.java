@@ -14,6 +14,8 @@ import java.util.Set;
 
 public class JsonEncoder {
 
+	public static boolean backCompat = false;
+
 	public static JsonElement encode(Object obj) {
 		return Data.err(() -> encode(obj, null));
 	}
@@ -198,7 +200,7 @@ public class JsonEncoder {
 				JsonField jf = f.getAnnotation(JsonField.class);
 				if (jf == null)
 					jf = JsonField.DEF;
-				if (jf.block() || jf.io() == JsonField.IOType.R)
+				if (jf.block() || jf.io() == JsonField.IOType.R || incompatible(jf.backCompat()))
 					continue;
 				String tag = jf.tag().length() == 0 ? f.getName() : jf.tag();
 				f.setAccessible(true);
@@ -213,7 +215,7 @@ public class JsonEncoder {
 		for (Method m : cls.getDeclaredMethods())
 			if (m.getAnnotation(JsonField.class) != null) {
 				JsonField jf = m.getAnnotation(JsonField.class);
-				if (jf.io() == JsonField.IOType.R)
+				if (jf.io() == JsonField.IOType.R || incompatible(jf.backCompat()))
 					continue;
 				if (jf.io() == JsonField.IOType.RW)
 					throw new JsonException(Type.FUNC, null, "functional fields should not have RW type");
@@ -230,4 +232,9 @@ public class JsonEncoder {
 		return curjcls.bypass() ? par : this;
 	}
 
+	private static final boolean incompatible(JsonField.CompatType ct) {
+		if (ct == JsonField.CompatType.ALL)
+			return false;
+		return bc == (backCompat ? JsonField.CompatType.FORK : JsonField.CompatType.UPST);
+	}
 }

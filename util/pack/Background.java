@@ -198,12 +198,12 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 	@JsonClass.JCIdentifier
 	@JsonField
 	public Identifier<Background> id;
-	@JsonField
+	@JsonField(backCompat = JsonField.CompatType.FORK)
 	public Identifier<Background> reference;
 	public VImg img;
 	@JsonField
 	public int[][] cs = new int[4][3];
-	@JsonField
+	@JsonField(backCompat = JsonField.CompatType.FORK)
 	public Identifier<BackgroundEffect> bgEffect = null;
 	@JsonField
 	public int overlayAlpha;
@@ -447,4 +447,10 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 		return BGWvType.values();
 	}
 
+	@JsonField(tag = "effect", io = IOType.W, backCompat = JsonField.CompatType.UPST)
+	public int getBGEff() {
+		if (bgEffect == null || bgEffect.getID().pack != Identifier.DEF)
+			return -1;
+		return bgEffect.getID().id;
+	}
 }
