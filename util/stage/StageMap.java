@@ -42,6 +42,7 @@ public class StageMap extends Data implements BasedCopable<StageMap, MapColc>,
 		public double[] multiplier;
 
 		public boolean hiddenUponClear = false;
+		public boolean cantUseGoldCPU = false;
 
 		private StageMapInfo(StageMap map, FileData ad) {
 			sm = map;

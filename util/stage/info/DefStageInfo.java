@@ -124,6 +124,9 @@ public class DefStageInfo implements StageInfo {
                     .append(st.getCont().info.clearLimit);
         }
 
+        if (st.getCont().info.unskippable)
+            ans.append("<br> You can't use gold CPU in this stage");
+
         if (exConnection) {
             ans.append("<br><br> EX Map Name: ")
                     .append(MultiLangCont.get(MapColc.get("000004").maps.get(exMapID)))
@@ -146,13 +149,9 @@ public class DefStageInfo implements StageInfo {
 
                 if (name == null || name.isEmpty())
                     name = exStages[i].id.toString();
-                else if (smName == null || smName.isEmpty()) {
+                else if (smName == null || smName.isEmpty())
                     smName = exStages[i].getCont().id.toString();
-
-                    name = smName + " - " + name;
-                } else {
-                    name = smName + " - " + name;
-                }
+                name = smName + " - " + name;
 
                 ans.append("<tr><td>")
                         .append(name)
@@ -164,15 +163,14 @@ public class DefStageInfo implements StageInfo {
             ans.append("</table>");
         }
 
-        if (!exConnection && (exStages == null || exChances == null)) {
+        if (!exConnection && (exStages == null || exChances == null))
             ans.append("<br>");
-        }
 
         ans.append("<br> Drop rewards");
 
-        if(drop == null || drop.length == 0) {
+        if(drop == null || drop.length == 0)
             ans.append(" : none");
-        } else {
+        else {
             ans.append("<br>");
             appendDropData(ans);
         }
