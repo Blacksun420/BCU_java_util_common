@@ -12,11 +12,54 @@ import common.util.unit.Trait;
 @JsonClass(noTag = NoTag.LOAD)
 public abstract class DataEntity extends Data implements MaskEntity {
 
-	public int hp, hb, speed, range, tba, abi, width, loop = -1, will;
+	public int hp, hb, speed, range, width, loop = -1, will;
+	@JsonField(backCompat = JsonField.CompatType.FORK)
+	public int tba, abi;
 
 	public Identifier<Soul> death;
 	@JsonField(generic = Trait.class, alias = Identifier.class)
 	public SortedPackSet<Trait> traits = new SortedPackSet<>();
+
+	@JsonField(tag = "tba", io = JsonField.IOType.W, backCompat = JsonField.CompatType.UPST)
+	public int getUTBA() {
+		return Math.abs(tba);
+	}
+
+	@JsonField(tag = "abi", io = JsonField.IOType.W, backCompat = JsonField.CompatType.UPST)
+	public int getUAbi() {
+		int nabi = 0;
+		int abiSub = 3;
+		for (int i = 0; i < ABI_TOT; i++) {
+			if (i == 2)
+				abiSub++;
+			else if (i == 11)
+				abiSub += 2;
+			if (((abi >> i) & 1) > 0)
+				nabi |= 1 << i + abiSub;
+		}
+
+		int str = getProc().DMGINC.mult;
+		if ((str >= 150 && str < 300) || (str >= 450 && str < 500) || (str >= 750 && str < 1500) || str >= 2250)
+			nabi |= 1;
+		if ((str >= 300 && str < 500) || str >= 1500)
+			nabi |= 4;
+		if (str >= 500)
+			nabi |= 1 << 16;
+
+		str = getProc().DEFINC.mult;
+		if ((str >= 200 && str < 400) || (str >= 800 && str < 2400) || str >= 4800)
+			nabi |= 1;
+		if ((str >= 400 && str < 600) || (str >= 800 && str < 1200) || str >= 2400)
+			nabi |= 2;
+		if ((str >= 600 && str < 800) || str >= 1200)
+			nabi |= 1 << 15;
+
+		if (getProc().IMUWAVE.block == 100)
+			nabi |= 1 << 5;
+		if (getProc().DEMONVOLC.exists())
+			nabi |= 1 << 19;
+		return nabi;
+	}
 
 	@Override
 	public int getAbi() {

@@ -750,6 +750,15 @@ public class Editors {
 			if (t.mult == 100)
 				t.mult = 0;
 		}));
+
+		map().put("RANGESHIELD", new EditControl<>(Proc.RANGESHIELD.class, (t) -> {
+			t.prob = MathUtil.clip(t.prob, 0, 100);
+			if (t.prob == 0) {
+				t.mult = 0;
+				t.type.range = false;
+			} else if (t.mult == 0)
+				t.mult = 1;
+		}));
 	}
 
 	private static void setComponentVisibility(EditorGroup egg, boolean boo, int... fields) {

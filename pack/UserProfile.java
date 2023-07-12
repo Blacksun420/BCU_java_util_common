@@ -189,7 +189,24 @@ public class UserProfile {
 					File main = CommonStatic.ctx.getWorkspaceFile("./" + f.getName() + "/pack.json");
 					if (!main.exists() || main.length() == 0)
 						continue;
-					UserPack pack = CommonStatic.ctx.noticeErr(() -> readJsonPack(main), ErrType.WARN,
+					File auto = CommonStatic.ctx.getWorkspaceFile("./_autosave/pack_" + f.getName() + ".json");
+					File FF;
+					if (auto.exists()) {
+						if (CommonStatic.ctx.confirm("Autosave found for " + f.getName() + ". Load this autosave?"))
+							FF = auto;
+						else {
+							FF = main;
+							if (CommonStatic.ctx.confirmDelete(auto))
+								try {
+									Context.delete(auto);
+								} catch (Exception e) {
+									CommonStatic.ctx.printErr(ErrType.WARN, "Failed to delete " + auto.getName());
+								}
+						}
+					} else
+						FF = main;
+
+					UserPack pack = CommonStatic.ctx.noticeErr(() -> readJsonPack(FF), ErrType.WARN,
 							"failed to load workspace pack " + f);
 					if (pack != null)
 						profile.pending.put(pack.desc.id, pack);
@@ -238,7 +255,7 @@ public class UserProfile {
 		SortedPackSet<String> deps = pk.preGetDependencies();
 		deps.removeIf(profile.packmap::containsKey);
 		if (deps.size() > 0)
-			CommonStatic.ctx.printErr(ErrType.WARN, pk.desc.names.toString() + " (" + pk.desc.id + ")"
+			CommonStatic.ctx.printErr(ErrType.WARN, pk.desc.names + " (" + pk.desc.id + ")"
 					+ " requires parent packs you don't have, which are: " + deps);
 	}
 
@@ -252,7 +269,7 @@ public class UserProfile {
 	}
 
 	public static UserPack readJsonPack(File f) throws Exception {
-		File folder = f.getParentFile();
+		File folder = f.getParentFile().getName().equals("_autosave") ? new File(f.getParentFile().getPath() + "/" + f.getName()) : f.getParentFile();
 		Reader r = new InputStreamReader(Files.newInputStream(f.toPath()), StandardCharsets.UTF_8);
 		JsonElement elem = JsonParser.parseReader(r);
 		r.close();

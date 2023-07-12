@@ -21,9 +21,11 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 	@JsonField(block = true)
 	public final CustomEntity ce;
 	public String str = "";
-	public int atk, pre = 1, ld0, ld1, targ = TCH_N, count = -1, dire = 1, alt = 0, move = 0;
+	public int atk, pre = 1, ld0, ld1, targ = TCH_N, count = -1, dire = 1, move = 0;
 	public boolean range = true;
-	@JsonField(generic = Trait.class, alias = Identifier.class)
+	@JsonField(backCompat = JsonField.CompatType.FORK)
+	public int alt = 0;
+	@JsonField(generic = Trait.class, alias = Identifier.class, backCompat = JsonField.CompatType.FORK)
 	public SortedPackSet<Trait> traits = new SortedPackSet<>(); //Gives attacks their own typings
 
 	@JsonField
@@ -234,5 +236,37 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 					traits.addAll(UserProfile.getUserPack(dep).traits.getList());
 			}
 		}
+	}
+
+	@JsonField(tag = "alt", io = JsonField.IOType.W, backCompat = JsonField.CompatType.UPST)
+	public int Ualt() {
+		int nabi = 0;
+		int abiSub = 3;
+		for (int i = 0; i < ABI_TOT; i++) {
+			if (i == 2)
+				abiSub++;
+			else if (i == 11)
+				abiSub += 2;
+			if (((alt >> i) & 1) > 0)
+				nabi |= 1 << i + abiSub;
+		}
+		return nabi;
+	}
+
+	@JsonField(tag = "specialTrait", io = JsonField.IOType.W, backCompat = JsonField.CompatType.UPST)
+	public boolean spTr() {
+		if (dire == 0 || traits.isEmpty())
+			return false;
+		boolean ig = dire == (ce instanceof CustomEnemy ? -1 : 1);
+
+		if (!traits.containsAll(UserProfile.getBCData().traits.getList()))
+			return !ig;
+		PackData.UserPack p = (PackData.UserPack)ce.getPack().getPack();
+		if (!traits.containsAll(p.traits.getList()))
+			return !ig;
+		for (String dep : p.desc.dependency)
+			if (!traits.containsAll(UserProfile.getUserPack(dep).traits.getList()))
+				return !ig;
+		return ig;
 	}
 }

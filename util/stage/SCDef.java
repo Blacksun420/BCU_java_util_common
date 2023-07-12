@@ -29,7 +29,9 @@ public class SCDef implements Copable<SCDef> {
 		public int castle_0, castle_1, layer_0, layer_1;
 		public int mult_atk;
 		public int kill_count;
+		@JsonField(backCompat = JsonField.CompatType.FORK)
 		public byte doorchance, doordis_0, doordis_1;
+		@JsonField(backCompat = JsonField.CompatType.FORK)
 		public Revival rev;
 
 		@JCConstructor

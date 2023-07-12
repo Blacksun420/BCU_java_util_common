@@ -166,12 +166,11 @@ public abstract class PackData implements IndexContainer {
 			File dict = CommonStatic.ctx.getAssetFile("./music/");
 			if (!dict.exists())
 				return;
-			File[] fs = dict.listFiles();
-			for (File f : fs) {
+			for (File f : dict.listFiles()) {
 				String str = f.getName();
-				if (str.length() != 7 || !str.endsWith(".ogg"))
+				if (str.length() < 7 || !str.endsWith(".ogg"))
 					continue;
-				int id = CommonStatic.parseIntN(str.substring(0, 3));
+				int id = CommonStatic.parseIntN(str.substring(0, str.indexOf(".")));
 				if (id == -1)
 					continue;
 				musics.set(id, new Music(Identifier.parseInt(id, Music.class), new FDFile(f)));
@@ -252,6 +251,7 @@ public abstract class PackData implements IndexContainer {
 	@JsonClass(noTag = NoTag.LOAD)
 	public static class PackDesc {
 		public String BCU_VERSION;
+		@JsonField(backCompat = JsonField.CompatType.FORK)
 		public int FORK_VERSION = 0; // The same as BCU_VERSION, but for this fork exclusively
 		public String id;
 		public String author;
@@ -368,9 +368,9 @@ public abstract class PackData implements IndexContainer {
 		public VImg icon, banner;
 		@JsonField(block = true)
 		public SaveData save;
-		@JsonField(generic = { Unit.class, Integer.class }, alias = Identifier.class, decodeLast = true)
+		@JsonField(generic = { Unit.class, Integer.class }, alias = Identifier.class, decodeLast = true, backCompat = JsonField.CompatType.FORK)
 		public final TreeMap<AbUnit, Integer> defULK = new TreeMap<>();//Units unlocked from the get-go, for progression
-		@JsonField(generic = String.class)
+		@JsonField(generic = String.class, backCompat = JsonField.CompatType.FORK)
 		public final SortedPackSet<String> syncPar = new SortedPackSet<>();
 
 		public UserPack(Source s, PackDesc desc, JsonElement elem) {

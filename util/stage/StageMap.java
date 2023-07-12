@@ -107,7 +107,7 @@ public class StageMap extends Data implements BasedCopable<StageMap, MapColc>,
 
 	@JsonField(generic = MultiLangData.class, gen = JsonField.GenType.FILL)
 	public final MultiLangData names = new MultiLangData();
-	@JsonField(generic = StageMap.class, alias = Identifier.class, decodeLast = true)
+	@JsonField(generic = StageMap.class, alias = Identifier.class, decodeLast = true, backCompat = JsonField.CompatType.FORK)
 	public final HashSet<StageMap> unlockReq = new HashSet<>();
 
 	@JsonField

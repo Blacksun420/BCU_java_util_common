@@ -232,9 +232,9 @@ public class JsonEncoder {
 		return curjcls.bypass() ? par : this;
 	}
 
-	private static final boolean incompatible(JsonField.CompatType ct) {
+	private static boolean incompatible(JsonField.CompatType ct) {
 		if (ct == JsonField.CompatType.ALL)
 			return false;
-		return bc == (backCompat ? JsonField.CompatType.FORK : JsonField.CompatType.UPST);
+		return ct == (backCompat ? JsonField.CompatType.FORK : JsonField.CompatType.UPST);
 	}
 }

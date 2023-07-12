@@ -244,6 +244,19 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 		}
 	}
 
+	public enum RangeShieldEff implements EffType<RangeShieldEff> {
+		SINGLE("-SINGLE"), AREA("-AREA");
+
+		private final String path;
+		RangeShieldEff(String str) {
+			path = str;
+		}
+		@Override
+		public String path() {
+			return path;
+		}
+	}
+
 	public static class EffAnimStore {
 
 		@Order(0)
@@ -414,6 +427,14 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 		public EffAnim<DefEff> A_COUNTERSURGE;
 		@Order(85)
 		public EffAnim<DefEff> A_E_COUNTERSURGE;
+		@Order(86)
+		public EffAnim<RangeShieldEff> A_RANGESHIELD;
+		@Order(87)
+		public EffAnim<RangeShieldEff> A_E_RANGESHIELD;
+		@Order(88)
+		public EffAnim<DefEff> A_MEGAWAVE;//TODO
+		@Order(89)
+		public EffAnim<DefEff> A_E_MEGAWAVE;
 
 		public EffAnim<?>[] values() {
 			Field[] fld = FieldOrder.getDeclaredFields(EffAnimStore.class);
@@ -690,6 +711,19 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 		VImg vah = new VImg(path + ".png");
 		ImgCut icah = ImgCut.newIns(path + ".imgcut");
 		effas.A_HYPNO = new EffAnim<>(path, vah, icah, DefEff.values());
+
+		path = "./org/battle/skill_targetshield/skill_targetshield";
+		VImg sah = new VImg(path + ".png");
+		ImgCut isah = ImgCut.newIns(path + ".imgcut");
+		effas.A_RANGESHIELD = new EffAnim<>(path, sah, isah, RangeShieldEff.values());
+		effas.A_E_RANGESHIELD = new EffAnim<>(path, sah, isah, RangeShieldEff.values());
+		effas.A_E_RANGESHIELD.rev = true;
+
+		path = "./org/battle/ChargedWave/ChargedWave";
+		VImg wah = new VImg(path + ".png");
+		ImgCut iwah = ImgCut.newIns(path + ".imgcut");
+		effas.A_MEGAWAVE = new EffAnim<>(path, wah, iwah, DefEff.values()); //TODO
+		effas.A_E_MEGAWAVE = new EffAnim<>(path, wah, iwah, DefEff.values());
 	}
 
 	private final VImg vimg;

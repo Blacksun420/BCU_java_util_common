@@ -246,6 +246,7 @@ public class Res extends ImgCore {
 		aux.icon[1][P_DEMONVOLC] = new VImg("./org/page/icons/CounterSurge.png");
 		aux.icon[1][P_DEFINC] = new VImg(parts[204]);
 		aux.icon[1][P_DMGINC] = new VImg(parts[206]);
+		aux.icon[1][P_RANGESHIELD] = new VImg("./org/page/icons/TargetShield.png");
 
 		aux.icon[2][ATK_SINGLE] = new VImg(parts[217]);
 		aux.icon[2][ATK_AREA] = new VImg(parts[211]);

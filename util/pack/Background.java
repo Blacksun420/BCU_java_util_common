@@ -447,10 +447,10 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 		return BGWvType.values();
 	}
 
-	@JsonField(tag = "effect", io = IOType.W, backCompat = JsonField.CompatType.UPST)
+	@JsonField(tag = "effect", io = JsonField.IOType.W, backCompat = JsonField.CompatType.UPST)
 	public int getBGEff() {
-		if (bgEffect == null || bgEffect.getID().pack != Identifier.DEF)
+		if (bgEffect == null || !bgEffect.pack.equals(Identifier.DEF))
 			return -1;
-		return bgEffect.getID().id;
+		return bgEffect.id;
 	}
 }

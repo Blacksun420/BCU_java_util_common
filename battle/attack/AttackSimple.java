@@ -20,7 +20,7 @@ public class AttackSimple extends AttackAb {
 	 * avoid attacking already attacked enemies for lasting attacks
 	 */
 	private final Set<AbEntity> attacked = new HashSet<>();
-	private final boolean range;
+	public final boolean range;
 
 	public AttackSimple(Entity attacker, AtkModelAb ent, int ATK, SortedPackSet<Trait> tr, int eab, Proc pro, double p0, double p1, boolean isr,
 						MaskAtk matk, int layer, boolean isLongAtk, int duration) {
@@ -140,8 +140,8 @@ public class AttackSimple extends AttackAb {
 			int addp = (dire == 1 ? W_E_INI : W_U_INI) + wid / 2;
 			double p0 = model.getPos() + dire * addp;
 
-			ContWaveDef wave = new ContWaveDef(new AttackWave(attacker, this, p0, wid, WT_MINI), p0, layer, false);
-			wave.atk.raw = (int) ((double) wave.atk.raw * getProc().MINIWAVE.multi / 100.0);
+			ContWaveDef wave = new ContWaveDef(new AttackWave(attacker, this, p0, wid, proc.MINIWAVE.multi > 100 ? WT_MEGA : WT_MINI), p0, layer, false);
+			wave.atk.raw = (int) ((double) wave.atk.raw * proc.MINIWAVE.multi / 100.0);
 
 			if(attacker != null)
 				attacker.summoned.add(wave);
@@ -167,7 +167,7 @@ public class AttackSimple extends AttackAb {
 			double end = p0 - (dire == 1 ? W_VOLC_INNER : W_VOLC_PIERCE);
 
 			ContVolcano volcano = new ContVolcano(new AttackVolcano(attacker, this, sta, end, WT_MIVC), p0, layer, volc.time, false);
-			volcano.v.raw = (int) ((double) volcano.v.raw * getProc().MINIVOLC.mult / 100.0);
+			volcano.v.raw = (int) ((double) volcano.v.raw * proc.MINIVOLC.mult / 100.0);
 
 			if(attacker != null)
 				attacker.summoned.add(volcano);

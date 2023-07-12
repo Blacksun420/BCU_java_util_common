@@ -532,6 +532,17 @@ public class Data {
 			public TYPE type = new TYPE();
 		}
 
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class RANGESHIELD extends PM {
+			@JsonClass(noTag = NoTag.LOAD)
+			public static class TYPE extends IntType {
+				@Order(0)
+				public boolean range;
+			}
+			@Order(2)
+			public TYPE type = new TYPE();
+		}
+
 		public static abstract class IntType implements Cloneable, BattleStatic {
 
 			@Documented
@@ -908,6 +919,8 @@ public class Data {
 		public final MULT DMGINC = new MULT(); //Merges Strong against, Massive Damage, and Insane Damage
 		@Order(70)
 		public final MULT DEFINC = new MULT(); //Merges Strong against, Resistant, and Insane Resist
+		@Order(71)
+		public final RANGESHIELD RANGESHIELD = new RANGESHIELD();
 
 		@Override
 		public Proc clone() {
@@ -1032,12 +1045,17 @@ public class Data {
 	public static final byte SE_SATK = 90;
 	public static final byte SE_WAVE = 26;
 	public static final byte SE_LETHAL = 50;
+	public static final byte SE_P_WORKERLVUP = 53;
+	public static final byte SE_P_WORKERLVDOWN = 107;
+	public static final byte SE_P_RESEARCHUP = 18;
+	public static final byte SE_P_RESEARCHDOWN = 36;
 	public static final byte SE_WARP_ENTER = 73;
 	public static final byte SE_WARP_EXIT = 74;
 	public static final byte SE_BOSS = 45;
 	public static final byte SE_SPEND_FAIL = 15;
 	public static final byte SE_SPEND_SUC = 19;
 	public static final byte SE_SPEND_REF = 27;
+	public static final byte SE_RANGESHIELD = 17;
 	public static final byte SE_CANNON_CHARGE = 28;
 	public static final byte SE_BARRIER_ABI = 70;
 	public static final byte SE_BARRIER_NON = 71;
@@ -1055,8 +1073,9 @@ public class Data {
 	public static final byte[][] SE_CANNON = { { 25, 26 }, { 60 }, { 61 }, { 36, 37 }, { 65, 83 }, { 84, 85 }, { 86 },
 			{ 124 } };
 
-	public static final short[] SE_ALL = { 15, 19, 20, 21, 22, 23, 24, 25, 26, 27, 36, 37, 44, 45, 50, 59, 60, 61, 65, 73,
-			74, 83, 84, 85, 86, 90, 110, 111, 112, 124, 136, 137, 138, 139, 143, 159 };
+	public static final short[] SE_ALL = { SE_VICTORY, SE_DEFEAT, SE_SPEND_FAIL, SE_RANGESHIELD, SE_SPEND_SUC, SE_HIT_0, SE_HIT_1, SE_HIT_BASE, SE_DEATH_0, SE_DEATH_1, 25, 26, SE_SPEND_REF,
+			SE_CANNON_CHARGE, 37, 44, 45, 50, 59, 60, 61, 65, 73, 74, 83, 84, 85, 86, 90, SE_POISON, SE_VOLC_START, SE_VOLC_LOOP, 124, SE_SHIELD_HIT, SE_SHIELD_BREAKER, SE_SHIELD_REGEN,
+			SE_SHIELD_BROKEN, SE_DEATH_SURGE, SE_COUNTER_SURGE };
 
 	public static final byte RARITY_TOT = 6;
 
@@ -1264,7 +1283,8 @@ public class Data {
 	public static final byte P_DEMONVOLC = 68;
 	public static final byte P_DMGINC = 69; // nice
 	public static final byte P_DEFINC = 70;
-	public static final byte PROC_TOT = 71;// 71
+	public static final byte P_RANGESHIELD = 71;
+	public static final byte PROC_TOT = 72;// 72
 
 	public static final boolean[] procSharable = {
 			false, //kb
@@ -1337,7 +1357,8 @@ public class Data {
 			false, //Mini surge
 			true,  //Counter Volc
 			true,  //Massive DMG but good
-			true   //Resistant but good
+			true,  //Resistant but good
+			true   //Range Shield
 	};
 
 	/**
@@ -1351,6 +1372,7 @@ public class Data {
 	public static final byte WT_VOLC = 4;
 	public static final byte WT_MINI = 8;
 	public static final byte WT_MIVC = 16;
+	public static final byte WT_MEGA = 32;
 	public static final byte PC_P = 0, PC_AB = 1, PC_BASE = 2, PC_IMU = 3, PC_TRAIT = 4;
 	public static final byte PC2_HP = 0;
 	public static final byte PC2_ATK = 1;
@@ -1476,7 +1498,8 @@ public class Data {
 			{ 0, P_WEAKAURA}, // 36: WeakenAura
 			{ 0, P_STRONGAURA}, // 37: StrengthAura
 			{ 0, P_DMGINC}, // 38: ExtraDmg
-			{ 0, P_DEFINC}  // 39: Resistance
+			{ 0, P_DEFINC},  // 39: Resistance
+			{ 0, P_RANGESHIELD} //40: Range Shield
 	};
 
 	public static int[] get_CORRES(int ind) {
@@ -1506,6 +1529,7 @@ public class Data {
 	public static final byte REMSHIELD_FAR = -15;
 	public static final byte A_WEAKAURASTR = -16;
 	public static final byte A_STRAURAWEAK = -17;
+	public static final byte RANGESHIELD_SINGLE = -18;
 
 	// Combo index
 	public static final byte C_ATK = 0;
@@ -1571,7 +1595,8 @@ public class Data {
 	public static final byte A_STRONGAURA = 32;
 	public static final byte A_RAGE = 33;
 	public static final byte A_HYPNO = 34;
-	public static final byte A_TOT = 35;
+	public static final byte A_RANGESHIELD = 35;
+	public static final byte A_TOT = 36;
 
 	// atk type index used in filter page
 	public static final byte ATK_SINGLE = 0;
@@ -1645,7 +1670,8 @@ public class Data {
 	public static final short W_E_WID = 500;
 	public static final short W_U_WID = 400;
 	public static final byte W_TIME = 3;
-	public static final byte W_MINI_TIME = 2; // mini wave spawn interval
+	public static final byte W_MINI_TIME = 1; // mini wave spawn interval
+	public static final byte W_MEGA_TIME = 6;
 	public static final short W_VOLC_INNER = 250; // volcano inner width
 	public static final byte W_VOLC_PIERCE = 125; // volcano pierce width
 	public static final byte VOLC_ITV = 20;

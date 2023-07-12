@@ -57,6 +57,7 @@ public class Stage extends Data
 
 	public boolean non_con, trail;
 	public int len, health, max, mush, bgh;
+	@JsonField(backCompat = JsonField.CompatType.FORK)
 	public int timeLimit = 0;
 	public int minUSpawn = 1, maxUSpawn = 1;
 	public int minSpawn = 1, maxSpawn = 1;
@@ -350,5 +351,12 @@ public class Stage extends Data
 		if (jobj.has("name"))
 			names.put(jobj.get("name").getAsString());
 		recd.removeIf(Objects::isNull);
+	}
+
+	@JsonField(tag = "timeLimit", io = JsonField.IOType.W, backCompat = JsonField.CompatType.UPST)
+	public int UTL() {
+		if (timeLimit == 0)
+			return 0;
+		return Math.min(1, timeLimit / 60);
 	}
 }

@@ -46,6 +46,7 @@ public class AnimTypeLocale {
 		Collections.addAll(TYPES, EffAnim.LethargyEff.values());
 		Collections.addAll(TYPES, EffAnim.RemShieldEff.values());
 		Collections.addAll(TYPES, EffAnim.AuraEff.values());
+		Collections.addAll(TYPES, EffAnim.RangeShieldEff.values());
 	}
 
 	public static void read() {

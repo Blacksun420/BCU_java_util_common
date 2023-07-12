@@ -35,7 +35,7 @@ public class CharaGroup extends Data implements Indexable<PackData, CharaGroup>,
 
 	public int type = 0;
 
-	@JsonField(generic = Form.class, alias = AbForm.AbFormJson.class)
+	@JsonField(generic = Form.class, alias = AbForm.AbFormJson.class, backCompat = JsonField.CompatType.FORK)
 		public final SortedPackSet<Form> fset = new SortedPackSet<>();
 
 	@JsonClass.JCConstructor
@@ -121,5 +121,13 @@ public class CharaGroup extends Data implements Indexable<PackData, CharaGroup>,
 					Collections.addAll(fset, u.forms);
 			}
 		}
+	}
+
+	@JsonField(tag = "set", io = JsonField.IOType.W, backCompat = JsonField.CompatType.UPST)
+	public SortedPackSet<Unit> getBGEff() {
+		SortedPackSet<Unit> uset = new SortedPackSet<>();
+		for (Form f : fset)
+			uset.add(f.unit);
+		return uset;
 	}
 }

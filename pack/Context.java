@@ -48,15 +48,22 @@ public interface Context {
 		check(f.delete(), "delete", f);
 	}
 
-	static void renameTo(File a, File b) {
+	static boolean renameTo(File a, File b) {
 		if (!b.getParentFile().exists())
 			b.getParentFile().mkdirs();
 		if (b.exists())
 			b.delete();
-		a.renameTo(b);
+		return a.renameTo(b);
 	}
 
-	boolean confirmDelete();
+	static String validate(String str, char replace) {
+		char[] chs = new char[] { '.', '/', '\\', ':', '*', '?', '"', '<', '>', '|' };
+		for (char c : chs)
+			str = str.replace(c, replace);
+		return str;
+	}
+
+	boolean confirm(String str);
 
 	boolean confirmDelete(File f);
 

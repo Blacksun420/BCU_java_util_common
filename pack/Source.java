@@ -441,7 +441,8 @@ public abstract class Source {
 			}
 		}
 
-		public void export(UserPack pack, String password, String parentPassword, Consumer<Double> prog) throws Exception {
+		public void export(UserPack pack, String password, String parentPassword, boolean backComp, Consumer<Double> prog) throws Exception {
+			JsonEncoder.backCompat = backComp;
 			HashSet<AnimCE> anims = new HashSet<>();
 
 			for (Enemy e : pack.enemies)
@@ -462,21 +463,27 @@ public abstract class Source {
 						if (rep != null && rep.rl.pack.startsWith(".temp_"))
 							rep.rl.pack = rep.rl.pack.substring(6);
 
+			if (backComp)
+				for (HashSet<AnimCI> aCS : this.anims) {
+					if (aCS == null)
+						continue;
+					for (AnimCI anim : aCS)
+						for (MaAnim ma : anim.anims)
+							for (Part p : ma.parts)
+								p.ints = Arrays.copyOf(p.ints, 5);
+				}
 			save(pack, false);
 			String star = id.startsWith(".temp_") ? "./packs/" : "./exports/";
-			File tar = CommonStatic.ctx.getAuxFile(star + pack + ".userpack");
-			File dst = CommonStatic.ctx.getAuxFile(star + ".userpack.temp");
+			String end = backComp ? ".pack.bcuzip" : ".userpack";
+			File tar = CommonStatic.ctx.getAuxFile(star + Context.validate(pack.toString(), '-') + (pack.toString().equals(pack.getSID()) ? "" : "(" + pack.getSID() + ")") + end);
+			File dst = CommonStatic.ctx.getAuxFile(star + end + ".temp");
 			File src = CommonStatic.ctx.getWorkspaceFile("./" + id);
 			if (tar.exists())
 				Context.delete(tar);
 			Context.check(dst);
 
 			PackData.PackDesc desc = pack.desc.clone();
-			if (parentPassword != null)
-				desc.parentPassword = PackLoader.getMD5(parentPassword.getBytes(StandardCharsets.UTF_8), 16);
-			else
-				desc.parentPassword = null;
-
+			desc.parentPassword = parentPassword != null ? PackLoader.getMD5(parentPassword.getBytes(StandardCharsets.UTF_8), 16) : null;
 			DateFormat df = new SimpleDateFormat("MM dd yyyy HH:mm:ss");
 			desc.exportDate = df.format(new Date());
 
@@ -486,10 +493,34 @@ public abstract class Source {
 			for(AnimCE anim : anims) {
 				anim.id.pack = ResourceLocation.LOCAL;
 				anim.id.id = anim.id.id.replaceAll("^_mapped_", "");
+				if (backComp) {
+					for (MaAnim ma : anim.anims)
+						for (Part p : ma.parts)
+							p.ints = Arrays.copyOf(p.ints, 3);
+					new SourceAnimSaver(anim.id, anim).saveData();
+				}
 			}
+			if (backComp)
+				for (HashSet<AnimCI> aCS : this.anims) {
+					if (aCS == null)
+						continue;
+					for (AnimCI anim : aCS) {
+						for (MaAnim ma : anim.anims)
+							for (Part p : ma.parts)
+								p.ints = Arrays.copyOf(p.ints, 3);
+						new SourceAnimSaver(anim.id, anim).saveData();
+					}
+				}
+			JsonEncoder.backCompat = false;
+			save(pack, false);
 		}
 
 		private void addAnim(UserPack pack, AnimCE anim, HashSet<AnimCE> anims) {
+			if (JsonEncoder.backCompat)
+				for (MaAnim ma : anim.anims)
+					for (Part p : ma.parts)
+						p.ints = Arrays.copyOf(p.ints, 5);
+
 			if (anim.id.pack.equals(ResourceLocation.LOCAL)) {
 				if(!anims.add(anim)) {
 					anim.id.pack = ResourceLocation.LOCAL;

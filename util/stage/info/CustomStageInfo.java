@@ -37,11 +37,11 @@ public class CustomStageInfo implements StageInfo {
     @JsonField(generic = Float.class)
     public final ArrayList<Float> chances = new ArrayList<>();
     public short totalChance;
-    @JsonField(alias = Form.AbFormJson.class)
+    @JsonField(alias = Form.AbFormJson.class, backCompat = JsonField.CompatType.FORK)
     public Form ubase;
     @JsonField
     public Level lv;
-    @JsonField(generic = Form.class, alias = Form.AbFormJson.class)
+    @JsonField(generic = Form.class, alias = Form.AbFormJson.class, backCompat = JsonField.CompatType.FORK)
     public final SortedPackSet<Form> rewards = new SortedPackSet<>();
 
     @JsonClass.JCConstructor

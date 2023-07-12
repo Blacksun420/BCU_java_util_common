@@ -11,17 +11,12 @@ import java.util.Set;
 public class ContWaveDef extends ContWaveAb {
 
 	protected ContWaveDef(AttackWave a, double p, int layer, boolean delay) {
-		super(a, p, (a.dire == 1 ? a.waveType == WT_MINI ? effas().A_E_MINIWAVE : effas().A_E_WAVE : a.waveType == WT_MINI ? effas().A_MINIWAVE : effas().A_WAVE).getEAnim(DefEff.DEF), layer, delay);
-		soundEffect = SE_WAVE;
-
-		maxt -= 1;
-		anim.setTime(1);
-		waves = new HashSet<>();
-		waves.add(this);
+		this(a, p, layer, delay, new HashSet<>());
 	}
 
 	protected ContWaveDef(AttackWave a, double p, int layer, boolean delay, Set<ContWaveAb> waves) {
-		super(a, p, (a.dire == 1 ? a.waveType == WT_MINI ? effas().A_E_MINIWAVE : effas().A_E_WAVE : a.waveType == WT_MINI ? effas().A_MINIWAVE : effas().A_WAVE).getEAnim(DefEff.DEF), layer, delay);
+		super(a, p, (a.dire == 1 ? a.waveType == WT_MEGA ? effas().A_E_MEGAWAVE : a.waveType == WT_MINI ? effas().A_E_MINIWAVE : effas().A_E_WAVE
+				: a.waveType == WT_MEGA ? effas().A_MEGAWAVE : a.waveType == WT_MINI ? effas().A_MINIWAVE : effas().A_WAVE).getEAnim(DefEff.DEF), layer, delay);
 		soundEffect = SE_WAVE;
 
 		maxt -= 1;
@@ -33,9 +28,9 @@ public class ContWaveDef extends ContWaveAb {
 	@Override
 	public void update() {
 		tempAtk = false;
-		boolean isMini = atk.waveType == WT_MINI;
+		boolean isMini = atk.waveType == WT_MINI, isMega = atk.waveType == WT_MEGA;
 		// guessed attack point compared from BC
-		int attack = (isMini ? 4 : 6);
+		int attack = (isMini || isMega ? 4 : 6);
 		// guessed wave block time compared from BC
 		if (t == 0)
 			CommonStatic.setSE(soundEffect);
@@ -57,10 +52,10 @@ public class ContWaveDef extends ContWaveAb {
 		}
 		if (!activate)
 			return;
-		if (t == (isMini ? W_MINI_TIME - 1 : W_TIME)) {
-			if (isMini && atk.proc.MINIWAVE.lv > this.waves.size())
+		if (t == (isMega ? W_MEGA_TIME : isMini ? W_MINI_TIME : W_TIME)) {
+			if ((isMini || isMega) && atk.proc.MINIWAVE.lv > this.waves.size())
 				nextWave();
-			else if (!isMini && atk.proc.WAVE.lv > this.waves.size())
+			else if (!(isMini || isMega) && atk.proc.WAVE.lv > this.waves.size())
 				nextWave();
 		}
 		if (t == attack) {

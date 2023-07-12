@@ -381,6 +381,12 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				} case P_HYPNO: {
 					effs[A_HYPNO] = effas().A_HYPNO.getEAnim(DefEff.DEF);
 					break;
+				} case P_RANGESHIELD: {
+					effs[A_RANGESHIELD] = (dire == -1 ? effas().A_RANGESHIELD : effas().A_E_RANGESHIELD).getEAnim(RangeShieldEff.AREA);
+					break;
+				} case RANGESHIELD_SINGLE: {
+					effs[A_RANGESHIELD] = (dire == -1 ? effas().A_RANGESHIELD : effas().A_E_RANGESHIELD).getEAnim(RangeShieldEff.SINGLE);
+					break;
 				}
 			}
 		}
@@ -1571,7 +1577,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				}
 			}
 		// if immune to wave and the attack is wave, jump out
-		if (atk.waveType != 5 && ((atk.waveType & WT_WAVE) > 0 || (atk.waveType & WT_MINI) > 0) && atk.canon != 16) {
+		if (atk.waveType != 5 && (((WT_WAVE | WT_MINI | WT_MEGA) & atk.waveType) > 0) && atk.canon != 16) {
 			if (getProc().IMUWAVE.mult > 0)
 				anim.getEff(P_WAVE);
 			if (getProc().IMUWAVE.mult == 100)
@@ -1682,6 +1688,18 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			}
 		}
 
+		Proc.RANGESHIELD rngs = getProc().RANGESHIELD;
+		if (rngs.exists() && (atk instanceof AttackSimple && ((AttackSimple)atk).range == rngs.type.range) && (rngs.prob == 100 || basis.r.nextDouble() * 100 < rngs.prob)) {
+			anim.getEff(rngs.type.range ? P_RANGESHIELD : RANGESHIELD_SINGLE);
+			CommonStatic.setSE(SE_RANGESHIELD);
+			if (rngs.mult == 100) {
+				if (!proc)
+					return;
+				dmg = 0;
+			} else if (rngs.mult != 0)
+				dmg = dmg * (100 - rngs.mult) / 100;
+		}
+
 		boolean barrierContinue = !hasBarrier();
 		boolean shieldContinue = status.shield[0] == 0;
 
@@ -1754,7 +1772,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		atk.notifyEntity(e -> {
 			Proc.COUNTER counter = getProc().COUNTER;
 			if (!atk.isCounter && counter.prob > 0 && e.getDire() != getDire() && (e.touchable() & getTouch()) > 0 && (counter.prob == 100 || basis.r.nextDouble() * 100 < counter.prob)) {
-				boolean isWave = (atk.waveType & WT_WAVE) > 0 || (atk.waveType & WT_MINI) > 0 || (atk.waveType & WT_MOVE) > 0 || (atk.waveType & WT_VOLC) > 0;
+				boolean isWave = ((WT_WAVE | WT_MINI | WT_MEGA | WT_MOVE | WT_VOLC | WT_MIVC) & atk.waveType) > 0;
 				if (!isWave || counter.type.counterWave != 0) {
 					double[] ds = counter.minRange != 0 || counter.maxRange != 0 ? new double[]{pos + counter.minRange, pos + counter.maxRange} : aam.touchRange();
 					int reflectAtk = FDmg;

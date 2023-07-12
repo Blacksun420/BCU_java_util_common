@@ -31,8 +31,7 @@ public class Admin {
 	public static class AdminContext implements Context {
 
 		@Override
-		public boolean confirmDelete() {
-			System.out.println("skip delete confirmation");
+		public boolean confirm(String str) {
 			return true;
 		}
 
