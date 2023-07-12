@@ -720,9 +720,10 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 		effas.A_E_RANGESHIELD.rev = true;
 
 		path = "./org/battle/ChargedWave/ChargedWave";
-		VImg wah = new VImg(path + ".png");
 		ImgCut iwah = ImgCut.newIns(path + ".imgcut");
-		effas.A_MEGAWAVE = new EffAnim<>(path, wah, iwah, DefEff.values()); //TODO
+		VImg wah = new VImg(path + "U.png");
+		effas.A_MEGAWAVE = new EffAnim<>(path, wah, iwah, DefEff.values());
+		wah = new VImg(path + ".png");
 		effas.A_E_MEGAWAVE = new EffAnim<>(path, wah, iwah, DefEff.values());
 	}
 
