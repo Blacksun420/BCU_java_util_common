@@ -140,7 +140,7 @@ public class AttackSimple extends AttackAb {
 			int addp = (dire == 1 ? W_E_INI : W_U_INI) + wid / 2;
 			double p0 = model.getPos() + dire * addp;
 
-			ContWaveDef wave = new ContWaveDef(new AttackWave(attacker, this, p0, wid, proc.MINIWAVE.multi > 100 ? WT_MEGA : WT_MINI), p0, layer, false);
+			ContWaveDef wave = new ContWaveDef(new AttackWave(attacker, this, p0, wid, proc.MINIWAVE.multi > 100 ? WT_MEGA : WT_MINI), p0, layer, proc.MINIWAVE.multi > 100);
 			wave.atk.raw = (int) ((double) wave.atk.raw * proc.MINIWAVE.multi / 100.0);
 
 			if(attacker != null)

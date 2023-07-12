@@ -232,7 +232,8 @@ public class Editors {
 			else if (obj instanceof Proc.AURA)
 				setComponentVisibility(this, obj.exists(), 4);
 			else if (!(obj instanceof Proc.IMU)) {
-				setComponentVisibility(this, obj.exists(), 1);
+				if (!(obj instanceof Proc.AI))
+					setComponentVisibility(this, obj.exists(), 1);
 				if (ctrl.visibilityReg != null)
 					ctrl.setVis(obj);
 			}
