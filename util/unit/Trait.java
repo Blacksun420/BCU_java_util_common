@@ -72,7 +72,7 @@ public class Trait extends Data implements Indexable<PackData, Trait>, Comparabl
     }
 
     // Convert Bitmask Type format to new format
-    public static SortedPackSet<Trait> convertType(int type) {
+    public static SortedPackSet<Trait> convertType(int type, boolean talent) {
         SortedPackSet<Trait> traits = new SortedPackSet<>();
         PackData.DefPack data = UserProfile.getBCData();
         if ((type & TB_RED) != 0)
@@ -89,8 +89,6 @@ public class Trait extends Data implements Indexable<PackData, Trait>, Comparabl
             traits.add(data.traits.get(TRAIT_ALIEN));
         if ((type & TB_ZOMBIE) != 0)
             traits.add(data.traits.get(TRAIT_ZOMBIE));
-        if ((type & TB_DEMON) != 0)
-            traits.add(data.traits.get(TRAIT_DEMON));
         if ((type & TB_RELIC) != 0)
             traits.add(data.traits.get(TRAIT_RELIC));
         if ((type & TB_WHITE) != 0)
@@ -99,8 +97,15 @@ public class Trait extends Data implements Indexable<PackData, Trait>, Comparabl
             traits.add(data.traits.get(TRAIT_EVA));
         if ((type & TB_WITCH) != 0)
             traits.add(data.traits.get(TRAIT_WITCH));
-        if ((type & TB_INFH) != 0)
-            traits.add(data.traits.get(TRAIT_INFH));
+        if (talent) {
+            if ((type & TB_DEMON_T) != 0)
+                traits.add(data.traits.get(TRAIT_DEMON));
+        } else {
+            if ((type & TB_DEMON) != 0)
+                traits.add(data.traits.get(TRAIT_DEMON));
+            if ((type & TB_INFH) != 0)
+                traits.add(data.traits.get(TRAIT_INFH));
+        }
         return traits;
     }
 

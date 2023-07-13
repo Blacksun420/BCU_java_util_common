@@ -201,7 +201,7 @@ public class DataUnit extends DefaultData implements MaskUnit, Cloneable {
 		} catch (IndexOutOfBoundsException ignored) {
 		}
 
-		traits = new SortedPackSet<>(Trait.convertType(t));
+		traits = new SortedPackSet<>(Trait.convertType(t, false));
 		abi = a;
 
 		datks = new DataAtk[getAtkCount(0)];

@@ -49,7 +49,7 @@ public class PCoin extends Data {
 
 	private PCoin(String[] strs) {
 		du = Identifier.parseInt(CommonStatic.parseIntN(strs[0]), Unit.class).get().getForms()[2].du;
-		trait = Trait.convertType(CommonStatic.parseIntN(strs[1]));
+		trait = Trait.convertType(CommonStatic.parseIntN(strs[1]), true);
 
 		for (int i = 0; i < 8; i++)
 			if(!strs[2 + i * 14].equals("0")) {

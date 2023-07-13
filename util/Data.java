@@ -1092,7 +1092,7 @@ public class Data {
 	public static final short TB_EVA = 512;
 	public static final short TB_WITCH = 1024;
 	public static final short TB_INFH = 2048;
-	public static final short TB_DEMON = 4096;
+	public static final short TB_DEMON = 4096, TB_DEMON_T = 2048;
 
 	// trait index
 	public static final byte TRAIT_RED = 0;

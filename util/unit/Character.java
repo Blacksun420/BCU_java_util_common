@@ -94,7 +94,7 @@ public abstract class Character extends Animable<AnimU<?>, AnimU.UType> {
                                                     ent.tba += ent.getPost(false, 0) + 1;
                                             } //Finish 0.5.2.0 check
                                             proc.BARRIER.health = jdu.get("shield").getAsInt();
-                                            ent.traits = Trait.convertType(type);
+                                            ent.traits = Trait.convertType(type, false);
                                             if ((ent.abi & (1 << 18)) != 0) //Seal Immunity
                                                 proc.IMUSEAL.mult = 100;
                                             if ((ent.abi & (1 << 7)) != 0) //Moving atk Immunity
