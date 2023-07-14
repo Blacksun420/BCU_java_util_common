@@ -1650,7 +1650,7 @@
         "abbr_name": "Extra DMG",
         "full_name": "Extra Damage",
         "tooltip": "Increases damage dealt to enemies on the traits this unit targets. Pretty much Massive Damage, but adjustable",
-        "format": "[(mult<100){Pitiful}(mult>100&mult<300){Strong}(mult>=300&mult<500){Massive}(mult>=500){Insane}] Damage (_left)Deals (mult)% damage to target traits(_right)",
+        "format": "[(mult<100){Pitiful}(mult>100&mult<300){Strong}(mult>=300&mult<500){Massive}(mult>=500){Insane}] Damage (_left)Deals (_resDiv(mult))x damage to target traits(_right)",
         "class": {
             "mult": {
                 "name": "multiplier",
