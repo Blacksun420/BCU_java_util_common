@@ -685,6 +685,7 @@ public class Editors {
 				t.min_dis = t.max_dis = 0;
 				t.type.trait = false;
 			} else {
+				t.tmult = Math.max(t.tmult, -100);
 				int min = t.min_dis;
 				t.min_dis = Math.min(min, t.max_dis);
 				t.max_dis = Math.max(min, t.max_dis);
@@ -696,6 +697,7 @@ public class Editors {
 				t.min_dis = t.max_dis = 0;
 				t.type.trait = false;
 			} else {
+				t.tmult = Math.max(t.tmult, 0);
 				int min = t.min_dis;
 				t.min_dis = Math.min(min, t.max_dis);
 				t.max_dis = Math.max(min, t.max_dis);

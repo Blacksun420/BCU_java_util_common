@@ -1181,7 +1181,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			}
 			if (aura.tmult != 0) {
 				tbaAuras.push((weak ? 100 + aura.tmult : aura.tmult) / 100f);
-				aff[weak ? 0 : 1] *= tbaAuras.peek();
+				aff[weak ? 0 : 1] /= tbaAuras.peek();
 			}
 		}
 		public void updateAuras() {
@@ -2625,7 +2625,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	protected double getMov(double extmov) {
 		if (cantGoMore())
 			return 0;
-		double mov = getSpeed(extmov);
+		double mov = getSpeed(data.getSpeed(), extmov);
 
 		if (mov > 0 && getProc().AI.retreatDist > 0)
 			mov = AIMove(mov);
@@ -2634,8 +2634,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		return mov;
 	}
 
-	public double getSpeed(double extmov) {
-		double mov = status.slow > 0 ? 0.25 : data.getSpeed() * 0.5;
+	public double getSpeed(int spd, double extmov) {
+		double mov = status.slow > 0 ? 0.25 : spd * 0.5;
 		if (status.speed[0] > 0 && status.slow == 0) {
 			if (status.speed[2] == 0) {
 				mov += status.speed[1] * 0.5;
@@ -2657,7 +2657,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			if (e.getDire() == getDire())
 				continue;
 			if (Math.abs(pos - e.pos) < getProc().AI.retreatDist) {
-				mv = -getProc().AI.retreatSpeed * getDire();
+				mv = getSpeed(-getProc().AI.retreatSpeed, 0);
 				break;
 			}
 			if (atkm.atkTime == 0 || e.aam.getAtk(e.atkm.preID, getTouch()) < 0)
@@ -2672,7 +2672,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			if (pos > end)
 				mv = 0;
 			else
-				mv = -getProc().AI.retreatSpeed * getDire();
+				mv = getSpeed(-getProc().AI.retreatSpeed, 0);
 			break;
 		}
 		return mv;
