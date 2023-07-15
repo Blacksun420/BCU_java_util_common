@@ -6,8 +6,6 @@ import common.util.Data;
 import common.util.anim.AnimU;
 import common.util.unit.Form;
 
-import java.util.Arrays;
-
 @JsonClass
 public class CustomUnit extends CustomEntity implements MaskUnit, Cloneable {
 
@@ -121,7 +119,7 @@ public class CustomUnit extends CustomEntity implements MaskUnit, Cloneable {
 				pcoin.max = p.max.clone();
 
 				for (int[] i : p.info) {
-					int[] j = Arrays.copyOf(i, i.length);
+					int[] j = i.clone();
 					j[1] = Math.max(1, j[1]);
 					j[j.length - 1] = Math.max(0, j[j.length - 1]);
 					pcoin.info.add(j);

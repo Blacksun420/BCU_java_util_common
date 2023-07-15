@@ -250,8 +250,6 @@ public class PCoin extends Data {
 
 	@OnInjected
 	public void onInjected() {
-		max = new int[info.size()];
-		for (int i = 0; i < info.size(); i++)
-			max[i] = Math.max(1, info.get(i)[1]);
+		max = info.stream().mapToInt(i -> Math.max(1, i[1])).toArray();
 	}
 }

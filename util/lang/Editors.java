@@ -251,9 +251,9 @@ public class Editors {
 	}
 
 	static {
-		EditControl<Proc.PROB> prob = new EditControl<>(Proc.PROB.class, (t) -> t.prob = MathUtil.clip(t.prob, 0, 100));
+		EditControl<Proc.PROB> prob = new EditControl<>(Proc.PROB.class, t -> t.prob = MathUtil.clip(t.prob, 0, 100));
 
-		EditControl<Proc.PT> pt = new EditControl<>(Proc.PT.class, (t) -> {
+		EditControl<Proc.PT> pt = new EditControl<>(Proc.PT.class, t -> {
 			t.prob = MathUtil.clip(t.prob, 0, 100);
 			if (t.prob == 0)
 				t.time = 0;
@@ -261,12 +261,12 @@ public class Editors {
 				t.time = 1;
 		});
 
-		EditControl<Proc.IMU> imu = new EditControl<>(Proc.IMU.class, (t) -> {
+		EditControl<Proc.IMU> imu = new EditControl<>(Proc.IMU.class, t -> {
 			t.mult = Math.min(t.mult, 100);
 			t.block = Math.min(t.block, 100);
 		});
 
-		EditControl<Proc.IMUAD> imuad = new EditControl<>(Proc.IMUAD.class, (t) -> {
+		EditControl<Proc.IMUAD> imuad = new EditControl<>(Proc.IMUAD.class, t -> {
 			t.mult = Math.min(t.mult, 100);
 			t.block = Math.min(t.block, 100);
 			if (t.mult != 0 || t.block != 0)
