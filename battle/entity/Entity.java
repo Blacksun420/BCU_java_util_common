@@ -2656,11 +2656,12 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		for (Entity e : basis.le) {
 			if (e.getDire() == getDire())
 				continue;
-			if (Math.abs(pos - e.pos) < getProc().AI.retreatDist) {
-				mv = getSpeed(-getProc().AI.retreatSpeed, 0);
-				break;
-			}
-			if (atkm.atkTime == 0 || e.aam.getAtk(e.atkm.preID, getTouch()) < 0)
+			if ((getTouch() & e.touchable()) > 0)
+				if (Math.abs(predictedPos - e.pos) <= getProc().AI.retreatDist) {
+					mv = (Math.abs(pos - e.pos) < getProc().AI.retreatDist) ? getSpeed(-getProc().AI.retreatSpeed, 0) : 0;
+					break;
+				}
+			if (e.atkm.atkTime == 0 || e.aam.getAtk(e.atkm.preID, getTouch()) < 0)
 				continue;
 			double[] ds = e.aam.inRange(e.atkm.preID);
 			double sta = Math.min(ds[0], ds[1]), end = Math.max(ds[0], ds[1]);
