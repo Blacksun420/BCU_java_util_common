@@ -7,6 +7,7 @@ import common.io.json.JsonField;
 import common.io.json.JsonField.GenType;
 import common.io.json.JsonField.CompatType;
 import common.pack.Identifier;
+import common.pack.PackData.UserPack;
 import common.pack.SortedPackSet;
 import common.util.Data;
 import common.util.pack.Soul;
@@ -269,7 +270,7 @@ public abstract class CustomEntity extends DataEntity {
 		abi = de.getAbi();
 		loop = de.getAtkLoop();
 		traits = new SortedPackSet<>();
-		traits.addIf(de.getTraits(), t -> (!t.BCTrait()) || (t.id.id != Data.TRAIT_EVA && t.id.id != Data.TRAIT_WITCH));
+		traits.addIf(de.getTraits(), t -> t.BCTrait() || t.id.pack.equals(getPack().getID().pack) || ((UserPack)getPack().getPack()).desc.dependency.contains(t.id.pack));
 		width = de.getWidth();
 		tba = de.getTBA();
 		touch = de.getTouch();
