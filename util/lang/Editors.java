@@ -9,14 +9,12 @@ import common.util.unit.Unit;
 import org.jcodec.common.tools.MathUtil;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class Editors {
-
-	private static final Map<String, EditorGroup> eg = new HashMap<>();
 
 	public static class DispItem implements LocaleCenter.Displayable {
 
@@ -121,13 +119,13 @@ public class Editors {
 
 		public final Class<T> cls;
 		private final Consumer<T> regulator;
-		private final Consumer<T> visibilityReg;
+		private final Function<EditorGroup, Consumer<T>> visibilityReg;
 
 		public EditControl(Class<T> cls, Consumer<T> func) {
 			this(cls, func, null);
 		}
 
-		public EditControl(Class<T> cls, Consumer<T> func, Consumer<T> vis) {
+		public EditControl(Class<T> cls, Consumer<T> func, Function<EditorGroup, Consumer<T>> vis) {
 			this.cls = cls;
 			regulator = func;
 			visibilityReg = vis;
@@ -158,8 +156,8 @@ public class Editors {
 		}
 
 		@SuppressWarnings("unchecked")
-		protected void setVis(ProcItem obj) {
-			visibilityReg.accept((T)obj);
+		protected void setVis(EditorGroup eg, ProcItem obj) {
+			visibilityReg.apply(eg).accept((T)obj);
 		}
 	}
 
@@ -203,10 +201,8 @@ public class Editors {
 			ProcLang.ItemLang item = ProcLang.get().get(proc);
 			String[] arr = item.list();
 			list = new Editor[arr.length];
-			for (int i = 0; i < arr.length; i++) {
+			for (int i = 0; i < arr.length; i++)
 				list[i] = getEditor(ctrl, this, arr[i], edit);
-			}
-			eg.put(proc, this);
 		}
 
 		public LocaleCenter.Binder getItem(Formatter.Context ctx) {
@@ -235,7 +231,7 @@ public class Editors {
 				if (!(obj instanceof Proc.AI))
 					setComponentVisibility(this, obj.exists(), 1);
 				if (ctrl.visibilityReg != null)
-					ctrl.setVis(obj);
+					ctrl.setVis(this, obj);
 			}
 		}
 	}
@@ -380,7 +376,7 @@ public class Editors {
 					t.type.range_type = MathUtil.clip(t.type.range_type, 0, 3);
 				}
 			}
-		}, t -> setComponentVisibility("REVIVE", t.type.revive_others, 3, 4, 5, 7)));
+		}, eg -> t -> setComponentVisibility(eg, t.type.revive_others, 3, 4, 5, 7)));
 
 		map().put("SNIPER", prob);
 
@@ -434,9 +430,9 @@ public class Editors {
 				}
 				t.type.anim_type = MathUtil.clip(t.type.anim_type, 0, 4);
 			}
-		}, (t) -> {
+		}, eg -> t -> {
 			EditorSupplier edi = UserProfile.getStatic("Editor_Supplier", () -> null);
-			setComponentVisibility("SUMMON", (!edi.isEnemy() && t.id == null) || (t.id != null && t.id.cls == Unit.class), 17);
+			setComponentVisibility(eg, t.prob > 0 && ((!edi.isEnemy() && t.id == null) || (t.id != null && t.id.cls == Unit.class)), 17);
 		}));
 
 		map().put("MOVEWAVE", new EditControl<>(Proc.MOVEWAVE.class, (t) -> {
@@ -725,16 +721,16 @@ public class Editors {
 			} else {
 				t.prob = t.time = 0;
 			}
-		}, (t) -> {
-			setComponentVisibility("BSTHUNT", t.type.active, 1);
-			setComponentVisibility("BSTHUNT", t.prob != 0, 2);
+		}, eg -> t -> {
+			setComponentVisibility(eg, t.type.active, 1);
+			setComponentVisibility(eg, t.prob != 0, 2);
 		}));
 
 		map().put("AI", new EditControl<>(Proc.AI.class, (t) -> {
 			t.retreatDist = Math.max(0, t.retreatDist);
 			if (t.retreatDist == 0)
 				t.retreatSpeed = 0;
-		}, t -> setComponentVisibility("AI", t.retreatDist > 0, 1, 2)));
+		}, eg -> t -> setComponentVisibility(eg, t.retreatDist > 0, 1, 2)));
 
 		map().put("DEMONVOLC", new EditControl<>(Proc.PM.class, (t) -> {
 			t.prob = MathUtil.clip(t.prob, 0, 100);
@@ -774,16 +770,6 @@ public class Editors {
 			for (int i = fields[0]; i < l1; i++)
 				edi.setEditorVisibility(egg.list[i], boo);
 		}
-	}
-
-	private static void setComponentVisibility(String proc, boolean boo, int... fields) {
-		EditorGroup egg = eg.get(proc);
-		if (egg == null) {
-			System.out.println("There is no proc named " + proc);
-			return;
-		}
-
-		setComponentVisibility(egg, boo, fields);
 	}
 
 	public static void setEditorSupplier(EditorSupplier sup) {
