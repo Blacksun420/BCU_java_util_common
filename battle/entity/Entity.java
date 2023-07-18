@@ -1544,8 +1544,6 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	public void damaged(AttackAb atk) {
 		damageTaken += atk.atk;
 		sumDamage(atk.atk, true);
-		if (anim.corpse != null && anim.corpse.type == ZombieEff.REVIVE && status.revs[1] >= REVIVE_SHOW_TIME)
-			return;
 		int dmg = getDamage(atk, atk.atk);
 
 		Proc.CANNI cRes = getProc().IMUCANNON;
