@@ -27,14 +27,6 @@ import java.util.Arrays;
 @JsonClass(read = RType.FILL)
 public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbForm, Comparable<AbForm> {
 
-	public static String lvString(int[] lvs) {
-		StringBuilder str = new StringBuilder("Lv." + lvs[0] + ", {");
-		for (int i = 1; i < 5; i++)
-			str.append(lvs[i]).append(",");
-		str.append(lvs[5]).append("}");
-		return str.toString();
-	}
-
 	@JsonField
 	public final MaskUnit du;
 	public final Unit unit;
@@ -155,7 +147,7 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 								atk.getProc().SUMMON.amount = 1;
 							}
 						for (AtkDataModel atk : atks)
-							if (atk.getProc().SUMMON.prob > 0 && atk.getProc().SUMMON.form == 0) {
+							if (atk.getProc().SUMMON.prob > 0 && atk.getProc().SUMMON.form <= 0) {
 								atk.getProc().SUMMON.form = 1;
 								atk.getProc().SUMMON.mult = 1;
 								atk.getProc().SUMMON.type.fix_buff = true;
@@ -167,7 +159,7 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 							int[] trueArr;
 							switch (corres[0]) {
 								case Data.PC_P:
-									trueArr = Arrays.copyOf(data, 3 + (du.getProc().getArr(corres[1]).getDeclaredFields().length - (corres.length >= 3 ? corres[2] : 0)) * 2); //The Math.min is for testing
+									trueArr = Arrays.copyOf(data, 3 + (du.getProc().getArr(corres[1]).getDeclaredFields().length - (corres.length >= 3 ? corres[2] : 0)) * 2);
 									break;
 								case Data.PC_BASE:
 									trueArr = Arrays.copyOf(data, 5);

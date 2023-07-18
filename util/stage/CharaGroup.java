@@ -31,8 +31,7 @@ public class CharaGroup extends Data implements Indexable<PackData, CharaGroup>,
 	public String name = "";
 
 	@JCIdentifier
-	public Identifier<CharaGroup> id;
-
+	public final Identifier<CharaGroup> id;
 	public int type = 0;
 
 	@JsonField(generic = Form.class, alias = AbForm.AbFormJson.class, backCompat = JsonField.CompatType.FORK)
@@ -40,16 +39,23 @@ public class CharaGroup extends Data implements Indexable<PackData, CharaGroup>,
 
 	@JsonClass.JCConstructor
 	public CharaGroup() {
-
-	}
-
-	public CharaGroup(CharaGroup cg) {
-		type = cg.type;
-		fset.addAll(cg.fset);
+		id = null;
 	}
 
 	public CharaGroup(Identifier<CharaGroup> id) {
 		this.id = id;
+	}
+
+	public CharaGroup(CharaGroup cg) {
+		this(cg.id);
+		type = cg.type;
+		fset.addAll(cg.fset);
+	}
+
+	public CharaGroup(Identifier<CharaGroup> id, CharaGroup cg) {
+		this(id);
+		type = cg.type;
+		fset.addAll(cg.fset);
 	}
 
 	public CharaGroup(int ID, int t, Identifier<AbUnit>[] units) {
@@ -99,7 +105,7 @@ public class CharaGroup extends Data implements Indexable<PackData, CharaGroup>,
 	public boolean used() {
 		UserPack mc = (UserPack) getCont();
 		for (LvRestrict lr : mc.lvrs.getList())
-			if (lr.res.containsKey(this))
+			if (lr.cgl.containsKey(this))
 				return true;
 		for (StageMap sm : mc.mc.maps)
 			for (Stage st : sm.list)

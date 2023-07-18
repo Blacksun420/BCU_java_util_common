@@ -1,5 +1,7 @@
 package common.util.stage;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import common.battle.LineUp;
 import common.io.assets.Admin.StaticPermitted;
 import common.io.json.JsonClass;
@@ -7,6 +9,7 @@ import common.io.json.JsonClass.JCIdentifier;
 import common.io.json.JsonClass.NoTag;
 import common.io.json.JsonDecoder;
 import common.io.json.JsonField;
+import common.io.json.localDecoder;
 import common.pack.Identifier;
 import common.pack.IndexContainer.IndexCont;
 import common.pack.IndexContainer.Indexable;
@@ -25,12 +28,15 @@ import java.util.TreeMap;
 public class LvRestrict extends Data implements Indexable<PackData, LvRestrict> {
 
 	@StaticPermitted
-	public static final int[] MAX = new int[] { 50, 70, 10, 10, 10, 10, 10 };
+	public static final Level MAX = new Level(50, 70, new int[0]);
 
-	@JsonField(generic = { CharaGroup.class, int[].class }, alias = Identifier.class)
-	public final TreeMap<CharaGroup, int[]> res = new TreeMap<>();
-	public int[][] rares = new int[RARITY_TOT][7];
-	public int[] all = new int[7];
+	@JsonField(generic = { CharaGroup.class, Level.class }, alias = Identifier.class, backCompat = JsonField.CompatType.FORK)
+	public final TreeMap<CharaGroup, Level> cgl = new TreeMap<>();
+	@JsonField(backCompat = JsonField.CompatType.FORK)
+	public Level[] rs = new Level[RARITY_TOT];
+	@JsonField(backCompat = JsonField.CompatType.FORK)
+	public Level def = new Level();
+
 	@JCIdentifier
 	public Identifier<LvRestrict> id;
 	public String name = "";
@@ -41,44 +47,57 @@ public class LvRestrict extends Data implements Indexable<PackData, LvRestrict> 
 	}
 
 	public LvRestrict(Identifier<LvRestrict> ID) {
-		all = MAX.clone();
+		def = MAX.clone();
 		for (int i = 0; i < RARITY_TOT; i++)
-			rares[i] = MAX.clone();
+			rs[i] = MAX.clone();
 		id = ID;
 	}
 
 	public LvRestrict(Identifier<LvRestrict> ID, LvRestrict lvr) {
 		id = ID;
-		all = lvr.all.clone();
+		def = lvr.def.clone();
 		for (int i = 0; i < RARITY_TOT; i++)
-			rares[i] = lvr.rares[i].clone();
-		for (CharaGroup cg : lvr.res.keySet())
-			res.put(cg, lvr.res.get(cg).clone());
+			rs[i] = lvr.rs[i].clone();
+		for (CharaGroup cg : lvr.cgl.keySet())
+			cgl.put(cg, lvr.cgl.get(cg).clone());
 	}
 
 	private LvRestrict(LvRestrict lvr) {
-		for (CharaGroup cg : lvr.res.keySet())
-			res.put(cg, lvr.res.get(cg).clone());
+		for (CharaGroup cg : lvr.cgl.keySet())
+			cgl.put(cg, lvr.cgl.get(cg).clone());
 	}
 
 	public LvRestrict combine(LvRestrict lvr) {
 		LvRestrict ans = new LvRestrict(this);
-		for (int i = 0; i < 7; i++)
-			ans.all[i] = Math.min(lvr.all[i], all[i]);
+		ans.def = combineLvs(lvr.def, def);
 		for (int i = 0; i < RARITY_TOT; i++)
-			for (int j = 0; j < 7; j++)
-				ans.rares[i][j] = Math.min(lvr.rares[i][j], rares[i][j]);
-		for (CharaGroup cg : lvr.res.keySet())
-			if (res.containsKey(cg)) {
-				int[] lv0 = res.get(cg);
-				int[] lv1 = lvr.res.get(cg);
-				int[] lv = new int[7];
-				for (int i = 0; i < 7; i++)
-					lv[i] = Math.min(lv0[i], lv1[i]);
-				ans.res.put(cg, lv);
+			ans.def = combineLvs(lvr.rs[i], rs[i]);
+
+		for (CharaGroup cg : lvr.cgl.keySet())
+			if (cgl.containsKey(cg)) {
+				Level lv0 = cgl.get(cg);
+				Level lv1 = lvr.cgl.get(cg);
+
+				ans.cgl.put(cg, combineLvs(lv0, lv1));
 			} else
-				ans.res.put(cg, lvr.res.get(cg).clone());
+				ans.cgl.put(cg, lvr.cgl.get(cg).clone());
 		return ans;
+	}
+
+	public static Level combineLvs(Level src, Level dst) {
+		int lv = Math.min(dst.getLv(), src.getLv());
+		int plv = Math.min(dst.getPlusLv(), src.getPlusLv());
+
+		int[] anp = dst.getTalents(), np = src.getTalents();
+		int[] nps = new int[Math.max(anp.length, np.length)];
+		for (int i = 0; i < nps.length; i++)
+			if (i >= anp.length)
+				nps[i] = np[i];
+			else if (i >= np.length)
+				nps[i] = anp[i];
+			else
+				nps[i] = Math.min(np[i], anp[i]);
+		return new Level(lv, plv, nps);
 	}
 
 	@Override
@@ -126,23 +145,19 @@ public class LvRestrict extends Data implements Indexable<PackData, LvRestrict> 
 	}
 
 	public Level valid(AbForm f) {
-		int[] lv = MAX.clone();
+		Level lv = MAX.clone();
 		boolean mod = false;
-		for (CharaGroup cg : res.keySet())
+		for (CharaGroup cg : cgl.keySet())
 			if (f instanceof Form && cg.fset.contains(f)) {
-				int[] rst = res.get(cg);
-				for (int i = 0; i < 6; i++)
-					lv[i] = Math.min(lv[i], rst[i]);
+				lv = combineLvs(cgl.get(cg), lv);
 				mod = true;
 			}
 		if (mod)
-			return f.regulateLv(null, Level.lvList(f.unit(), lv, null));
+			return f.regulateLv(null, lv);
 		if (f instanceof Form)
-			for (int i = 0; i < 6; i++)
-				lv[i] = Math.min(lv[i], rares[((Form)f).unit.rarity][i]);
-		for (int i = 0; i < 6; i++)
-			lv[i] = Math.min(lv[i], all[i]);
-		return f.regulateLv(null, Level.lvList(f.unit(), lv, null));
+			lv = combineLvs(rs[((Form)f).unit.rarity], lv);
+		lv = combineLvs(def, lv);
+		return f.regulateLv(null, lv);
 	}
 
 	public void validate(LineUp lu) {
@@ -153,34 +168,58 @@ public class LvRestrict extends Data implements Indexable<PackData, LvRestrict> 
 		lu.renew();
 	}
 
+	@JsonField(tag = "all", io = JsonField.IOType.W, backCompat = JsonField.CompatType.UPST)
+	public int[] oldAll() {
+		return toOldFormat(def);
+	}
+
+	@JsonField(tag = "rares", io = JsonField.IOType.W, backCompat = JsonField.CompatType.UPST)
+	public int[][] oldRares() {
+		int[][] rr = new int[RARITY_TOT][6];
+		for (int i = 0; i < rr.length; i++)
+			rr[i] = toOldFormat(rs[i]);
+		return rr;
+	}
+
+	@JsonField(tag = "res", io = JsonField.IOType.W, backCompat = JsonField.CompatType.UPST)
+	public TreeMap<CharaGroup, int[]> oldRes() {
+		TreeMap<CharaGroup, int[]> ors = new TreeMap<>();
+		for (CharaGroup cg : cgl.keySet())
+			ors.put(cg, toOldFormat(cgl.get(cg)));
+		return ors;
+	}
+
+	private static int[] toOldFormat(Level lv) {
+		int[] arrs = new int[]{lv.getLv(), lv.getPlusLv(), 10, 10, 10, 10, 10};
+		for (int i = 2; i < Math.min(arrs.length, lv.getTalents().length); i++)
+			arrs[i] = lv.getTalents()[i];
+		return arrs;
+	}
+
+	private static Level toNewFormat(int[] lvs) {
+		Level lv = new Level(lvs[0], lvs[1], new int[0]);
+		int[] nps = new int[lvs.length - 2];
+		System.arraycopy(lvs, 2, nps, 0, nps.length);
+		lv.setTalents(nps);
+		return lv;
+	}
+
 	@JsonDecoder.OnInjected
-	public void onInjected() {
-		res.replaceAll((k, v) -> {
-			if(v == null)
-				return MAX.clone();
-			if(v.length == 6) {
-				int[] l = new int[7];
-				l[0] = v[0];
-				System.arraycopy(v, 1, l, 2, l.length - 2);
-				return l;
-			}
-			return v;
-		});
+	public void onInjected(JsonObject jobj) {
+		UserPack pack = (UserPack)getCont();
+		if (pack.desc.FORK_VERSION < 10) {
+			def = toNewFormat(JsonDecoder.decode(jobj.get("all"), int[].class));
+			int[][] oldRares = JsonDecoder.decode(jobj.get("rares"), int[][].class);
+			for (int i = 0; i < RARITY_TOT; i++)
+				rs[i] = toNewFormat(oldRares[i]);
 
-		for(int i = 0; i < rares.length; i++) {
-			if (rares[i].length == 6) {
-				int[] l = new int[7];
-				l[0] = rares[i][0];
-				System.arraycopy(rares[i], 1, l, 2, l.length - 2);
-				rares[i] = l;
+			JsonArray jarr = jobj.getAsJsonArray("res");
+			int n = jarr.size();
+			for (int i = 0; i < n; i++) {
+				JsonObject job = jarr.get(i).getAsJsonObject();
+				CharaGroup ch = new localDecoder(job.get("key"), CharaGroup.class, this).setAlias(Identifier.class).decode();
+				cgl.put(ch, toNewFormat(JsonDecoder.decode(job.get("val"), int[].class)));
 			}
-		}
-
-		if (all.length == 6) {
-			int[] l = new int[7];
-			l[0] = all[0];
-			System.arraycopy(all, 1, l, 2, l.length - 2);
-			all = l;
 		}
 	}
 }

@@ -53,6 +53,17 @@ public class Level implements BattleStatic, LevelInterface {
 		return lv;
 	}
 
+	public static String lvString(Level lvs) {
+		StringBuilder str = new StringBuilder().append("Lv.").append(lvs.getLv()).append(" + ").append(lvs.getPlusLv());
+		if (lvs.getTalents().length > 0) {
+			str.append(" {");
+			for (int i = 0; i < lvs.getTalents().length - 1; i++)
+				str.append(lvs.getTalents()[i]).append(",");
+			str.append(lvs.getTalents()[lvs.getTalents().length - 1]).append("}");
+		}
+		return str.toString();
+	}
+
 	@JsonClass.JCConstructor
 	public Level() {
 		level = 1;

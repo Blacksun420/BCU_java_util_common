@@ -135,6 +135,11 @@ public class localDecoder {
         return this;
     }
 
+    public localDecoder setGeneric(Class<?>... cls) {
+        locfld.generic = cls;
+        return this;
+    }
+
     public localDecoder setAlias(Class<?>... cls) {
         locfld.alias = cls;
         return this;
