@@ -4,12 +4,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import common.CommonStatic;
 import common.io.assets.Admin.StaticPermitted;
-import common.io.json.FieldOrder;
+import common.io.json.*;
 import common.io.json.FieldOrder.Order;
-import common.io.json.JsonClass;
 import common.io.json.JsonClass.NoTag;
-import common.io.json.JsonDecoder;
-import common.io.json.JsonEncoder;
 import common.pack.Context.ErrType;
 import common.pack.Context.RunExc;
 import common.pack.Context.SupExc;
@@ -342,15 +339,9 @@ public class Data {
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class WARP extends PT {
 			@Order(2)
-			public int dis_0;
+			public int dis;
 			@Order(3)
 			public int dis_1;
-
-			@JsonDecoder.OnInjected
-			public void OnIReaction(JsonObject jobj) {
-				if (jobj.has("dis"))
-					dis_0 = dis_1 = jobj.get("dis").getAsInt();
-			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)

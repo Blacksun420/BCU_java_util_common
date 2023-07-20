@@ -333,10 +333,10 @@ public class Editors {
 		map().put("WARP", new EditControl<>(Proc.WARP.class, (t) -> {
 			t.prob = MathUtil.clip(t.prob, 0, 100);
 			if (t.prob == 0) {
-				t.dis_0 = t.dis_1 = t.time = 0;
+				t.dis = t.dis_1 = t.time = 0;
 			} else {
-				int oDis = t.dis_0;
-				t.dis_0 = Math.min(t.dis_0, t.dis_1);
+				int oDis = t.dis;
+				t.dis = Math.min(t.dis, t.dis_1);
 				t.dis_1 = Math.max(oDis, t.dis_1);
 			}
 		}));

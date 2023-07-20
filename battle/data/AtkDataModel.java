@@ -222,8 +222,8 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 			if ((ce instanceof CustomUnit && spTrait && dire == -1) || (ce instanceof CustomEnemy && ((spTrait && dire == 1) || (!spTrait && dire == -1))))
 				traits.addAll(ce.traits);
 		}
-		if (proc.WARP.dis_1 < proc.WARP.dis_0)
-			proc.WARP.dis_1 = proc.WARP.dis_0;
+		if (proc.WARP.dis_1 < proc.WARP.dis)
+			proc.WARP.dis_1 = proc.WARP.dis;
 	}
 
 	@JsonDecoder.PostLoad
@@ -238,6 +238,8 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 					traits.addAll(UserProfile.getUserPack(dep).traits.getList());
 			}
 		}
+		if (proc.WARP.prob > 0 && UserProfile.isOlderPack((PackData.UserPack)ce.getPack().getPack(), "0.7.4.2"))
+			proc.WARP.dis_1 = proc.WARP.dis;
 	}
 
 	@JsonField(tag = "alt", io = JsonField.IOType.W, backCompat = JsonField.CompatType.UPST)

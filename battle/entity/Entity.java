@@ -1993,7 +1993,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		if (atk.getProc().WARP.exists())
 			if (getProc().IMUWARP.mult < 100) {
 				Data.Proc.WARP warp = atk.getProc().WARP;
-				interrupt(INT_WARP, warp.dis_0 == warp.dis_1 ? warp.dis_0 : warp.dis_0 + (int)(basis.r.nextDouble() * (warp.dis_1 - warp.dis_0)));
+				interrupt(INT_WARP, warp.dis == warp.dis_1 ? warp.dis : warp.dis + (int)(basis.r.nextDouble() * (warp.dis_1 - warp.dis)));
 				EffAnim<WarpEff> e = effas().A_W;
 				int len = e.len(WarpEff.ENTER) + e.len(WarpEff.EXIT);
 				int val = atk.getProc().WARP.time;
