@@ -47,9 +47,7 @@ public class CharaGroup extends Data implements Indexable<PackData, CharaGroup>,
 	}
 
 	public CharaGroup(CharaGroup cg) {
-		this(cg.id);
-		type = cg.type;
-		fset.addAll(cg.fset);
+		this(cg.id, cg);
 	}
 
 	public CharaGroup(Identifier<CharaGroup> id, CharaGroup cg) {

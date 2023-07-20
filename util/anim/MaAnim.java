@@ -20,6 +20,7 @@ public class MaAnim extends Data implements BattleStatic {
 		try {
 			return new MaAnim(f.readLine());
 		} catch (Exception e) {
+			System.out.println("Error reading " + f.getPath());
 			e.printStackTrace();
 			return new MaAnim();
 		}

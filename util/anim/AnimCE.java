@@ -243,10 +243,10 @@ public class AnimCE extends AnimCI {
 							list.add(((CustomBGEffect) bge).anim);
 				if (list.size() == 0)
 					continue;
-				((Workspace)pack.source).addAnimation(this);
 				ResourceLocation rl = new ResourceLocation(pack.getSID(), id.id, id.base);
 				Workspace.validate(rl);
 				AnimCE tar = new AnimCE(rl, this);
+				((Workspace)pack.source).addAnimation(tar);
 				for (Animable<AnimU<?>, UType> a : list)
 					a.anim = tar;
 			}

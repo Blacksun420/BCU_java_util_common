@@ -1,5 +1,6 @@
 package common.util.stage;
 
+import common.battle.LineUp;
 import common.battle.data.MaskUnit;
 import common.io.json.JsonClass;
 import common.io.json.JsonField;
@@ -8,6 +9,7 @@ import common.pack.UserProfile;
 import common.util.BattleStatic;
 import common.util.Data;
 import common.util.stage.MapColc.DefMapColc;
+import common.util.unit.AbForm;
 import common.util.unit.Form;
 
 @JsonClass
@@ -49,7 +51,7 @@ public class Limit extends Data implements BattleStatic {
 	@JsonField
 	public int star = -1, sid = -1;
 	@JsonField
-	public int rare, num, line, min, max;
+	public int rare, num, line, min, max, fa; //last var could be named forceAmount, but that'd take too much json space
 	@JsonField(alias = Identifier.class)
 	public CharaGroup group;
 	@JsonField(alias = Identifier.class)
@@ -109,6 +111,20 @@ public class Limit extends Data implements BattleStatic {
 			return true;
 		return group != null && !group.allow(f);
 	}
+
+	/*public boolean valid(LineUp lu) {
+		if (group != null) {
+			int count = 0;
+			for (AbForm[] fa : lu.fs)
+				for (AbForm f : fa) {
+					if (f == null)
+						break;
+					if (f instanceof Form) {
+						if (group.fset)
+					}
+				}
+		}
+	}*/
 
 	@Override
 	public String toString() {
