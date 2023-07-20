@@ -157,7 +157,7 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 							}
 						if (form.getPCoin() != null)
 							for (int[] dat : form.pcoin.info)
-								if (dat[13] == 1)
+								if (dat.length == 14 && dat[13] == 1)
 									dat[13] = 60;
 					} //Finish FORK_VERSION 1 checks
 					if (form.getPCoin() != null) {

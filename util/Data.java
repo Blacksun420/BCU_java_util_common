@@ -339,11 +339,18 @@ public class Data {
 			public TYPE type = new TYPE();
 		}
 
+		@JsonClass(noTag = NoTag.LOAD)
 		public static class WARP extends PT {
 			@Order(2)
 			public int dis_0;
 			@Order(3)
 			public int dis_1;
+
+			@JsonDecoder.OnInjected
+			public void OnIReaction(JsonObject jobj) {
+				if (jobj.has("dis"))
+					dis_0 = dis_1 = jobj.get("dis").getAsInt();
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -1011,22 +1018,18 @@ public class Data {
 		@SuppressWarnings("unused")
 		public static Proc genProc(JsonElement elem) {
 			Proc proc = Proc.blank();
-
 			if(elem == null)
 				return proc;
 
 			JsonObject obj = elem.getAsJsonObject();
-
 			if(obj == null)
 				return proc;
 
 			for(Field f : getDeclaredFields()) {
 				String tag = f.getName();
-
 				try {
 					if(obj.has(tag) && !obj.get(tag).isJsonNull()) {
 						f.setAccessible(true);
-
 						f.set(proc, JsonDecoder.decode(obj.get(tag), f.getType()));
 					}
 				} catch (Exception e) {
