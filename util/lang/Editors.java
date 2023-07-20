@@ -271,7 +271,7 @@ public class Editors {
 				t.smartImu = 0;
 		});
 
-		EditControl<Proc.MULT> wavei = new EditControl<>(Proc.MULT.class, (t) -> t.mult = Math.min(t.mult, 100));
+		EditControl<Proc.MULT> wavei = new EditControl<>(Proc.MULT.class, t -> t.mult = Math.min(t.mult, 100));
 
 		map().put("KB", new EditControl<>(Proc.PTD.class, (t) -> {
 			t.prob = MathUtil.clip(t.prob, 0, 100);
@@ -330,10 +330,10 @@ public class Editors {
 
 		map().put("BREAK", prob);
 
-		map().put("WARP", new EditControl<>(Proc.PTD.class, (t) -> {
+		map().put("WARP", new EditControl<>(Proc.WARP.class, (t) -> {
 			t.prob = MathUtil.clip(t.prob, 0, 100);
 			if (t.prob == 0) {
-				t.dis = t.time = 0;
+				t.dis_0 = t.dis_1 = t.time = 0;
 			}
 		}));
 
@@ -627,7 +627,7 @@ public class Editors {
 			}
 		}));
 
-		map().put("DEMONSHIELD", new EditControl<>(Proc.DSHIELD.class, (t) -> {
+		map().put("DEMONSHIELD", new EditControl<>(Proc.DSHIELD.class, t -> {
 			t.hp = Math.max(0, t.hp);
 
 			if(t.hp == 0)
@@ -638,19 +638,19 @@ public class Editors {
 
 		map().put("SHIELDBREAK", prob);
 
-		map().put("DEATHSURGE", new EditControl<>(Proc.VOLC.class, (t) -> {
+		map().put("DEATHSURGE", new EditControl<>(Proc.VOLC.class, t -> {
 			t.prob = MathUtil.clip(t.prob, 0, 100);
 			if (t.prob == 0) {
 				t.dis_0 = t.dis_1 = t.time = 0;
 			} else {
 				t.time = Math.max(1, t.time / Data.VOLC_ITV) * Data.VOLC_ITV;
 			}
-		}));
+		}, eg -> t -> setComponentVisibility(eg, false, 3)));
 
-		map().put("BOUNTY", new EditControl<>(Proc.MULT.class, (t) -> {}));
-		map().put("ATKBASE", new EditControl<>(Proc.MULT.class, (t) -> {}));
+		map().put("BOUNTY", new EditControl<>(Proc.MULT.class, t -> {}));
+		map().put("ATKBASE", new EditControl<>(Proc.MULT.class, t -> {}));
 
-		map().put("WORKERLV", new EditControl<>(Proc.PM.class, (t) -> {
+		map().put("WORKERLV", new EditControl<>(Proc.PM.class, t -> {
 			t.prob = MathUtil.clip(t.prob, 0, 100);
 			if (t.prob == 0)
 				t.mult = 0;

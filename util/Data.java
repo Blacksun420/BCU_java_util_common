@@ -339,6 +339,13 @@ public class Data {
 			public TYPE type = new TYPE();
 		}
 
+		public static class WARP extends PT {
+			@Order(2)
+			public int dis_0;
+			@Order(3)
+			public int dis_1;
+		}
+
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class TIME extends PT {
 			@Order(2)
@@ -800,7 +807,7 @@ public class Data {
 		@Order(10)
 		public final PROB SHIELDBREAK = new PROB();
 		@Order(11)
-		public final PTD WARP = new PTD();
+		public final WARP WARP = new WARP();
 		@Order(12)
 		public final PT CURSE = new PT();
 		@Order(13)

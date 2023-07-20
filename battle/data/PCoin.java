@@ -95,6 +95,56 @@ public class PCoin extends Data {
 		full = improve(max);
 	}
 
+	public void verify() { // TODO: lmao
+		/*Proc proc = du.getAllProc();
+		for (int[] data : info) {
+			data[1] = Math.max(data[1], 1);
+			int type = Data.PC_CORRES[data[0]][1];
+			ProcItem pi = proc.getArr(type);
+
+			for (int i = 0; i < pi.getDeclaredFields().length - 1; i += 2) {
+				int effPos = 2 + i * 2;
+				switch (pi.getFieldName(type)) {
+					case "prob":
+						data[effPos] = MathUtil.clip(data[i], 0, 100 - pi.get(0));
+						data[effPos] = MathUtil.clip(data[i + 1], data[i], 100 - pi.get(0));
+						break;
+				}
+			}
+			/*switch (data[0]) {
+				case 0:
+					break;
+				case 10:
+					data[2] = MathUtil.clip(data[2], 0, 99 - proc.getArr(type).get(0));
+					data[3] = MathUtil.clip(data[3], data[2], 99 - proc.getArr(type).get(0));
+					data[4] = Math.max(data[4], 0);
+					data[5] = Math.max(data[5], data[4]);
+					break;
+				case 25: case 26: case 31: case 32:
+					data[2] = Math.max(data[2], 0);
+					data[3] = Math.max(data[3], data[2]);
+					break;
+				case 64:
+					data[2] = MathUtil.clip(data[2], 0, 100 - proc.getArr(type).get(1));
+					data[3] = MathUtil.clip(data[3], data[2], 100 - proc.getArr(type).get(1));
+					data[4] = Math.max(data[4], 0);
+					data[5] = Math.max(data[5], data[4]);
+					break;
+				case 62: case 1:
+					data[6] = Math.max(data[6], 0);
+					data[7] = Math.max(data[7], data[6]);
+				case 2: case 3: case 9: case 17: case 50: case 51: case 56: case 60: case 65:
+					data[4] = Math.max(data[4], 0);
+					data[5] = Math.max(data[5], data[4]);
+				case 8: case 11: case 13: case 15: case 18: case 19: case 20: case 21: case 22: case 24: case 30:
+				case 52: case 54: case 58:
+					data[2] = MathUtil.clip(data[2], 0, 100 - proc.getArr(type).get(0));
+					data[3] = MathUtil.clip(data[3], data[2], 100 - proc.getArr(type).get(0));
+					break;
+			}/
+		}*/
+	}
+
 	@SuppressWarnings("deprecation")
 	public MaskUnit improve(int[] talents) {
 		MaskUnit ans = du.clone();

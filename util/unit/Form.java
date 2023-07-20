@@ -140,18 +140,25 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 							if (jobj.has("explanation"))
 								description.put(jobj.get("explanation").getAsString().replace("<br>", "\n"));
 						} //Finish 0.6.4.0 check
+						if (form.getProc().SUMMON.prob > 0 && form.getProc().SUMMON.form <= 0) { //boo hoo common proc
+							form.getProc().SUMMON.form = 1;
+							form.getProc().SUMMON.mult = 1;
+							form.getProc().SUMMON.type.fix_buff = true;
+						}
 						for (AtkDataModel atk : atks)
 							if (atk.getProc().SUMMON.prob > 0) {
-								if (atk.getProc().SUMMON.id != null && !Unit.class.isAssignableFrom(atk.getProc().SUMMON.id.cls))
+								if (atk.getProc().SUMMON.form <= 0) {
+									atk.getProc().SUMMON.form = 1;
+									atk.getProc().SUMMON.mult = 1;
+									atk.getProc().SUMMON.type.fix_buff = true;
+								} else if (atk.getProc().SUMMON.id != null && !Unit.class.isAssignableFrom(atk.getProc().SUMMON.id.cls))
 									atk.getProc().SUMMON.type.fix_buff = true;
 								atk.getProc().SUMMON.amount = 1;
 							}
-						for (AtkDataModel atk : atks)
-							if (atk.getProc().SUMMON.prob > 0 && atk.getProc().SUMMON.form <= 0) {
-								atk.getProc().SUMMON.form = 1;
-								atk.getProc().SUMMON.mult = 1;
-								atk.getProc().SUMMON.type.fix_buff = true;
-							}
+						if (form.getPCoin() != null)
+							for (int[] dat : form.pcoin.info)
+								if (dat[13] == 1)
+									dat[13] = 60;
 					} //Finish FORK_VERSION 1 checks
 					if (form.getPCoin() != null) {
 						form.pcoin.info.replaceAll(data -> {
