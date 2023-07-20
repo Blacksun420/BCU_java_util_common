@@ -222,6 +222,8 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 			if ((ce instanceof CustomUnit && spTrait && dire == -1) || (ce instanceof CustomEnemy && ((spTrait && dire == 1) || (!spTrait && dire == -1))))
 				traits.addAll(ce.traits);
 		}
+		if (proc.WARP.dis_1 < proc.WARP.dis_0)
+			proc.WARP.dis_1 = proc.WARP.dis_0;
 	}
 
 	@JsonDecoder.PostLoad
