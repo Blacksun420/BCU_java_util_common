@@ -25,8 +25,8 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
         }
     }
 
-    public Object[] arr;
-    public int size = 0;
+    private Object[] arr;
+    private int size = 0;
     private Comparator<T> comp = null;
 
     public SortedPackSet() {
@@ -261,7 +261,6 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
             if (np.size() == size)
                 break;
         }
-
         return np;
     }
 

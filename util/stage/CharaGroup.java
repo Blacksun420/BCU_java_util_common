@@ -67,7 +67,7 @@ public class CharaGroup extends Data implements Indexable<PackData, CharaGroup>,
 	}
 
 	public boolean allow(Form f) {
-		return (type != 0 || fset.contains(f)) && (type != 2 || !fset.contains(f));
+		return type % 2 != 0 || (type == 0 && fset.contains(f)) || (type == 2 && !fset.contains(f));
 	}
 
 	public CharaGroup combine(CharaGroup cg) {
@@ -127,7 +127,7 @@ public class CharaGroup extends Data implements Indexable<PackData, CharaGroup>,
 		}
 	}
 
-	@JsonField(tag = "set", io = JsonField.IOType.W, backCompat = JsonField.CompatType.UPST)
+	@JsonField(tag = "set", io = JsonField.IOType.W, alias = Identifier.class, backCompat = JsonField.CompatType.UPST)
 	public SortedPackSet<Unit> getBGEff() {
 		SortedPackSet<Unit> uset = new SortedPackSet<>();
 		for (Form f : fset)

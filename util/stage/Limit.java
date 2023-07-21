@@ -5,6 +5,7 @@ import common.battle.data.MaskUnit;
 import common.io.json.JsonClass;
 import common.io.json.JsonField;
 import common.pack.Identifier;
+import common.pack.SortedPackSet;
 import common.pack.UserProfile;
 import common.util.BattleStatic;
 import common.util.Data;
@@ -51,7 +52,9 @@ public class Limit extends Data implements BattleStatic {
 	@JsonField
 	public int star = -1, sid = -1;
 	@JsonField
-	public int rare, num, line, min, max, fa; //last var could be named forceAmount, but that'd take too much json space
+	public int rare, num, line, min, max;
+	@JsonField(backCompat = JsonField.CompatType.FORK)
+	public int fa; //last var could be named forceAmount, but that'd take too much json space
 	@JsonField(alias = Identifier.class)
 	public CharaGroup group;
 	@JsonField(alias = Identifier.class)
@@ -66,6 +69,7 @@ public class Limit extends Data implements BattleStatic {
 	@Override
 	public Limit clone() {
 		Limit l = new Limit();
+		l.fa = fa;
 		l.star = star;
 		l.sid = sid;
 		l.rare = rare;
@@ -112,19 +116,38 @@ public class Limit extends Data implements BattleStatic {
 		return group != null && !group.allow(f);
 	}
 
-	/*public boolean valid(LineUp lu) {
-		if (group != null) {
-			int count = 0;
-			for (AbForm[] fa : lu.fs)
-				for (AbForm f : fa) {
-					if (f == null)
-						break;
-					if (f instanceof Form) {
-						if (group.fset)
-					}
-				}
+	public boolean valid(LineUp lu) {
+		if (group != null && group.type % 2 != 0) {
+			SortedPackSet<Form> fSet = getValid(lu);
+			if ((group.type == 1 && fSet.size() < fa) || (group.type == 3 && fSet.size() > fa))
+				return false;
 		}
-	}*/
+		return lvr == null || lvr.isValid(lu);
+	}
+
+	public SortedPackSet<Form> getValid(LineUp lu) {
+		SortedPackSet<Form> fSet = new SortedPackSet<>();
+		boolean brek = false;
+		for (AbForm[] fs : lu.fs) {
+			for (AbForm f : fs) {
+				if (brek = f == null)
+					break;
+				validForm(fSet, f);
+			}
+			if (brek)
+				break;
+		}
+		return fSet;
+	}
+
+	private void validForm(SortedPackSet<Form> fSet, AbForm f) {
+		if (f instanceof Form) {
+			if (group.fset.contains(f))
+				fSet.add((Form)f);
+		} else if (f != null)
+			for (AbForm ff : f.unit().getForms())
+				validForm(fSet, ff);
+	}
 
 	@Override
 	public String toString() {

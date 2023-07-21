@@ -246,6 +246,7 @@ public class AnimCE extends AnimCI {
 				ResourceLocation rl = new ResourceLocation(pack.getSID(), id.id, id.base);
 				Workspace.validate(rl);
 				AnimCE tar = new AnimCE(rl, this);
+				tar.parts = tar.imgcut.cut(tar.getNum());
 				((Workspace)pack.source).addAnimation(tar);
 				for (Animable<AnimU<?>, UType> a : list)
 					a.anim = tar;
