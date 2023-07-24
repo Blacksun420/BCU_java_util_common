@@ -206,6 +206,8 @@ public class LvRestrict extends Data implements Indexable<PackData, LvRestrict> 
 
 	@JsonDecoder.OnInjected
 	public void onInjected(JsonObject jobj) {
+		if (!(getCont() instanceof UserPack))
+			return;
 		UserPack pack = (UserPack)getCont();
 		if (pack.desc.FORK_VERSION < 10) {
 			def = toNewFormat(JsonDecoder.decode(jobj.get("all"), int[].class));
