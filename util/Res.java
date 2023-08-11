@@ -248,21 +248,9 @@ public class Res extends ImgCore {
 		aux.icon[1][P_DMGINC] = new VImg(parts[206]);
 		aux.icon[1][P_RANGESHIELD] = new VImg("./org/page/icons/TargetShield.png");
 
-		aux.icon[2][ATK_SINGLE] = new VImg(parts[217]);
-		aux.icon[2][ATK_AREA] = new VImg(parts[211]);
-		aux.icon[2][ATK_LD] = new VImg(parts[212]);
-		aux.icon[2][ATK_OMNI] = new VImg(parts[112]);
-
-		aux.icon[3][TRAIT_RED] = new VImg(parts[77]);
-		aux.icon[3][TRAIT_FLOAT] = new VImg(parts[78]);
-		aux.icon[3][TRAIT_BLACK] = new VImg(parts[79]);
-		aux.icon[3][TRAIT_METAL] = new VImg(parts[80]);
-		aux.icon[3][TRAIT_ANGEL] = new VImg(parts[81]);
-		aux.icon[3][TRAIT_ALIEN] = new VImg(parts[82]);
-		aux.icon[3][TRAIT_ZOMBIE] = new VImg(parts[83]);
-		aux.icon[3][TRAIT_RELIC] = new VImg(parts[84]);
-		aux.icon[3][TRAIT_DEMON] = new VImg(parts[85]);
+		langIcons();
 		aux.icon[3][TRAIT_WHITE] = new VImg(parts[86]);
+
 		aux.icon[3][TRAIT_WITCH] = new VImg("./org/page/icons/Witch.png");
 		aux.icon[3][TRAIT_EVA] = new VImg("./org/page/icons/Eva.png");
 		aux.icon[3][TRAIT_BARON] = new VImg("./org/page/icons/Baron.png");
@@ -286,11 +274,32 @@ public class Res extends ImgCore {
 		CommonStatic.getConfig().icon = false;
 	}
 
+	public static void langIcons() {
+		BCAuxAssets aux = CommonStatic.getBCAssets();
+		ImgCut ic015 = ImgCut.newIns("./org/page/img015.imgcut");
+		VImg img015 = new VImg("./org/page/img015" + (CommonStatic.getConfig().lang == 0 ? "_en" : "") + ".png");
+		FakeImage[] parts = ic015.cut(img015.getImg());
+		aux.icon[2][ATK_SINGLE] = new VImg(parts[217]);
+		aux.icon[2][ATK_AREA] = new VImg(parts[211]);
+		aux.icon[2][ATK_LD] = new VImg(parts[212]);
+		aux.icon[2][ATK_OMNI] = new VImg(parts[112]);
+
+		aux.icon[3][TRAIT_RED] = new VImg(parts[77]);
+		aux.icon[3][TRAIT_FLOAT] = new VImg(parts[78]);
+		aux.icon[3][TRAIT_BLACK] = new VImg(parts[79]);
+		aux.icon[3][TRAIT_METAL] = new VImg(parts[80]);
+		aux.icon[3][TRAIT_ANGEL] = new VImg(parts[81]);
+		aux.icon[3][TRAIT_ALIEN] = new VImg(parts[82]);
+		aux.icon[3][TRAIT_ZOMBIE] = new VImg(parts[83]);
+		aux.icon[3][TRAIT_RELIC] = new VImg(parts[84]);
+		aux.icon[3][TRAIT_DEMON] = new VImg(parts[85]);
+	}
+
 	private static void readBattle() {
 		BCAuxAssets aux = CommonStatic.getBCAssets();
 		aux.battle[0] = new VImg[4];
 		aux.battle[1] = new VImg[22];
-		aux.battle[2] = new VImg[9];
+		aux.battle[2] = new VImg[12];
 		ImgCut ic001 = ImgCut.newIns("./org/page/img001.imgcut");
 		VImg img001 = new VImg("./org/page/img001.png");
 		FakeImage[] parts = ic001.cut(img001.getImg());
@@ -372,7 +381,7 @@ public class Res extends ImgCore {
 		aux.battle[2][4] = new VImg(parts[11]);
 		aux.battle[2][5] = new VImg(parts[16]);
 
-		for(int i = 6; i < 9; i++)
+		for(int i = 6; i < aux.battle[2].length; i++)
 			aux.battle[2][i] = new VImg("./org/page/speedUp" + (i - 3) + ".png");
 		// money, lv, lv dark,cost,cost dark,hp, money light,time,point
 	}
