@@ -294,8 +294,8 @@ public class Res extends ImgCore {
 		ImgCut ic001 = ImgCut.newIns("./org/page/img001.imgcut");
 		VImg img001 = new VImg("./org/page/img001.png");
 		FakeImage[] parts = ic001.cut(img001.getImg());
-		int[] vals = new int[] { 5, 19, 30, 40, 51, 62, 73, 88, 115 };
-		int[] adds = new int[] { 1, 2, 2, 0, 0, 1, 1, 1, 0 };
+		byte[] vals = new byte[] { 5, 19, 30, 40, 51, 62, 73, 88, 115 };
+		byte[] adds = new byte[] { 1, 2, 2, 0, 0, 1, 1, 1, 0 };
 		aux.num[5] = new VImg[12];
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 10; j++)
@@ -317,11 +317,9 @@ public class Res extends ImgCore {
 
 		parts = moneyCut.cut(moneyImg.getImg());
 
-		for(int i = 0; i < aux.moneySign.length; i++) {
-			for(int j = 0; j < aux.moneySign[0].length; j++) {
+		for(int i = 0; i < aux.moneySign.length; i++)
+			for(int j = 0; j < aux.moneySign[0].length; j++)
 				aux.moneySign[i][j] = new VImg(parts[i * 4 + j]);
-			}
-		}
 
 		ImgCut ic002 = ImgCut.newIns("./org/page/img002.imgcut");
 		VImg img002 = new VImg("./org/page/img002.png");
@@ -374,10 +372,8 @@ public class Res extends ImgCore {
 		aux.battle[2][4] = new VImg(parts[11]);
 		aux.battle[2][5] = new VImg(parts[16]);
 
-		for(int i = 6; i < 9; i++) {
+		for(int i = 6; i < 9; i++)
 			aux.battle[2][i] = new VImg("./org/page/speedUp" + (i - 3) + ".png");
-		}
-
 		// money, lv, lv dark,cost,cost dark,hp, money light,time,point
 	}
 

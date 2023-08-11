@@ -90,7 +90,7 @@ public class Part extends Data implements Cloneable, Comparable<Part> {
 			off = 0;
 		for (int i = 0; i < n; i++)
 			moves[i][0] += doff;
-		fir = moves.length == 0 ? 0 : moves[0][0];
+		fir = n == 0 ? 0 : moves[0][0];
 		max = n > 0 ? moves[n - 1][0] : 0;
 	}
 

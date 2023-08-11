@@ -82,6 +82,9 @@ public interface Context {
 	@Nonnull
 	File getBCUFolder();
 
+	@Nonnull
+	File newFile(String path);
+
 	String getAuthor();
 
 	void initProfile();

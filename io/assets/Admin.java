@@ -76,6 +76,12 @@ public class Admin {
 			return new File("./");
 		}
 
+		@NotNull
+		@Override
+		public File newFile(String path) {
+			return new File(path);
+		}
+
 		@Override
 		public String getAuthor() {
 			return "";
@@ -165,12 +171,11 @@ public class Admin {
 	public static List<ZipDesc> read() throws Exception {
 		File folder = new File("./assets/assets/");
 		List<ZipDesc> list = new ArrayList<>();
-		for (File f : folder.listFiles()) {
+		for (File f : folder.listFiles())
 			if (f.getName().endsWith(".asset.bcuzip")) {
 				ZipDesc zd = PackLoader.readPack(Admin::preload, f);
 				list.add(zd);
 			}
-		}
 		return list;
 	}
 

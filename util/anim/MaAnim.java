@@ -103,10 +103,10 @@ public class MaAnim extends Data implements BattleStatic {
 	protected void update(int f, EAnimD<?> eAnim, boolean rotate) {
 		if (rotate)
 			f %= max + 1;
-		if (f == 0) {
+		if (f == 0)
 			for (EPart e : eAnim.ent)
 				e.setValue();
-		}
+
 		for (int i = 0; i < n; i++) {
 			int loop = parts[i].ints[2];
 			int smax = parts[i].max;
@@ -117,9 +117,8 @@ public class MaAnim extends Data implements BattleStatic {
 			if (prot) {
 				int mf = loop == -1 ? smax : max + 1;
 				frame = mf == 0 ? 0 : (f + parts[i].off) % mf;
-			} else {
+			} else
 				frame = f + parts[i].off;
-			}
 			if (loop > 0 && lmax != 0) {
 				if (frame > fir + loop * lmax) {
 					parts[i].ensureLast(eAnim.ent);

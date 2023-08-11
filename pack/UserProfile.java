@@ -269,7 +269,7 @@ public class UserProfile {
 	}
 
 	public static UserPack readJsonPack(File f) throws Exception {
-		File folder = f.getParentFile().getName().equals("_autosave") ? new File(f.getParentFile().getPath() + "/" + f.getName()) : f.getParentFile();
+		File folder = f.getName().length() == 9 ? f.getParentFile() : new File(f.getParentFile().getPath() + "/" + f.getName().substring(5, f.getName().indexOf("."))); //pack.json : pack_ID.json
 		Reader r = new InputStreamReader(Files.newInputStream(f.toPath()), StandardCharsets.UTF_8);
 		JsonElement elem = JsonParser.parseReader(r);
 		r.close();

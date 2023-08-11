@@ -20,8 +20,11 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 
 	@JsonField(block = true)
 	public final CustomEntity ce;
+	@JsonField(backCompat = JsonField.CompatType.FORK)
 	public String str = "";
-	public int atk, pre = 1, ld0, ld1, targ = TCH_N, count = -1, dire = 1, move = 0;
+	public int atk, ld0, ld1, targ = TCH_N, count = -1, dire = 1, move = 0;
+	@JsonField(backCompat = JsonField.CompatType.FORK)
+	public int pre = 1;
 	public boolean range = true;
 	@JsonField(backCompat = JsonField.CompatType.FORK)
 	public int alt = 0;
@@ -240,6 +243,16 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 		}
 		if (proc.WARP.prob > 0 && UserProfile.isOlderPack((PackData.UserPack)ce.getPack().getPack(), "0.7.4.2"))
 			proc.WARP.dis_1 = proc.WARP.dis;
+	}
+
+	@JsonField(tag = "str", io = JsonField.IOType.W, backCompat = JsonField.CompatType.UPST)
+	public String Ustr() {
+		return str.startsWith("combo") && pre == 0 ? str.replace("combo", "[c]") : str;
+	}
+
+	@JsonField(tag = "pre", io = JsonField.IOType.W, backCompat = JsonField.CompatType.UPST)
+	public int Upre() {
+		return str.startsWith("combo") && pre == 0 ? 1 : pre;
 	}
 
 	@JsonField(tag = "alt", io = JsonField.IOType.W, backCompat = JsonField.CompatType.UPST)
