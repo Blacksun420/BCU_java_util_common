@@ -321,6 +321,7 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 			add(14, id -> new StageMap(id, akuOutbreak+"MSDDM/MapStageDataDM_000.csv", 0));
 
 			add(15, id -> new StageMap(id, abbr + "2_0_Z.csv", 3)).names.put("CotC 1 Zombie");
+			add(16, id -> new StageMap(id, abbr + "2_1_Z.csv", 3)).names.put("CotC 2 Zombie");
 
 			VFile stz = VFile.get("./org/stage/CH/stageZ/");
 			for (VFile vf : stz.list()) {
@@ -343,6 +344,8 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 					maps.get(13).add(id1, id -> new Stage(id, vf, 0));
 				else if (id0 == 7)
 					maps.get(15).add(id1, id -> new Stage(id, vf, 0));
+				else if (id0 == 8)
+					maps.get(16).add(id1, id -> new Stage(id, vf, 0));
 			}
 			VFile stw = VFile.get("./org/stage/CH/stageW/");
 			for (VFile vf : stw.list()) {

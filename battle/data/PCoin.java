@@ -39,7 +39,7 @@ public class PCoin extends Data {
 
 	@JsonField(block = true)
 	public int[] max;
-	@JsonField(generic = int[].class)
+	@JsonField(generic = int[].class, backCompat = JsonField.CompatType.FORK)
 	public final ArrayList<int[]> info = new ArrayList<>();
 
 	public PCoin(CustomEntity ce) {
@@ -96,6 +96,33 @@ public class PCoin extends Data {
 	}
 
 	public void verify() { // TODO: lmao
+		if (du instanceof CustomUnit) {
+			for (int i = 0; i < info.size(); i++) {
+				if (info.get(i)[0] == PC_CORRES.length)
+					continue;
+				if (info.get(i)[0] == 23) {
+					info.get(i)[0]--;
+				} else if (info.get(i)[0] == 5) {
+					info.set(i, Arrays.copyOf(info.get(i), 5));
+					info.get(i)[0] = -38;
+					info.get(i)[4] = info.get(i)[2];
+					info.get(i)[2] = info.get(i)[3] = 150;
+					info.add(new int[]{-39, 1, 200, 200, 0});
+				} else if (info.get(i)[0] == 6 || info.get(i)[0] == 7) {
+					boolean repl = false;
+					for (int[] iii : info)
+						if (info.get(i)[0] - iii[0] == -32) {
+							repl = true;
+							iii[0] *= info.get(i)[0] - 3;
+							break;
+						}
+					if (repl)
+						info.get(i)[0] = PC_CORRES.length;
+				}
+			}
+			info.removeIf(ii -> ii[0] == PC_CORRES.length);
+			onInjected();
+		}
 		/*Proc proc = du.getAllProc();
 		for (int[] data : info) {
 			data[1] = Math.max(data[1], 1);
@@ -301,5 +328,37 @@ public class PCoin extends Data {
 	@OnInjected
 	public void onInjected() {
 		max = info.stream().mapToInt(i -> Math.max(1, i[1])).toArray();
+	}
+
+	@JsonField(tag = "info", io = JsonField.IOType.W, backCompat = JsonField.CompatType.UPST)
+	public ArrayList<int[]> oldInfo() {
+		ArrayList<int[]> oi = new ArrayList<>();
+		for (int[] ii : info) {
+			int[] ni = Arrays.copyOf(ii, 14);
+			ni[13] = ii[ii.length - 1];
+			if (ii.length < 14)
+				ni[ii.length - 1] = 0;
+
+			int[] COR = Data.get_CORRES(ii[0]);
+			if (COR[1] == P_IMUWAVE && COR[5] >= 100)
+				ni[0] = 23;//Port old waveblock talent
+			else if (COR[1] == P_DMGINC)
+				ni[0] = ni[3] < 300 ? 5 : 7;
+			else if (COR[1] == P_DEFINC)
+				ni[0] = ni[3] < 400 ? 5 : 6;
+
+			boolean add = true;
+			if (ni[0] == 5) {
+				for (int[] iii : info)
+					if (iii[0] == 5) {
+						add = false;
+						break;
+					}
+			}
+
+			if (add)
+				oi.add(ni);
+		}
+		return oi;
 	}
 }

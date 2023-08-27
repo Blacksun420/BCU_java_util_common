@@ -3,7 +3,6 @@ package common.io.json;
 import com.google.gson.*;
 import common.io.json.JsonClass.JCGeneric;
 import common.io.json.JsonClass.JCIdentifier;
-import common.io.json.JsonException.Type;
 import common.pack.Identifier;
 import common.util.Data;
 import common.util.stage.CastleImg;
@@ -61,7 +60,7 @@ public class Dependency {
 						break;
 					}
 				if (!found)
-					throw new JsonException(Type.TYPE_MISMATCH, null, "class not present in JCGeneric");
+					throw new JsonException(true, cls, alias + "Not present in JCGeneric");
 				for (Field f : cls.getFields()) {
 					JCIdentifier jcgw = f.getAnnotation(JCIdentifier.class);
 					if (jcgw != null && f.getType() == alias) {
@@ -77,14 +76,14 @@ public class Dependency {
 				JsonField jfield = par.curjfld;
 				if (jfield.ser() == JsonField.SerType.FUNC) {
 					if (jfield.serializer().length() == 0)
-						throw new JsonException(Type.FUNC, null, "no serializer function");
+						throw new JsonException(false, jfield, "no serializer function");
 					Method m = par.obj.getClass().getMethod(jfield.serializer(), cls);
 					collect(set, m.invoke(par.obj, obj), null);
 					return;
 				} else if (jfield.ser() == JsonField.SerType.CLASS) {
 					JsonClass cjc = cls.getAnnotation(JsonClass.class);
 					if (cjc == null || cjc.serializer().length() == 0)
-						throw new JsonException(Type.FUNC, null, "no serializer function");
+						throw new JsonException(false, jfield, "no serializer function");
 					String func = cjc.serializer();
 					Method m = cls.getMethod(func);
 					collect(set, m.invoke(obj), null);
@@ -103,7 +102,7 @@ public class Dependency {
 					return;
 				} else if (jc.write() == JsonClass.WType.CLASS) {
 					if (jc.serializer().length() == 0)
-						throw new JsonException(Type.FUNC, null, "no serializer function");
+						throw new JsonException(false, jc, "no serializer function");
 					String func = jc.serializer();
 					Method m = cls.getMethod(func);
 					collect(set, m.invoke(obj), null);
@@ -116,7 +115,7 @@ public class Dependency {
 				}
 				return;
 			}
-			throw new JsonException(Type.UNDEFINED, null, "object " + obj + ":" + obj.getClass() + " not defined");
+			throw new JsonException(false, obj, obj.getClass() + " not defined");
 		}
 
 		/***
@@ -144,7 +143,7 @@ public class Dependency {
 								return getFuncConstructor(alias, intf);
 					}
 				}
-				throw new JsonException(Type.FUNC, null, "No constructor using " + cls + " found for " + alias);
+				throw new JsonException(false, cls, "No constructor using " + cls + " found");
 			}
 		}
 
@@ -188,10 +187,10 @@ public class Dependency {
 					if (jf.io() == JsonField.IOType.R)
 						continue;
 					if (jf.io() == JsonField.IOType.RW)
-						throw new JsonException(Type.FUNC, null, "functional fields should not have RW type");
+						throw new JsonException(false, obj, "RW IOType", m);
 					String tag = jf.tag();
 					if (tag.length() == 0)
-						throw new JsonException(Type.TAG, null, "function fields must have tag");
+						throw new JsonException(false, obj, "No tag", m);
 					curjfld = jf;
 					collect(set, m.invoke(obj), getInvoker());
 					curjfld = null;

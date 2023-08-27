@@ -1396,12 +1396,12 @@ public class Data {
 			{ 0, P_WEAK }, // 1: weak, reversed health or relic-weak
 			{ 0, P_STOP }, // 2: stop
 			{ 0, P_SLOW }, // 3: slow
-			{ 1, AB_ONLY }, // 4:
-			{ 5, P_DMGINC, 150 }, // 5:
-			{ 5, P_DEFINC, 400 }, // 6:
-			{ 5, P_DMGINC, 300 }, // 7:
+			{ 1, AB_ONLY }, // 4:Target Obnly
+			{ 5, P_DMGINC, 150 }, // 5:Strong Vs.
+			{ 5, P_DEFINC, 400 }, // 6:Resistant
+			{ 5, P_DMGINC, 300 }, // 7:Massive Dmg
 			{ 0, P_KB }, // 8: kb
-			{ 0, P_WARP }, // 9:
+			{ 0, P_WARP }, // 9:Warp
 			{ 0, P_STRONG }, // 10: berserker, reversed health
 			{ 0, P_LETHAL }, // 11: lethal
 			{ 0, P_ATKBASE }, // 12: Base Destroyer
@@ -1766,10 +1766,15 @@ public class Data {
 
 	/**
 	 * convenient method to log an unexpected error. Don't use it to process any
-	 * expected error
+	 * expected error.
 	 */
 	public static <T> T err(SupExc<T> s) {
-		return CommonStatic.ctx.noticeErr(s, ErrType.ERROR, "unexpected error");
+		try {
+			return s.get();
+		} catch (Exception e) {
+			CommonStatic.ctx.noticeErr(e, ErrType.ERROR, "Unexpected Error: " + e + " in " + e.getStackTrace()[0].toString());
+			return null;
+		}
 	}
 
 	public static int getVer(String ver) {

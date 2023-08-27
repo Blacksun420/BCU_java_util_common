@@ -3,7 +3,6 @@ package common.io.json;
 import com.google.gson.*;
 import common.io.json.JsonClass.JCGeneric;
 import common.io.json.JsonClass.JCIdentifier;
-import common.io.json.JsonException.Type;
 import common.util.Data;
 
 import java.lang.reflect.*;
@@ -64,7 +63,7 @@ public class JsonEncoder {
 					break;
 				}
 			if (!found)
-				throw new JsonException(Type.TYPE_MISMATCH, null, cls + " not present in JCGeneric");
+				throw new JsonException(false, cls, "Not present in JCGeneric");
 			for (Field f : cls.getFields()) {
 				JCIdentifier jcgw = f.getAnnotation(JCIdentifier.class);
 				if (jcgw != null && f.getType() == alias)
@@ -77,13 +76,13 @@ public class JsonEncoder {
 			JsonField jfield = par.curjfld;
 			if (jfield.ser() == JsonField.SerType.FUNC) {
 				if (jfield.serializer().length() == 0)
-					throw new JsonException(Type.FUNC, null, "no serializer function");
+					throw new JsonException(false, jfield, "no serializer function");
 				Method m = par.obj.getClass().getMethod(jfield.serializer(), cls);
 				return encode(m.invoke(par.obj, obj));
 			} else if (jfield.ser() == JsonField.SerType.CLASS) {
 				JsonClass cjc = cls.getAnnotation(JsonClass.class);
 				if (cjc == null || cjc.serializer().length() == 0)
-					throw new JsonException(Type.FUNC, null, "no serializer function");
+					throw new JsonException(false, jfield, "no serializer function");
 				String func = cjc.serializer();
 				Method m = cls.getMethod(func);
 				return encode(m.invoke(obj), null);
@@ -95,7 +94,7 @@ public class JsonEncoder {
 				return new JsonEncoder(par, obj).ans;
 			else if (jc.write() == JsonClass.WType.CLASS) {
 				if (jc.serializer().length() == 0)
-					throw new JsonException(Type.FUNC, null, "no serializer function");
+					throw new JsonException(false, jc, "no serializer function");
 				String func = jc.serializer();
 				Method m = cls.getMethod(func);
 				return encode(m.invoke(obj), null);
@@ -106,7 +105,7 @@ public class JsonEncoder {
 			return encodeSet((Set<?>) obj, par);
 		if (obj instanceof Map)
 			return encodeMap((Map<?, ?>) obj, par);
-		throw new JsonException(Type.UNDEFINED, null, "object " + obj + ":" + obj.getClass() + " not defined");
+		throw new JsonException(false, obj, obj.getClass() + " not defined");
 	}
 
 	/***
@@ -134,7 +133,7 @@ public class JsonEncoder {
 							return getFuncConstructor(alias, intf);
 				}
 			}
-			throw new JsonException(Type.FUNC, null, "No constructor using " + cls + " found for " + alias);
+			throw new JsonException(false, alias, "No constructor using " + cls + " found");
 		}
 	}
 
@@ -218,10 +217,10 @@ public class JsonEncoder {
 				if (jf.io() == JsonField.IOType.R || incompatible(jf.backCompat()))
 					continue;
 				if (jf.io() == JsonField.IOType.RW)
-					throw new JsonException(Type.FUNC, null, "functional fields should not have RW type");
+					throw new JsonException(false, obj, "RW IOType", m);
 				String tag = jf.tag();
 				if (tag.length() == 0)
-					throw new JsonException(Type.TAG, null, "function fields must have tag");
+					throw new JsonException(false, obj, "No Tag", m);
 				curjfld = jf;
 				ans.add(tag, encode(m.invoke(obj), getInvoker()));
 				curjfld = null;

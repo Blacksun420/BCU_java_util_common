@@ -182,10 +182,10 @@ public class LvRestrict extends Data implements Indexable<PackData, LvRestrict> 
 	}
 
 	@JsonField(tag = "res", io = JsonField.IOType.W, backCompat = JsonField.CompatType.UPST)
-	public TreeMap<CharaGroup, int[]> oldRes() {
-		TreeMap<CharaGroup, int[]> ors = new TreeMap<>();
+	public TreeMap<Identifier<CharaGroup>, int[]> oldRes() {
+		TreeMap<Identifier<CharaGroup>, int[]> ors = new TreeMap<>();
 		for (CharaGroup cg : cgl.keySet())
-			ors.put(cg, toOldFormat(cgl.get(cg)));
+			ors.put(cg.getID(), toOldFormat(cgl.get(cg)));
 		return ors;
 	}
 

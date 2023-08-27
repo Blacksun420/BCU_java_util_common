@@ -155,7 +155,7 @@ public class localDecoder {
             decode(cls.getSuperclass());
         JsonClass curjcls = cls.getAnnotation(JsonClass.class);
         if (curjcls == null)
-            throw new JsonException(JsonException.Type.TYPE_MISMATCH, jobj, "no annotation for class " + cls);
+            throw new JsonException(true, cls, "No JsonClass annotation");
 
         Field[] fs = FieldOrder.getDeclaredFields(cls);
         for (Field f : fs) {
@@ -176,7 +176,7 @@ public class localDecoder {
             try {
                 f.set(obj, getInvoker().decode(elem, f.getType()));
             } catch (Exception e) {
-                throw new Exception("Error decoding " + cls + " in field " + f +" | Elem : "+elem, e);
+                throw new JsonException(cls, e, f, elem);
             }
             curfld = null;
         }
@@ -186,19 +186,19 @@ public class localDecoder {
                 if (oni == null)
                     oni = m;
                 else
-                    throw new JsonException(JsonException.Type.FUNC, null, "Duplicate OnInjected. " + oni.getName() + " already exists, " + m.getName() + " merge both of them pls kthnx");
+                    throw new JsonException(true, obj, "Duplicate OnInjected. " + oni + " already exists", m);
             if (m.getAnnotation(JsonDecoder.PostLoad.class) != null)
                 if (lastin == null)
                     lastin = m; //Toggle whether to actually PostLoad may be added in the future
                 else
-                    throw new JsonException(JsonException.Type.FUNC, null, "Duplicate PostLoad. " + lastin.getName() + " already exists, " + m.getName() + " merge both of them pls kthnx");
+                    throw new JsonException(true, obj, "Duplicate PostLoad. " + lastin + " already exists", m);
             locfld.setJProperties(m.getAnnotation(JsonField.class));
             if (locfld.isNull || locfld.block)
                 continue;
             if (m.getParameterTypes().length != 1)
-                throw new JsonException(JsonException.Type.FUNC, null, "Parameter count for " + m.getName() + " should be 1");
+                throw new JsonException(true, obj, "Has " + m.getParameterTypes().length + " parameters, should be 1", m);
             if (locfld.tag.length() == 0)
-                throw new JsonException(JsonException.Type.TAG, null, m.getName() + " must have a tag");
+                throw new JsonException(true, obj, m.getName() + " must have a tag", m);
             if (!jobj.has(locfld.tag))
                 continue;
             JsonElement elem = jobj.get(locfld.tag);
@@ -246,7 +246,7 @@ public class localDecoder {
                         if (cls == ret || cls.isAssignableFrom(ret) || ret.isAssignableFrom(cls))
                             return m.invoke(input);
                     }
-                throw new JsonException(JsonException.Type.TYPE_MISMATCH, null, "no JCGetter present: " + alias + "->" + cls);
+                throw new JsonException(true, locfld, "no JCGetter present: " + alias + "->" + cls);
             }
         }
         // fill existing object
@@ -266,7 +266,7 @@ public class localDecoder {
                     if (ci.getParameterTypes().length == 1 && ci.getParameterTypes()[0].isAssignableFrom(ccls))
                         cst = ci;
                 if (cst == null)
-                    throw new JsonException(JsonException.Type.FUNC, null, "No constructor found in " + cls + " that takes " + ccls + " as parameter");
+                    throw new JsonException(true, locfld, "No constructor found in " + cls + " that takes " + ccls + " as parameter");
                 Object val = cst.newInstance(obj);
                 return inject(elem.getAsJsonObject(), cls, val);
             }
@@ -278,12 +278,12 @@ public class localDecoder {
             cls = Class.forName(elem.getAsJsonObject().get("_class").getAsString());
         if (cls.getAnnotation(JsonClass.class) != null)
             return decodeObject(elem, cls);
-        throw new JsonException(JsonException.Type.UNDEFINED, elem, cls + " is not possible to generate");
+        throw new JsonException(true, cls, "Not possible to generate");
     }
 
     protected List<Object> decodeList(JsonElement elem, Class<?> cls) throws Exception {
         if (locfld.generic.length != 1)
-            throw new JsonException(JsonException.Type.TAG, null, "List " + elem + " in " + cls + " requires one class as generic provider");
+            throw new JsonException(true, elem, "In " + cls + ": Requires one class as generic provider");
         if (elem.isJsonNull())
             return null;
         @SuppressWarnings("unchecked")
@@ -298,7 +298,7 @@ public class localDecoder {
             return val;
         }
         if (!elem.isJsonArray())
-            throw new JsonException(JsonException.Type.TYPE_MISMATCH, elem, " is not array");
+            throw new JsonException(true, elem, "Not an array");
         JsonArray jarr = elem.getAsJsonArray();
         int n = jarr.size();
         for (int i = 0; i < n; i++) {
@@ -310,7 +310,7 @@ public class localDecoder {
     private Object getArray(Class<?> cls, int n) throws Exception {
         if (!locfld.isNull && locfld.gen == localField.GenType.FILL) {
             if (curfld == null || obj == null)
-                throw new JsonException(JsonException.Type.TAG, null, "no enclosing object");
+                throw new JsonException(true, locfld, "no enclosing object");
             return par.curfld.get(par.obj);
         } else
             return Array.newInstance(cls, n);
@@ -329,7 +329,7 @@ public class localDecoder {
             return arr;
         }
         if (!elem.isJsonArray())
-            throw new JsonException(JsonException.Type.TYPE_MISMATCH, elem, "Element + " + elem + " on " + cls + " at " + ccls + " in " + this + " is not array");
+            throw new JsonException(true, obj, "Element + " + elem + " on " + cls + " at " + ccls + " in " + this + " is not array");
         JsonArray jarr = elem.getAsJsonArray();
         int n = jarr.size();
         Object arr = getArray(ccls, n);
@@ -340,11 +340,11 @@ public class localDecoder {
 
     private Map<Object, Object> decodeMap(JsonElement elem, Class<?> cls) throws Exception {
         if (locfld.generic.length != 2)
-            throw new JsonException(JsonException.Type.TAG, null, "generic data structure requires typeProvider tag");
+            throw new JsonException(true, locfld, "generic data structure requires typeProvider tag");
         if (elem.isJsonNull())
             return null;
         if (!elem.isJsonArray())
-            throw new JsonException(JsonException.Type.TYPE_MISMATCH, elem, "this element is not array");
+            throw new JsonException(true, elem, "this element is not array");
 
         JsonArray jarr = elem.getAsJsonArray();
         int n = jarr.size();
@@ -368,7 +368,7 @@ public class localDecoder {
         if (elem.isJsonNull())
             return null;
         if (!elem.isJsonObject())
-            throw new JsonException(JsonException.Type.TYPE_MISMATCH, elem, "this element is not object for " + cls);
+            throw new JsonException(true, elem, "this element is not object for " + cls);
         JsonObject jobj = elem.getAsJsonObject();
         JsonClass jc = cls.getAnnotation(JsonClass.class);
         if (jc.read() == JsonClass.RType.FILL) {
@@ -380,27 +380,26 @@ public class localDecoder {
                     else
                         return val;
             }
-            throw new JsonException(JsonException.Type.FUNC, null,
-                    "RType FILL requires GenType FILL or GEN, or implicit GenType FILL: " + cls + ", " + elem);
+            throw new JsonException(true, obj, "RType FILL requires GenType FILL or GEN, or implicit GenType FILL: " + cls + ", " + elem);
         } else if (jc.read() == JsonClass.RType.DATA)
             return inject(jobj, cls, null);
         else if (jc.read() == JsonClass.RType.MANUAL) {
             String func = jc.generator();
             if (func.length() == 0)
-                throw new JsonException(JsonException.Type.FUNC, elem, "no generate function");
+                throw new JsonException(true, cls, "no generate function");
             Method m = cls.getMethod(func, JsonElement.class);
             return m.invoke(null, jobj);
         } else
-            throw new JsonException(JsonException.Type.UNDEFINED, elem, "class not possible to generate");
+            throw new JsonException(true, cls, "Not possible to generate");
     }
 
     private Set<Object> decodeSet(JsonElement elem, Class<?> cls) throws Exception {
         if (locfld.generic.length != 1)
-            throw new JsonException(JsonException.Type.TAG, null, "generic data structure requires typeProvider tag");
+            throw new JsonException(true, locfld, "generic data structure requires typeProvider tag");
         if (elem.isJsonNull())
             return null;
         if (!elem.isJsonArray())
-            throw new JsonException(JsonException.Type.TYPE_MISMATCH, elem, "this element is not array");
+            throw new JsonException(true, elem, "this element is not array");
         JsonArray jarr = elem.getAsJsonArray();
         int n = jarr.size();
         @SuppressWarnings("unchecked")

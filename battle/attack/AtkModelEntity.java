@@ -334,7 +334,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 			if (getProc(matk).get(par[i]).perform(b.r))
 				proc.get(par[i]).set(getProc(matk).get(par[i]));
 
-		if (data instanceof CustomEntity)
+		if (data instanceof CustomEntity || matk.canProc())
 			for (int b : BCShareable) proc.getArr(b).set(getProc(matk).getArr(b));
 		if (getProc(matk).SUMMON.perform(b.r)) {
 			SUMMON sprc = getProc(matk).SUMMON;

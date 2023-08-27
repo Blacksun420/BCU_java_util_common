@@ -182,8 +182,10 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 				} //Finish FORK_VERSION 7 checks
 			} //Finish FORK_VERSION 9 checks
 		}
-		if (form.getPCoin() != null)
+		if (form.getPCoin() != null) {
+			form.pcoin.verify();
 			form.pcoin.update();
+		}
 	}
 
 	/**

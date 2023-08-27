@@ -430,27 +430,27 @@ public abstract class CustomEntity extends DataEntity {
 			}
 	}
 
-	@JsonField(tag = "atks", io = JsonField.IOType.W, backCompat = CompatType.UPST)
+	@JsonField(tag = "atks", io = JsonField.IOType.W, gen = GenType.GEN, usePool = true, backCompat = CompatType.UPST)
 	public AtkDataModel[] getUAtk() {
 		return hits.get(firstAtk());
 	}
 
-	@JsonField(tag = "rev", io = JsonField.IOType.W, backCompat = CompatType.UPST)
+	@JsonField(tag = "rev", io = JsonField.IOType.W, gen = GenType.GEN, backCompat = CompatType.UPST)
 	public AtkDataModel getURev() {
 		return revs.length == 0 ? null : revs[0];
 	}
 
-	@JsonField(tag = "res", io = JsonField.IOType.W, backCompat = CompatType.UPST)
+	@JsonField(tag = "res", io = JsonField.IOType.W, gen = GenType.GEN, backCompat = CompatType.UPST)
 	public AtkDataModel getURes() {
 		return ress.length == 0 ? null : ress[0];
 	}
 
-	@JsonField(tag = "bur", io = JsonField.IOType.W, backCompat = CompatType.UPST)
+	@JsonField(tag = "bur", io = JsonField.IOType.W, gen = GenType.GEN, backCompat = CompatType.UPST)
 	public AtkDataModel getUBur() {
 		return burs.length == 0 ? null : burs[0];
 	}
 
-	@JsonField(tag = "resu", io = JsonField.IOType.W, backCompat = CompatType.UPST)
+	@JsonField(tag = "resu", io = JsonField.IOType.W, gen = GenType.GEN, backCompat = CompatType.UPST)
 	public AtkDataModel getUResu() {
 		return resus.length == 0 ? null : resus[0];
 	}
