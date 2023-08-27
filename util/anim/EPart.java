@@ -17,9 +17,10 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 	private final EPart[] ent;
 	private final int ind;
 	private EPart fa, para;
-	private int id, img, gsca;
+	private int id, img;
 	private P pos = new P(0, 0), piv = new P(0, 0), sca = new P(0, 0);
-	private int z, angle, opacity, glow, extendX, extendY, extType; // extType - 0 : Slow, 1 : Curse
+	private int z, glow, extType; // extType - 0 : Slow, 1 : Curse
+	private float angle, opacity, extendX, extendY, gsca;
 	private int hf, vf;
 	public boolean EWarp = false;
 	private boolean flipped = false;
@@ -48,14 +49,14 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 		return -1;
 	}
 
-	public void alter(int m, int v) {
+	public void alter(int m, float v) {
 		if (m == 0)
 			if (v < ent.length && v >= 0 && v != ind)
-				fa = ent[v];
+				fa = ent[(int)v];
 			else
 				fa = null;
 		else if (m == 1)
-			id = v;
+			id = (int) v;
 		else if (m == 2) {
 			if (extType == 1 && img != v)
 				for (int i = 0; i < randSeries.size(); i++) {
@@ -67,9 +68,9 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 					randSeries.set(i, r);
 				}
 
-			img = v;
+			img = (int) v;
 		} else if (m == 3)
-			z = v * ent.length + ind;
+			z = (int) (v * ent.length + ind);
 		else if (m == 4)
 			pos.x = args[4] + v;
 		else if (m == 5)
@@ -108,10 +109,10 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 
 	@Override
 	public int compareTo(EPart o) {
-		return Integer.compare(z, o.z);
+		return Float.compare(z, o.z);
 	}
 
-	public int getVal(int m) {
+	public float getVal(int m) {
 		if (m == 0)
 			return getPar();
 		else if (m == 1)

@@ -124,24 +124,23 @@ public class AttackSimple extends AttackAb {
 		if (proc.WAVE.exists() && (capt.size() > 0 || proc.WAVE.type.hitless)) {
 			int dire = model.getDire();
 			int wid = dire == 1 ? W_E_WID : W_U_WID;
-			int addp = (dire == 1 ? W_E_INI : W_U_INI) + wid / 2;
+			double addp = (dire == 1 ? W_E_INI : W_U_INI) + wid / 2.0;
 			double p0 = model.getPos() + dire * addp;
 			// generate a wave when hits somebody
 
 			ContWaveDef wave = new ContWaveDef(new AttackWave(attacker, this, p0, wid, WT_WAVE), p0, layer, true);
 
-			if(attacker != null) {
+			if(attacker != null)
 				attacker.summoned.add(wave);
-			}
 		}
 		if(proc.MINIWAVE.exists() && (capt.size() > 0 || proc.MINIWAVE.type.hitless)) {
 			int dire = model.getDire();
 			int wid = dire == 1 ? W_E_WID : W_U_WID;
-			int addp = (dire == 1 ? W_E_INI : W_U_INI) + wid / 2;
+			double addp = (dire == 1 ? W_E_INI : W_U_INI) + wid / 2.0;
 			double p0 = model.getPos() + dire * addp;
 
 			ContWaveDef wave = new ContWaveDef(new AttackWave(attacker, this, p0, wid, proc.MINIWAVE.multi > 100 ? WT_MEGA : WT_MINI), p0, layer, proc.MINIWAVE.multi > 100);
-			wave.atk.raw = (int) ((double) wave.atk.raw * proc.MINIWAVE.multi / 100.0);
+			wave.atk.raw *= proc.MINIWAVE.multi / 100.0;
 
 			if(attacker != null)
 				attacker.summoned.add(wave);
@@ -167,7 +166,7 @@ public class AttackSimple extends AttackAb {
 			double end = p0 - (dire == 1 ? W_VOLC_INNER : W_VOLC_PIERCE);
 
 			ContVolcano volcano = new ContVolcano(new AttackVolcano(attacker, this, sta, end, WT_MIVC), p0, layer, volc.time, false);
-			volcano.v.raw = (int) ((double) volcano.v.raw * proc.MINIVOLC.mult / 100.0);
+			volcano.v.raw *= proc.MINIVOLC.mult / 100.0;
 
 			if(attacker != null)
 				attacker.summoned.add(volcano);

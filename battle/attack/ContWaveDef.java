@@ -64,9 +64,14 @@ public class ContWaveDef extends ContWaveAb {
 		}
 		if (maxt == t)
 			activate = false;
+		updateAnimation();
+		t++;
+	}
+
+	@Override
+	public void updateAnimation() {
 		if (t >= 0)
 			anim.update(false);
-		t++;
 	}
 
 	@Override

@@ -95,9 +95,14 @@ public class ContWaveCanon extends ContWaveAb {
 		}
 		if (maxt == t)
 			deactivate();
+		updateAnimation();
+		t++;
+	}
+
+	@Override
+	public void updateAnimation() {
 		if (t >= 0 && !anim.done())
 			anim.update(false);
-		t++;
 	}
 
 	@Override

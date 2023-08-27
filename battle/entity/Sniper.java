@@ -63,6 +63,14 @@ public class Sniper extends AtkModelAb {
 	}
 
 	private void getAngle() {
+		if (pos == -1) {
+			if(preTime == 0 && bulletX == 0)
+				bulletAngle = 0;
+
+			targetAngle = 0;
+			return;
+		}
+
 		int Cx = b.st.len * 4 - 3200;
 		int Cy = 4400;
 
@@ -107,7 +115,7 @@ public class Sniper extends AtkModelAb {
 		}
 
 		// find enemy pos
-		if(preTime == 0 && bulletX == 0) {
+		if(preTime == 0) {
 			pos = -1;
 			for (Entity e : b.le)
 				if (e.dire == 1 && e.pos > pos && !e.isBase && (e.touchable() & TCH_N) > 0) {
@@ -116,8 +124,8 @@ public class Sniper extends AtkModelAb {
 					layer = e.layer;
 				}
 		}
-
-		getAngle();
+		if (enabled)
+			getAngle();
 
 		if (preTime > 0) {
 			preTime--;
@@ -159,36 +167,41 @@ public class Sniper extends AtkModelAb {
 		if (atkTime > 0) {
 			atkTime--;
 			atka.update(false);
-		} else {
+		} else
 			anim.update(true);
-		}
 
 		if(bulletX > 0) {
 			cannonAngle = targetAngle;
-		} else {
-			if(cannonAngle != targetAngle) {
-				if(cannonAngle < targetAngle) {
-					cannonAngle += 1;
+		} else if (cannonAngle != targetAngle) {
+			if(cannonAngle < targetAngle) {
+				cannonAngle += 1;
 
-					if(cannonAngle > targetAngle) {
-						cannonAngle = targetAngle;
-					}
-				} else {
-					cannonAngle -= 1;
+				if(cannonAngle > targetAngle)
+					cannonAngle = targetAngle;
+			} else {
+				cannonAngle -= 1;
 
-					if(cannonAngle < targetAngle) {
-						cannonAngle = targetAngle;
-					}
-				}
+				if(cannonAngle < targetAngle)
+					cannonAngle = targetAngle;
 			}
 		}
+		updateAnim0();
+	}
 
+	public void updateAnimation() {
+		if (atkTime > 0)
+			atka.update(false);
+		else
+			anim.update(true);
+		updateAnim0();
+	}
+
+	private void updateAnim0() {
 		if(bulletX > 0) {
 			anim.ent[6].alter(12, 1000);
 			anim.ent[5].alter(11, (int) Math.round(bulletAngle * 10));
-		} else {
+		} else
 			anim.ent[5].alter(11, (int) Math.round(cannonAngle * 10));
-		}
 
 		atka.ent[5].alter(11, (int) Math.round(bulletAngle * 10));
 

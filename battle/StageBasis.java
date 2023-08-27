@@ -95,10 +95,9 @@ public class StageBasis extends BattleObj {
 		st = est.s;
 		elu = new ELineUp(bas.lu, this, sav);
 		est.assign(this);
-		bg = Identifier.getOr(st.bg, Background.class);
-		if (bg.bgEffect != null)
+		setBackground(st.bg);
+		if (bg.bgEffect != null) //TODO: Move BG Effect setting to setBG function
 			bgEffect = bg.bgEffect.get();
-
 		boss_spawn = Identifier.getOr(st.castle, CastleImg.class).boss_spawn;
 
 		EEnemy ee = est.base(this);
@@ -477,6 +476,11 @@ public class StageBasis extends BattleObj {
 			elu.resetCD(i, j);
 			totalSpawned[i][j]++;
 			eu.added(-1, st.len - 700);
+
+			eu.preUpdate();
+			eu.update();
+			eu.postUpdate();
+
 			le.add(eu);
 			money -= elu.price[i][j];
 			if (st.minUSpawn == st.maxUSpawn)
@@ -500,9 +504,16 @@ public class StageBasis extends BattleObj {
 	 */
 	protected void update() {
 		boolean active = ebase.health > 0 && ubase.health > 0;
-		if(midH != -1 && bgEffect != null && !bgEffectInitialized) {
+
+		if (midH != -1 && bgEffect != null && !bgEffectInitialized) {
 			bgEffect.initialize(st.len, battleHeight, midH, bg);
 			bgEffectInitialized = true;
+		}
+
+		if (buttonDelay > 0 && --buttonDelay == 0) {
+			act_spawn(selectedUnit[0], selectedUnit[1], true);
+			selectedUnit[0] = -1;
+			selectedUnit[1] = -1;
 		}
 
 		tempe.removeIf(e -> {
@@ -537,8 +548,12 @@ public class StageBasis extends BattleObj {
 			int allow = st.max - entityCount(1);
 			if (respawnTime <= 0 && active && allow > 0) {
 				EEnemy e = est.allow();
+
 				if (e != null) {
 					e.added(1, (e.mark >= 1 ? boss_spawn : 700.0) + (st.len - 800 - ebase.pos) * e.door / 100);
+					e.preUpdate();
+					e.update();
+					e.postUpdate();
 
 					if (!enemyStatistics.containsKey((Enemy)e.data.getPack()))
 						enemyStatistics.put((Enemy)e.data.getPack(), new long[]{0, 0, 1});
@@ -709,13 +724,35 @@ public class StageBasis extends BattleObj {
 			} else if(changeFrame == changeDivision - 1)
 				frontLineup = 1 - frontLineup;
 		}
-		if(buttonDelay > 0) {
-			buttonDelay--;
-			if(buttonDelay == 0) {
-				act_spawn(selectedUnit[0], selectedUnit[1], true);
-				selectedUnit[0] = -1;
-				selectedUnit[1] = -1;
-			}
+	}
+
+	protected void updateAnimation() {
+		boolean active = ebase.health > 0 && ubase.health > 0;
+		if (s_stop == 0 || (ebase.getAbi() & AB_TIMEI) != 0)
+			ebase.updateAnimation();
+
+		if (s_stop == 0) {
+			if(bgEffect != null)
+				bgEffect.updateAnimation(st.len, battleHeight, midH);
+			ubase.updateAnimation();
+			canon.updateAnimation();
+
+			if (sniper != null && active)
+				sniper.updateAnimation();
+		}
+
+		if (temp_n_inten > 0)
+			n_inten += temp_n_inten;
+		updateEntitiesAnimation(s_stop == 0);
+		while (n_inten >= 1) {
+			updateEntitiesAnimation(false);
+			n_inten--;
+		}
+
+		if (s_stop == 0) {
+			lea.forEach(EAnimCont::update);
+			ebaseSmoke.forEach(EAnimCont::update);
+			ubaseSmoke.forEach(EAnimCont::update);
 		}
 	}
 
@@ -742,9 +779,23 @@ public class StageBasis extends BattleObj {
 				}
 	}
 
+	private void updateEntitiesAnimation(boolean time) {
+		for (int i = 0; i < le.size(); i++)
+			if (time || (le.get(i).getAbi() & AB_TIMEI) != 0)
+				le.get(i).updateAnimation();
+
+		for (int i = 0; i < tlw.size(); i++)
+			if (time || tlw.get(i).IMUTime())
+				tlw.get(i).updateAnimation();
+
+		for (int i = 0; i < lw.size(); i++)
+			if (time || lw.get(i).IMUTime())
+				lw.get(i).updateAnimation();
+	}
+
 	private void updateTheme() {
 		if (theme != null) {
-			bg = Identifier.getOr(theme, Background.class);
+			setBackground(theme);
 			if (themeType != null && themeType.kill) {
 				le.removeIf(e -> (e.getAbi() & AB_THEMEI) == 0);
 				lw.clear();
@@ -773,5 +824,19 @@ public class StageBasis extends BattleObj {
 			return 0;
 
 		return (1 - 2 * ((shake[SHAKE_DURATION] - shakeDuration) % 2)) * (1.0f * (shake[SHAKE_END] - shake[SHAKE_INITIAL]) / (shake[SHAKE_DURATION] - 1) * (shake[SHAKE_DURATION] - shakeDuration) + shake[SHAKE_INITIAL]) / SHAKE_STABILIZER;
+	}
+
+	private void setBackground(Identifier<Background> id) {
+		Background newBg = Identifier.getOr(id, Background.class);
+		if (bg != null && bg.id.equals(newBg.id))
+			return;
+		if ((bg != null && bg.bgEffect != newBg.bgEffect) || (bg == null && newBg.bgEffect != null)) {
+			bgEffectInitialized = false;
+			if (newBg.bgEffect == null)
+				bgEffect = null;
+			else
+				bgEffect = newBg.bgEffect.get();
+		}
+		bg = newBg;
 	}
 }

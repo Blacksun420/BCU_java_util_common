@@ -52,7 +52,7 @@ public abstract class EAnimI extends BattleObj {
 
 	public abstract void draw(FakeGraphics g, P ori, double siz);
 
-	public abstract int ind();
+	public abstract float ind();
 
 	public abstract int len();
 
@@ -64,7 +64,7 @@ public abstract class EAnimI extends BattleObj {
 		sort();
 	}
 
-	public abstract void setTime(int value);
+	public abstract void setTime(float value);
 
 	public abstract void update(boolean b);
 

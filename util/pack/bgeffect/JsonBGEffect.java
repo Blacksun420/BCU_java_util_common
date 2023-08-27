@@ -128,6 +128,12 @@ public class JsonBGEffect extends BackgroundEffect {
     }
 
     @Override
+    public void updateAnimation(int w, double h, double midH) {
+        for (BGEffectHandler handler : handlers)
+            handler.updateAnimation();
+    }
+
+    @Override
     public void initialize(int w, double h, double midH, Background bg) {
         for (BGEffectHandler handler : handlers)
             handler.initialize(w, h, midH);

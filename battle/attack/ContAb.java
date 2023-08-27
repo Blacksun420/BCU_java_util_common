@@ -25,6 +25,9 @@ public abstract class ContAb extends BattleObj implements Comparable<ContAb> {
 
 	public abstract void update();
 
+	public void updateAnimation() {
+	}
+
 	public abstract boolean IMUTime();
 
 	@Override

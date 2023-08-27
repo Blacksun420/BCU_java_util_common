@@ -1,5 +1,6 @@
 package common.util.pack.bgeffect;
 
+import common.CommonStatic;
 import common.pack.UserProfile;
 import common.system.BattleRange;
 import common.system.P;
@@ -336,17 +337,8 @@ public class BGEffectHandler {
             } else if (checkDestroy(i)) {
                 capture.add(i);
             } else {
-                animation.get(i).update(false);
+                updateChunk(i);
 
-                if(v != null && moveAngle != null) {
-                    position[i].x += v[i] * Math.cos(moveAngle[i]);
-                    position[i].y += v[i] * Math.sin(moveAngle[i]);
-                } else if(velocity != null) {
-                    position[i].x += velocity[i].x;
-                    position[i].y += velocity[i].y;
-                }
-                if(angleVelocity != null)
-                    angle[i] += angleVelocity[i];
                 if(lifeTime != null)
                     lifeTime[i]--;
             }
@@ -381,6 +373,38 @@ public class BGEffectHandler {
                         reInitialize(ind, w, h, midH, 0);
                 }
             }
+    }
+
+    public void updateAnimation() {
+        for(int i = 0; i < count; i++)
+            if (wait == null || wait[i] == 0)
+                updateChunk(i);
+    }
+
+    public void updateChunk(int i) {
+        animation.get(i).update(false);
+
+        if (CommonStatic.getConfig().battle60fps) {
+            if(v != null && moveAngle != null) {
+                position[i].x += v[i] * Math.cos(moveAngle[i]) / 2.0;
+                position[i].y += v[i] * Math.sin(moveAngle[i]) / 2.0;
+            } else if(velocity != null) {
+                position[i].x += velocity[i].x / 2.0;
+                position[i].y += velocity[i].y / 2.0;
+            }
+            if(angleVelocity != null)
+                angle[i] += angleVelocity[i] / 2.0;
+        } else {
+            if(v != null && moveAngle != null) {
+                position[i].x += v[i] * Math.cos(moveAngle[i]);
+                position[i].y += v[i] * Math.sin(moveAngle[i]);
+            } else if(velocity != null) {
+                position[i].x += velocity[i].x;
+                position[i].y += velocity[i].y;
+            }
+            if(angleVelocity != null)
+                angle[i] += angleVelocity[i];
+        }
     }
 
     public void draw(FakeGraphics g, P rect, double siz, boolean post) {

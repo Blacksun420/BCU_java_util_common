@@ -10,7 +10,7 @@ public class EAnimD<T extends AnimI.AnimType<?, T>> extends EAnimI {
 
 	protected MaAnim ma;
 
-	public int f = -1;
+	public float f = -1f;
 
 	public EAnimD(AnimI<?, T> ia, MaModel mm, MaAnim anim, T t) {
 		super(ia, mm);
@@ -84,7 +84,7 @@ public class EAnimD<T extends AnimI.AnimType<?, T>> extends EAnimI {
 	}
 
 	@Override
-	public int ind() {
+	public float ind() {
 		return f;
 	}
 
@@ -98,7 +98,7 @@ public class EAnimD<T extends AnimI.AnimType<?, T>> extends EAnimI {
 	}
 
 	@Override
-	public void setTime(int value) {
+	public void setTime(float value) {
 		setup();
 		f = value;
 		ma.update(f, this, true);
@@ -110,7 +110,16 @@ public class EAnimD<T extends AnimI.AnimType<?, T>> extends EAnimI {
 
 	@Override
 	public void update(boolean rotate) {
-		f++;
+		if (CommonStatic.getConfig().anim60fps) {
+			if (f == -1) {
+				f++;
+			} else {
+				f += 0.5f;
+			}
+		} else {
+			f++;
+		}
+
 		ma.update(f, this, rotate);
 	}
 

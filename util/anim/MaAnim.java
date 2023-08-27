@@ -100,7 +100,7 @@ public class MaAnim extends Data implements BattleStatic {
 		validate();
 	}
 
-	protected void update(int f, EAnimD<?> eAnim, boolean rotate) {
+	protected void update(float f, EAnimD<?> eAnim, boolean rotate) {
 		if (rotate)
 			f %= max + 1;
 		if (f == 0)
@@ -113,7 +113,7 @@ public class MaAnim extends Data implements BattleStatic {
 			int fir = parts[i].fir;
 			int lmax = smax - fir;
 			boolean prot = rotate || loop == -1;
-			int frame;
+			float frame;
 			if (prot) {
 				int mf = loop == -1 ? smax : max + 1;
 				frame = mf == 0 ? 0 : (f + parts[i].off) % mf;

@@ -23,7 +23,7 @@ public class BalloonBGEffect extends BackgroundEffect {
 
     private final List<P> balloonPosition = new ArrayList<>();
     private final List<Boolean> isBigBalloon = new ArrayList<>();
-    private final List<Byte> speed = new ArrayList<>();
+    private final List<Float> speed = new ArrayList<>();
     private final Random r = new Random();
 
     private final List<Integer> capture = new LinkedList<>();
@@ -133,7 +133,10 @@ public class BalloonBGEffect extends BackgroundEffect {
 
             balloonPosition.add(P.newP(r.nextInt(w + battleOffset + 2 * BackgroundEffect.revertP(bw)) - BackgroundEffect.revertP(bw), r.nextInt(BGHeight) * 3));
             isBigBalloon.add(isBig);
-            speed.add(Data.BG_EFFECT_BALLOON_SPEED);
+            if (CommonStatic.getConfig().battle60fps)
+                speed.add(Data.BG_EFFECT_BALLOON_SPEED / 2f);
+            else
+                speed.add(Data.BG_EFFECT_BALLOON_SPEED);
         }
     }
 

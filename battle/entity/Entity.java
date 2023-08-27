@@ -541,20 +541,10 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 		private void update() {
 			checkEff();
-
-			for (EAnimD<?> eff : effs)
-				if (eff != null)
-					eff.update(false);
-
-			boolean checkKB = e.kb.kbType != INT_SW && e.kb.kbType != INT_WARP;
-			if (e.status.stop == 0 && (e.kbTime == 0 || checkKB))
-				anim.update(false);
-			if (back != null)
-				back.update(false);
-			if (dead > 0) {
-				soul.update(false);
+			updateAnimation();
+			if (dead > 0)
 				dead--;
-			}
+
 			if (anim.done() && anim.type == AnimU.TYPEDEF[AnimU.ENTRY])
 				setAnim(AnimU.TYPEDEF[AnimU.IDLE], true);
 			if (dead >= 0) {
@@ -570,19 +560,32 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 						e.basis.getAttack(e.aam.getSpAttack(RES, i));
 				}
 			}
+
+			e.dead = dead == 0;
+		}
+
+		private void updateAnimation() {
+			for (EAnimD<?> eff : effs)
+				if (eff != null)
+					eff.update(false);
+
+			boolean checkKB = e.kb.kbType != INT_SW && e.kb.kbType != INT_WARP;
+			if (e.status.stop == 0 && (e.kbTime == 0 || checkKB))
+				anim.update(false);
+			if (back != null)
+				back.update(false);
+			if (dead > 0)
+				soul.update(false);
+
 			if(smoke != null) {
 				if(smoke.done()) {
 					smoke = null;
 					smokeLayer = -1;
 					smokeX = -1;
-				} else {
+				} else
 					smoke.update(false);
-				}
 			}
-
-			e.dead = dead == 0;
 		}
-
 	}
 
 	private static class AtkManager extends BattleObj {
@@ -1890,8 +1893,6 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		double f = getFruit(atk.trait, atk.dire, 1);
 		double time = atk instanceof AttackCanon ? 1 : 1 + f * 0.2 / 3;
 		double dist = 1 + f * 0.1;
-		if (atk.trait.contains(BCTraits.get(BCTraits.size() - 1)) || atk.canon != -2)
-			dist = time = 1;
 		if (atk.getProc().STOP.time != 0 || atk.getProc().STOP.prob > 0) {
 			int val = (int) (atk.getProc().STOP.time * time);
 			int rst = getProc().IMUSTOP.mult;
@@ -2468,7 +2469,6 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		if (atkm.atkTime > 0 && nstop)
 			atkm.updateAttack();
 
-		//update animation
 		anim.update();
 		bondTree.update();
 	}
@@ -2484,6 +2484,12 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		else if (status.lethargy[2] == 0)
 			tba += status.lethargy[1];
 		return Math.max(0, tba);
+	}
+
+	@Override
+	public void updateAnimation() {
+		//update animation
+		anim.updateAnimation();
 	}
 
 	protected int critCalc(boolean isMetal, int ans, AttackAb atk) {

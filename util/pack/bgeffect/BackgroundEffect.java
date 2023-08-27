@@ -187,6 +187,10 @@ public abstract class BackgroundEffect extends Data implements IndexContainer.In
      */
     public abstract void update(int w, double h, double midH);
 
+    public void updateAnimation(int w, double h, double midH) {
+        update(w, h, midH);
+    }
+
     /**
      * Initialize data here
      * @param w Width of battlefield as P

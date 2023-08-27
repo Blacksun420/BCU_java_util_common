@@ -21,10 +21,7 @@ import common.util.pack.Background;
 import common.util.pack.Soul;
 import common.util.pack.bgeffect.BackgroundEffect;
 import common.util.pack.bgeffect.CustomBGEffect;
-import common.util.stage.CastleImg;
-import common.util.stage.Replay;
-import common.util.stage.Stage;
-import common.util.stage.StageMap;
+import common.util.stage.*;
 import common.util.unit.Enemy;
 import common.util.unit.Form;
 import common.util.unit.Trait;
@@ -32,6 +29,7 @@ import common.util.unit.Unit;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -543,6 +541,10 @@ public abstract class Source {
 			return getFile("./" + BasePath.CASTLE + "/" + Data.trio(id.id) + ".png");
 		}
 
+		public File getMusFile(Identifier<Music> id) {
+			return getFile("./" + BasePath.MUSIC + "/" + Data.trio(id.id) + ".ogg");
+		}
+
 		public File getTraitIconFile(Identifier<Trait> id) {
 			return getFile("./" + BasePath.TRAIT + "/" + Data.trio(id.id) + ".png");
 		}
@@ -612,10 +614,14 @@ public abstract class Source {
 			return vimg(VFile.getFile(getFile(path + ".png")));
 		}
 
+		public InputStream streamFile(String path) throws IOException {
+			return Files.newInputStream(getFile(path).toPath());
+		}
+
 		public OutputStream writeFile(String path) throws IOException {
 			File f = getFile(path);
 			Context.check(f);
-			return new FileOutputStream(f);
+			return Files.newOutputStream(f.toPath());
 		}
 
 		protected void save(UserPack up, boolean auto) throws IOException {

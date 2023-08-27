@@ -1,11 +1,13 @@
 package common.battle;
 
+import common.CommonStatic;
 import common.util.stage.EStage;
 
 public abstract class BattleField {
 
 	public StageBasis sb;
 	public byte endFrames = 0;
+	private boolean btlTick = true;
 
 	protected BattleField(EStage stage, BasisLU bas, int[] ints, long seed, boolean buttonDelay, boolean sav) {
 		sb = new StageBasis(this, stage, bas, ints, seed, buttonDelay, sav);
@@ -16,14 +18,20 @@ public abstract class BattleField {
 	}
 
 	public void update() {
-		sb.time++;
-		if (sb.ebase.health <= 0 || sb.ubase.health <= 0)
-			endFrames = (byte)Math.min(126, endFrames + 1);
-		else
-			endFrames = 0;
+		if (!CommonStatic.getConfig().battle60fps || btlTick) {
+			btlTick = false;
+			sb.time++;
+			if (sb.ebase.health <= 0 || sb.ubase.health <= 0)
+				endFrames = (byte) Math.min(126, endFrames + 1);
+			else
+				endFrames = 0;
 
-		actions();
-		sb.update();
+			actions();
+			sb.update();
+		} else {
+			btlTick = true;
+			sb.updateAnimation();
+		}
 	}
 
 	protected boolean act_can() {

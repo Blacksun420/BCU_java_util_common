@@ -112,9 +112,7 @@ public class Unit extends Data implements AbUnit {
 				forms[i] = new Form(this, i, str + SUFX[i] + "/", qs.poll());
 			} else
 				forms[i] = new Form(this, i, m[i], "./org/img/m/" + Data.trio(m[i]) + "/", qs.poll());
-		} for (Form f : forms)
-			if (f.anim.getEdi() != null)
-				f.anim.getEdi().check();
+		}
 	}
 
 	protected Unit(Identifier<AbUnit> id, Unit u) {

@@ -1665,8 +1665,8 @@ public class Data {
 	public static final byte[] KB_TIME = new byte[] { 11, 23, 47, 11, -1 };
 	public static final short[] KB_DIS = new short[] { 165, 345, 705, 55, -1 };
 
-	public static final byte W_E_INI = -33;
-	public static final byte W_U_INI = -67;
+	public static final double W_E_INI = -32.75;
+	public static final double W_U_INI = -67.5;
 	public static final short W_PROG = 200;
 	public static final short W_E_WID = 500;
 	public static final short W_U_WID = 400;
@@ -1681,7 +1681,7 @@ public class Data {
 	public static final byte VOLC_POST = 10; // volcano post-atk
 	public static final byte VOLC_SE = 30; // volcano se loop duration
 
-	public static final byte[] NYPRE = new byte[] { 18, 2, -1, 28, 37, 18, 9, 2 };// not sure, 10f for bblast
+	public static final byte[] NYPRE = new byte[] { 18, 2, -1, 28, 37, 18, 10, 2 };// not sure, 10f for bblast
 	public static final short[] NYRAN = new short[] { 710, 600, -1, 500, 500, 710, 100, 600 };// not sure
 	public static final short SNIPER_CD = 300;// not sure
 	public static final byte SNIPER_PRE = 8;// not sure
@@ -1729,11 +1729,11 @@ public class Data {
 	public static final byte BG_EFFECT_BUBBLE_STABILIZER = 7;
 	public static final byte BG_EFFECT_SNOW_SPEED = 8;
 	public static final float[] BG_EFFECT_BLIZZARD_SIZE = {1.0f, 1.5f, 2.0f};
-	public static final byte BG_EFFECT_BLIZZARD_SPEED = 40;
+	public static final float BG_EFFECT_BLIZZARD_SPEED = 40;
 	public static final byte BG_EFFECT_FALLING_SNOW_SPEED = 3;
 	public static final float BG_EFFECT_FALLING_SNOW_SIZE = 2.0f;
 	public static final byte BG_EFFECT_SHINING_TIME = 8;
-	public static final byte BG_EFFECT_BALLOON_SPEED = 1;
+	public static final float BG_EFFECT_BALLOON_SPEED = 1f;
 	public static final byte BG_EFFECT_BALLOON_FACTOR = 32;
 	public static final byte BG_EFFECT_BALLOON_STABILIZER = 25;
 	public static final double[] BG_EFFECT_ROCK_SIZE = {1.0, 2.25};

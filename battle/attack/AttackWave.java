@@ -16,9 +16,9 @@ public class AttackWave extends AttackAb {
 		super(e, a, p0 - wid / 2, p0 + wid / 2, false);
 		incl = new HashSet<>();
 		waveType = wt;
-		if(wt != WT_MOVE && dire == 1 && model.b.canon.deco == DECO_BASE_WALL)
-			atk *= model.b.b.t().getDecorationMagnification(model.b.canon.deco);
 		raw = model instanceof AtkModelEntity ? ((AtkModelEntity)model).getDefAtk(matk) : atk;
+		if(wt != WT_MOVE && dire == 1 && model.b.canon.deco == DECO_BASE_WALL)
+			raw *= model.b.b.t().getDecorationMagnification(model.b.canon.deco);
 	}
 
 	public AttackWave(Entity e, AttackWave a, double p0, double wid) {

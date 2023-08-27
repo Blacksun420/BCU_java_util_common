@@ -118,18 +118,23 @@ public class ECastle extends AbEntity {
 
 	@Override
 	public void update() {
+		updateAnimation();
+
+		if (hit > 0)
+			hit--;
+	}
+
+	@Override
+	public void updateAnimation() {
+		//Do nothing
 		if(smoke != null) {
 			if(smoke.done()) {
 				smoke = null;
 				smokeLayer = -1;
 				smokeX = -1;
-			} else {
+			} else
 				smoke.update(false);
-			}
 		}
-
-		if (hit > 0)
-			hit--;
 	}
 
 	@Override

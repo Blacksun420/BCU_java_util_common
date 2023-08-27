@@ -35,8 +35,9 @@ public class PCoin extends Data {
 
 	private final MaskUnit du;
 	public MaskUnit full = null;
-	public SortedPackSet<Trait> trait = new SortedPackSet<>();
 
+	@JsonField(generic = Trait.class, alias = Identifier.class)
+	public SortedPackSet<Trait> trait = new SortedPackSet<>();
 	@JsonField(block = true)
 	public int[] max;
 	@JsonField(generic = int[].class, backCompat = JsonField.CompatType.FORK)
@@ -141,6 +142,11 @@ public class PCoin extends Data {
 			/*switch (data[0]) {
 				case 0:
 					break;
+				case 56: case 65:
+					data[2] = MathUtil.clip(data[2], 0, 99 - proc.getArr(type).get(0));
+					data[3] = MathUtil.clip(data[3], data[2], 99 - proc.getArr(type).get(0));
+					data[8] = Math.max(1, data[8] / Data.VOLC_ITV) * Data.VOLC_ITV;
+					data[9] = Math.max(Math.max(1, data[9] / Data.VOLC_ITV) * Data.VOLC_ITV, data[8]);
 				case 10:
 					data[2] = MathUtil.clip(data[2], 0, 99 - proc.getArr(type).get(0));
 					data[3] = MathUtil.clip(data[3], data[2], 99 - proc.getArr(type).get(0));
@@ -160,7 +166,7 @@ public class PCoin extends Data {
 				case 62: case 1:
 					data[6] = Math.max(data[6], 0);
 					data[7] = Math.max(data[7], data[6]);
-				case 2: case 3: case 9: case 17: case 50: case 51: case 56: case 60: case 65:
+				case 2: case 3: case 9: case 17: case 50: case 51: case 60:
 					data[4] = Math.max(data[4], 0);
 					data[5] = Math.max(data[5], data[4]);
 				case 8: case 11: case 13: case 15: case 18: case 19: case 20: case 21: case 22: case 24: case 30:
