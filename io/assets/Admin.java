@@ -173,7 +173,7 @@ public class Admin {
 		List<ZipDesc> list = new ArrayList<>();
 		for (File f : folder.listFiles())
 			if (f.getName().endsWith(".asset.bcuzip")) {
-				ZipDesc zd = PackLoader.readPack(Admin::preload, f);
+				ZipDesc zd = PackLoader.readPack(f);
 				list.add(zd);
 			}
 		return list;
@@ -259,7 +259,7 @@ public class Admin {
 			return;
 		}
 		if (args.length > 1 && args[0].equals("decode")) {
-			ZipDesc zip = PackLoader.readPack((fd) -> false, new File(args[1]));
+			ZipDesc zip = PackLoader.readPack(new File(args[1]));
 			System.out.println("id: " + zip.desc.id);
 			System.out.println("version: " + zip.desc.BCU_VERSION);
 			System.out.println("description: " + zip.desc.info);

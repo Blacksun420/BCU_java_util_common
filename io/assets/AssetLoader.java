@@ -43,7 +43,7 @@ public class AssetLoader {
 			}
 
 			private AssetEntry(File f) throws Exception {
-				desc = PackLoader.readPack((fd) -> false, f).desc;
+				desc = PackLoader.readPack(f).desc;
 				size = (int) f.length();
 			}
 
@@ -94,7 +94,7 @@ public class AssetLoader {
 				int I = i;
 				prog.accept(1.0 * (i++) / map.size());
 				Consumer<Double> con = (d) -> prog.accept((I + d) / map.size());
-				List<ZipDesc> list = PackLoader.readAssets(AssetLoader::getPreload, f, con);
+				List<ZipDesc> list = PackLoader.readAssets(f, con);
 				for (ZipDesc zip : list)
 					if (Data.getVer(zip.desc.BCU_VERSION) <= Data.getVer(CORE_VER))
 						zips.put(zip.desc.id, zip);
@@ -196,7 +196,7 @@ public class AssetLoader {
 					for (AssetEntry ent : header.list)
 						ans.add(ent.desc.id);
 				} else if (f.getName().endsWith(".asset.bcuzip"))
-					ans.add(PackLoader.readPack((fd) -> false, f).desc.id);
+					ans.add(PackLoader.readPack(f).desc.id);
 			}
 			return ans;
 		} catch (Exception e) {
@@ -211,10 +211,6 @@ public class AssetLoader {
 				add(new VFile(vf, fi.getName()), fi);
 			else
 				new VFile(vf, fi.getName(), new FDFile(fi));
-	}
-
-	private static Preload getPreload(ZipDesc desc) {
-		return Data.getVer(desc.desc.BCU_VERSION) > Data.getVer(CORE_VER) ? (fd) -> false : AssetLoader::preload;
 	}
 
 	private static boolean preload(FileDesc fd) {

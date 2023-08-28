@@ -130,7 +130,7 @@ public class Backup {
 
     public boolean load() {
         return CommonStatic.ctx.noticeErr(() -> {
-            backup = PackLoader.readPack(fd -> false, f);
+            backup = PackLoader.readPack(f);
         }, Context.ErrType.WARN, "Failed to load "+f.getName()+" backup file (This corrupted backup will be deleted)", this::delete);
     }
 

@@ -4,10 +4,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import common.CommonStatic;
 import common.io.PackLoader.ZipDesc.FileDesc;
-import common.io.assets.MultiStream;
 import common.io.assets.Admin.StaticPermitted;
 import common.io.assets.AssetLoader.AssetHeader;
 import common.io.assets.AssetLoader.AssetHeader.AssetEntry;
+import common.io.assets.MultiStream;
 import common.io.assets.MultiStream.ByteStream;
 import common.io.json.JsonClass;
 import common.io.json.JsonClass.JCConstructor;
@@ -21,7 +21,6 @@ import common.pack.Context;
 import common.pack.Context.ErrType;
 import common.pack.PackData;
 import common.system.fake.FakeImage;
-import common.system.files.FDByte;
 import common.system.files.FileData;
 import common.system.files.VFileRoot;
 import common.util.Data;
@@ -33,7 +32,10 @@ import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Queue;
 import java.util.function.Consumer;
 
 @StaticPermitted
@@ -328,17 +330,13 @@ public class PackLoader {
 			}
 
 		}
-
 		private final FileInputStream fis;
-		private final Preloader context;
 		private final ZipDesc pack;
 		private final File file;
 		private final byte[] key;
 		private final boolean useRAF;
 
-		private FileLoader(Preloader cont, FileInputStream stream, int off, File file, boolean useRAF,
-				Consumer<Double> con) throws Exception {
-			context = cont;
+		private FileLoader(FileInputStream stream, int off, File file, boolean useRAF, Consumer<Double> con) throws Exception {
 			this.file = file;
 			this.fis = stream;
 			this.useRAF = useRAF;
@@ -509,7 +507,7 @@ public class PackLoader {
 		asset.offset = HEADER + 4 + size;
 	}
 
-	public static List<ZipDesc> readAssets(Preloader cont, File f, Consumer<Double> prog) throws Exception {
+	public static List<ZipDesc> readAssets(File f, Consumer<Double> prog) throws Exception {
 		FileInputStream fis = new FileInputStream(f);
 		AssetHeader header = new AssetHeader();
 		read(fis, header);
@@ -520,7 +518,7 @@ public class PackLoader {
 			int I = i++;
 			prog.accept(1.0 * I / header.list.size());
 			Consumer<Double> con = (d) -> prog.accept((I + d) / header.list.size());
-			ZipDesc zip = new FileLoader(cont, fis, off, f, true, con).pack;
+			ZipDesc zip = new FileLoader(fis, off, f, true, con).pack;
 			ans.add(zip);
 			off += ent.size;
 		}
@@ -528,9 +526,9 @@ public class PackLoader {
 		return ans;
 	}
 
-	public static ZipDesc readPack(Preload cont, File f) throws Exception {
+	public static ZipDesc readPack(File f) throws Exception {
 		FileInputStream fis = new FileInputStream(f);
-		ZipDesc ans = new FileLoader((desc) -> cont, fis, 0, f, false, (d) -> {
+		ZipDesc ans = new FileLoader(fis, 0, f, false, (d) -> {
 		}).pack;
 		fis.close();
 		return ans;

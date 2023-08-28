@@ -575,4 +575,12 @@ public class CommonStatic {
 	public static double bossSpawnPoint(int y, int z) {
 		return (int) (3200 + y * z / 10 + Math.round(0.25 * Math.round(3.6 * z))) / 4.0;
 	}
+
+	public static float fltFpsDiv(float f) {
+		return getConfig().fps60 ? f / 2f : f;
+	}
+
+	public static float fltFpsMul(float f) {
+		return getConfig().fps60 ? f * 2f : f;
+	}
 }

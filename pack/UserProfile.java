@@ -291,7 +291,7 @@ public class UserProfile {
 	}
 
 	public static UserPack readZipPack(File f) throws Exception {
-		ZipDesc zip = PackLoader.readPack(CommonStatic.ctx::preload, f);
+		ZipDesc zip = PackLoader.readPack(f);
 
 		if (Data.getVer(zip.desc.BCU_VERSION) > Data.getVer(AssetLoader.CORE_VER)) {
 			CommonStatic.ctx.printErr(ErrType.WARN, "Pack " + f.getName() + " core version (" + zip.desc.BCU_VERSION
