@@ -110,7 +110,7 @@ public class EAnimD<T extends AnimI.AnimType<?, T>> extends EAnimI {
 
 	@Override
 	public void update(boolean rotate) {
-		if (CommonStatic.getConfig().anim60fps) {
+		if (CommonStatic.getConfig().fps60) {
 			if (f == -1) {
 				f++;
 			} else {

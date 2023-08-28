@@ -193,13 +193,9 @@ public class CommonStatic {
 		public boolean prog = false;
 
 		/**
-		 * 60 fps mode if this is true for animation
+		 * 60 fps mode
 		 */
-		public boolean anim60fps = false;
-		/**
-		 * 60 fps mode if this is true for battle
-		 */
-		public boolean battle60fps = false;
+		public boolean fps60 = false;
 	}
 
 	@JsonClass

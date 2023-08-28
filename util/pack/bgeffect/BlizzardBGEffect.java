@@ -106,7 +106,7 @@ public class BlizzardBGEffect extends BackgroundEffect {
                 initPos.get(cap).x = x;
                 initPos.get(cap).y = y;
 
-                if (CommonStatic.getConfig().battle60fps)
+                if (CommonStatic.getConfig().fps60)
                     speed.set(cap, (Data.BG_EFFECT_BLIZZARD_SPEED - r.nextInt(5)) / 2f);
                 else
                     speed.set(cap, (Data.BG_EFFECT_BLIZZARD_SPEED - r.nextInt(5)));
@@ -144,7 +144,7 @@ public class BlizzardBGEffect extends BackgroundEffect {
             blizzardPosition.add(P.newP(x, y));
             initPos.add(P.newP(x, y));
 
-            if (CommonStatic.getConfig().battle60fps) {
+            if (CommonStatic.getConfig().fps60) {
                 speed.add((Data.BG_EFFECT_BLIZZARD_SPEED - r.nextInt(5)) / 2f);
             } else {
                 speed.add((Data.BG_EFFECT_BLIZZARD_SPEED - r.nextInt(5)));

@@ -164,7 +164,7 @@ public class RockBGEffect extends BackgroundEffect {
                 angle.set(capt, r.nextDouble() * Math.PI);
                 layer.set(capt, l);
                 size.set(capt, siz);
-                if (CommonStatic.getConfig().battle60fps)
+                if (CommonStatic.getConfig().fps60)
                     speed.set(capt, (Data.BG_EFFECT_ROCK_SPEED[l] - r.nextDouble() * 0.5) / 2.0);
                 else
                     speed.set(capt, Data.BG_EFFECT_ROCK_SPEED[l] - r.nextDouble() * 0.5);
@@ -215,7 +215,7 @@ public class RockBGEffect extends BackgroundEffect {
             int rw = (int) ((isR ? rock.getWidth() : segment.getWidth()) * siz);
 
             rockPosition.add(P.newP(r.nextInt(w + battleOffset + 2 * rw) - rw, r.nextInt(l == 0 ? 1020 + Data.BG_EFFECT_ROCK_BEHIND_SPAWN_OFFSET : BGHeight * 3)));
-            if (CommonStatic.getConfig().battle60fps)
+            if (CommonStatic.getConfig().fps60)
                 speed.add((Data.BG_EFFECT_ROCK_SPEED[l] - r.nextDouble() * 0.5) / 2.0);
             else
                 speed.add(Data.BG_EFFECT_ROCK_SPEED[l] - r.nextDouble() * 0.5);

@@ -92,7 +92,7 @@ public class SnowBGEffect extends BackgroundEffect {
                 double angle = Math.toRadians(r.nextInt(75));
 
                 //-0.5angle + 1 is stabilizer
-                if (CommonStatic.getConfig().battle60fps)
+                if (CommonStatic.getConfig().fps60)
                     speed.set(capt, (float) ((Data.BG_EFFECT_SNOW_SPEED - r.nextInt(Data.BG_EFFECT_SNOW_SPEED - 3)) * (-0.75 * angle / maxSlope + 1)) / 2f);
                 else
                     speed.set(capt, (float) ((Data.BG_EFFECT_SNOW_SPEED - r.nextInt(Data.BG_EFFECT_SNOW_SPEED - 3)) * (-0.75 * angle / maxSlope + 1)));
@@ -120,7 +120,7 @@ public class SnowBGEffect extends BackgroundEffect {
             double angle = Math.toRadians(r.nextInt(75));
 
             //-0.5angle + 1 is stabilizer
-            if (CommonStatic.getConfig().battle60fps)
+            if (CommonStatic.getConfig().fps60)
                 speed.add((float) ((Data.BG_EFFECT_SNOW_SPEED - r.nextInt(Data.BG_EFFECT_SNOW_SPEED - 3)) * (-0.75 * angle / maxSlope + 1)) / 2f);
             else
                 speed.add((float) ((Data.BG_EFFECT_SNOW_SPEED - r.nextInt(Data.BG_EFFECT_SNOW_SPEED - 3)) * (-0.75 * angle / maxSlope + 1)));

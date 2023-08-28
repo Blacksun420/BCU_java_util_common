@@ -18,7 +18,7 @@ public abstract class BattleField {
 	}
 
 	public void update() {
-		if (!CommonStatic.getConfig().battle60fps || btlTick) {
+		if (!CommonStatic.getConfig().fps60 || btlTick) {
 			btlTick = false;
 			sb.time++;
 			if (sb.ebase.health <= 0 || sb.ubase.health <= 0)

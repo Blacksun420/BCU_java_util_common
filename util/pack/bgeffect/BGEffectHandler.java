@@ -384,7 +384,7 @@ public class BGEffectHandler {
     public void updateChunk(int i) {
         animation.get(i).update(false);
 
-        if (CommonStatic.getConfig().battle60fps) {
+        if (CommonStatic.getConfig().fps60) {
             if(v != null && moveAngle != null) {
                 position[i].x += v[i] * Math.cos(moveAngle[i]) / 2.0;
                 position[i].y += v[i] * Math.sin(moveAngle[i]) / 2.0;
