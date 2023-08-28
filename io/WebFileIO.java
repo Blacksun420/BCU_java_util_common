@@ -76,6 +76,7 @@ public class WebFileIO {
 			if ((ava = is.available()) > 0)
 				prog.accept(1.0 * count / ava);
 		}
+		out.flush();
 		out.close();
 	}
 
@@ -110,6 +111,7 @@ public class WebFileIO {
 			headers.setAuthorization(token);
 		}
 		downloader.download(gurl, headers, out);
+		out.flush();
 		out.close();
 	}
 

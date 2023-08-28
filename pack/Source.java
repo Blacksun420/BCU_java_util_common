@@ -309,6 +309,7 @@ public abstract class Source {
 			Context.check(f);
 			PrintStream ps = new PrintStream(f, StandardCharsets.UTF_8.toString());
 			con.accept(ps);
+			ps.flush();
 			ps.close();
 		}
 
@@ -629,6 +630,7 @@ public abstract class Source {
 			Context.check(f);
 			OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(f), StandardCharsets.UTF_8);
 			fw.write(JsonEncoder.encode(up).toString());
+			fw.flush();
 			fw.close();
 		}
 

@@ -191,6 +191,7 @@ public class Replay extends Data {
 			for (int i = 0; i < action.length; i++)
 				DataIO.fromInt(data, 4 + 4 * i, action[i]);
 			fos.write(data);
+			fos.flush();
 			fos.close();
 			tmp.renameTo(tar);
 			unsaved = false;
