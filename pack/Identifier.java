@@ -153,7 +153,6 @@ public class Identifier<T extends IndexContainer.Indexable<?, T>> implements Com
 	@SuppressWarnings("unchecked")
 	public T get() {
 		IndexContainer cont = getCont();
-
 		if (cont == null)
 			return null;
 

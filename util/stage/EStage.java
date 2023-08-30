@@ -54,7 +54,7 @@ public class EStage extends BattleObj {
 		for (int i = 0; i < rem.length; i++) {
 			SCDef.Line data = s.data.getSimple(i);
 
-			if (inHealth(data) && s.data.allow(b, data.group, Identifier.getOr(data.enemy, AbEnemy.class)) && rem[i] <= 1 && num[i] != -1 && killCounter[i] == 0) {
+			if (inHealth(data) && s.data.allow(b, data.group, Identifier.getOr(data.enemy, AbEnemy.class)) && Math.abs(rem[i]) <= 1 && num[i] != -1 && killCounter[i] == 0) {
 				if(!s.trail && data.respawn_0 >= data.respawn_1)
 					rem[i] = data.respawn_0;
 				else
@@ -96,7 +96,7 @@ public class EStage extends BattleObj {
 		for (int i = 0; i < rem.length; i++) {
 			rem[i] = datas[i].spawn_0;
 
-			if (Math.abs(datas[i].spawn_0) < Math.abs(datas[i].spawn_1))
+			if (Math.abs(rem[i]) < Math.abs(datas[i].spawn_1))
 				rem[i] += (int) ((datas[i].spawn_1 - datas[i].spawn_0) * b.r.nextDouble());
 
 			if (s.isBCstage && datas[i].castle_0 < 100 && rem[i] > 0)
@@ -174,7 +174,7 @@ public class EStage extends BattleObj {
 	public void update() {
 		for (int i = 0; i < rem.length; i++) {
 			SCDef.Line data = s.data.getSimple(i);
-			if (inHealth(data) && rem[i] < 0)
+			if (inHealth(data) && killCounter[i] == 0 && rem[i] < 0)
 				rem[i] *= -1;
 			if (rem[i] > 0)
 				rem[i]--;
