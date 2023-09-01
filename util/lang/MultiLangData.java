@@ -18,15 +18,22 @@ public class MultiLangData extends Data {
     public MultiLangData() {
     }
 
-    public void put(String data) {
-        put(lang(), data);
+    public boolean put(String data) {
+        return put(lang(), data);
     }
 
-    public void put(int lang, String data) {
-        if (data != null && data.length() > 0)
-            dat.put(lang, data);
-        else
-            dat.remove(lang);
+    /**
+     * Handles putting a name and removing duplicate/identical names in other languages.
+     * @param lang The language index
+     * @param data The string
+     * @return True if the value in the given lang changed
+     */
+    public boolean put(int lang, String data) {
+        if (data != null && data.length() > 0 && (lang == lang() || !toString().equals(data))) {
+            String old = dat.put(lang, data);
+            return old == null || !old.equals(data);
+        }
+        return dat.remove(lang) != null;
     }
 
     public void remove(int lang) {
@@ -49,24 +56,19 @@ public class MultiLangData extends Data {
     public String toString() {
         int lang = lang();
 
-        if (dat.containsKey(lang)) {
-            String temp = dat.get(lang);
-
-            if(temp != null)
-                return temp;
-        }
+        String temp = dat.get(lang);
+        if(temp != null)
+            return temp;
 
         for (int i = 1; i < Lang.LOC_CODE.length; i++) {
             if (i < Lang.pref[lang].length) {
                 if (dat.containsKey(Lang.pref[lang][i])) {
-                    String temp = dat.get(Lang.pref[lang][i]);
-
+                    temp = dat.get(Lang.pref[lang][i]);
                     if (temp != null)
                         return temp;
                 }
             } else if (dat.containsKey(i)) {
-                String temp = dat.get(i);
-
+                temp = dat.get(i);
                 if(temp != null)
                     return temp;
             }
