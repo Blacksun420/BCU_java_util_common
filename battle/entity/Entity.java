@@ -295,7 +295,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					EffAnim<WarpEff> ea = effas().A_W;
 					int ind = e.status.warp[2];
 					WarpEff pa = ind == 0 ? WarpEff.ENTER : WarpEff.EXIT;
-					e.basis.lea.add(new WaprCont(e.pos, pa, e.layer, anim, e.dire));
+					e.basis.lea.add(new WaprCont(e.pos, pa, e.layer, anim, e.dire, (e.getAbi() & AB_TIMEI) != 0));
 					CommonStatic.setSE(ind == 0 ? SE_WARP_ENTER : SE_WARP_EXIT);
 					e.status.warp[ind] = ea.len(pa);
 					break;
@@ -329,7 +329,6 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				} case SHIELD_HIT: {
 					EffAnim<ShieldEff> eff = dire == -1 ? effas().A_DEMON_SHIELD : effas().A_E_DEMON_SHIELD;
 					boolean half = e.status.shield[0] * 1.0 / (e.getProc().DEMONSHIELD.hp * e.shieldMagnification) < 0.5;
-
 					effs[A_DEMON_SHIELD] = eff.getEAnim(half ? ShieldEff.HALF : ShieldEff.FULL);
 					CommonStatic.setSE(SE_SHIELD_HIT);
 					break;

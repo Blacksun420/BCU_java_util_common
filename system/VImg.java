@@ -69,8 +69,10 @@ public class VImg extends ImgCore {
 	public void unload() {
 		if (file == null)
 			return;
-		bimg.unload();
-		bimg = null;
+		if (bimg != null) {
+			bimg.unload();
+			bimg = null;
+		}
 		loaded = false;
 	}
 

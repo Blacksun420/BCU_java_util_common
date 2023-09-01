@@ -275,7 +275,7 @@ public class StageBasis extends BattleObj {
 	/**
 	 * list of entities in the range of d0~d1 that can be touched by entity with
 	 * this direction and touch mode
-	 *
+	 * <p>
 	 * excludeLastEdge : If range is d0 ~ d1, normally it's true if d0 <= x <= d1 where x is entity's position<br>If this is true, then it will become d0 <= x < d1
 	 */
 	public List<AbEntity> inRange(int touch, int dire, double d0, double d1, boolean excludeLastEdge) {
@@ -630,7 +630,13 @@ public class StageBasis extends BattleObj {
 			ubaseSmoke.forEach(EAnimCont::update);
 			lw.addAll(tlw);
 			tlw.clear();
-		}
+		} else
+			for (int i = 0; i < lea.size(); i++) {
+				EAnimCont content = lea.get(i);
+				if (content instanceof WaprCont && ((WaprCont) content).timeImmune)
+					content.update();
+			}
+
 		la.forEach(AttackAb::capture);
 		la.forEach(AttackAb::excuse);
 		la.removeIf(a -> a.duration <= 0);
@@ -695,7 +701,8 @@ public class StageBasis extends BattleObj {
 			doors.removeIf(EAnimCont::done);
 			ebaseSmoke.removeIf(EAnimCont::done);
 			ubaseSmoke.removeIf(EAnimCont::done);
-		}
+		} else
+			lea.removeIf(content -> content instanceof WaprCont && ((WaprCont) content).timeImmune && content.done());
 		updateTheme();
 		if (s_stop > 0)
 			s_stop--;
@@ -753,7 +760,12 @@ public class StageBasis extends BattleObj {
 			lea.forEach(EAnimCont::update);
 			ebaseSmoke.forEach(EAnimCont::update);
 			ubaseSmoke.forEach(EAnimCont::update);
-		}
+		} else
+			for (int i = 0; i < lea.size(); i++) {
+				EAnimCont content = lea.get(i);
+				if (content instanceof WaprCont && ((WaprCont) content).timeImmune)
+					content.update();
+			}
 	}
 
 	private void updateEntities(boolean time) {

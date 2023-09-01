@@ -13,14 +13,16 @@ public class WaprCont extends EAnimCont {
 	private final EAnimU ent;
 	private final EAnimD<?> chara;
 	public final int dire;
+	public final boolean timeImmune;
 
-	public WaprCont(double p, WarpEff pa, int layer, EAnimU a, int dire) {
+	public WaprCont(double p, WarpEff pa, int layer, EAnimU a, int dire, boolean timeImmune) {
 		super(p, layer, effas().A_W.getEAnim(pa));
 		type = pa;
 		ent = a;
 		chara = effas().A_W_C.getEAnim(pa);
 		this.dire = dire;
 		a.ent[0].EWarp = dire == 1;
+		this.timeImmune = timeImmune;
 	}
 
 	@Override
