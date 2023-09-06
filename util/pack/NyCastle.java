@@ -6,7 +6,7 @@ import common.system.VImg;
 import common.system.fake.FakeImage;
 import common.util.anim.*;
 
-public class NyCastle extends AnimI<NyCastle, NyCastle.NyType> {
+public class NyCastle extends AnimD<NyCastle, NyCastle.NyType> {
 
 	public enum NyType implements AnimI.AnimType<NyCastle, NyType> {
 		BASE, ATK, EXT
@@ -32,55 +32,50 @@ public class NyCastle extends AnimI<NyCastle, NyCastle.NyType> {
 
 	private final int id;
 	private final VImg sprite;
-	private final ImgCut ic;
-	private final MaModel model, atkm, extm;
-	private final MaAnim manim, atka, exta;
-	private FakeImage[] parts;
+	private final MaModel atkm, extm;
 
 	private NyCastle(String str, int t) {
+		super(str);
 		anim = this;
 		id = t;
 		sprite = new VImg(str + t + "_00.png");
-		ic = ImgCut.newIns(str + t + "_00.imgcut");
-		model = MaModel.newIns(str + t + "_01.mamodel");
-		manim = MaAnim.newIns(str + t + "_01.maanim");
+		imgcut = ImgCut.newIns(str + t + "_00.imgcut");
+		mamodel = MaModel.newIns(str + t + "_01.mamodel");
+		anims = new MaAnim[]{MaAnim.newIns(str + t + "_01.maanim"),null,null};
 		if (t != 1 && t != 2 && t != 7) {
 			atkm = MaModel.newIns(str + t + "_00.mamodel");
-			atka = MaAnim.newIns(str + t + "_00.maanim");
-		} else {
+			anims[1] = MaAnim.newIns(str + t + "_00.maanim");
+		} else
 			atkm = null;
-			atka = null;
-		}
 		if (t == 6) {
 			extm = MaModel.newIns(str + t + "_02.mamodel");
-			exta = MaAnim.newIns(str + t + "_02.maanim");
-		} else {
+			anims[2] = MaAnim.newIns(str + t + "_02.maanim");
+		} else
 			extm = null;
-			exta = null;
-		}
-	}
-
-	@Override
-	public void check() {
-		if (parts == null)
-			load();
 	}
 
 	@Override
 	public EAnimD<NyType> getEAnim(NyType t) {
 		check();
 		if (t == NyType.BASE)
-			return new EAnimD<>(this, model, manim, t);
+			return new EAnimD<>(this, mamodel, anims[0], t);
 		if (t == NyType.ATK)
-			return new EAnimD<>(this, atkm, atka, t);
+			return new EAnimD<>(this, atkm, anims[1], t);
 		if (t == NyType.EXT)
-			return new EAnimD<>(this, extm, exta, t);
+			return new EAnimD<>(this, extm, anims[2], t);
 		return null;
 	}
 
 	@Override
+	public FakeImage getNum() {
+		return sprite.getImg();
+	}
+
+	@Override
 	public void load() {
-		parts = ic.cut(sprite.getImg());
+		types = NyType.values();
+		parts = imgcut.cut(sprite.getImg());
+		loaded = true;
 	}
 
 	@Override
@@ -93,18 +88,7 @@ public class NyCastle extends AnimI<NyCastle, NyCastle.NyType> {
 	}
 
 	@Override
-	public FakeImage parts(int i) {
-		return parts[i];
-	}
-
-	@Override
 	public String toString() {
 		return "castle " + id;
 	}
-
-	@Override
-	public NyType[] types() {
-		return NyType.values();
-	}
-
 }
