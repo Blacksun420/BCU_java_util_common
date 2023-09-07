@@ -575,6 +575,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				back.update(false);
 			if (dead > 0)
 				soul.update(false);
+			if (corpse != null)
+				corpse.update(false);
 
 			if(smoke != null) {
 				if(smoke.done()) {
@@ -1920,14 +1922,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		}
 		if (atk.getProc().WEAK.time > 0) {
 			int val = (int) (atk.getProc().WEAK.time * time);
-
 			int rst = checkAIImmunity(atk.getProc().WEAK.mult - 100, getProc().IMUWEAK.smartImu, getProc().IMUWEAK.mult > 0) ? getProc().IMUWEAK.mult : 0;
-
 			val = val * (100 - rst) / 100;
-
-			if(dire == -1 && basis.canon.deco == DECO_BASE_GROUND) {
-				val *= basis.b.t().getDecorationMagnification(basis.canon.deco, Data.DECO_WEAK);
-			}
 
 			if (rst < 100) {
 				if (val < 0)

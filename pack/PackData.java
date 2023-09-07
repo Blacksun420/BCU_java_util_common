@@ -7,7 +7,6 @@ import common.battle.Treasure;
 import common.battle.data.CustomEntity;
 import common.battle.data.Orb;
 import common.battle.data.PCoin;
-import common.io.BCUException;
 import common.io.assets.AssetLoader;
 import common.io.json.Dependency;
 import common.io.json.FieldOrder.Order;
@@ -27,7 +26,6 @@ import common.system.files.VFileRoot;
 import common.util.Data;
 import common.util.Res;
 import common.util.anim.AnimCE;
-import common.util.anim.AnimU;
 import common.util.anim.AnimUD;
 import common.util.lang.MultiLangData;
 import common.util.pack.*;
@@ -489,8 +487,6 @@ public abstract class PackData implements IndexContainer {
 			loaded = true;
 			loadMusics();
 			UserProfile.setStatic(UserProfile.CURRENT_PACK, null);
-			if (!validate())
-				throw new BCUException("This pack contains invalid animation data"); //Like with every other upstream BCU exception, this antithesis to user-friendliness tells nothing about its cause. Fix later kthnx
 
 			if(source instanceof Source.ZipSource && ((Source.ZipSource) source).zip.desc.parentPassword != null)
 				desc.parentPassword = ((Source.ZipSource) source).zip.desc.parentPassword.clone();
@@ -530,36 +526,6 @@ public abstract class PackData implements IndexContainer {
 				def = func.reduce(def, castles);
 			return def;
 		}
-	}
-
-	public boolean validate() {
-		//mental damage
-		//Check if any units contain corrupted animation
-		for(Unit unit : units) {
-			if (unit == null)
-				continue;
-			for(Form form : unit.forms) {
-				if (form == null)
-					continue;
-				if (form.anim == null || form.anim.cantLoadAll(AnimU.ImageKeeper.AnimationType.UNIT))
-					return false;
-			}
-		}
-		//Check if any enemies contain corrupted animation
-		for(Enemy enemy : enemies) {
-			if (enemy == null)
-				continue;
-			if (enemy.anim == null || enemy.anim.cantLoadAll(AnimU.ImageKeeper.AnimationType.ENEMY))
-				return false;
-		}
-		//Check if any souls contain corrupted animation
-		for (Soul soul : souls) {
-			if (soul == null)
-				continue;
-			if (soul.anim == null || soul.anim.cantLoadAll(AnimU.ImageKeeper.AnimationType.SOUL))
-				return false;
-		}
-		return true;
 	}
 
 	@ContGetter

@@ -114,11 +114,6 @@ public class AnimCI extends AnimU<AnimCI.AnimCIKeeper> {
 				num = null;
 			}
 		}
-
-		@Override
-		public boolean validate(AnimationType type) {
-			return loader.validate(type);
-		}
 	}
 
 	@JsonClass.JCIdentifier
@@ -170,11 +165,6 @@ public class AnimCI extends AnimU<AnimCI.AnimCIKeeper> {
 			getUni().check();
 
 		validate();
-	}
-
-	@Override
-	public boolean cantLoadAll(ImageKeeper.AnimationType type) {
-		return !loader.validate(type);
 	}
 
 	@Override

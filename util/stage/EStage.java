@@ -101,7 +101,7 @@ public class EStage extends BattleObj {
 
 			if (s.isBCstage && datas[i].castle_0 < 100 && rem[i] > 0 && !s.trail)
 				rem[i] = b.ebase instanceof EEnemy ? -2 : 0;
-			else if (b.ebase instanceof EEnemy)
+			else if (s.isBCstage && b.ebase instanceof EEnemy)
 				rem[i] += 2;
 		}
 	}

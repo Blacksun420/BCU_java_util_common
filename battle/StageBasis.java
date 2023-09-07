@@ -109,9 +109,6 @@ public class StageBasis extends BattleObj {
 		} else {
 			ebase = new ECastle(this);
 			ebase.added(1, 800);
-
-			// If enemy base is castle, no need to perform delayed first spawn
-			Arrays.fill(est.first, -1);
 		}
 		EUnit eu = est.ubase(this);
 		if (eu != null) {

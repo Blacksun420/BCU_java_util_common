@@ -53,15 +53,6 @@ public abstract class Source {
 		int getStatus();
 
 		VImg getUni();
-
-		/**
-		 * Validate if animation loader can load data without any error
-		 *
-		 * @param type Type of this animation. For example, soul animation won't need deploy icon
-		 *
-		 * @return Whether loader contains any corrupted data or not
-		 */
-		boolean validate(AnimU.ImageKeeper.AnimationType type);
 	}
 
 	public interface SourceLoader {
@@ -190,7 +181,10 @@ public abstract class Source {
 
 		@Override
 		public ImgCut getIC() {
-			return ImgCut.newIns(loader.loadFile(id.base, id, IC));
+			FileData fd = loader.loadFile(id.base, id, IC);
+			if (fd == null)
+				CommonStatic.ctx.printErr(ErrType.WARN, "Corrupted imgcut found for " + id);
+			return ImgCut.newIns(fd);
 		}
 
 		@Override
@@ -212,7 +206,10 @@ public abstract class Source {
 
 		@Override
 		public MaModel getMM() {
-			return MaModel.newIns(loader.loadFile(id.base, id, MM));
+			FileData fd = loader.loadFile(id.base, id, MM);
+			if (fd == null)
+				CommonStatic.ctx.printErr(ErrType.WARN, "Corrupted mamodel found for " + id);
+			return MaModel.newIns(fd);
 		}
 
 		@Override
@@ -236,31 +233,6 @@ public abstract class Source {
 			if (uni == null)
 				return null;
 			return new VImg(FakeImage.read(uni));
-		}
-
-		@Override
-		public boolean validate(AnimU.ImageKeeper.AnimationType type) {
-			if (type == AnimU.ImageKeeper.AnimationType.UNIT) {
-				FileData uni = loader.loadFile(id.base, id, UNI);
-				if (uni == null)
-					return false;
-			}
-			FileData num = loader.loadFile(id.base, id, SP);
-			if (num == null)
-				return false;
-
-			FileData cut = loader.loadFile(id.base, id, IC);
-			if (cut == null)
-				return false;
-
-			FileData mod = loader.loadFile(id.base, id, MM);
-			if (mod == null)
-				return false;
-
-			//for (int i = 0; i < AnimU.UType.length; i++)
-			//	if(loader.loadFile(id.base, id, getBaseMA()[i]) == null)
-			//		return false;
-			return true;
 		}
 	}
 
@@ -379,7 +351,8 @@ public abstract class Source {
 						ResourceLocation rl = new ResourceLocation(id, f.getName(), path);
 						AnimCE anim = new AnimCE(rl);
 						AnimCE.map().put(f.getName(), anim);
-					}
+					} else if (f.isDirectory())
+						CommonStatic.ctx.printErr(ErrType.WARN, "Corrupted Sprite found in " + sprite);
 				}
 			}
 		}

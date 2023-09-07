@@ -17,10 +17,6 @@ public class AnimUD extends AnimU<AnimUD.DefImgLoader> {
 
 	@JsonClass.JCIdentifier
 	public final Source.ResourceLocation id;
-	@Override
-	public boolean cantLoadAll(ImageKeeper.AnimationType type) {
-		return !loader.validate(type);
-	}
 
 	static class DefImgLoader implements AnimU.ImageKeeper {
 		private final String spath;
@@ -111,12 +107,6 @@ public class AnimUD extends AnimU<AnimUD.DefImgLoader> {
 				uni.unload();
 				uni = null;
 			}
-		}
-
-		@Override
-		public boolean validate(AnimationType type) {
-			// This is for BC animations, if validate is false, just let program crash rather
-			return true;
 		}
 
 		private MaAnim[] filterValidAnims(MaAnim[] original) {

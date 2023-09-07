@@ -95,13 +95,10 @@ public class Sniper extends AtkModelAb {
 	}
 
 	public void update() {
-		if (canDo && b.ubase.health <= 0) {
+		if (canDo && b.ubase.health <= 0)
 			canDo = false;
-		}
-
-		if (enabled && coolTime > 0 && preTime == 0 && atkTime == 0) {
+		if (enabled && coolTime > 0 && preTime == 0 && atkTime == 0)
 			coolTime--;
-		}
 
 		if (coolTime == 0 && enabled && pos > 0 && canDo) {
 			if(Math.abs(targetAngle - cannonAngle) < 1) {
