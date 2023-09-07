@@ -79,6 +79,12 @@ public class NyCastle extends AnimD<NyCastle, NyCastle.NyType> {
 	}
 
 	@Override
+	public boolean cantLoadAll(AnimU.ImageKeeper.AnimationType type) {
+		//TODO delete this garbage
+		return false;
+	}
+
+	@Override
 	public String[] names() {
 		if (atkm == null)
 			return new String[] { "castle" };

@@ -242,30 +242,24 @@ public abstract class Source {
 		public boolean validate(AnimU.ImageKeeper.AnimationType type) {
 			if (type == AnimU.ImageKeeper.AnimationType.UNIT) {
 				FileData uni = loader.loadFile(id.base, id, UNI);
-
 				if (uni == null)
 					return false;
 			}
-
 			FileData num = loader.loadFile(id.base, id, SP);
-
 			if (num == null)
 				return false;
 
 			FileData cut = loader.loadFile(id.base, id, IC);
-
 			if (cut == null)
 				return false;
 
 			FileData mod = loader.loadFile(id.base, id, MM);
-
 			if (mod == null)
 				return false;
 
-			for (int i = 0; i < getBaseMA().length; i++)
-				if(loader.loadFile(id.base, id, getBaseMA()[i]) == null)
-					return false;
-
+			//for (int i = 0; i < AnimU.UType.length; i++)
+			//	if(loader.loadFile(id.base, id, getBaseMA()[i]) == null)
+			//		return false;
 			return true;
 		}
 	}
