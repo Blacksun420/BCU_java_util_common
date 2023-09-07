@@ -1137,9 +1137,6 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 							if (anim.corpse.len() - rev[1] == e.data.getRevive()[i].pre) {
 								e.basis.getAttack(e.aam.getSpAttack(REVI, i));
 					}
-
-					if (anim.corpse != null)
-						anim.corpse.update(false);
 				}
 				if (rev[1] == 0) {
 					if(anim.corpse != null && e.anim.corpse.type == ZombieEff.REVIVE)

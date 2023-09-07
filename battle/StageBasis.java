@@ -94,7 +94,6 @@ public class StageBasis extends BattleObj {
 		est = stage;
 		st = est.s;
 		elu = new ELineUp(bas.lu, this, sav);
-		est.assign(this);
 		setBackground(st.bg);
 		if (bg.bgEffect != null) //TODO: Move BG Effect setting to setBG function
 			bgEffect = bg.bgEffect.get();
@@ -117,6 +116,7 @@ public class StageBasis extends BattleObj {
 		}
 		ubase = eu != null ? eu : new ECastle(this, bas);
 		ubase.added(-1, st.len - 800);
+		est.assign(this);
 
 		int sttime = 3;
 		if (st.getCont().getCont() == DefMapColc.getMap("CH")) {
