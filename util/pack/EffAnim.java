@@ -757,6 +757,12 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 	}
 
 	@Override
+	public boolean cantLoadAll(AnimU.ImageKeeper.AnimationType type) {
+		// Effect animation is part of BC animation, there must not be failure
+		return false;
+	}
+
+	@Override
 	public String toString() {
 		if (name.length() > 0)
 			return name;

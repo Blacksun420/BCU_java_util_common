@@ -111,11 +111,14 @@ public class AnimCI extends AnimU<AnimCI.AnimCIKeeper> {
 		public void unload() {
 			if(num != null) {
 				num.unload();
-
 				num = null;
 			}
 		}
 
+		@Override
+		public boolean validate(AnimationType type) {
+			return loader.validate(type);
+		}
 	}
 
 	@JsonClass.JCIdentifier
@@ -170,8 +173,12 @@ public class AnimCI extends AnimU<AnimCI.AnimCIKeeper> {
 	}
 
 	@Override
+	public boolean cantLoadAll(ImageKeeper.AnimationType type) {
+		return !loader.validate(type);
+	}
+
+	@Override
 	public String toString() {
 		return id.id;
 	}
-
 }

@@ -78,8 +78,8 @@ public class EStage extends BattleObj {
 				double multi = (data.multiple == 0 ? 100 : data.multiple) * mul * 0.01;
 				double mulatk = (data.multiple == 0 ? 100 : data.mult_atk) * mul * 0.01;
 				AbEnemy e = Identifier.getOr(data.enemy, AbEnemy.class);
-
 				EEnemy ee = e.getEntity(b, data, multi, mulatk, data.layer_0, data.layer_1, data.boss);
+
 				if (data.doorchance > 0 && b.r.nextDouble() * 100 < data.doorchance)
 					ee.door = data.doordis_0 == data.doordis_1 ? data.doordis_0 : (float) ((data.doordis_1 - data.doordis_0) * b.r.nextDouble()) + data.doordis_0;
 				ee.group = data.group;
@@ -99,8 +99,10 @@ public class EStage extends BattleObj {
 			if (Math.abs(rem[i]) < Math.abs(datas[i].spawn_1))
 				rem[i] += (int) ((datas[i].spawn_1 - datas[i].spawn_0) * b.r.nextDouble());
 
-			if (s.isBCstage && datas[i].castle_0 < 100 && rem[i] > 0)
-				rem[i] = 0;
+			if (s.isBCstage && datas[i].castle_0 < 100 && rem[i] > 0 && !s.trail)
+				rem[i] = b.ebase instanceof EEnemy ? -2 : 0;
+			else if (b.ebase instanceof EEnemy)
+				rem[i] += 2;
 		}
 	}
 
@@ -187,5 +189,4 @@ public class EStage extends BattleObj {
 		double d = !s.trail ? b.getEBHP() : b.ebase.maxH - b.ebase.health;
 		return c0 >= c1 ? (s.trail ? d >= c0 : d <= c0) : (d > c0 && d <= c1);
 	}
-
 }

@@ -1920,8 +1920,15 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		}
 		if (atk.getProc().WEAK.time > 0) {
 			int val = (int) (atk.getProc().WEAK.time * time);
+
 			int rst = checkAIImmunity(atk.getProc().WEAK.mult - 100, getProc().IMUWEAK.smartImu, getProc().IMUWEAK.mult > 0) ? getProc().IMUWEAK.mult : 0;
+
 			val = val * (100 - rst) / 100;
+
+			if(dire == -1 && basis.canon.deco == DECO_BASE_GROUND) {
+				val *= basis.b.t().getDecorationMagnification(basis.canon.deco, Data.DECO_WEAK);
+			}
+
 			if (rst < 100) {
 				if (val < 0)
 					status.weak[0] = Math.max(status.weak[0], Math.abs(val));
