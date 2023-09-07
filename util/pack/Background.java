@@ -401,21 +401,18 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 
 		if (img == null) {
 			PackData pack = getCont();
-
 			if (pack == null)
 				return;
 
 			if (pack instanceof PackData.DefPack) {
-				if (reference == -1) {
+				if (reference == null)
 					img = new VImg(VFile.get("./org/img/bg/bg"+Data.trio(id.id)+".png"));
-				} else {
-					img = new VImg(VFile.get("./org/img/bg/bg"+Data.trio(reference)+".png"));
-				}
-			} else if (pack instanceof PackData.UserPack) {
+				else
+					img = new VImg(VFile.get("./org/img/bg/bg"+Data.trio(reference.id)+".png"));
+			} else if (pack instanceof PackData.UserPack)
 				img = ((PackData.UserPack) getCont()).source.readImage(Source.BasePath.BG.toString(), id.id);
-			} else {
+			else
 				return;
-			}
 		}
 
 		img.mark(Marker.BG);
