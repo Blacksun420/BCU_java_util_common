@@ -644,12 +644,11 @@ public class Editors {
 
 		map().put("DEATHSURGE", new EditControl<>(Proc.VOLC.class, t -> {
 			t.prob = MathUtil.clip(t.prob, 0, 100);
-			if (t.prob == 0) {
+			if (t.prob == 0)
 				t.dis_0 = t.dis_1 = t.time = 0;
-			} else {
+			else
 				t.time = Math.max(1, t.time / Data.VOLC_ITV) * Data.VOLC_ITV;
-			}
-		}, eg -> t -> setComponentVisibility(eg, false, 3)));
+		}, eg -> t -> setComponentVisibility(eg, false, 4)));
 
 		map().put("BOUNTY", new EditControl<>(Proc.MULT.class, t -> {}));
 		map().put("ATKBASE", new EditControl<>(Proc.MULT.class, t -> {}));

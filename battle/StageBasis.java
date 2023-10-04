@@ -320,9 +320,8 @@ public class StageBasis extends BattleObj {
 	}
 
 	public void release() {
-		if(bgEffect != null) {
+		if(bgEffect != null)
 			bgEffect.release();
-		}
 	}
 
 	protected boolean act_can() {

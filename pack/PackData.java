@@ -140,7 +140,7 @@ public abstract class PackData implements IndexContainer {
 			qs.poll();
 			qs.poll();
 
-			Queue<String> fs = VFile.get("./org/data/t_force.csv") != null ? VFile.readLine("./org/data/t_force.csv") : null;
+			Queue<String> fs = CommonStatic.getConfig().stat && VFile.get("./org/data/t_force.csv") != null ? VFile.readLine("./org/data/t_force.csv") : null;
 			for (VFile p : list) {
 				boolean force = fs != null && fs.peek() != null && fs.peek().endsWith(Data.trio(i));
 				if (force)

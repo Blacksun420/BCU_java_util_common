@@ -197,6 +197,11 @@ public class CommonStatic {
 		 * 60 fps mode
 		 */
 		public boolean fps60 = false;
+
+		/**
+		 * Stat
+		 */
+		public boolean stat = false;
 	}
 
 	@JsonClass
