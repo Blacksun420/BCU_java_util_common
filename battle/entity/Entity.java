@@ -412,7 +412,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			}
 			if (e.status.curse == 0)
 				effs[A_CURSE] = null;
-			if (e.status.inv == 0 && e.status.wild == 0)
+			if (e.status.inv[0] == 0 && e.status.wild == 0)
 				effs[A_IMUATK] = null;
 			for (int i = 0; i < A_POIS.length; i++)
 				if ((e.status.poison & (1 << i)) == 0)
@@ -1239,8 +1239,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	public static class ProcManager extends BattleObj {
 
 		public boolean lethal;
-		public int kb, slow, stop, curse, seal, strengthen, money, dcut, dcap, poison, inv, wild, rage, hypno;
-		public final int[] weak = new int[2], shield = new int[2], burs = new int[2], revs = new int[2], armor = new int[2], speed = new int[3];
+		public int kb, slow, stop, curse, seal, strengthen, money, dcut, dcap, poison, wild, rage, hypno;
+		public final int[] weak = new int[2], shield = new int[2], burs = new int[2], revs = new int[2], armor = new int[2], speed = new int[3], inv = new int[2];
 		public final int[] lethargy = new int[3], warp = new int[3];
 
 		private final Entity e;
@@ -1268,8 +1268,10 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				speed[0]--;
 			if (lethargy[0] > 0)
 				lethargy[0]--;
-			if (inv > 0)
-				inv--;
+			if (inv[0] > 0)
+				inv[0]--;
+			else if (inv[1] > 0)
+				inv[1]--;
 			if (wild > 0)
 				wild--;
 			if (rage > 0)
@@ -1610,13 +1612,14 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			}
 		}
 
-		Proc.PT imuatk = getProc().IMUATK;
+		Proc.IMUATK imuatk = getProc().IMUATK;
 		if (imuatk.prob > 0 && (atk.dire == -1 || receive(-1) || ctargetable(atk.trait, atk.attacker))) {
-			if (status.inv == 0 && (imuatk.prob == 100 || basis.r.nextFloat() * 100 < imuatk.prob)) {
-				status.inv = (int) (imuatk.time * (1 + 0.2 / 3 * getFruit(atk.trait, atk.dire, -1)));
+			if (status.inv[0] + status.inv[1] == 0 && (imuatk.prob == 100 || basis.r.nextFloat() * 100 < imuatk.prob)) {
+				status.inv[0] = (int) (imuatk.time * (1 + 0.2 / 3 * getFruit(atk.trait, atk.dire, -1)));
+				status.inv[1] = imuatk.cd;
 				anim.getEff(P_IMUATK);
 			}
-			if (status.inv > 0)
+			if (status.inv[0] > 0)
 				return;
 		}
 		boolean proc = true;

@@ -215,7 +215,7 @@ public class StageBasis extends BattleObj {
 			slot = (int) (r.nextFloat() * totUni); //Pick random unit if chosen one isn't there
 		int i = slot >= 5 ? 1 : 0;
 
-		CommonStatic.setSE(amount < 0 ? SE_P_RESEARCHUP : SE_P_WORKERLVDOWN);
+		CommonStatic.setSE(amount < 0 ? SE_P_RESEARCHUP : SE_P_RESEARCHDOWN);
 		if (type == 0)
 			elu.cool[i][slot % 5] += amount;
 		else if (type == 1)

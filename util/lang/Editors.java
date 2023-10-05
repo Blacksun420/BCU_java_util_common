@@ -496,7 +496,15 @@ public class Editors {
 			}
 		}));
 
-		map().put("IMUATK", pt);
+		map().put("IMUATK", new EditControl<>(Proc.IMUATK.class, (t) -> {
+			t.prob = MathUtil.clip(t.prob, 0, 100);
+			if (t.prob == 0)
+				t.time = t.cd = 0;
+			else {
+				t.time = Math.max(t.time, 1);
+				t.cd = Math.max(t.cd, 0);
+			}
+		}));
 
 		map().put("DMGCUT", new EditControl<>(Proc.DMGCUT.class, (t) -> {
 			t.prob = MathUtil.clip(t.prob, 0, 100);

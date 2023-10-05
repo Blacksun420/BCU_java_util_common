@@ -168,6 +168,12 @@ public class Data {
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
+		public static class IMUATK extends PT {
+			@Order(2)
+			public int cd;
+		}
+
+		@JsonClass(noTag = NoTag.LOAD)
 		public static class BURROW extends ProcItem {
 			@Order(0)
 			public int count;
@@ -871,7 +877,7 @@ public class Data {
 		@Order(43)
 		public final COUNTER COUNTER = new COUNTER();
 		@Order(44)
-		public final PT IMUATK = new PT();
+		public final IMUATK IMUATK = new IMUATK();
 		@Order(45)
 		public final DMGCUT DMGCUT = new DMGCUT();
 		@Order(46)
