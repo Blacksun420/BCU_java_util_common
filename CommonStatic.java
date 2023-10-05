@@ -292,12 +292,10 @@ public class CommonStatic {
 	public static boolean isInteger(String str) {
 		str = str.trim();
 
-		for (int i = 0; i < str.length(); i++) {
-			if (!Character.isDigit(str.charAt(i))) {
+		for (int i = 0; i < str.length(); i++)
+			if (!Character.isDigit(str.charAt(i)))
 				if(str.charAt(i) != '-' || i != 0)
 					return false;
-			}
-		}
 		return !str.isEmpty();
 	}
 
@@ -310,7 +308,6 @@ public class CommonStatic {
 				else
 					dots++;
 			}
-
 		return true;
 	}
 
@@ -327,25 +324,19 @@ public class CommonStatic {
 	}
 
 	public static double parseDoubleN(String str) {
-		double ans;
 		try {
-			ans = parseDoublesN(str)[0];
+			return parseDoublesN(str)[0];
 		} catch (Exception e) {
-			ans = -1.0;
+			return -1.0;
 		}
-		return ans;
 	}
 
 	public static float parseFloatN(String str) {
-		float ans;
-
 		try {
-			ans = parseFloatsN(str)[0];
+			return parseFloatsN(str)[0];
 		} catch (Exception e) {
-			ans = -1f;
+			return -1f;
 		}
-
-		return ans;
 	}
 
 	public static double[] parseDoublesN(String str) {

@@ -54,12 +54,12 @@ public class CustomBGEffect extends BackgroundEffect {
         }
     }
     @Override
-    public void preDraw(FakeGraphics g, P rect, double siz, double midH) {
+    public void preDraw(FakeGraphics g, P rect, float siz, float midH) {
         int spaced = 0;
         while (spaced <= sw) {
             FakeTransform at = g.getTransform();
             g.translate(convertP(1024 + spaced * 2, siz) + rect.x, convertP(7000 - midH, siz) - rect.y);
-            ebg[0].drawBGEffect(g, origin, siz * 0.8, 255, 1, 1);
+            ebg[0].drawBGEffect(g, origin, siz * 0.8f, 255, 1, 1);
             g.setTransform(at);
             g.delete(at);
 
@@ -70,12 +70,12 @@ public class CustomBGEffect extends BackgroundEffect {
     }
 
     @Override
-    public void postDraw(FakeGraphics g, P rect, double siz, double midH) {
+    public void postDraw(FakeGraphics g, P rect, float siz, float midH) {
         int spaced = 0;
         while (spaced <= sw) {
             FakeTransform at = g.getTransform();
             g.translate(convertP(1024 + spaced * 2, siz) + rect.x, convertP(7000 - midH, siz) - rect.y);
-            ebg[1].drawBGEffect(g, origin, siz * 0.8, 255, 1, 1);
+            ebg[1].drawBGEffect(g, origin, siz * 0.8f, 255, 1, 1);
             g.setTransform(at);
             g.delete(at);
 
@@ -86,21 +86,21 @@ public class CustomBGEffect extends BackgroundEffect {
     }
 
     @Override
-    public void draw(FakeGraphics g, double y, double siz, double midH) {
+    public void draw(FakeGraphics g, float y, float siz, float midH) {
         P pee = new P(0, y);
         preDraw(g, pee, siz, midH);
         postDraw(g, pee, siz, midH);
     }
 
     @Override
-    public void update(int w, double h, double midH) {
+    public void update(int w, float h, float midH) {
         check();
         ebg[0].update(false);
         ebg[1].update(false);
     }
 
     @Override
-    public void initialize(int w, double h, double midH, Background bg) {
+    public void initialize(int w, float h, float midH, Background bg) {
         check();
         sw = w;
         ebg[0].setTime(0);

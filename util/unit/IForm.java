@@ -23,7 +23,7 @@ public interface IForm {
 
     int getWill();
 
-    double getPrice(int sta);
+    float getPrice(int sta);
 
     int getRespawn();
 }

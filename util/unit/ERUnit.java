@@ -109,8 +109,8 @@ public class ERUnit extends Data implements IForm {
     }
 
     @Override
-    public double getPrice(int sta) {
-        return unit.price * (1 + sta * 0.5);
+    public float getPrice(int sta) {
+        return unit.price * (1 + sta * 0.5f);
     }
 
     @Override
