@@ -9,7 +9,6 @@ import common.system.fake.FakeImage;
 import common.system.fake.FakeImage.Marker;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @JsonClass.JCGeneric(ResourceLocation.class)
 public class AnimCI extends AnimU<AnimCI.AnimCIKeeper> {

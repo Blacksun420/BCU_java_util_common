@@ -46,7 +46,7 @@ public class Revival extends Data {
             rev.par = this;
     }
 
-    public void triggerRevival(StageBasis b, double mul, int layer, int group, double pos) {
+    public void triggerRevival(StageBasis b, float mul, int layer, int group, float pos) {
         if (boss >= 1) {
             if (CommonStatic.getConfig().shake && boss == 2 && b.shakeCoolDown[1] == 0) {
                 b.shake = SHAKE_MODE_BOSS;
@@ -63,8 +63,8 @@ public class Revival extends Data {
             CommonStatic.setSE(SE_BOSS);
         }
 
-        double multi = (mhp == 0 ? 100 : mhp) * mul * 0.01;
-        double mulatk = (mhp == 0 ? 100 : matk) * mul * 0.01;
+        float multi = (mhp == 0 ? 100 : mhp) * mul * 0.01f;
+        float mulatk = (mhp == 0 ? 100 : matk) * mul * 0.01f;
         AbEnemy e = Identifier.getOr(enemy, AbEnemy.class);
 
         EEnemy ee = e.getEntity(b, this, multi, mulatk, layer, layer, boss);

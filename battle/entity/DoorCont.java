@@ -24,7 +24,7 @@ public class DoorCont extends EAnimCont {
     }
 
     @Override
-    public void draw(FakeGraphics gra, P p, double psiz) {
+    public void draw(FakeGraphics gra, P p, float psiz) {
         FakeTransform at = gra.getTransform();
         super.draw(gra, p, psiz);
         gra.setTransform(at);

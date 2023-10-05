@@ -26,8 +26,6 @@ import common.system.files.VFileRoot;
 import common.util.Data;
 import common.util.Res;
 import common.util.anim.AnimCE;
-import common.util.anim.AnimCI;
-import common.util.anim.AnimU;
 import common.util.anim.AnimUD;
 import common.util.lang.MultiLangData;
 import common.util.pack.*;
@@ -37,7 +35,6 @@ import common.util.stage.CastleList.PackCasList;
 import common.util.stage.MapColc.DefMapColc;
 import common.util.stage.MapColc.PackMapColc;
 import common.util.unit.*;
-import javafx.util.Pair;
 
 import java.io.File;
 import java.text.DateFormat;

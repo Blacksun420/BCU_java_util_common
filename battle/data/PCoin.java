@@ -334,6 +334,20 @@ public class PCoin extends Data {
 	@OnInjected
 	public void onInjected() {
 		max = info.stream().mapToInt(i -> Math.max(1, i[1])).toArray();
+		for (int i = 0; i < info.size(); i++) {
+			int[] type = get_CORRES(info.get(i)[0]);
+			if (type[0] != PC_P)
+				continue;
+
+			int fieldTOT = (type.length >= 3 ? -type[2] : 0) + du.getProc().getArr(type[1]).getDeclaredFields().length * 2; //The Math.min is for testing
+			if (info.get(i).length - 3 == fieldTOT)
+				continue;
+			int[] modifs = Arrays.copyOf(info.get(i), fieldTOT + 3);
+			modifs[fieldTOT + 2] = info.get(i)[info.get(i).length - 1];
+			if (info.get(i).length - 3 < fieldTOT)
+				modifs[info.get(i).length - 1] = 0;
+			info.set(i, modifs);
+		}
 	}
 
 	@JsonField(tag = "info", io = JsonField.IOType.W, backCompat = JsonField.CompatType.UPST)

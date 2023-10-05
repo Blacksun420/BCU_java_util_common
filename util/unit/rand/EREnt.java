@@ -34,7 +34,7 @@ public class EREnt implements BattleStatic, Copable<EREnt> {
     @JsonField(io = JsonField.IOType.W, tag = "ent", backCompat = JsonField.CompatType.UPST)
     public JsonElement legacyEnt() {
         if (ent == null)
-            return new JsonNull();
+            return null;
         JsonObject jo = new JsonObject();
         jo.addProperty("cls", ent.cls.getName());
         jo.addProperty("pack", ent.pack);

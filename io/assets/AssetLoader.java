@@ -2,9 +2,7 @@ package common.io.assets;
 
 import common.CommonStatic;
 import common.io.PackLoader;
-import common.io.PackLoader.Preload;
 import common.io.PackLoader.ZipDesc;
-import common.io.PackLoader.ZipDesc.FileDesc;
 import common.io.assets.Admin.StaticPermitted;
 import common.io.assets.AssetLoader.AssetHeader.AssetEntry;
 import common.io.json.JsonClass;
@@ -74,10 +72,6 @@ public class AssetLoader {
 
 	public static final String CORE_VER = "0.7.4.3";
 	public static final byte FORK_VER = 10;
-
-	private static final String[] ANIMFL = { ".imgcut", ".mamodel", ".maanim" };
-	private static final String[] NONPRE = { "\\./org/img/../.....\\.png", "\\./org/enemy/.../..._.\\.png",
-			"\\./org/unit/..././..._.\\.png", "\\./org/unit/..././udi..._.\\.png" };
 
 	private static final int LEN = 1024;
 
@@ -212,18 +206,6 @@ public class AssetLoader {
 				add(new VFile(vf, fi.getName()), fi);
 			else
 				new VFile(vf, fi.getName(), new FDFile(fi));
-	}
-
-	private static boolean preload(FileDesc fd) {
-		if (fd.size < 1024)
-			return true;
-		for (String str : ANIMFL)
-			if (fd.path.endsWith(str))
-				return false;
-		for (String str : NONPRE)
-			if (fd.path.length() == str.length() - 2 && fd.path.matches(str))
-				return false;
-		return true;
 	}
 
 	private static void stream(OutputStream fos, InputStream fis) throws IOException {
