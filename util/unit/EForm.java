@@ -39,14 +39,14 @@ public class EForm extends Data implements IForm {
 		if(b.st.isAkuStage())
 			getAkuStageLevel();
 
-		double d = f.unit.lv.getMult(level.getTotalLv());
+		float d = f.unit.lv.getMult(level.getTotalLv());
 		EAnimU anim = getEntryAnim();
 		return new EUnit(b, du, anim, d, du.getFront(), du.getBack(), level, f.du.getPCoin(), index, isBase);
 	}
 
 	@Override
 	public EUnit invokeEntity(StageBasis b, int Lvl, int minLayer, int maxLayer) {
-		double d = f.unit.lv.getMult(Lvl);
+		float d = f.unit.lv.getMult(Lvl);
 		EAnimU anim = getEntryAnim();
 		return new EUnit(b, du, anim, d, minLayer, maxLayer, level, f.du.getPCoin(), null, false);
 	}
@@ -57,8 +57,8 @@ public class EForm extends Data implements IForm {
 	}
 
 	@Override
-	public double getPrice(int sta) {
-		return du.getPrice() * (1 + sta * 0.5);
+	public float getPrice(int sta) {
+		return du.getPrice() * (1 + sta * 0.5f);
 	}
 
 	@Override

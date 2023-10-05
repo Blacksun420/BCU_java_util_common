@@ -15,7 +15,7 @@ public class AttackVolcano extends AttackAb {
 	protected final List<Entity> vcapt = new ArrayList<>();
 	public boolean active = true;
 
-	public AttackVolcano(Entity e, AttackSimple a, double sta, double end, int vt) {
+	public AttackVolcano(Entity e, AttackSimple a, float sta, float end, int vt) {
 		super(e, a, sta, end, false);
 		this.sta = sta;
 		this.end = end;

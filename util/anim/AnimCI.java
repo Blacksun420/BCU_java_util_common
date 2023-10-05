@@ -9,6 +9,7 @@ import common.system.fake.FakeImage;
 import common.system.fake.FakeImage.Marker;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @JsonClass.JCGeneric(ResourceLocation.class)
 public class AnimCI extends AnimU<AnimCI.AnimCIKeeper> {
@@ -109,7 +110,7 @@ public class AnimCI extends AnimU<AnimCI.AnimCIKeeper> {
 
 		@Override
 		public void unload() {
-			if(num != null) {
+			if (num != null) {
 				num.unload();
 				num = null;
 			}

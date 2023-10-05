@@ -10,7 +10,7 @@ public class AtkModelUnit extends AtkModelEntity {
 
 	private final ELineUp elu;
 
-	protected AtkModelUnit(Entity ent, double d0, double d1, PCoin pcoin, Level lv) {
+	protected AtkModelUnit(Entity ent, float d0, float d1, PCoin pcoin, Level lv) {
 		super(ent, d0, d1, pcoin, lv);
 		elu = ent.basis.elu;
 	}

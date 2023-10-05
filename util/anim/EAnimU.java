@@ -32,7 +32,7 @@ public class EAnimU extends EAnimD<AnimU.UType> {
 			setTime(0);
 	}
 
-	public void draw(FakeGraphics g, P ori, double siz, boolean flip) {
+	public void draw(FakeGraphics g, P ori, float siz, boolean flip) {
 		flip(flip);
 		draw(g, ori, siz);
 	}
@@ -45,7 +45,7 @@ public class EAnimU extends EAnimD<AnimU.UType> {
 		}
 	}
 	@Override
-	public void draw(FakeGraphics g, P ori, double siz) {
+	public void draw(FakeGraphics g, P ori, float siz) {
 		if (f == -1) {
 			f = 0;
 			setup();

@@ -22,10 +22,10 @@ public class RockBGEffect extends BackgroundEffect {
     private FakeImage segment;
 
     private final List<P> rockPosition = new ArrayList<>();
-    private final List<Double> speed = new ArrayList<>();
-    private final List<Double> size = new ArrayList<>();
+    private final List<Float> speed = new ArrayList<>();
+    private final List<Float> size = new ArrayList<>();
     private final List<Boolean> isRock = new ArrayList<>();
-    private final List<Double> angle = new ArrayList<>();
+    private final List<Float> angle = new ArrayList<>();
     //0 : Behind, 2 : Front
     private final List<Byte> layer = new ArrayList<>();
     private final List<Integer> opacity = new ArrayList<>();
@@ -49,7 +49,7 @@ public class RockBGEffect extends BackgroundEffect {
     }
 
     @Override
-    public void preDraw(FakeGraphics g, P rect, double siz, double midH) {
+    public void preDraw(FakeGraphics g, P rect, float siz, float midH) {
         FakeTransform at = g.getTransform();
 
         for(int i = 0; i < rockPosition.size(); i++) {
@@ -57,11 +57,11 @@ public class RockBGEffect extends BackgroundEffect {
                 g.setComposite(FakeGraphics.TRANS, opacity.get(i), 0);
 
                 FakeImage img = isRock.get(i) ? rock : segment;
-                double s = size.get(i);
+                float s = size.get(i);
 
                 g.translate(BackgroundEffect.convertP(rockPosition.get(i).x, siz) + (int) rect.x, (int) (rockPosition.get(i).y * siz - rect.y));
                 g.rotate(angle.get(i));
-                g.drawImage(img, 0, 0, img.getWidth() * s * siz, img.getHeight() * s * siz);
+                g.drawImage(img, 0, 0, (int) (img.getWidth() * s * siz), (int) (img.getHeight() * s * siz));
 
                 g.setTransform(at);
             }
@@ -74,13 +74,13 @@ public class RockBGEffect extends BackgroundEffect {
     }
 
     @Override
-    public void postDraw(FakeGraphics g, P rect, double siz, double midH) {
+    public void postDraw(FakeGraphics g, P rect, float siz, float midH) {
         FakeTransform at = g.getTransform();
 
         for(int i = 0; i < rockPosition.size(); i++) {
             if(layer.get(i) == 1) {
                 FakeImage img = isRock.get(i) ? rock : segment;
-                double s = size.get(i);
+                float s = size.get(i);
 
                 g.translate(BackgroundEffect.convertP(rockPosition.get(i).x + (vibrate ? 2 : -2), siz) + (int) rect.x, (int) (rockPosition.get(i).y * siz - rect.y + midH * siz));
                 g.rotate(angle.get(i));
@@ -95,14 +95,14 @@ public class RockBGEffect extends BackgroundEffect {
     }
 
     @Override
-    public void draw(FakeGraphics g, double y, double siz, double midH) {
+    public void draw(FakeGraphics g, float y, float siz, float midH) {
         FakeTransform at = g.getTransform();
         for(int i = 0; i < rockPosition.size(); i++) {
             if(layer.get(i) == 0) {
                 g.setComposite(FakeGraphics.TRANS, opacity.get(i), 0);
 
                 FakeImage img = isRock.get(i) ? rock : segment;
-                double s = size.get(i);
+                float s = size.get(i);
 
                 g.translate(BackgroundEffect.convertP(rockPosition.get(i).x, siz), (int) (rockPosition.get(i).y * siz - y));
                 g.rotate(angle.get(i));
@@ -115,7 +115,7 @@ public class RockBGEffect extends BackgroundEffect {
         for(int i = 0; i < rockPosition.size(); i++) {
             if(layer.get(i) == 1) {
                 FakeImage img = isRock.get(i) ? rock : segment;
-                double s = size.get(i);
+                float s = size.get(i);
 
                 g.translate(BackgroundEffect.convertP(rockPosition.get(i).x + (vibrate ? 2 : -2), siz), (int) (rockPosition.get(i).y * siz - y + midH * siz));
                 g.rotate(angle.get(i));
@@ -130,13 +130,13 @@ public class RockBGEffect extends BackgroundEffect {
     }
 
     @Override
-    public void update(int w, double h, double midH) {
+    public void update(int w, float h, float midH) {
         capture.clear();
 
         vibrate = !vibrate;
 
         for(int i = 0; i < rockPosition.size(); i++) {
-            double s = size.get(i);
+            float s = size.get(i);
             int rh = isRock.get(i) ? rock.getHeight() : segment.getHeight();
 
             if(rockPosition.get(i).y < -rh * s) {
@@ -152,28 +152,25 @@ public class RockBGEffect extends BackgroundEffect {
 
         if(!capture.isEmpty())
             for (Integer capt : capture) {
-                byte l = (byte) (r.nextDouble() >= 1 / 4.0 ? 0 : 1);
-                boolean isR = l != 1 && r.nextDouble() >= 0.9;
-                double siz = (Data.BG_EFFECT_ROCK_SIZE[l] - r.nextDouble() * (1 - 0.5 * l)) * (isR ? 0.8 : 1.0);
+                byte l = (byte) (r.nextFloat() >= 1 / 4.0 ? 0 : 1);
+                boolean isR = l != 1 && r.nextFloat() >= 0.9;
+                float siz = (Data.BG_EFFECT_ROCK_SIZE[l] - r.nextFloat() * (1 - 0.5f * l)) * (isR ? 0.8f : 1.0f);
 
                 int rw = (int) ((isR ? rock.getWidth() : segment.getWidth()) * siz);
 
                 rockPosition.get(capt).x = r.nextInt(w + battleOffset + 2 * rw) - rw;
                 rockPosition.get(capt).y = l == 0 ? 1020 + Data.BG_EFFECT_ROCK_BEHIND_SPAWN_OFFSET : BGHeight * 3;
                 isRock.set(capt, isR);
-                angle.set(capt, r.nextDouble() * Math.PI);
+                angle.set(capt,(float) (r.nextFloat() * Math.PI));
                 layer.set(capt, l);
                 size.set(capt, siz);
-                if (CommonStatic.getConfig().fps60)
-                    speed.set(capt, (Data.BG_EFFECT_ROCK_SPEED[l] - r.nextDouble() * 0.5) / 2.0);
-                else
-                    speed.set(capt, Data.BG_EFFECT_ROCK_SPEED[l] - r.nextDouble() * 0.5);
+                speed.set(capt, CommonStatic.fltFpsDiv(Data.BG_EFFECT_ROCK_SPEED[l] - r.nextFloat() * 0.5f));
                 opacity.set(capt, l == 0 ? 0 : 255);
             }
     }
 
     @Override
-    public void initialize(int w, double h, double midH, Background bg) {
+    public void initialize(int w, float h, float midH, Background bg) {
         for (P p : rockPosition)
             P.delete(p);
 
@@ -208,20 +205,17 @@ public class RockBGEffect extends BackgroundEffect {
         int number = w / 100;
 
         for(int i = 0; i < number; i++) {
-            byte l = (byte) (r.nextDouble() >= 0.25 ? 0 : 1);
-            boolean isR = l != 1 && r.nextDouble() >= 0.9;
-            double siz = (Data.BG_EFFECT_ROCK_SIZE[l] - r.nextDouble() * (1 - 0.5 * l)) * (isR ? 0.8 : 1.0);
+            byte l = (byte) (r.nextFloat() >= 0.25 ? 0 : 1);
+            boolean isR = l != 1 && r.nextFloat() >= 0.9;
+            float siz = (Data.BG_EFFECT_ROCK_SIZE[l] - r.nextFloat() * (1 - 0.5f * l)) * (isR ? 0.8f : 1f);
 
             int rw = (int) ((isR ? rock.getWidth() : segment.getWidth()) * siz);
 
             rockPosition.add(P.newP(r.nextInt(w + battleOffset + 2 * rw) - rw, r.nextInt(l == 0 ? 1020 + Data.BG_EFFECT_ROCK_BEHIND_SPAWN_OFFSET : BGHeight * 3)));
-            if (CommonStatic.getConfig().fps60)
-                speed.add((Data.BG_EFFECT_ROCK_SPEED[l] - r.nextDouble() * 0.5) / 2.0);
-            else
-                speed.add(Data.BG_EFFECT_ROCK_SPEED[l] - r.nextDouble() * 0.5);
+            speed.add(CommonStatic.fltFpsDiv(Data.BG_EFFECT_ROCK_SPEED[l] - r.nextFloat() * 0.5f));
 
             isRock.add(isR);
-            angle.add(r.nextDouble() * Math.PI);
+            angle.add((float) (r.nextFloat() * Math.PI));
             layer.add(l);
             size.add(siz);
             opacity.add(255);

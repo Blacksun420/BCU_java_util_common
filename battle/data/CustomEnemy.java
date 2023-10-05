@@ -20,7 +20,7 @@ public class CustomEnemy extends CustomEntity implements MaskEnemy {
 	@JsonField
 	public int star, drop;
 	@JsonField
-	public double limit;
+	public float limit;
 
 	public CustomEnemy() {
 		super();
@@ -89,7 +89,7 @@ public class CustomEnemy extends CustomEntity implements MaskEnemy {
 	}
 
 	@Override
-	public double multi(Basis b) {
+	public float multi(Basis b) {
 		if (star > 0)
 			return b.t().getStarMulti(star);
 		if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_ALIEN)))
@@ -98,7 +98,7 @@ public class CustomEnemy extends CustomEntity implements MaskEnemy {
 	}
 
 	@Override
-	public double getLimit() {
+	public float getLimit() {
 		return limit;
 	}
 }

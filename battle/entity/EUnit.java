@@ -26,7 +26,7 @@ public class EUnit extends Entity {
 
 	public static class OrbHandler extends BattleObj {
 
-		protected static double getOrb(int mult, AttackAb atk, SortedPackSet<Trait> traits, Treasure t) {
+		protected static float getOrb(int mult, AttackAb atk, SortedPackSet<Trait> traits, Treasure t) {
 			if(atk.origin.model instanceof AtkModelUnit)
 				return ((EUnit) ((AtkModelUnit) atk.origin.model).e).getOrb(mult, atk.trait, traits, t);
 			return ((EUnit) ((AtkModelUnit)atk.model).e).getOrb(mult, atk.trait, traits, t);
@@ -46,9 +46,9 @@ public class EUnit extends Entity {
 
 	protected final Level level;
 
-	public EUnit(StageBasis b, MaskUnit de, EAnimU ea, double d0, int layer0, int layer1, Level level, PCoin pc, int[] index, boolean isBase) {
+	public EUnit(StageBasis b, MaskUnit de, EAnimU ea, float d0, int layer0, int layer1, Level level, PCoin pc, int[] index, boolean isBase) {
 		super(b, de, ea, d0, b.b.t().getAtkMulti(), b.b.t().getDefMulti(), pc, level);
-		layer = layer0 == layer1 ? layer0 : layer0 + (int) (b.r.nextDouble() * (layer1 - layer0 + 1));
+		layer = layer0 == layer1 ? layer0 : layer0 + (int) (b.r.nextFloat() * (layer1 - layer0 + 1));
 		traits = de.getTraits();
 		lvl = level.getTotalLv();
 		this.index = index;
@@ -62,9 +62,9 @@ public class EUnit extends Entity {
 	}
 
 	//used for waterblast
-	public EUnit(StageBasis b, MaskUnit de, EAnimU ea, double d0) {
+	public EUnit(StageBasis b, MaskUnit de, EAnimU ea, float d0) {
 		super(b, de, ea, d0, b.b.t().getAtkMulti(), b.b.t().getDefMulti(), null, null);
-		layer = de.getFront() + (int) (b.r.nextDouble() * (de.getBack() - de.getFront() + 1));
+		layer = de.getFront() + (int) (b.r.nextFloat() * (de.getBack() - de.getFront() + 1));
 		traits = de.getTraits();
 		this.index = null;
 
@@ -109,7 +109,7 @@ public class EUnit extends Entity {
 		if (atk.trait.contains(BCTraits.get(TRAIT_BEAST))) {
 			Proc.BSTHUNT beastDodge = getProc().BSTHUNT;
 			if (beastDodge.prob > 0 && (atk.dire != getDire())) {
-				if (status.wild == 0 && (beastDodge.prob == 100 || basis.r.nextDouble() * 100 < beastDodge.prob)) {
+				if (status.wild == 0 && (beastDodge.prob == 100 || basis.r.nextFloat() * 100 < beastDodge.prob)) {
 					status.wild = beastDodge.time;
 					anim.getEff(P_IMUATK);
 				}
@@ -168,19 +168,19 @@ public class EUnit extends Entity {
 	}
 
 	@Override
-	protected double getLim() {
+	protected float getLim() {
 		return Math.max(0, basis.st.len - pos - ((MaskUnit) data).getLimit());
 	}
 
 	@Override
-	protected double updateMove(double extmov) {
+	protected float updateMove(float extmov) {
 		if (status.slow == 0)
 			extmov += data.getSpeed() * basis.elu.getInc(C_SPE) / 200.0;
 		return super.updateMove(extmov);
 	}
 
 	@Override
-	protected double getMov(double extmov) {
+	protected float getMov(float extmov) {
 		if (status.slow == 0)
 			extmov += data.getSpeed() * basis.elu.getInc(C_SPE) / 200.0;
 		return super.getMov(extmov);
@@ -212,13 +212,13 @@ public class EUnit extends Entity {
 		return ans;
 	}
 
-	private double getOrb(int mult, SortedPackSet<Trait> eTraits, SortedPackSet<Trait> traits, Treasure t) {
+	private float getOrb(int mult, SortedPackSet<Trait> eTraits, SortedPackSet<Trait> traits, Treasure t) {
 		final int ORB_LV = mult < 500 && mult > 100 ? mult < 300 ? ORB_STRONG : ORB_MASSIVE : -1;
 		final float[] ORB_MULTIS = ORB_LV == -1 ? new float[0] : ORB_LV == ORB_STRONG ? ORB_STR_ATK_MULTI : ORB_MASSIVE_MULTI;
 
-		double ini = 1;
+		float ini = 1;
 		if (!traits.isEmpty())
-			ini = (mult/100.0) + (ORB_LV == ORB_STRONG ? 0.3 : mult > 100 ? 1.0 : 0.0) / 3 * t.getFruit(traits);
+			ini = (mult/100f) + (ORB_LV == ORB_STRONG ? 0.3f : mult > 100 ? 1f : 0f) / 3 * t.getFruit(traits);
 
 		Orb orbs = ((MaskUnit)data).getOrb();
 		if(orbs != null && level.getOrbs() != null) {
@@ -235,7 +235,7 @@ public class EUnit extends Entity {
 		}
 		if (ini == 1 || ORB_LV == -1)
 			return ini;
-		double com = 1 + t.b.getInc(ORB_LV == ORB_STRONG ? C_GOOD : C_MASSIVE) * 0.01;
+		float com = 1 + t.b.getInc(ORB_LV == ORB_STRONG ? C_GOOD : C_MASSIVE) * 0.01f;
 		return ini * com;
 	}
 

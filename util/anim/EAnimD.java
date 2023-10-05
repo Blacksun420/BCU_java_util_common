@@ -32,7 +32,7 @@ public class EAnimD<T extends AnimI.AnimType<?, T>> extends EAnimI {
 	}
 
 	@Override
-	public void draw(FakeGraphics g, P ori, double siz) {
+	public void draw(FakeGraphics g, P ori, float siz) {
 		if (f == -1) {
 			f = 0;
 			setup();
@@ -53,7 +53,7 @@ public class EAnimD<T extends AnimI.AnimType<?, T>> extends EAnimI {
 	 * @param siz Size
 	 * @param opacity Opacity, range is 0 ~ 255
 	 */
-	public void drawBGEffect(FakeGraphics g, P ori, double siz, int opacity, double sizX, double sizY) {
+	public void drawBGEffect(FakeGraphics g, P ori, float siz, int opacity, float sizX, float sizY) {
 		if(f == -1) {
 			f = 0;
 			setup();
@@ -70,12 +70,12 @@ public class EAnimD<T extends AnimI.AnimType<?, T>> extends EAnimI {
 		}
 	}
 
-	public double getBaseSizeX() {
-		return mamodel.parts[0][8] * 1.0 / mamodel.ints[0];
+	public float getBaseSizeX() {
+		return mamodel.parts[0][8] * 1f / mamodel.ints[0];
 	}
 
-	public double getBaseSizeY() {
-		return mamodel.parts[0][9] * 1.0 / mamodel.ints[0];
+	public float getBaseSizeY() {
+		return mamodel.parts[0][9] * 1f / mamodel.ints[0];
 	}
 
 	public void removeBasePivot() {

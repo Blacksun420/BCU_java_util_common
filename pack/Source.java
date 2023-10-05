@@ -73,7 +73,6 @@ public abstract class Source {
 
 		@JsonClass.JCConstructor
 		public ResourceLocation() {
-
 		}
 
 		public ResourceLocation(String pack, String id) {
@@ -430,6 +429,14 @@ public abstract class Source {
 			File f = CommonStatic.ctx.getWorkspaceFile(path);
 			if (!f.exists())
 				return null;
+
+			try {//what
+				File realFile = new File(f.getCanonicalPath()).getParentFile();
+				if (realFile != null && !realFile.getName().equals(id.id))
+					return null;
+			} catch (Exception ignored) {
+			}
+
 			return new FDFile(f);
 		}
 

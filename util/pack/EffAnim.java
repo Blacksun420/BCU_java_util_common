@@ -10,6 +10,8 @@ import common.util.Data;
 import common.util.anim.*;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 
 public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAnim<T>, T> {

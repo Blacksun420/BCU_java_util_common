@@ -44,37 +44,37 @@ public class MixedBGEffect extends BackgroundEffect {
     }
 
     @Override
-    public void preDraw(FakeGraphics g, P rect, double siz, double midH) {
+    public void preDraw(FakeGraphics g, P rect, float siz, float midH) {
         for (BackgroundEffect effect : effects)
             effect.preDraw(g, rect, siz, midH);
     }
 
     @Override
-    public void postDraw(FakeGraphics g, P rect, double siz, double midH) {
+    public void postDraw(FakeGraphics g, P rect, float siz, float midH) {
         for (BackgroundEffect effect : effects)
             effect.postDraw(g, rect, siz, midH);
     }
 
     @Override
-    public void draw(FakeGraphics g, double y, double siz, double midH) {
+    public void draw(FakeGraphics g, float y, float siz, float midH) {
         for (BackgroundEffect effect : effects)
             effect.draw(g, y, siz, midH);
     }
 
     @Override
-    public void update(int w, double h, double midH) {
+    public void update(int w, float h, float midH) {
         for (BackgroundEffect effect : effects)
             effect.update(w, h, midH);
     }
 
     @Override
-    public void updateAnimation(int w, double h, double midH) {
+    public void updateAnimation(int w, float h, float midH) {
         for (BackgroundEffect effect : effects)
             effect.updateAnimation(w, h, midH);
     }
 
     @Override
-    public void initialize(int w, double h, double midH, Background bg) {
+    public void initialize(int w, float h, float midH, Background bg) {
         for (BackgroundEffect effect : effects)
             effect.initialize(w, h, midH, bg);
     }

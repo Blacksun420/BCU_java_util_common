@@ -42,18 +42,18 @@ public class BalloonBGEffect extends BackgroundEffect {
     }
 
     @Override
-    public void preDraw(FakeGraphics g, P rect, double siz, double midH) {
+    public void preDraw(FakeGraphics g, P rect, float siz, float midH) {
 
     }
 
     @Override
-    public void postDraw(FakeGraphics g, P rect, double siz, double midH) {
+    public void postDraw(FakeGraphics g, P rect, float siz, float midH) {
         for(int i = 0; i < balloonPosition.size(); i++) {
             FakeImage img = isBigBalloon.get(i) ? bigBalloon : balloon;
 
             g.drawImage(
                     img,
-                    BackgroundEffect.convertP(balloonPosition.get(i).x + Data.BG_EFFECT_BALLOON_FACTOR * Math.sin(balloonPosition.get(i).y / Data.BG_EFFECT_BALLOON_STABILIZER), siz) + (int) rect.x,
+                    BackgroundEffect.convertP((float)(balloonPosition.get(i).x + Data.BG_EFFECT_BALLOON_FACTOR * Math.sin(balloonPosition.get(i).y / Data.BG_EFFECT_BALLOON_STABILIZER)), siz) + (int) rect.x,
                     (int) (balloonPosition.get(i).y * siz - rect.y + midH * siz),
                     img.getWidth() * siz,
                     img.getHeight() * siz
@@ -62,12 +62,12 @@ public class BalloonBGEffect extends BackgroundEffect {
     }
 
     @Override
-    public void draw(FakeGraphics g, double y, double siz, double midH) {
+    public void draw(FakeGraphics g, float y, float siz, float midH) {
         for(int i = 0; i < balloonPosition.size(); i++) {
             FakeImage img = isBigBalloon.get(i) ? bigBalloon : balloon;
             g.drawImage(
                     img,
-                    BackgroundEffect.convertP(balloonPosition.get(i).x + Data.BG_EFFECT_BALLOON_FACTOR * Math.sin(balloonPosition.get(i).y / Data.BG_EFFECT_BALLOON_STABILIZER), siz),
+                    BackgroundEffect.convertP((float)(balloonPosition.get(i).x + Data.BG_EFFECT_BALLOON_FACTOR * Math.sin(balloonPosition.get(i).y / Data.BG_EFFECT_BALLOON_STABILIZER)), siz),
                     (int) (balloonPosition.get(i).y * siz - y + midH * siz),
                     img.getWidth() * siz,
                     img.getHeight() * siz
@@ -76,7 +76,7 @@ public class BalloonBGEffect extends BackgroundEffect {
     }
 
     @Override
-    public void update(int w, double h, double midH) {
+    public void update(int w, float h, float midH) {
         capture.clear();
 
         for(int i = 0; i < balloonPosition.size(); i++) {
@@ -102,10 +102,9 @@ public class BalloonBGEffect extends BackgroundEffect {
     }
 
     @Override
-    public void initialize(int w, double h, double midH, Background bg) {
-        for (P p : balloonPosition) {
+    public void initialize(int w, float h, float midH, Background bg) {
+        for (P p : balloonPosition)
             P.delete(p);
-        }
 
         balloonPosition.clear();
         isBigBalloon.clear();

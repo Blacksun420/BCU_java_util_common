@@ -23,7 +23,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 	 * @param d0 Level multiplication for EUnit, Magnification for EEnemy
 	 * @return returns AtkModelEntity with specified magnification values
 	 */
-	public static AtkModelEntity getEnemyAtk(Entity e, double d0) {
+	public static AtkModelEntity getEnemyAtk(Entity e, float d0) {
 		if (e instanceof EEnemy) {
 			EEnemy ee = (EEnemy) e;
 			return new AtkModelEnemy(ee, d0);
@@ -31,7 +31,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		return null;
 	}
 
-	public static AtkModelEntity getUnitAtk(Entity e, double treasure, double level, PCoin pcoin, Level lv) {
+	public static AtkModelEntity getUnitAtk(Entity e, float treasure, float level, PCoin pcoin, Level lv) {
 		if(!(e instanceof EUnit))
 			return null;
 
@@ -44,7 +44,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 	public final Entity e;
 	protected final int[][] act;
 
-	protected AtkModelEntity(Entity ent, double d0, double d1) {
+	protected AtkModelEntity(Entity ent, float d0, float d1) {
 		super(ent.basis);
 		e = ent;
 		data = e.data;
@@ -57,7 +57,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		setAtks(matks, satks);
 	}
 
-	protected AtkModelEntity(Entity ent, double d0, double d1, PCoin pc, Level lv) {
+	protected AtkModelEntity(Entity ent, float d0, float d1, PCoin pc, Level lv) {
 		super(ent.basis);
 		e = ent;
 		data = e.data;
@@ -148,7 +148,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 			return 0;
 		for (MaskAtk atk : atks) {
 			int dmg = getEffAtk(atk) * atk.getDire();
-			double[] ranges = inRange(atk);
+			float[] ranges = inRange(atk);
 			List<AbEntity> ents = e.basis.inRange(atk.getTarget(), atk.getDire() * getDire(), ranges[0], ranges[1], false);
 			for (AbEntity ent : ents)
 				total += Math.min(ent.health * atk.getDire(), dmg * ent.calcDamageMult(dmg, e, atk));
@@ -166,7 +166,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		Proc proc = Proc.blank();
 		MaskAtk matk = getMAtk(ind);
 		int atk = getAttack(matk, proc);
-		double[] ints = inRange(matk);
+		float[] ints = inRange(matk);
 		return new AttackSimple(e, this, atk, e.traits, getAbi(), proc, ints[0], ints[1], matk, e.layer, matk.isLD() || matk.isOmni());
 	}
 
@@ -181,7 +181,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		Proc proc = Proc.blank();
 		MaskAtk matk = data.getSpAtks(false, atkind)[ind];
 		int atk = getAttack(matk, proc);
-		double[] ints = inRange(matk);
+		float[] ints = inRange(matk);
 		return new AttackSimple(e, this, atk, e.traits, getAbi(), proc, ints[0], ints[1], matk, e.layer, matk.isLD() || matk.isOmni());
 	}
 
@@ -194,9 +194,9 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		AttackSimple as = new AttackSimple(e, this, atk, e.traits, getAbi(), p, 0, 0, data.getAtkModel(data.firstAtk(), 0), 0, false);
 		Proc.VOLC ds = e.getProc().DEATHSURGE;
 		int addp = ds.dis_0 == ds.dis_1 ? ds.dis_0 : ds.dis_0 + (int) (b.r.nextDouble() * (ds.dis_1 - ds.dis_0));
-		double p0 = getPos() + getDire() * addp;
-		double sta = p0 + (getDire() == 1 ? W_VOLC_PIERCE : W_VOLC_INNER);
-		double end = p0 - (getDire() == 1 ? W_VOLC_INNER : W_VOLC_PIERCE);
+		float p0 = getPos() + getDire() * addp;
+		float sta = p0 + (getDire() == 1 ? W_VOLC_PIERCE : W_VOLC_INNER);
+		float end = p0 - (getDire() == 1 ? W_VOLC_INNER : W_VOLC_PIERCE);
 
 		e.summoned.add(new ContVolcano(new AttackVolcano(e, as, sta, end, WT_VOLC), p0, e.layer, ds.time));
 	}
@@ -204,7 +204,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 	/**
 	 * Generate counter surge
 	 */
-	public void getCounterSurge(double pos, Proc.ProcItem itm) { //Item will always be either minisurge or surge, so no worries
+	public void getCounterSurge(float pos, Proc.ProcItem itm) { //Item will always be either minisurge or surge, so no worries
 		Proc p = Proc.blank();
 		int mult = e.getProc().DEMONVOLC.mult;
 
@@ -215,10 +215,10 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		}
 
 		AttackSimple as = new AttackSimple(e, this, atk, e.traits, getAbi(), p, 0, 0, data.getAtkModel(data.firstAtk(), 0), 0, false);
-		int addp = itm.get(1) == itm.get(2) ? itm.get(1) : itm.get(1) + (int) (b.r.nextDouble() * (itm.get(2) - itm.get(1)));
-		double p0 = pos + getDire() * addp;
-		double sta = p0 + (getDire() == 1 ? W_VOLC_PIERCE : W_VOLC_INNER);
-		double end = p0 - (getDire() == 1 ? W_VOLC_INNER : W_VOLC_PIERCE);
+		int addp = itm.get(1) == itm.get(2) ? itm.get(1) : itm.get(1) + (int) (b.r.nextFloat() * (itm.get(2) - itm.get(1)));
+		float p0 = pos + getDire() * addp;
+		float sta = p0 + (getDire() == 1 ? W_VOLC_PIERCE : W_VOLC_INNER);
+		float end = p0 - (getDire() == 1 ? W_VOLC_INNER : W_VOLC_PIERCE);
 
 		e.summoned.add(new ContVolcano(new AttackVolcano(e, as, sta, end, mult >= 100 ? WT_VOLC : WT_MIVC), p0, e.layer, itm.get(3), true));
 	}
@@ -229,16 +229,16 @@ public abstract class AtkModelEntity extends AtkModelAb {
 	}
 
 	@Override
-	public double getPos() {
+	public float getPos() {
 		return e.pos;
 	}
 
 	/**
 	 * get the attack box for maskAtk
 	 */
-	public double[] inRange(MaskAtk atk) {
+	public float[] inRange(MaskAtk atk) {
 		int dire = e.getDire();
-		double d0, d1;
+		float d0, d1;
 		d0 = d1 = dire == e.dire ? e.pos : e.pos + (data.getWidth() * dire);
 		if (!atk.isLD() && !atk.isOmni()) {
 			d0 += data.getRange() * dire;
@@ -247,13 +247,13 @@ public abstract class AtkModelEntity extends AtkModelAb {
 			d0 += atk.getShortPoint() * dire;
 			d1 += atk.getLongPoint() * dire;
 		}
-		return new double[] { d0, d1 };
+		return new float[] { d0, d1 };
 	}
 
 	/**
 	 * get the attack box for nth attack
 	 */
-	public double[] inRange(int ind) {
+	public float[] inRange(int ind) {
 		return inRange(getMAtk(ind));
 	}
 
@@ -272,16 +272,16 @@ public abstract class AtkModelEntity extends AtkModelAb {
 	/**
 	 * get the collide box bound
 	 */
-	public double[] touchRange() {
+	public float[] touchRange() {
 		int dire = e.getDire();
-		double d0, d1;
+		float d0, d1;
 		d0 = d1 = dire == e.dire ? e.pos : e.pos + (data.getWidth() * dire);
 		d0 += data.getRange() * dire;
 		if (data.isLD() && e.getProc().AI.type.calcblindspot)
 			d1 += getBlindSpot() * dire;
 		else
 			d1 -= data.getWidth() * dire;
-		return new double[] { d0, d1 };
+		return new float[] { d0, d1 };
 	}
 
 	protected void extraAtk(MaskAtk matk) {
@@ -290,7 +290,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		if (matk.getAltAbi() != 0)
 			e.altAbi(matk.getAltAbi());
 
-		if (getProc(matk).TIME.prob != 0 && (getProc(matk).TIME.prob == 100 || b.r.nextDouble() * 100 < getProc(matk).TIME.prob)) {
+		if (getProc(matk).TIME.prob != 0 && (getProc(matk).TIME.prob == 100 || b.r.nextFloat() * 100 < getProc(matk).TIME.prob)) {
 			if (getProc(matk).TIME.intensity > 0) {
 				b.temp_s_stop = Math.max(b.temp_s_stop, getProc(matk).TIME.time);
 				b.temp_inten = getProc(matk).TIME.intensity;
@@ -300,10 +300,10 @@ public abstract class AtkModelEntity extends AtkModelAb {
 			}
 		}
 		Proc.THEME t = getProc(matk).THEME;
-		if (t.prob != 0 && (t.prob == 100 || b.r.nextDouble() * 100 < t.prob))
+		if (t.prob != 0 && (t.prob == 100 || b.r.nextFloat() * 100 < t.prob))
 			b.changeTheme(t);
 		Proc.PM w = getProc(matk).WORKERLV;
-		if (w.prob != 0 && (w.prob == 100 || b.r.nextDouble() * 100 < w.prob))
+		if (w.prob != 0 && (w.prob == 100 || b.r.nextFloat() * 100 < w.prob))
 			b.changeWorkerLv(w.mult);
 	}
 
@@ -420,8 +420,8 @@ public abstract class AtkModelEntity extends AtkModelAb {
 				AbEnemy ene = Identifier.getOr(proc.id, AbEnemy.class);
 				int allow = b.st.data.allow(b, ene);
 				if (allow >= 0 || conf.ignore_limit) {
-					double mula = proc.mult * 0.01;
-					double mult = proc.mult * 0.01;
+					float mula = proc.mult * 0.01f;
+					float mult = proc.mult * 0.01f;
 					if (!conf.fix_buff) {
 						if (e instanceof EUnit) {
 							mula *= 1 + ((((EUnit) e).lvl - 1) * 0.2);
@@ -436,7 +436,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 					mult *= (100.0 - resist) / 100;
 					for (int i = 0; i < proc.amount; i++) {
 						int dis = proc.dis == proc.max_dis ? proc.dis : (int) (proc.dis + b.r.nextDouble() * (proc.max_dis - proc.dis + 1));
-						double up = ent.pos + getDire() * dis;
+						float up = ent.pos + getDire() * dis;
 						EEnemy ee = ene.getEntity(b, acs, mult, mula, minlayer, maxlayer, 0);
 
 						ee.group = allow;

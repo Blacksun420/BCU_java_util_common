@@ -46,32 +46,32 @@ public class ShiningBGEffect extends BackgroundEffect {
     }
 
     @Override
-    public void preDraw(FakeGraphics g, P rect, double siz, double midH) {
+    public void preDraw(FakeGraphics g, P rect, float siz, float midH) {
 
     }
 
     @Override
-    public void postDraw(FakeGraphics g, P rect, double siz, double midH) {
+    public void postDraw(FakeGraphics g, P rect, float siz, float midH) {
         g.setComposite(FakeGraphics.BLEND, 255, 1);
         for(int i = 0; i < shinePosition.size(); i++) {
-            double size = Math.sin(Math.PI * time.get(i) / Data.BG_EFFECT_SHINING_TIME);
+            float size = (float) Math.sin(Math.PI * time.get(i) / Data.BG_EFFECT_SHINING_TIME);
             g.drawImage(shine, BackgroundEffect.convertP(shinePosition.get(i).x, siz) + (int) (rect.x - sw * size * siz / 2), (int) (shinePosition.get(i).y * siz - rect.y - sh * size * siz / 2), sw * size * siz, sh * size * siz);
         }
         g.setComposite(FakeGraphics.DEF, 255, 0);
     }
 
     @Override
-    public void draw(FakeGraphics g, double y, double siz, double midH) {
+    public void draw(FakeGraphics g, float y, float siz, float midH) {
         g.setComposite(FakeGraphics.BLEND, 255, 1);
         for(int i = 0; i < shinePosition.size(); i++) {
-            double size = Math.sin(Math.PI * time.get(i) / Data.BG_EFFECT_SHINING_TIME);
+            float size = (float) Math.sin(Math.PI * time.get(i) / Data.BG_EFFECT_SHINING_TIME);
             g.drawImage(shine, BackgroundEffect.convertP(shinePosition.get(i).x, siz) + (int) (-sw * size * siz / 2), (int) (shinePosition.get(i).y * siz - y - sh * size * siz / 2), sw * size * siz, sh * size * siz);
         }
         g.setComposite(FakeGraphics.DEF, 255, 0);
     }
 
     @Override
-    public void update(int w, double h, double midH) {
+    public void update(int w, float h, float midH) {
         capture.clear();
 
         for(int i = 0; i < shinePosition.size(); i++) {
@@ -90,7 +90,7 @@ public class ShiningBGEffect extends BackgroundEffect {
     }
 
     @Override
-    public void initialize(int w, double h, double midH, Background bg) {
+    public void initialize(int w, float h, float midH, Background bg) {
         for (P p : shinePosition)
             P.delete(p);
 

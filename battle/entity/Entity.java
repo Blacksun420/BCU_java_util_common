@@ -116,7 +116,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		/**
 		 * draw this entity
 		 */
-		public void draw(FakeGraphics gra, P p, double siz) {
+		public void draw(FakeGraphics gra, P p, float siz) {
 			if (dead > 0) {
 				//100 is guessed value comparing from BC
 				p.y -= 100 * siz;
@@ -162,7 +162,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		/**
 		 * draw the effect icons
 		 */
-		public void drawEff(FakeGraphics g, P p, double siz) {
+		public void drawEff(FakeGraphics g, P p, float siz) {
 			if (dead != -1)
 				return;
 			if (e.status.warp[2] != 0)
@@ -170,9 +170,9 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 			FakeTransform at = g.getTransform();
 			int EWID = 36;
-			double x = p.x;
+			float x = p.x;
 			if (effs[eftp] != null) {
-				effs[eftp].draw(g, p, siz * 0.75);
+				effs[eftp].draw(g, p, siz * 0.75f);
 			}
 
 			for(int i = 0; i < effs.length; i++) {
@@ -187,10 +187,10 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				if (eae == null)
 					continue;
 
-				double offset = 0.0;
+				float offset = 0f;
 
 				g.setTransform(at);
-				eae.draw(g, new P(x, p.y+offset), siz * 0.75);
+				eae.draw(g, new P(x, p.y+offset), siz * 0.75f);
 				x -= EWID * e.dire * siz;
 			}
 
@@ -203,11 +203,11 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					if(eae == null)
 						continue;
 
-					double offset = -25.0 * siz;
+					float offset = -25f * siz;
 
 					g.setTransform(at);
 
-					eae.draw(g, new P(x, p.y + offset), siz * 0.75);
+					eae.draw(g, new P(x, p.y + offset), siz * 0.75f);
 				}
 			}
 
@@ -533,7 +533,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			if (anim.type.toString().contains("attack"))
 				setAnim(AnimU.TYPEDEF[AnimU.WALK], false);
 			else if (anim.type == AnimU.TYPEDEF[AnimU.HB]) {
-				e.interrupt(0, 0.0);
+				e.interrupt(0, 0f);
 				setAnim(AnimU.TYPEDEF[AnimU.WALK], false);
 			}
 		}
@@ -699,7 +699,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 						if (e.data.getAtkModel(e.aam.atkType, preID).getName().toLowerCase().startsWith("combo"))
 							e.basis.getAttack(e.aam.getAttack(atk0++));
 
-					tempAtk = preID - 1 > atk0 ? (int) (atk0 + e.basis.r.nextDouble() * (preID - atk0)) : atk0;
+					tempAtk = preID - 1 > atk0 ? (int) (atk0 + e.basis.r.nextFloat() * (preID - atk0)) : atk0;
 					e.basis.getAttack(e.aam.getAttack(tempAtk));
 					if (preID < multi) {
 						preTime = pres[preID];
@@ -727,21 +727,21 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		/**
 		 * remaining distance to KB
 		 */
-		private double kbDis;
+		private float kbDis;
 
 		/**
 		 * temp field to store wanted KB length
 		 */
-		private double tempKBdist;
+		private float tempKBdist;
 
 		/**
 		 * temp field to store wanted KB type
 		 */
 		private int tempKBtype = -1;
 
-		private double initPos;
-		private double kbDuration;
-		private double time = 1;
+		private float initPos;
+		private float kbDuration;
+		private float time = 1;
 
 		private KBManager(Entity ent) {
 			e = ent;
@@ -754,7 +754,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			int t = tempKBtype;
 			if (t == -1)
 				return;
-			double d = tempKBdist;
+			float d = tempKBdist;
 			tempKBtype = -1;
 			e.clearState();
 			kbType = t;
@@ -767,12 +767,12 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			e.anim.update();
 		}
 
-		private double easeOut(double time, double start, double end, double duration, double dire) {
+		private float easeOut(float time, float start, float end, float duration, float dire) {
 			time /= duration;
 			return -end * time * (time - 2) * dire + start;
 		}
 
-		private void interrupt(int t, double d) {
+		private void interrupt(int t, float d) {
 			if (t == INT_ASS && (e.getAbi() & AB_SNIPERI) > 0) {
 				e.anim.getEff(INV);
 				return;
@@ -788,7 +788,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			}
 		}
 
-		private void kbmove(double mov) {
+		private void kbmove(float mov) {
 			if (mov < 0)
 				e.pos -= mov * e.dire;
 			else
@@ -842,7 +842,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					e.preKill();
 			} else {
 				if (kbType != INT_WARP && kbType != INT_KB) {
-					double mov = kbDis / e.kbTime;
+					float mov = kbDis / e.kbTime;
 					kbDis -= mov;
 					kbmove(mov);
 				} else if (kbType == INT_KB) {
@@ -850,7 +850,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 						kbDuration = e.kbTime;
 					}
 
-					double mov = easeOut(time, initPos, kbDis, kbDuration, -e.dire) - e.pos;
+					float mov = easeOut(time, initPos, kbDis, kbDuration, -e.dire) - e.pos;
 					mov *= -e.dire;
 
 					kbmove(mov);
@@ -1103,8 +1103,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				if (abEntity == e)
 					continue;
 				Entity em = ((Entity) abEntity);
-				double d0 = em.pos + em.getProc().REVIVE.dis_0;
-				double d1 = em.pos + em.getProc().REVIVE.dis_1;
+				float d0 = em.pos + em.getProc().REVIVE.dis_0;
+				float d1 = em.pos + em.getProc().REVIVE.dis_1;
 				if ((d0 - e.pos) * (d1 - e.pos) > 0)
 					continue;
 				if (em.kb.kbType == INT_WARP)
@@ -1442,7 +1442,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	/**
 	 * remaining burrow distance
 	 */
-	private double bdist;
+	private float bdist;
 
 	/**
 	 * poison proc processor
@@ -1484,14 +1484,14 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	/**
 	 * Used for regenerating shield considering enemy's magnification
 	 */
-	private final double shieldMagnification;
+	private final float shieldMagnification;
 
 	/**
 	 * Whether onLastBreathe is called or not
 	 */
 	private boolean killCounted = false;
 
-	protected Entity(StageBasis b, MaskEntity de, EAnimU ea, double atkMagnif, double hpMagnif) {
+	protected Entity(StageBasis b, MaskEntity de, EAnimU ea, float atkMagnif, float hpMagnif) {
 		super((int) (de.getHp() * hpMagnif));
 		basis = b;
 		data = de;
@@ -1503,7 +1503,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		ini(hpMagnif);
 	}
 
-	protected Entity(StageBasis b, MaskEntity de, EAnimU ea, double lvMagnif, double tAtk, double tHP, PCoin pc, Level lv) {
+	protected Entity(StageBasis b, MaskEntity de, EAnimU ea, float lvMagnif, float tAtk, float tHP, PCoin pc, Level lv) {
 		super((pc != null && lv != null && lv.getTalents().length == pc.max.length) ?
 				(int) ((1 + b.elu.getInc(Data.C_DEF) * 0.01) * (int) ((int) (Math.round(de.getHp() * lvMagnif) * tHP) * pc.getStatMultiplication(Data.PC2_HP, lv.getTalents()))) :
 				(int) ((1 + b.elu.getInc(Data.C_DEF) * 0.01) * (int) (Math.round(de.getHp() * lvMagnif) * tHP))
@@ -1566,7 +1566,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 							atk.getProc().STOP.time = atk.getProc().STOP.time * (100 - cRes.mult) / 100;
 							break;
 						case 32:
-							if (cRes.mult > 0 && basis.r.nextDouble() * 100 < cRes.mult)
+							if (cRes.mult > 0 && basis.r.nextFloat() * 100 < cRes.mult)
 								atk.getProc().BREAK.clear();
 							atk.getProc().KB.dis = atk.getProc().KB.dis * (100 - cRes.mult) / 100;
 							break;
@@ -1612,7 +1612,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 		Proc.PT imuatk = getProc().IMUATK;
 		if (imuatk.prob > 0 && (atk.dire == -1 || receive(-1) || ctargetable(atk.trait, atk.attacker))) {
-			if (status.inv == 0 && (imuatk.prob == 100 || basis.r.nextDouble() * 100 < imuatk.prob)) {
+			if (status.inv == 0 && (imuatk.prob == 100 || basis.r.nextFloat() * 100 < imuatk.prob)) {
 				status.inv = (int) (imuatk.time * (1 + 0.2 / 3 * getFruit(atk.trait, atk.dire, -1)));
 				anim.getEff(P_IMUATK);
 			}
@@ -1622,7 +1622,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		boolean proc = true;
 
 		Proc.DMGCUT dmgcut = getProc().DMGCUT;
-		if (dmgcut.prob > 0 && ((dmgcut.type.traitIgnore && status.curse == 0) || ctargetable(atk.trait, atk.attacker)) && dmg < status.dcut && dmg > 0 && (dmgcut.prob == 100 || basis.r.nextDouble() * 100 < dmgcut.prob)) {
+		if (dmgcut.prob > 0 && ((dmgcut.type.traitIgnore && status.curse == 0) || ctargetable(atk.trait, atk.attacker)) && dmg < status.dcut && dmg > 0 && (dmgcut.prob == 100 || basis.r.nextFloat() * 100 < dmgcut.prob)) {
 			anim.getEff(P_DMGCUT);
 			if (dmgcut.type.procs)
 				proc = false;
@@ -1636,7 +1636,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		}
 
 		Proc.DMGCAP dmgcap = getProc().DMGCAP;
-		if (dmgcap.prob > 0 && ((dmgcap.type.traitIgnore && status.curse == 0) || ctargetable(atk.trait, atk.attacker)) && dmg > status.dcap && (dmgcap.prob == 100 || basis.r.nextDouble() * 100 < dmgcap.prob)) {
+		if (dmgcap.prob > 0 && ((dmgcap.type.traitIgnore && status.curse == 0) || ctargetable(atk.trait, atk.attacker)) && dmg > status.dcap && (dmgcap.prob == 100 || basis.r.nextFloat() * 100 < dmgcap.prob)) {
 			anim.getEff(dmgcap.type.nullify ? DMGCAP_SUCCESS : DMGCAP_FAIL);
 			if (dmgcap.type.procs)
 				proc = false;
@@ -1739,12 +1739,12 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			return;
 		//75.0 is guessed value compared from BC
 		if (atk.getProc().CRIT.mult > 0) {
-			basis.lea.add(new EAnimCont(pos, layer, effas().A_CRIT.getEAnim(DefEff.DEF), -75.0));
+			basis.lea.add(new EAnimCont(pos, layer, effas().A_CRIT.getEAnim(DefEff.DEF), -75f));
 			CommonStatic.setSE(SE_CRIT);
 		}
 		//75.0 is guessed value compared from BC
 		if (atk.getProc().SATK.mult > 0) {
-			basis.lea.add(new EAnimCont(pos, layer, effas().A_SATK.getEAnim(DefEff.DEF), -75.0));
+			basis.lea.add(new EAnimCont(pos, layer, effas().A_SATK.getEAnim(DefEff.DEF), -75f));
 			CommonStatic.setSE(SE_SATK);
 		}
 		if (!shieldContinue)
@@ -1763,17 +1763,17 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			anim.smoke = effas().A_WHITE_SMOKE.getEAnim(DefEff.DEF);
 		else
 			anim.smoke = effas().A_ATK_SMOKE.getEAnim(DefEff.DEF);
-		anim.smokeLayer = (int) (layer + 3 - basis.r.irDouble() * -6);
-		anim.smokeX = (int) (pos + 25 - basis.r.irDouble() * -50);
+		anim.smokeLayer = (int) (layer + 3 - basis.r.irFloat() * -6);
+		anim.smokeX = (int) (pos + 25 - basis.r.irFloat() * -50);
 
 		bondTree.damaged(atk, dmg, proc);
 		final int FDmg = dmg;
 		atk.notifyEntity(e -> {
 			Proc.COUNTER counter = getProc().COUNTER;
-			if (!atk.isCounter && counter.prob > 0 && e.getDire() != getDire() && (e.touchable() & getTouch()) > 0 && (counter.prob == 100 || basis.r.nextDouble() * 100 < counter.prob)) {
+			if (!atk.isCounter && counter.prob > 0 && e.getDire() != getDire() && (e.touchable() & getTouch()) > 0 && (counter.prob == 100 || basis.r.nextFloat() * 100 < counter.prob)) {
 				boolean isWave = ((WT_WAVE | WT_MINI | WT_MEGA | WT_MOVE | WT_VOLC | WT_MIVC) & atk.waveType) > 0;
 				if (!isWave || counter.type.counterWave != 0) {
-					double[] ds = counter.minRange != 0 || counter.maxRange != 0 ? new double[]{pos + counter.minRange, pos + counter.maxRange} : aam.touchRange();
+					float[] ds = counter.minRange != 0 || counter.maxRange != 0 ? new float[]{pos + counter.minRange, pos + counter.maxRange} : aam.touchRange();
 					int reflectAtk = FDmg;
 
 					Proc reflectProc = Proc.blank();
@@ -1862,7 +1862,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			if (rst == 100)
 				anim.getEff(INV);
 			else {
-				double poiDmg = atk.getProc().POIATK.mult * (100 - rst) / 10000.0;
+				float poiDmg = atk.getProc().POIATK.mult * (100 - rst) / 10000f;
 				damage += maxH * poiDmg;
 				basis.lea.add(new EAnimCont(pos, layer, effas().A_POISON.getEAnim(DefEff.DEF)));
 				CommonStatic.setSE(SE_POISON);
@@ -1888,9 +1888,9 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		if (!btargetable(atk))
 			return;
 
-		double f = getFruit(atk.trait, atk.dire, 1);
-		double time = atk instanceof AttackCanon ? 1 : 1 + f * 0.2 / 3;
-		double dist = 1 + f * 0.1;
+		float f = getFruit(atk.trait, atk.dire, 1);
+		float time = atk instanceof AttackCanon ? 1 : 1 + f * 0.2f / 3;
+		float dist = 1 + f * 0.1f;
 		if (atk.getProc().STOP.time != 0 || atk.getProc().STOP.prob > 0) {
 			int val = (int) (atk.getProc().STOP.time * time);
 			int rst = getProc().IMUSTOP.mult;
@@ -1993,7 +1993,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		if (atk.getProc().WARP.exists())
 			if (getProc().IMUWARP.mult < 100) {
 				Data.Proc.WARP warp = atk.getProc().WARP;
-				interrupt(INT_WARP, warp.dis == warp.dis_1 ? warp.dis : warp.dis + (int)(basis.r.nextDouble() * (warp.dis_1 - warp.dis)));
+				interrupt(INT_WARP, warp.dis == warp.dis_1 ? warp.dis : warp.dis + (int)(basis.r.nextFloat() * (warp.dis_1 - warp.dis)));
 				EffAnim<WarpEff> e = effas().A_W;
 				int len = e.len(WarpEff.ENTER) + e.len(WarpEff.EXIT);
 				int val = atk.getProc().WARP.time;
@@ -2022,7 +2022,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				POISON ws = (POISON) atk.getProc().POISON.clone();
 				ws.time = ws.time * (100 - res) / 100;
 				if (atk.atk != 0 && ws.type.modifAffected)
-					ws.damage *= (double) getDamage(atk, atk.atk) / atk.atk;
+					ws.damage *= (float) getDamage(atk, atk.atk) / atk.atk;
 
 				pois.add(ws);
 				anim.getEff(P_POISON);
@@ -2126,7 +2126,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	/**
 	 * receive an interrupt
 	 */
-	public void interrupt(int t, double d) {
+	public void interrupt(int t, float d) {
 		if(isBase && health <= 0)
 			return;
 
@@ -2189,7 +2189,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		}
 		// lethal strike
 		if (getProc().LETHAL.prob > 0 && health <= 0) {
-			boolean b = getProc().LETHAL.prob == 100 || basis.r.nextDouble() * 100 < getProc().LETHAL.prob;
+			boolean b = getProc().LETHAL.prob == 100 || basis.r.nextFloat() * 100 < getProc().LETHAL.prob;
 			if (!status.lethal && b) {
 				health = 1;
 				anim.getEff(P_LETHAL);
@@ -2601,7 +2601,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	/**
 	 * get max distance to go back
 	 */
-	protected abstract double getLim();
+	protected abstract float getLim();
 
 	public int getDire() {
 		if (status.hypno > 0)
@@ -2620,16 +2620,16 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 * @param extmov: distance to add to this movement
 	 * @return distance moved
 	 */
-	protected double updateMove(double extmov) {
-		double mov = getMov(extmov);
+	protected float updateMove(float extmov) {
+		float mov = getMov(extmov);
 		pos += mov * getDire();
 		return mov;
 	}
 
-	protected double getMov(double extmov) {
+	protected float getMov(float extmov) {
 		if (cantGoMore())
 			return 0;
-		double mov = getSpeed(data.getSpeed(), extmov);
+		float mov = getSpeed(data.getSpeed(), extmov);
 
 		if (mov > 0 && getProc().AI.retreatDist > 0)
 			mov = AIMove(mov);
@@ -2638,15 +2638,15 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		return mov;
 	}
 
-	public double getSpeed(int spd, double extmov) {
-		double mov = status.slow > 0 ? 0.25 : spd * 0.5;
+	public float getSpeed(int spd, float extmov) {
+		float mov = status.slow > 0 ? 0.25f : spd * 0.5f;
 		if (status.speed[0] > 0 && status.slow == 0) {
 			if (status.speed[2] == 0) {
 				mov += status.speed[1] * 0.5;
 			} else if (status.speed[2] == 1) {
 				mov = mov * (100 + status.speed[1]) / 100;
 			} else if (status.speed[2] == 2) {
-				mov = status.speed[1] * 0.5;
+				mov = status.speed[1] * 0.5f;
 			}
 		}
 		mov += extmov;
@@ -2654,8 +2654,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		return mov;
 	}
 
-	private double AIMove(double mov) {
-		double mv = mov, predictedPos = pos + mv * getDire();
+	private float AIMove(float mov) {
+		float mv = mov, predictedPos = pos + mv * getDire();
 
 		for (Entity e : basis.le) {
 			if (e.getDire() == getDire())
@@ -2667,8 +2667,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				}
 			if (e.atkm.atkTime == 0 || e.aam.getAtk(e.atkm.preID, getTouch()) < 0)
 				continue;
-			double[] ds = e.aam.inRange(e.atkm.preID);
-			double sta = Math.min(ds[0], ds[1]), end = Math.max(ds[0], ds[1]);
+			float[] ds = e.aam.inRange(e.atkm.preID);
+			float sta = Math.min(ds[0], ds[1]), end = Math.max(ds[0], ds[1]);
 			if (pos < sta || predictedPos < sta || predictedPos > end) //Is already on blindspot if there is one, or doesn't runs into risk of receiving an attack if it moves
 				continue;
 			if (e.data.getAtkModel(e.aam.atkType, e.atkm.preID).isLD() && sta >= data.getRange() && predictedPos * e.atkm.preTime < sta)
@@ -2710,18 +2710,18 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		}
 	}
 
-	private void drawAxis(FakeGraphics gra, P p, double siz) {
+	private void drawAxis(FakeGraphics gra, P p, float siz) {
 		// after this is the drawing of hit boxes
 		siz *= 1.25;
-		double rat = BattleConst.ratio;
-		double poa = p.x - pos * rat * siz;
+		float rat = BattleConst.ratio;
+		float poa = p.x - pos * rat * siz;
 		int py = (int) p.y;
 		int h = (int) (640 * rat * siz);
 		gra.setColor(FakeGraphics.RED);
 		for (int i = 0; i < data.getAtkCount(aam.atkType); i++) {
-			double[] ds = aam.inRange(i);
-			double d0 = Math.min(ds[0], ds[1]);
-			double ra = Math.abs(ds[0] - ds[1]);
+			float[] ds = aam.inRange(i);
+			float d0 = Math.min(ds[0], ds[1]);
+			float ra = Math.abs(ds[0] - ds[1]);
 			int x = (int) (d0 * rat * siz + poa);
 			int y = (int) (p.y + 100 * i * rat * siz);
 			int w = (int) (ra * rat * siz);
@@ -2744,7 +2744,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	/**
 	 * get the extra proc time due to fruits, for EEnemy only
 	 */
-	private double getFruit(SortedPackSet<Trait> trait, int dire, int e) {
+	private float getFruit(SortedPackSet<Trait> trait, int dire, int e) {
 		if (!receive(dire) || receive(e))
 			return 0;
 		SortedPackSet<Trait> sharedTraits = trait.inCommon(traits);
@@ -2779,7 +2779,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 */
 	private void updateBurrow() {
 		if (!acted && kbTime == 0 && touch && status.burs[0] != 0) {
-			double bpos = basis.getBase(getDire()).pos;
+			float bpos = basis.getBase(getDire()).pos;
 			boolean ntbs = (bpos - pos) * getDire() > data.touchBase();
 			if (ntbs) {
 				// setup burrow state
@@ -2803,7 +2803,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		}
 		if (!acted && kbTime == -3) {
 			// move underground
-			double oripos = pos;
+			float oripos = pos;
 			updateMove(0);
 			bdist -= (pos - oripos) * getDire();
 			if (bdist < 0 || (basis.getBase(getDire()).pos - pos) * getDire() - data.touchBase() <= 0) {
@@ -2841,13 +2841,13 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 */
 	public void checkTouch() {
 		touch = true;
-		double[] ds = aam.touchRange();
+		float[] ds = aam.touchRange();
 		List<AbEntity> le = basis.inRange(getTouch(), getDire(), ds[0], ds[1], false);
 		if (status.hypno > 0)
 			le.remove(this);
 
-		double bpos = basis.getBase(getDire()).pos;
-		double poss = status.hypno == 0 ? pos : pos + (data.getWidth() * -dire);
+		float bpos = basis.getBase(getDire()).pos;
+		float poss = status.hypno == 0 ? pos : pos + (data.getWidth() * -dire);
 		boolean blds = (bpos - poss) * getDire() > data.touchBase();
 		if (blds)
 			le.remove(basis.getBase(getDire()));

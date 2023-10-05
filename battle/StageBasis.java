@@ -56,10 +56,10 @@ public class StageBasis extends BattleObj {
 	public int changeDivision = -1;
 	public byte buttonDelay = 0;
 	public int[] selectedUnit = {-1, -1};
-	public final double boss_spawn;
+	public final float boss_spawn;
 	public final int[] shakeCoolDown = {0, 0};
 
-	public double siz;
+	public float siz;
 	public int work_lv, money, maxMoney, cannon, maxCannon, upgradeCost, max_num, pos;
 	public int frontLineup = 0;
 	public boolean lineupChanging = false;
@@ -78,7 +78,7 @@ public class StageBasis extends BattleObj {
 	/**
 	 * Real groundHeight of battle
 	 */
-	public double midH = -1, battleHeight = -1;
+	public float midH = -1, battleHeight = -1;
 	private final List<AttackAb> la = new ArrayList<>();
 	private boolean lethal = false;
 	public int themeTime;
@@ -141,7 +141,7 @@ public class StageBasis extends BattleObj {
 		else if(st.minSpawn == st.maxSpawn)
 			respawnTime = st.minSpawn;
 		else
-			respawnTime = st.minSpawn + (int) ((st.maxSpawn - st.minSpawn) * r.nextDouble());
+			respawnTime = st.minSpawn + (int) ((st.maxSpawn - st.minSpawn) * r.nextFloat());
 
 		if ((conf[0] & 1) > 0)
 			work_lv = 8;
@@ -212,7 +212,7 @@ public class StageBasis extends BattleObj {
 		while (b.lu.efs[totUni >= 5 ? 1 : 0][totUni % 5] != null && totUni < 10)
 			totUni++;
 		if (slot == -1 || b.lu.efs[Math.floorDiv(slot, 5)][slot % 5] == null)
-			slot = (int) (r.nextDouble() * totUni); //Pick random unit if chosen one isn't there
+			slot = (int) (r.nextFloat() * totUni); //Pick random unit if chosen one isn't there
 		int i = slot >= 5 ? 1 : 0;
 
 		CommonStatic.setSE(amount < 0 ? SE_P_RESEARCHUP : SE_P_WORKERLVDOWN);
@@ -268,8 +268,8 @@ public class StageBasis extends BattleObj {
 		return dire == 1 ? ubase : ebase;
 	}
 
-	public double getEBHP() {
-		return 100.0 * ebase.health / ebase.maxH;
+	public float getEBHP() {
+		return 100f * ebase.health / ebase.maxH;
 	}
 
 	/**
@@ -278,9 +278,9 @@ public class StageBasis extends BattleObj {
 	 * <p>
 	 * excludeLastEdge : If range is d0 ~ d1, normally it's true if d0 <= x <= d1 where x is entity's position<br>If this is true, then it will become d0 <= x < d1
 	 */
-	public List<AbEntity> inRange(int touch, int dire, double d0, double d1, boolean excludeLastEdge) {
-		double start = Math.min(d0, d1);
-		double end = Math.max(d0, d1);
+	public List<AbEntity> inRange(int touch, int dire, float d0, float d1, boolean excludeLastEdge) {
+		float start = Math.min(d0, d1);
+		float end = Math.max(d0, d1);
 		List<AbEntity> ans = new ArrayList<>();
 		if (dire == 0)
 			return ans;
@@ -297,13 +297,13 @@ public class StageBasis extends BattleObj {
 		return ans;
 	}
 
-	public void registerBattleDimension(double midH, double battleHeight) {
+	public void registerBattleDimension(float midH, float battleHeight) {
 		this.midH = midH;
 		this.battleHeight = battleHeight;
 	}
 
 	public void notifyUnitDeath() {
-		double percentage = ebase.health * 100.0 / ebase.maxH;
+		float percentage = ebase.health * 100f / ebase.maxH;
 
 		for(int i = 0; i < est.killCounter.length; i++) {
 			SCDef.Line line = est.s.data.datas[i];
@@ -462,9 +462,9 @@ public class StageBasis extends BattleObj {
 				return false;
 			}
 			IForm f = b.lu.efs[i][j];
-			if (f == null) {
+			if (f == null)
 				return false;
-			}
+
 			EUnit eu = f.getEntity(this, new int[]{i, j}, false);
 			if (eu == null) {
 				if (manual)
@@ -476,16 +476,12 @@ public class StageBasis extends BattleObj {
 			totalSpawned[i][j]++;
 			eu.added(-1, st.len - 700);
 
-			eu.preUpdate();
-			eu.update();
-			eu.postUpdate();
-
 			le.add(eu);
 			money -= elu.price[i][j];
 			if (st.minUSpawn == st.maxUSpawn)
 				unitRespawnTime = st.minUSpawn;
 			else
-				unitRespawnTime = st.minUSpawn + (int) ((st.maxUSpawn - st.minUSpawn) * r.nextDouble());
+				unitRespawnTime = st.minUSpawn + (int) ((st.maxUSpawn - st.minUSpawn) * r.nextFloat());
 			return true;
 		}
 		return false;
@@ -549,10 +545,7 @@ public class StageBasis extends BattleObj {
 				EEnemy e = est.allow();
 
 				if (e != null) {
-					e.added(1, (e.mark >= 1 ? boss_spawn : 700.0) + (st.len - 800 - ebase.pos) * e.door / 100);
-					e.preUpdate();
-					e.update();
-					e.postUpdate();
+					e.added(1, (e.mark >= 1 ? boss_spawn : 700f) + (st.len - 800 - ebase.pos) * e.door / 100);
 
 					if (!enemyStatistics.containsKey((Enemy)e.data.getPack()))
 						enemyStatistics.put((Enemy)e.data.getPack(), new long[]{0, 0, 1});
@@ -569,7 +562,7 @@ public class StageBasis extends BattleObj {
 					else if(st.minSpawn == st.maxSpawn)
 						respawnTime = st.minSpawn;
 					else
-						respawnTime = st.minSpawn + (int) ((st.maxSpawn - st.minSpawn) * r.nextDouble());
+						respawnTime = st.minSpawn + (int) ((st.maxSpawn - st.minSpawn) * r.nextFloat());
 				}
 			}
 
@@ -833,8 +826,7 @@ public class StageBasis extends BattleObj {
 	private float getOffset() {
 		if(shake == null)
 			return 0;
-
-		return (1 - 2 * ((shake[SHAKE_DURATION] - shakeDuration) % 2)) * (1.0f * (shake[SHAKE_END] - shake[SHAKE_INITIAL]) / (shake[SHAKE_DURATION] - 1) * (shake[SHAKE_DURATION] - shakeDuration) + shake[SHAKE_INITIAL]) / SHAKE_STABILIZER;
+		return (1 - 2 * ((shake[SHAKE_DURATION] - shakeDuration) % 2)) * (1f * (shake[SHAKE_END] - shake[SHAKE_INITIAL]) / (shake[SHAKE_DURATION] - 1) * (shake[SHAKE_DURATION] - shakeDuration) + shake[SHAKE_INITIAL]) / SHAKE_STABILIZER;
 	}
 
 	private void setBackground(Identifier<Background> id) {

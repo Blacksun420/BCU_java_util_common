@@ -101,19 +101,19 @@ public class JsonBGEffect extends BackgroundEffect {
     }
 
     @Override
-    public void preDraw(FakeGraphics g, P rect, double siz, double midH) {
+    public void preDraw(FakeGraphics g, P rect, float siz, float midH) {
         for (BGEffectHandler handler : handlers)
             handler.draw(g, rect, siz, false);
     }
 
     @Override
-    public void postDraw(FakeGraphics g, P rect, double siz, double midH) {
+    public void postDraw(FakeGraphics g, P rect, float siz, float midH) {
         for (BGEffectHandler handler : handlers)
             handler.draw(g, rect, siz, true);
     }
 
     @Override
-    public void draw(FakeGraphics g, double y, double siz, double midH) {
+    public void draw(FakeGraphics g, float y, float siz, float midH) {
         P pee = new P(0, y);
         for (BGEffectHandler handler : handlers) {
             handler.draw(g, pee, siz, false);
@@ -122,19 +122,19 @@ public class JsonBGEffect extends BackgroundEffect {
     }
 
     @Override
-    public void update(int w, double h, double midH) {
+    public void update(int w, float h, float midH) {
         for (BGEffectHandler handler : handlers)
             handler.update(w, h, midH);
     }
 
     @Override
-    public void updateAnimation(int w, double h, double midH) {
+    public void updateAnimation(int w, float h, float midH) {
         for (BGEffectHandler handler : handlers)
             handler.updateAnimation();
     }
 
     @Override
-    public void initialize(int w, double h, double midH, Background bg) {
+    public void initialize(int w, float h, float midH, Background bg) {
         for (BGEffectHandler handler : handlers)
             handler.initialize(w, h, midH);
     }

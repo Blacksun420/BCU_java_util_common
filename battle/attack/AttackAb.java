@@ -35,9 +35,9 @@ public abstract class AttackAb extends BattleObj {
 	protected final Proc proc;
 	public final Set<Proc.REMOTESHIELD> r = new HashSet<>();
 	protected final List<AbEntity> capt = new ArrayList<>();
-	protected double sta, end;
+	protected float sta, end;
 
-	protected AttackAb(Entity attacker, AtkModelAb ent, int ATK, SortedPackSet<Trait> tr, int eab, Proc pro, double p0, double p1, MaskAtk matk, int layer, boolean isLongAtk, int time) {
+	protected AttackAb(Entity attacker, AtkModelAb ent, int ATK, SortedPackSet<Trait> tr, int eab, Proc pro, float p0, float p1, MaskAtk matk, int layer, boolean isLongAtk, int time) {
 		this.attacker = attacker;
 		dire = ent.getDire();
 		origin = this;
@@ -54,7 +54,7 @@ public abstract class AttackAb extends BattleObj {
 		this.isLongAtk = isLongAtk;
 	}
 
-	protected AttackAb(Entity attacker, AttackAb a, double STA, double END, boolean isLongAtk) {
+	protected AttackAb(Entity attacker, AttackAb a, float STA, float END, boolean isLongAtk) {
 		this.attacker = attacker;
 		dire = a.dire;
 		origin = a.origin;

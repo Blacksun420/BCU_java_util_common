@@ -44,7 +44,7 @@ public class StarBackgroundEffect extends BackgroundEffect {
     }
 
     @Override
-    public void preDraw(FakeGraphics g, P rect, double siz, double midH) {
+    public void preDraw(FakeGraphics g, P rect, float siz, float midH) {
         FakeTransform at = g.getTransform();
 
         g.setComposite(FakeGraphics.BLEND, 255, 1);
@@ -62,12 +62,12 @@ public class StarBackgroundEffect extends BackgroundEffect {
     }
 
     @Override
-    public void postDraw(FakeGraphics g, P rect, double siz, double midH) {
+    public void postDraw(FakeGraphics g, P rect, float siz, float midH) {
 
     }
 
     @Override
-    public void draw(FakeGraphics g, double y, double siz, double midH) {
+    public void draw(FakeGraphics g, float y, float siz, float midH) {
         FakeTransform at = g.getTransform();
         g.setComposite(FakeGraphics.BLEND, 255, 1);
         for(int i = 0; i < number; i++) {
@@ -80,7 +80,7 @@ public class StarBackgroundEffect extends BackgroundEffect {
     }
 
     @Override
-    public void update(int w, double h, double midH) {
+    public void update(int w, float h, float midH) {
         capture.clear();
 
         for(int i = 0; i < times.size(); i++) {
@@ -107,7 +107,7 @@ public class StarBackgroundEffect extends BackgroundEffect {
     }
 
     @Override
-    public void initialize(int w, double h, double midH, Background bg) {
+    public void initialize(int w, float h, float midH, Background bg) {
         opacities.clear();
         for (P position : positions)
             P.delete(position);

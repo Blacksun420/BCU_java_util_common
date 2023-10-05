@@ -704,7 +704,7 @@ public class Data {
 						return false;
 					if (prob == 100)
 						return true;
-					return r.nextDouble() * 100 < prob;
+					return r.nextFloat() * 100 < prob;
 				} catch (Exception e) {
 					return exists();
 				}
@@ -1665,8 +1665,8 @@ public class Data {
 	public static final byte[] KB_TIME = new byte[] { 11, 23, 47, 11, -1 };
 	public static final short[] KB_DIS = new short[] { 165, 345, 705, 55, -1 };
 
-	public static final double W_E_INI = -32.75;
-	public static final double W_U_INI = -67.5;
+	public static final float W_E_INI = -32.75f;
+	public static final float W_U_INI = -67.5f;
 	public static final short W_PROG = 200;
 	public static final short W_E_WID = 500;
 	public static final short W_U_WID = 400;
@@ -1736,7 +1736,7 @@ public class Data {
 	public static final float BG_EFFECT_BALLOON_SPEED = 1f;
 	public static final byte BG_EFFECT_BALLOON_FACTOR = 32;
 	public static final byte BG_EFFECT_BALLOON_STABILIZER = 25;
-	public static final double[] BG_EFFECT_ROCK_SIZE = {1.0, 2.25};
+	public static final float[] BG_EFFECT_ROCK_SIZE = {1.0f, 2.25f};
 	public static final byte[] BG_EFFECT_ROCK_SPEED = {1, 3};
 	public static final short BG_EFFECT_ROCK_BEHIND_SPAWN_OFFSET = 190;
 

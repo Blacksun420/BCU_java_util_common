@@ -12,7 +12,7 @@ public class AttackWave extends AttackAb {
 	protected final Set<Entity> incl;
 	public int raw;
 
-	public AttackWave(Entity e, AttackSimple a, double p0, double wid, int wt) {
+	public AttackWave(Entity e, AttackSimple a, float p0, float wid, int wt) {
 		super(e, a, p0 - wid / 2, p0 + wid / 2, false);
 		incl = new HashSet<>();
 		waveType = wt;
@@ -21,14 +21,14 @@ public class AttackWave extends AttackAb {
 			raw *= model.b.b.t().getDecorationMagnification(model.b.canon.deco);
 	}
 
-	public AttackWave(Entity e, AttackWave a, double p0, double wid) {
+	public AttackWave(Entity e, AttackWave a, float p0, float wid) {
 		super(e, a, p0 - wid / 2, p0 + wid / 2, false);
 		incl = a.incl;
 		waveType = a.waveType;
 		raw = a.raw;
 	}
 
-	public AttackWave(Entity e, AttackWave a, double pos, double start, double end) {
+	public AttackWave(Entity e, AttackWave a, float pos, float start, float end) {
 		super(e, a, pos - start, pos + end, false);
 		incl = a.incl;
 		waveType = a.waveType;

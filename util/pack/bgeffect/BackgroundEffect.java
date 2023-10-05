@@ -164,7 +164,7 @@ public abstract class BackgroundEffect extends Data implements IndexContainer.In
      * @param siz size of battle
      * @param midH how battle will be shifted along y-axis
      */
-    public abstract void preDraw(FakeGraphics g, P rect, final double siz, final double midH);
+    public abstract void preDraw(FakeGraphics g, P rect, final float siz, final float midH);
 
     /**
      * Effects which will be drawn in front of entities
@@ -173,21 +173,21 @@ public abstract class BackgroundEffect extends Data implements IndexContainer.In
      * @param siz size of battle
      * @param midH how battle will be shifted along y-axis
      */
-    public abstract void postDraw(FakeGraphics g, P rect, final double siz, final double midH);
+    public abstract void postDraw(FakeGraphics g, P rect, final float siz, final float midH);
 
     /**
      * Used for Background preview only. Draws everything at once with no battle scaling
      */
-    public abstract void draw(FakeGraphics g, double y, double siz, double midH);
+    public abstract void draw(FakeGraphics g, float y, float siz, float midH);
 
     /**
      * Update data here
      * @param w Width of battlefield as P
      * @param h Height of battlefield as Px
      */
-    public abstract void update(int w, double h, double midH);
+    public abstract void update(int w, float h, float midH);
 
-    public void updateAnimation(int w, double h, double midH) {
+    public void updateAnimation(int w, float h, float midH) {
         update(w, h, midH);
     }
 
@@ -196,7 +196,7 @@ public abstract class BackgroundEffect extends Data implements IndexContainer.In
      * @param w Width of battlefield as P
      * @param h Height of battlefield as Px
      */
-    public abstract void initialize(int w, double h, double midH, Background bg);
+    public abstract void initialize(int w, float h, float midH, Background bg);
 
     public void release() {
 
@@ -208,11 +208,11 @@ public abstract class BackgroundEffect extends Data implements IndexContainer.In
      * @param siz Size of battle
      * @return Converted pixel
      */
-    static int convertP(double p, double siz) {
+    static int convertP(float p, float siz) {
         return (int) (p * CommonStatic.BattleConst.ratio * siz);
     }
 
-    static int revertP(double px) {
+    static int revertP(float px) {
         return (int) (px / CommonStatic.BattleConst.ratio);
     }
 

@@ -119,7 +119,7 @@ public class Treasure extends Data {
 			int min = data[3];
 			int max = data[4];
 
-			double segment = (max - min) * 1.0 / (difference / 10.0);
+			float segment = (max - min) * 1f / (difference / 10f);
 
 			int mn;
 			int mx;
@@ -205,15 +205,15 @@ public class Treasure extends Data {
 	/**
 	 * get multiplication of non-starred alien
 	 */
-	public double getAlienMulti() {
-		return 7 - alien * 0.01;
+	public float getAlienMulti() {
+		return 7 - alien * 0.01f;
 	}
 
 	/**
 	 * get cat attack multiplication
 	 */
-	public double getAtkMulti() {
-		return 1 + trea[T_ATK] * 0.005;
+	public float getAtkMulti() {
+		return 1 + trea[T_ATK] * 0.005f;
 	}
 
 	/**
@@ -238,7 +238,7 @@ public class Treasure extends Data {
 		return base * (100 + b.getInc(C_C_ATK)) / 100;
 	}
 
-	public double getCannonMagnification(int id, int type) {
+	public float getCannonMagnification(int id, int type) {
 		if(curveData.containsKey(id)) {
 			CannonLevelCurve levelCurve = curveData.get(id);
 
@@ -250,8 +250,8 @@ public class Treasure extends Data {
 		return 0;
 	}
 
-	public double getBaseMagnification(int id, SortedPackSet<Trait> traits) {
-		double ans = 1.0;
+	public float getBaseMagnification(int id, SortedPackSet<Trait> traits) {
+		float ans = 1f;
 		FixIndexMap<Trait> BCTraits = UserProfile.getBCData().traits;
 
 		byte trait;
@@ -293,42 +293,42 @@ public class Treasure extends Data {
 		return ans;
 	}
 
-	public double getDecorationMagnification(int id) {
+	public float getDecorationMagnification(int id) {
 		if(deco[id - 1] == 0)
-			return 1.0;
+			return 1f;
 		CannonLevelCurve clc = decorationData.get(id);
 
 		if(clc == null)
-			return 1.0;
+			return 1f;
 		return clc.applyFormula(id - 1, deco[id - 1]);
 	}
 
 	/**
 	 * get cat health multiplication
 	 */
-	public double getDefMulti() {
-		return 1 + trea[T_DEF] * 0.005;
+	public float getDefMulti() {
+		return 1 + trea[T_DEF] * 0.005f;
 	}
 
 	/**
 	 * get accounting multiplication
 	 */
-	public double getDropMulti() {
-		return (0.95 + 0.05 * tech[LV_ACC] + 0.005 * trea[T_ACC]) * (1 + b.getInc(C_MEAR) * 0.01);
+	public float getDropMulti() {
+		return (0.95f + 0.05f * tech[LV_ACC] + 0.005f * trea[T_ACC]) * (1 + b.getInc(C_MEAR) * 0.01f);
 	}
 
 	/**
 	 * get EVA kill ability attack multiplication
 	 */
-	public double getEKAtk() {
-		return 0.05 * (100 + b.getInc(C_EKILL));
+	public float getEKAtk() {
+		return 0.05f * (100 + b.getInc(C_EKILL));
 	}
 
 	/**
 	 * get EVA kill ability reduce damage multiplication
 	 */
-	public double getEKDef() {
-		return 20.0 / (100 + b.getInc(C_EKILL));
+	public float getEKDef() {
+		return 20f / (100 + b.getInc(C_EKILL));
 	}
 
 	/**
@@ -336,8 +336,8 @@ public class Treasure extends Data {
 	 * max treasure & level should lead to -264f recharge
 	 */
 	public int getFinRes(int ori) {
-		double research = (tech[LV_RES] - 1) * 6 + trea[T_RES] * 0.3;
-		double deduction = research + Math.floor(research * b.getInc(C_RESP) / 100);
+		float research = (tech[LV_RES] - 1) * 6 + trea[T_RES] * 0.3f;
+		float deduction = research + (float) Math.floor(research * b.getInc(C_RESP) / 100);
 		return (int) Math.max(60, ori - deduction);
 	}
 
@@ -345,8 +345,8 @@ public class Treasure extends Data {
 	 * get reverse cat cool down time
 	 */
 	public int getRevRes(int res) {
-		double research = (tech[LV_RES] - 1) * 6 + trea[T_RES] * 0.3;
-		double addition = research + Math.floor(research * b.getInc(C_RESP) / 100);
+		float research = (tech[LV_RES] - 1) * 6 + trea[T_RES] * 0.3f;
+		float addition = research + (float) Math.floor(research * b.getInc(C_RESP) / 100);
 		return (int) Math.max(60, res + addition);
 
 	}
@@ -354,8 +354,8 @@ public class Treasure extends Data {
 	/**
 	 * get maximum fruit of certain trait bitmask
 	 */
-	public double getFruit(SortedPackSet<Trait> types) {
-		double ans = 0;
+	public float getFruit(SortedPackSet<Trait> types) {
+		float ans = 0;
 		FixIndexMap<Trait> BCTraits = UserProfile.getBCData().traits;
 		if (types.contains(BCTraits.get(Data.TRAIT_RED)))
 			ans = Math.max(ans, fruit[T_RED]);
@@ -371,7 +371,7 @@ public class Treasure extends Data {
 			ans = Math.max(ans, fruit[T_ALIEN]);
 		if (types.contains(BCTraits.get(Data.TRAIT_ZOMBIE)))
 			ans = Math.max(ans, fruit[T_ZOMBIE]);
-		return ans * 0.01;
+		return ans * 0.01f;
 	}
 
 	/**
@@ -380,24 +380,24 @@ public class Treasure extends Data {
 	 * @param traits Trait list for fruit buff
 	 * @return Multiplied value
 	 */
-	public double getATK(int mult, SortedPackSet<Trait> traits) {
-		double ini = (mult/100.0) + (mult >= 300 ? 1.0 : mult > 100 ? 0.3 : 0.0) / 3 * getFruit(traits);
+	public float getATK(int mult, SortedPackSet<Trait> traits) {
+		float ini = (mult/100f) + (mult >= 300 ? 1f : mult > 100 ? 0.3f : 0f) / 3 * getFruit(traits);
 		if (mult > 100 && mult < 500)
-			return ini * 1 - (b.getInc(mult >= 300 ? C_MASSIVE : C_GOOD) * 0.01);
+			return ini * 1 - (b.getInc(mult >= 300 ? C_MASSIVE : C_GOOD) * 0.01f);
 		return ini;
 	}
 
-	public double getDEF(int mult, SortedPackSet<Trait> eTraits, SortedPackSet<Trait> traits, Orb orb, Level level) {
+	public float getDEF(int mult, SortedPackSet<Trait> eTraits, SortedPackSet<Trait> traits, Orb orb, Level level) {
 		final int ORB_LV = mult < 600 && mult > 100 ? mult < 400 ? ORB_STRONG : ORB_RESISTANT : -1;
 		final byte[] ORB_MULTIS = ORB_LV == -1 ? new byte[0] : ORB_LV == ORB_STRONG ? ORB_STR_DEF_MULTI : ORB_RESISTANT_MULTI;
 
-		double ini = 1;
+		float ini = 1;
 		if (!traits.isEmpty()) {
-			ini = (100.0/mult);
+			ini = (100f/mult);
 			if (ORB_LV != -1)
-				ini = ini - (ORB_LV == ORB_STRONG ? 0.1 : 0.05) / 3 * getFruit(traits);
+				ini = ini - (ORB_LV == ORB_STRONG ? 0.1f : 0.05f) / 3 * getFruit(traits);
 			else if (mult >= 600)
-				ini = ini - 1.0 / 126 * getFruit(traits);
+				ini = ini - 1f / 126 * getFruit(traits);
 		}
 		if(orb != null && level.getOrbs() != null) {
 			int[][] orbs = level.getOrbs();
@@ -413,39 +413,39 @@ public class Treasure extends Data {
 		}
 		if (ini == 1 || ORB_LV == -1)
 			return ini;
-		double com = 1 - b.getInc(ORB_LV == ORB_STRONG ? C_GOOD : C_RESIST) * 0.01;
+		float com = 1 - b.getInc(ORB_LV == ORB_STRONG ? C_GOOD : C_RESIST) * 0.01f;
 		return ini * com;
 	}
 
 	/**
 	 * get multiplication of starred enemy
 	 */
-	public double getStarMulti(int st) {
+	public float getStarMulti(int st) {
 		if (st == 1)
-			return 16 - star * 0.01;
+			return 16 - star * 0.01f;
 		else
-			return 11 - 0.1 * gods[st - 2];
+			return 11 - 0.1f * gods[st - 2];
 	}
 
 	/**
 	 * get witch kill ability attack multiplication
 	 */
-	public double getWKAtk() {
-		return 0.05 * (100 + b.getInc(C_WKILL));
+	public float getWKAtk() {
+		return 0.05f * (100 + b.getInc(C_WKILL));
 	}
 
 	/**
 	 * get witch kill ability reduce damage multiplication
 	 */
-	public double getWKDef() {
-		return 10.0 / (100 + b.getInc(C_WKILL));
+	public float getWKDef() {
+		return 10f / (100 + b.getInc(C_WKILL));
 	}
 
-	public double getXPMult() {
+	public float getXPMult() {
 		int txp1 = trea[T_XP1];
 		int txp2 = trea[T_XP2];
-		double tm = txp1 * 0.005 + txp2 * 0.0025;
-		return 0.95 + tech[LV_XP] * 0.05 + tm;
+		float tm = txp1 * 0.005f + txp2 * 0.0025f;
+		return 0.95f + tech[LV_XP] * 0.05f + tm;
 	}
 
 	/**

@@ -20,7 +20,7 @@ public abstract class AbEntity extends BattleObj {
 	/**
 	 * Current Position of this Entity
 	 */
-	public double pos;
+	public float pos;
 
 	/**
 	 * Base shake
@@ -38,7 +38,7 @@ public abstract class AbEntity extends BattleObj {
 	 * @param d dire
 	 * @param p position
 	 */
-	public void added(int d, double p) {
+	public void added(int d, float p) {
 		pos = p;
 		dire = d;
 	}

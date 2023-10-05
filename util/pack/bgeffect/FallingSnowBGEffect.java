@@ -22,8 +22,8 @@ public class FallingSnowBGEffect extends BackgroundEffect {
     private final int sh;
 
     private final List<P> snowPosition = new ArrayList<>();
-    private final List<Double> speed = new ArrayList<>();
-    private final List<Double> size = new ArrayList<>();
+    private final List<Float> speed = new ArrayList<>();
+    private final List<Float> size = new ArrayList<>();
     private final Random r = new Random();
 
     private final List<Integer> capture = new LinkedList<>();
@@ -42,24 +42,24 @@ public class FallingSnowBGEffect extends BackgroundEffect {
     }
 
     @Override
-    public void preDraw(FakeGraphics g, P rect, double siz, double midH) {
+    public void preDraw(FakeGraphics g, P rect, float siz, float midH) {
 
     }
 
     @Override
-    public void postDraw(FakeGraphics g, P rect, double siz, double midH) {
+    public void postDraw(FakeGraphics g, P rect, float siz, float midH) {
         for(int i = 0; i < snowPosition.size(); i++)
             g.drawImage(snow, BackgroundEffect.convertP(snowPosition.get(i).x, siz) + (int) rect.x, (int) (snowPosition.get(i).y * siz - rect.y + midH * siz), sw * size.get(i) * siz, sh * size.get(i) * siz);
     }
 
     @Override
-    public void draw(FakeGraphics g, double y, double siz, double midH) {
+    public void draw(FakeGraphics g, float y, float siz, float midH) {
         for(int i = 0; i < snowPosition.size(); i++)
             g.drawImage(snow, BackgroundEffect.convertP(snowPosition.get(i).x, siz), (int) (snowPosition.get(i).y * siz - y + midH * siz), sw * size.get(i) * siz, this.sh * size.get(i) * siz);
     }
 
     @Override
-    public void update(int w, double h, double midH) {
+    public void update(int w, float h, float midH) {
         capture.clear();
 
         for(int i = 0; i < snowPosition.size(); i++) {
@@ -71,21 +71,18 @@ public class FallingSnowBGEffect extends BackgroundEffect {
 
         if(!capture.isEmpty()) {
             for (Integer capt : capture) {
-                double siz = Data.BG_EFFECT_FALLING_SNOW_SIZE - r.nextDouble() * 1.5;
+                float siz = Data.BG_EFFECT_FALLING_SNOW_SIZE - r.nextFloat() * 1.5f;
 
-                snowPosition.get(capt).x = r.nextDouble() * (w + battleOffset + sw * siz) - sw * siz;
+                snowPosition.get(capt).x = r.nextFloat() * (w + battleOffset + sw * siz) - sw * siz;
                 snowPosition.get(capt).y = -sh * siz;
-                if (CommonStatic.getConfig().fps60)
-                    speed.set(capt, (Data.BG_EFFECT_FALLING_SNOW_SPEED - r.nextDouble() * 1.5) / 2.0);
-                else
-                    speed.set(capt, Data.BG_EFFECT_FALLING_SNOW_SPEED - r.nextDouble() * 1.5);
+                speed.set(capt, CommonStatic.fltFpsDiv(Data.BG_EFFECT_FALLING_SNOW_SPEED - r.nextFloat() * 1.5f));
                 size.set(capt, siz);
             }
         }
     }
 
     @Override
-    public void initialize(int w, double h, double midH, Background bg) {
+    public void initialize(int w, float h, float midH, Background bg) {
         for (P p : snowPosition)
             P.delete(p);
 
@@ -94,17 +91,11 @@ public class FallingSnowBGEffect extends BackgroundEffect {
         size.clear();
 
         int number = w / 50;
-
         for(int i = 0; i < number; i++) {
             snowPosition.add(P.newP(r.nextInt(w + battleOffset + sw) - sw, r.nextInt(BGHeight * 3 + sh)));
+            speed.add(CommonStatic.fltFpsDiv(Data.BG_EFFECT_FALLING_SNOW_SPEED - r.nextFloat() * 1.5f));
 
-            if (CommonStatic.getConfig().fps60) {
-                speed.add((Data.BG_EFFECT_FALLING_SNOW_SPEED - r.nextDouble() * 1.5) / 2.0);
-            } else {
-                speed.add(Data.BG_EFFECT_FALLING_SNOW_SPEED - r.nextDouble() * 1.5);
-            }
-
-            size.add(Data.BG_EFFECT_FALLING_SNOW_SIZE - r.nextDouble() * 1.5);
+            size.add(Data.BG_EFFECT_FALLING_SNOW_SIZE - r.nextFloat() * 1.5f);
         }
     }
 

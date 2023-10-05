@@ -22,13 +22,13 @@ public class EEnemy extends Entity {
 	public Revival rev;
 	public float door;
 
-	public EEnemy(StageBasis b, MaskEnemy de, EAnimU ea, double magnif, double atkMagnif, int d0, int d1, int m) {
+	public EEnemy(StageBasis b, MaskEnemy de, EAnimU ea, float magnif, float atkMagnif, int d0, int d1, int m) {
 		super(b, de, ea, atkMagnif, magnif);
 		mult = magnif;
 		mula = atkMagnif;
 		mark = m;
 		isBase = mark <= -1;
-		layer = d0 == d1 ? d0 : d0 + (int) (b.r.nextDouble() * (d1 - d0 + 1));
+		layer = d0 == d1 ? d0 : d0 + (int) (b.r.nextFloat() * (d1 - d0 + 1));
 		traits = de.getTraits();
 
 		canBurrow = mark < 1;
@@ -38,7 +38,7 @@ public class EEnemy extends Entity {
 	public void kill(boolean atk) {
 		super.kill(atk);
 		if (!basis.st.trail && !atk) {
-			double mul = basis.b.t().getDropMulti() * (1 + (status.money / 100.0));
+			float mul = basis.b.t().getDropMulti() * (1 + (status.money / 100f));
 			basis.money += mul * ((MaskEnemy) data).getDrop();
 		}
 
@@ -110,9 +110,9 @@ public class EEnemy extends Entity {
 	}
 
 	@Override
-	protected double getLim() {
-		double ans;
-		double minPos = ((MaskEnemy) data).getLimit();
+	protected float getLim() {
+		float ans;
+		float minPos = ((MaskEnemy) data).getLimit();
 
 		if (mark >= 1)
 			ans = pos - (minPos + basis.boss_spawn); // guessed value compared to BC

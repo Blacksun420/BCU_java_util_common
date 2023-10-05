@@ -26,12 +26,12 @@ public class ContVolcano extends ContAb {
 	private int t = 0;
 	private final boolean[] performed = new boolean[4]; // [0,1] - check if curse/seal rng has passed, [2,3] - check if unit process needs to be updated
 
-	protected ContVolcano(AttackVolcano v, double p, int lay, int alive) {
+	protected ContVolcano(AttackVolcano v, float p, int lay, int alive) {
 		this(v, p, lay, alive, false);
 		ds = true;
 	}
 
-	protected ContVolcano(AttackVolcano v, double p, int lay, int alive, boolean reflect) {
+	protected ContVolcano(AttackVolcano v, float p, int lay, int alive, boolean reflect) {
 		super(v.model.b, p, lay);
 		if(v.waveType == WT_VOLC)
 			anim = (v.dire == 1 ? effas().A_E_VOLC : effas().A_VOLC).getEAnim(VolcEff.START);
@@ -52,7 +52,7 @@ public class ContVolcano extends ContAb {
 	}
 
 	@Override
-	public void draw(FakeGraphics gra, P p, double psiz) {
+	public void draw(FakeGraphics gra, P p, float psiz) {
 		FakeTransform at = gra.getTransform();
 		anim.draw(gra, p, psiz);
 		gra.setTransform(at);
@@ -141,17 +141,17 @@ public class ContVolcano extends ContAb {
 		}
 	}
 
-	protected void drawAxis(FakeGraphics gra, P p, double siz) {
+	protected void drawAxis(FakeGraphics gra, P p, float siz) {
 		if (!CommonStatic.getConfig().ref)
 			return;
 
 		// after this is the drawing of hit boxes
 		siz *= 1.25;
-		double rat = BattleConst.ratio;
+		float rat = BattleConst.ratio;
 		int h = (int) (640 * rat * siz);
 		gra.setColor(FakeGraphics.MAGENTA);
-		double d0 = Math.min(v.sta, v.end);
-		double ra = Math.abs(v.sta - v.end);
+		float d0 = Math.min(v.sta, v.end);
+		float ra = Math.abs(v.sta - v.end);
 		int x = (int) ((d0 - pos) * rat * siz + p.x);
 		int y = (int) p.y;
 		int w = (int) (ra * rat * siz);

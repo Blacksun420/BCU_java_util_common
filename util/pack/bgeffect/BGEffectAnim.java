@@ -4,6 +4,9 @@ import common.system.VImg;
 import common.system.fake.FakeImage;
 import common.util.anim.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class BGEffectAnim extends AnimD<BGEffectAnim, BGEffectAnim.BGEffType> {
 
     private final String imgcutName, mamodelName, maanimName;
