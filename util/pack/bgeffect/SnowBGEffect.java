@@ -4,8 +4,8 @@ import common.CommonStatic;
 import common.io.json.JsonClass;
 import common.pack.Identifier;
 import common.system.P;
+import common.system.VImg;
 import common.system.fake.FakeGraphics;
-import common.system.fake.FakeImage;
 import common.util.Data;
 import common.util.pack.Background;
 
@@ -17,7 +17,7 @@ import java.util.Random;
 @JsonClass.JCGeneric(Identifier.class)
 public class SnowBGEffect extends BackgroundEffect {
     private final float maxSlope = (float) Math.tan(Math.toRadians(75));
-    private final FakeImage snow;
+    private final VImg snow;
 
     private final int sw;
     private final int sh;
@@ -30,17 +30,17 @@ public class SnowBGEffect extends BackgroundEffect {
 
     private final List<Integer> capture = new LinkedList<>();
 
-    public SnowBGEffect(Identifier<BackgroundEffect> i, FakeImage snow) {
+    public SnowBGEffect(Identifier<BackgroundEffect> i, VImg snow) {
         super(i);
         this.snow = snow;
 
-        this.sw = (int) (snow.getWidth() * 1.8);
-        this.sh = (int) (snow.getHeight() * 1.8);
+        this.sw = (int) (snow.getImg().getWidth() * 1.8);
+        this.sh = (int) (snow.getImg().getHeight() * 1.8);
     }
 
     @Override
     public void check() {
-        snow.bimg();
+        snow.check();
     }
 
     @Override
@@ -52,7 +52,7 @@ public class SnowBGEffect extends BackgroundEffect {
     public void postDraw(FakeGraphics g, P rect, float siz, float midH) {
         g.setComposite(FakeGraphics.TRANS, 127, 0);
         for (P p : snowPosition)
-            g.drawImage(snow, BackgroundEffect.convertP(p.x, siz) + (int) rect.x, (int) (p.y * siz - rect.y + midH * siz), sw * siz, sh * siz);
+            g.drawImage(snow.getImg(), BackgroundEffect.convertP(p.x, siz) + (int) rect.x, (int) (p.y * siz - rect.y + midH * siz), sw * siz, sh * siz);
         g.setComposite(FakeGraphics.DEF, 255, 0);
     }
 
@@ -60,7 +60,7 @@ public class SnowBGEffect extends BackgroundEffect {
     public void draw(FakeGraphics g, float y, float siz, float midH) {
         g.setComposite(FakeGraphics.TRANS, 127, 0);
         for (P p : snowPosition)
-            g.drawImage(snow, BackgroundEffect.convertP(p.x, siz), (int) (p.y * siz - y + midH * siz), sw * siz, sh * siz);
+            g.drawImage(snow.getImg(), BackgroundEffect.convertP(p.x, siz), (int) (p.y * siz - y + midH * siz), sw * siz, sh * siz);
         g.setComposite(FakeGraphics.DEF, 255, 0);
     }
 

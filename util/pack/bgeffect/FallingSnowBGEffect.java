@@ -4,8 +4,8 @@ import common.CommonStatic;
 import common.io.json.JsonClass;
 import common.pack.Identifier;
 import common.system.P;
+import common.system.VImg;
 import common.system.fake.FakeGraphics;
-import common.system.fake.FakeImage;
 import common.util.Data;
 import common.util.pack.Background;
 
@@ -16,7 +16,7 @@ import java.util.Random;
 
 @JsonClass.JCGeneric(Identifier.class)
 public class FallingSnowBGEffect extends BackgroundEffect {
-    private final FakeImage snow;
+    private final VImg snow;
 
     private final int sw;
     private final int sh;
@@ -28,17 +28,17 @@ public class FallingSnowBGEffect extends BackgroundEffect {
 
     private final List<Integer> capture = new LinkedList<>();
 
-    public FallingSnowBGEffect(Identifier<BackgroundEffect> i, FakeImage snow) {
+    public FallingSnowBGEffect(Identifier<BackgroundEffect> i, VImg snow) {
         super(i);
         this.snow = snow;
 
-        sw = this.snow.getWidth();
-        sh = this.snow.getHeight();
+        sw = this.snow.getImg().getWidth();
+        sh = this.snow.getImg().getHeight();
     }
 
     @Override
     public void check() {
-        snow.bimg();
+        snow.check();
     }
 
     @Override
@@ -49,13 +49,13 @@ public class FallingSnowBGEffect extends BackgroundEffect {
     @Override
     public void postDraw(FakeGraphics g, P rect, float siz, float midH) {
         for(int i = 0; i < snowPosition.size(); i++)
-            g.drawImage(snow, BackgroundEffect.convertP(snowPosition.get(i).x, siz) + (int) rect.x, (int) (snowPosition.get(i).y * siz - rect.y + midH * siz), sw * size.get(i) * siz, sh * size.get(i) * siz);
+            g.drawImage(snow.getImg(), BackgroundEffect.convertP(snowPosition.get(i).x, siz) + (int) rect.x, (int) (snowPosition.get(i).y * siz - rect.y + midH * siz), sw * size.get(i) * siz, sh * size.get(i) * siz);
     }
 
     @Override
     public void draw(FakeGraphics g, float y, float siz, float midH) {
         for(int i = 0; i < snowPosition.size(); i++)
-            g.drawImage(snow, BackgroundEffect.convertP(snowPosition.get(i).x, siz), (int) (snowPosition.get(i).y * siz - y + midH * siz), sw * size.get(i) * siz, this.sh * size.get(i) * siz);
+            g.drawImage(snow.getImg(), BackgroundEffect.convertP(snowPosition.get(i).x, siz), (int) (snowPosition.get(i).y * siz - y + midH * siz), sw * size.get(i) * siz, this.sh * size.get(i) * siz);
     }
 
     @Override

@@ -227,6 +227,11 @@ public abstract class PackData implements IndexContainer {
 				else if (u.info.tfLevel == -1)
 					u.info.tfLevel = 20;
 
+				//Handle zero form
+				tf = Integer.parseInt(strs[26]);
+				if (tf != -1)
+					u.info.zeroLevel = tf;
+
 				strs = qt.poll().split(",");
 				int[] lv = new int[20];
 				for (int i = 0; i < 20; i++)

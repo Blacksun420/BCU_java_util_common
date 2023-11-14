@@ -11,6 +11,7 @@ import common.pack.UserProfile;
 import common.system.files.VFile;
 import common.util.Data;
 import common.util.Data.Proc.ProcItem;
+import common.util.unit.AbUnit;
 import common.util.unit.Trait;
 import common.util.unit.Unit;
 
@@ -28,8 +29,17 @@ public class PCoin extends Data {
 		for (String str : qs) {
 			String[] strs = str.trim().split(",");
 
-			if (strs.length == 114)
-				new PCoin(strs);
+			if (strs.length == 114) {
+				int[] data = CommonStatic.parseIntsN(str);
+
+				AbUnit u = Identifier.parseInt(data[0], Unit.class).get();
+				if (u != null) {
+					if (u.getForms().length > 2)
+						new PCoin(data, u.getForms()[2].du);
+					if (u.getForms().length > 3)
+						new PCoin(data, u.getForms()[3].du);
+				}
+			}
 		}
 	}
 
@@ -48,15 +58,15 @@ public class PCoin extends Data {
 		((CustomUnit)du).pcoin = this;
 	}
 
-	private PCoin(String[] strs) {
-		du = Identifier.parseInt(CommonStatic.parseIntN(strs[0]), Unit.class).get().getForms()[2].du;
-		trait = Trait.convertType(CommonStatic.parseIntN(strs[1]), true);
+	private PCoin(int[] strs, MaskUnit du) {
+		this.du = du;
+		trait = Trait.convertType(strs[1], true);
 
 		for (int i = 0; i < 8; i++)
-			if(!strs[2 + i * 14].equals("0")) {
+			if(strs[2 + i * 14] != 0) {
 				int[] data = new int[14]; //Default length of BC
 				for (int j = 0; j < 14; j++)
-					data[j] = CommonStatic.parseIntN(strs[2 + i * 14 + j]);
+					data[j] = strs[2 + i * 14 + j];
 				if (data[13] == 1) //Super Talent
 					data[13] = 60;
 				if(data[0] == 62) //Miniwave
@@ -84,11 +94,8 @@ public class PCoin extends Data {
 				trueArr[trueArr.length - 1] = Math.max(0, data[13]);
 				info.add(trueArr);
 			}
-		max = new int[info.size()];
-		for (int i = 0; i < info.size(); i++)
-			max[i] = Math.max(1, info.get(i)[1]);
+		max = info.stream().mapToInt(i -> Math.max(1, i[1])).toArray();
 		((DataUnit)du).pcoin = this;
-
 		full = improve(max);
 	}
 

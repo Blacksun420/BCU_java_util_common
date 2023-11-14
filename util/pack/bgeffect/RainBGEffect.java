@@ -4,10 +4,12 @@ import common.CommonStatic;
 import common.io.json.JsonClass;
 import common.pack.Identifier;
 import common.system.P;
+import common.system.VImg;
 import common.system.fake.FakeGraphics;
 import common.system.fake.FakeImage;
 import common.system.fake.FakeTransform;
 import common.util.Data;
+import common.util.anim.ImgCut;
 import common.util.pack.Background;
 
 import java.util.LinkedList;
@@ -16,8 +18,11 @@ import java.util.Random;
 
 @JsonClass.JCGeneric(Identifier.class)
 public class RainBGEffect extends BackgroundEffect {
-    private final FakeImage rain;
-    private final FakeImage splash;
+    private final VImg sprite;
+    private final ImgCut imgCut;
+
+    private FakeImage rain;
+    private FakeImage splash;
 
     private final int rw;
     private final int rh;
@@ -28,10 +33,14 @@ public class RainBGEffect extends BackgroundEffect {
     private final List<P> splashPosition = new LinkedList<>();
     private final Random r = new Random();
 
-    public RainBGEffect(Identifier<BackgroundEffect> i, FakeImage rain, FakeImage splash) {
+    public RainBGEffect(Identifier<BackgroundEffect> i, VImg sprite, ImgCut imgCut) {
         super(i);
-        this.rain = rain;
-        this.splash = splash;
+        this.sprite = sprite;
+        this.imgCut = imgCut;
+
+        FakeImage[] cutImages = imgCut.cut(sprite.getImg());
+        this.rain = cutImages[29];
+        this.splash = cutImages[28];
 
         rw = this.rain.getWidth();
         rh = this.rain.getHeight();
@@ -42,8 +51,12 @@ public class RainBGEffect extends BackgroundEffect {
 
     @Override
     public void check() {
-        rain.bimg();
-        splash.bimg();
+        if (!rain.isValid() || !splash.isValid()) {
+            FakeImage[] cutImages = imgCut.cut(sprite.getImg());
+
+            rain = cutImages[29];
+            splash = cutImages[28];
+        }
     }
 
     @Override

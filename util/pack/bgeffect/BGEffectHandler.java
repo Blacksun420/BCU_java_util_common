@@ -48,7 +48,6 @@ public class BGEffectHandler {
     private int[] wait;
     private boolean[] startWaitDone;
 
-    private boolean animLoaded = false;
 
     private final List<Integer> capture = new LinkedList<>();
     private final Random r = new Random();
@@ -84,12 +83,8 @@ public class BGEffectHandler {
     }
 
     public void check() {
-        if(!animLoaded) {
-            for (BGEffectAnim anim : anims)
-                anim.load();
-
-            animLoaded = true;
-        }
+        for (BGEffectAnim anim : anims)
+            anim.check();
     }
 
     public void initialize(int w, float h, float midH) {
@@ -532,6 +527,8 @@ public class BGEffectHandler {
     public void release() {
         animation.clear();
 
+        for (BGEffectAnim anim : anims)
+            anim.unload();
         count = 0;
     }
 }

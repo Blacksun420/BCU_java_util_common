@@ -4,8 +4,8 @@ import common.CommonStatic;
 import common.io.json.JsonClass;
 import common.pack.Identifier;
 import common.system.P;
+import common.system.VImg;
 import common.system.fake.FakeGraphics;
-import common.system.fake.FakeImage;
 import common.util.Data;
 import common.util.pack.Background;
 
@@ -16,7 +16,7 @@ import java.util.Random;
 
 @JsonClass.JCGeneric(Identifier.class)
 public class BubbleBGEffect extends BackgroundEffect {
-    private final FakeImage bubble;
+    private final VImg bubble;
 
     private final int bw;
     private final int bh;
@@ -27,17 +27,17 @@ public class BubbleBGEffect extends BackgroundEffect {
 
     private final List<Integer> capture = new LinkedList<>();
 
-    public BubbleBGEffect(Identifier<BackgroundEffect> i, FakeImage bubble) {
+    public BubbleBGEffect(Identifier<BackgroundEffect> i, VImg bubble) {
         super(i);
         this.bubble = bubble;
 
-        bw = (int) (this.bubble.getWidth() * 1.8);
-        bh = (int) (this.bubble.getHeight() * 1.8);
+        bw = (int) (this.bubble.getImg().getWidth() * 1.8);
+        bh = (int) (this.bubble.getImg().getHeight() * 1.8);
     }
 
     @Override
     public void check() {
-        bubble.bimg();
+        bubble.check();
     }
 
     @Override
@@ -49,7 +49,7 @@ public class BubbleBGEffect extends BackgroundEffect {
     public void postDraw(FakeGraphics g, P rect, float siz, float midH) {
         for(int i = 0; i < bubblePosition.size(); i++) {
             g.drawImage(
-                    bubble,
+                    bubble.getImg(),
                     BackgroundEffect.convertP((float) (bubblePosition.get(i).x + Data.BG_EFFECT_BUBBLE_FACTOR * Math.sin(differentiator.get(i) + bubblePosition.get(i).y / Data.BG_EFFECT_BUBBLE_STABILIZER)), siz) + (int) rect.x,
                     (int) (bubblePosition.get(i).y * siz - rect.y + midH * siz),
                     bw * siz, bh * siz
@@ -61,7 +61,7 @@ public class BubbleBGEffect extends BackgroundEffect {
     public void draw(FakeGraphics g, float y, float siz, float midH) {
         for(int i = 0; i < bubblePosition.size(); i++) {
             g.drawImage(
-                    bubble,
+                    bubble.getImg(),
                     BackgroundEffect.convertP((float) (bubblePosition.get(i).x + Data.BG_EFFECT_BUBBLE_FACTOR * Math.sin(differentiator.get(i) + bubblePosition.get(i).y / Data.BG_EFFECT_BUBBLE_STABILIZER)), siz),
                     (int) (bubblePosition.get(i).y * siz - y + midH * siz),
                     bw * siz, bh * siz

@@ -4,8 +4,8 @@ import common.CommonStatic;
 import common.io.json.JsonClass;
 import common.pack.Identifier;
 import common.system.P;
+import common.system.VImg;
 import common.system.fake.FakeGraphics;
-import common.system.fake.FakeImage;
 import common.system.fake.FakeTransform;
 import common.util.Data;
 import common.util.pack.Background;
@@ -17,7 +17,7 @@ import java.util.Random;
 
 @JsonClass.JCGeneric(Identifier.class)
 public class BlizzardBGEffect extends BackgroundEffect {
-    private final FakeImage blizzard;
+    private final VImg blizzard;
     private final int bw;
     private final int bh;
 
@@ -31,17 +31,17 @@ public class BlizzardBGEffect extends BackgroundEffect {
 
     private final List<Integer> capture = new LinkedList<>();
 
-    public BlizzardBGEffect(Identifier<BackgroundEffect> id, FakeImage blizzard) {
+    public BlizzardBGEffect(Identifier<BackgroundEffect> id, VImg blizzard) {
         super(id);
         this.blizzard = blizzard;
 
-        bw = this.blizzard.getWidth();
-        bh = this.blizzard.getHeight();
+        bw = this.blizzard.getImg().getWidth();
+        bh = this.blizzard.getImg().getHeight();
     }
 
     @Override
     public void check() {
-        blizzard.bimg();
+        blizzard.check();
     }
 
     @Override
@@ -56,7 +56,7 @@ public class BlizzardBGEffect extends BackgroundEffect {
             g.translate(BackgroundEffect.convertP(blizzardPosition.get(i).x, siz) + rect.x, blizzardPosition.get(i).y * siz - rect.y + midH * siz);
             g.rotate(-angle.get(i));
 
-            g.drawImage(blizzard, 0, 0, (int) (bw * 0.5 * Data.BG_EFFECT_BLIZZARD_SIZE[size.get(i)] * siz), (int) (bh * Data.BG_EFFECT_BLIZZARD_SIZE[size.get(i)] * siz));
+            g.drawImage(blizzard.getImg(), 0, 0, (int) (bw * 0.5 * Data.BG_EFFECT_BLIZZARD_SIZE[size.get(i)] * siz), (int) (bh * Data.BG_EFFECT_BLIZZARD_SIZE[size.get(i)] * siz));
 
             g.setTransform(at);
         }
@@ -72,7 +72,7 @@ public class BlizzardBGEffect extends BackgroundEffect {
             g.translate(BackgroundEffect.convertP(blizzardPosition.get(i).x, siz), blizzardPosition.get(i).y * siz - y + midH * siz);
             g.rotate(-angle.get(i));
 
-            g.drawImage(blizzard, 0, 0, (int) (bw * 0.5 * Data.BG_EFFECT_BLIZZARD_SIZE[size.get(i)] * siz), (int) (bh * Data.BG_EFFECT_BLIZZARD_SIZE[size.get(i)] * siz));
+            g.drawImage(blizzard.getImg(), 0, 0, (int) (bw * 0.5 * Data.BG_EFFECT_BLIZZARD_SIZE[size.get(i)] * siz), (int) (bh * Data.BG_EFFECT_BLIZZARD_SIZE[size.get(i)] * siz));
 
             g.setTransform(at);
         }

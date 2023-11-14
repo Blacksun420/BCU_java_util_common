@@ -7,8 +7,8 @@ import common.io.json.JsonDecoder;
 import common.io.json.JsonField;
 import common.pack.*;
 import common.system.P;
+import common.system.VImg;
 import common.system.fake.FakeGraphics;
-import common.system.fake.FakeImage;
 import common.system.files.VFile;
 import common.util.Data;
 import common.util.anim.ImgCut;
@@ -45,37 +45,18 @@ public abstract class BackgroundEffect extends Data implements IndexContainer.In
 
         assets.bgEffects.add(new StarBackgroundEffect(assets.getNextID(BackgroundEffect.class)));
 
-        VFile rainFile = VFile.get("./org/battle/a/000_a.png");
+        assets.bgEffects.add(new RainBGEffect(assets.getNextID(BackgroundEffect.class), new VImg("./org/battle/a/000_a.png"), ImgCut.newIns("./org/battle/a/000_a.imgcut")));
 
-        FakeImage rainImage = rainFile.getData().getImg();
-        ImgCut rainCut = ImgCut.newIns("./org/battle/a/000_a.imgcut");
+        assets.bgEffects.add(new BubbleBGEffect(assets.getNextID(BackgroundEffect.class), new VImg("./org/img/bgEffect/bubble02.png")));
 
-        FakeImage[] images = rainCut.cut(rainImage);
+        assets.bgEffects.add(new FallingSnowBGEffect(assets.getNextID(BackgroundEffect.class), new VImg("./org/img/bgEffect/bubble03_bg040.png")));
 
-        assets.bgEffects.add(new RainBGEffect(assets.getNextID(BackgroundEffect.class), images[29], images[28]));
-
-        VFile bubbleFile = VFile.get("./org/img/bgEffect/bubble02.png");
-
-        FakeImage bubbleImage = bubbleFile.getData().getImg();
-
-        assets.bgEffects.add(new BubbleBGEffect(assets.getNextID(BackgroundEffect.class), bubbleImage));
-
-        VFile secondBubbleFile = VFile.get("./org/img/bgEffect/bubble03_bg040.png");
-
-        FakeImage secondBubbleImage = secondBubbleFile.getData().getImg();
-
-        assets.bgEffects.add(new FallingSnowBGEffect(assets.getNextID(BackgroundEffect.class), secondBubbleImage));
-
-        VFile snowFile = VFile.get("./org/img/bgEffect/img021.png");
-
-        FakeImage snowImage = snowFile.getData().getImg();
-
-        assets.bgEffects.add(new SnowBGEffect(assets.getNextID(BackgroundEffect.class), snowImage));
+        assets.bgEffects.add(new SnowBGEffect(assets.getNextID(BackgroundEffect.class), new VImg("./org/img/bgEffect/img021.png")));
 
         assets.bgEffects.add(new MixedBGEffect(assets.getNextID(BackgroundEffect.class),
                 assets.bgEffects.get(Data.BG_EFFECT_STAR), assets.bgEffects.get(Data.BG_EFFECT_SNOW)));
 
-        assets.bgEffects.add(new BlizzardBGEffect(assets.getNextID(BackgroundEffect.class), secondBubbleImage));
+        assets.bgEffects.add(new BlizzardBGEffect(assets.getNextID(BackgroundEffect.class), new VImg("./org/img/bgEffect/bubble03_bg040.png")));
 
         assets.bgEffects.add(new ShiningBGEffect(assets.getNextID(BackgroundEffect.class)));
 
