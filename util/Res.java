@@ -243,7 +243,7 @@ public class Res extends ImgCore {
 		aux.icon[1][P_IMURAGE] = new VImg("./org/page/icons/ImuRage.png");
 		aux.icon[1][P_HYPNO] = new VImg("./org/page/icons/Hypno.png");
 		aux.icon[1][P_IMUHYPNO] = new VImg("./org/page/icons/ImuHypno.png");
-		aux.icon[1][P_DEMONVOLC] = new VImg("./org/page/icons/CounterSurge.png");
+		aux.icon[1][P_DEMONVOLC] = new VImg(parts[315]);
 		aux.icon[1][P_DEFINC] = new VImg(parts[204]);
 		aux.icon[1][P_DMGINC] = new VImg(parts[206]);
 		aux.icon[1][P_RANGESHIELD] = new VImg("./org/page/icons/TargetShield.png");

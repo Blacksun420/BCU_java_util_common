@@ -74,6 +74,9 @@ public class Unit extends Data implements AbUnit {
 			return MultiLangCont.getStatic().CFEXP.getCont(this);
 		}
 
+		public String getUltraFormEvolveExplanation() {
+			return MultiLangCont.getStatic().UFEXP.getCont(this);
+		}
 	}
 
 	@JsonField
