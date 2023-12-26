@@ -282,8 +282,22 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 	public boolean hasEvolveCost() {
 		return unit.info.hasEvolveCost() && fid == 2;
 	}
-
 	public boolean hasZeroForm() {
 		return unit.info.hasZeroForm() && fid == 3;
+	}
+
+	public int getEvoCost() {
+		if (hasEvolveCost())
+			return unit.info.xp;
+		else if (hasZeroForm())
+			return unit.info.zeroXp;
+		return -1;
+	}
+	public int[][] getEvoMaterials() {
+		if (hasEvolveCost())
+			return unit.info.evo;
+		else if (hasZeroForm())
+			return unit.info.zeroEvo;
+		return null;
 	}
 }
