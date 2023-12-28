@@ -162,7 +162,7 @@ public class EUnit extends Entity {
 	@Override
 	protected void processProcs0(AttackAb atk, int dmg) {
 		Proc.CDSETTER cd = atk.getProc().CDSETTER;
-		if (cd.prob > 0 && index != null && index[1] < 5)
+		if (cd.prob > 0 && cd.slot == 10 && index != null && index[1] < 5)
 			basis.changeUnitCooldown(cd.amount, index[0] * 5 + index[1], cd.type);
 		super.processProcs0(atk, dmg);
 	}

@@ -2,6 +2,7 @@ package common.battle.attack;
 
 import common.CommonStatic;
 import common.CommonStatic.BattleConst;
+import common.battle.entity.AbEntity;
 import common.system.P;
 import common.system.fake.FakeGraphics;
 import common.system.fake.FakeTransform;
@@ -42,7 +43,12 @@ public abstract class ContWaveAb extends ContAb {
 	/**
 	 * kill every related wave
 	 */
-	protected void deactivate() {
+	protected void deactivate(AbEntity e) {
+		if (e != null && e.getProc().IMUWAVE.mult < 0) {
+			e.getProc().IMUWAVE.mult += 100;
+			e.damaged(atk);
+			e.getProc().IMUWAVE.mult -= 100;
+		}
 		waves.forEach(w -> w.activate = false);
 	}
 

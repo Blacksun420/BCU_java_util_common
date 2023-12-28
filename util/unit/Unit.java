@@ -73,7 +73,6 @@ public class Unit extends Data implements AbUnit {
 		public String getCatfruitExplanation() {
 			return MultiLangCont.getStatic().CFEXP.getCont(this);
 		}
-
 		public String getUltraFormEvolveExplanation() {
 			return MultiLangCont.getStatic().UFEXP.getCont(this);
 		}

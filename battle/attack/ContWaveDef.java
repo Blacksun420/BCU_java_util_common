@@ -43,7 +43,7 @@ public class ContWaveDef extends ContWaveAb {
 						if (waves > 0)
 							((Entity)e).anim.getEff(STPWAVE);
 						if (waves == 100) {
-							deactivate();
+							deactivate(e);
 							return;
 						} else
 							atk.raw = atk.raw * (100 - waves) / 100;

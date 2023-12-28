@@ -181,8 +181,14 @@ public abstract class Source {
 		@Override
 		public ImgCut getIC() {
 			FileData fd = loader.loadFile(id.base, id, IC);
-			if (fd == null)
+			if (fd == null) {
 				CommonStatic.ctx.printErr(ErrType.WARN, "Corrupted imgcut found for " + id);
+				try {
+					byte[] b = fd.getBytes();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 			return ImgCut.newIns(fd);
 		}
 

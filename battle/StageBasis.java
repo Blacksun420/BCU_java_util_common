@@ -213,16 +213,28 @@ public class StageBasis extends BattleObj {
 			totUni++;
 		if (slot == -1 || b.lu.efs[Math.floorDiv(slot, 5)][slot % 5] == null)
 			slot = (int) (r.nextFloat() * totUni); //Pick random unit if chosen one isn't there
-		int i = slot >= 5 ? 1 : 0;
 
-		CommonStatic.setSE(amount < 0 ? SE_P_RESEARCHUP : SE_P_RESEARCHDOWN);
+		CDChange(amount, slot / 5, slot % 5, type);
+	}
+	public void changeUnitsCooldown(int amount, int type) {
+		for (byte s = 0; s < 10; s++) {
+			byte r = (byte)(s / 5), c = (byte)(s % 5);
+			if (b.lu.efs[r][c] == null)
+				break;
+			if (CDChange(amount, r, c, type))
+				CommonStatic.setSE(amount < 0 ? SE_P_RESEARCHUP : SE_P_RESEARCHDOWN);
+		}
+	}
+	private boolean CDChange(int amount, int r, int c, int type) {
+		int curC = elu.cool[r][c];
 		if (type == 0)
-			elu.cool[i][slot % 5] += amount;
+			elu.cool[r][c] += amount;
 		else if (type == 1)
-			elu.cool[i][slot % 5] += elu.maxC[i][slot % 5] * (amount/100.0);
+			elu.cool[r][c] += elu.maxC[r][c] * (amount / 100.0);
 		else
-			elu.cool[i][slot % 5] = amount;
-		elu.cool[i][slot % 5] = Math.min(elu.maxC[i][slot % 5], elu.cool[i][slot % 5]);
+			elu.cool[r][c] = amount;
+		elu.cool[r][c] = Math.min(elu.maxC[r][c], elu.cool[r][c]);
+		return curC != elu.cool[r][c];
 	}
 
 	public void changeBG(Identifier<Background> id) {

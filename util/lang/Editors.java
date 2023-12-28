@@ -223,16 +223,8 @@ public class Editors {
 		}
 
 		public void updateVisibility() {
-			if (obj instanceof Proc.IMUAD)
-				setComponentVisibility(this, obj.exists(), 2);
-			else if (obj instanceof Proc.AURA)
-				setComponentVisibility(this, obj.exists(), 4);
-			else if (!(obj instanceof Proc.IMU)) {
-				if (!(obj instanceof Proc.AI))
-					setComponentVisibility(this, obj.exists(), 1);
-				if (ctrl.visibilityReg != null)
-					ctrl.setVis(this, obj);
-			}
+			if (ctrl.visibilityReg != null)
+				ctrl.setVis(this, obj);
 		}
 	}
 
@@ -258,18 +250,22 @@ public class Editors {
 		});
 
 		EditControl<Proc.IMU> imu = new EditControl<>(Proc.IMU.class, t -> {
-			t.mult = Math.min(t.mult, 100);
 			t.block = Math.min(t.block, 100);
+			if (t.block == 100)
+				t.mult = Math.min(0, t.mult);
+			t.mult = Math.min(t.mult, 100);
 		});
 
 		EditControl<Proc.IMUAD> imuad = new EditControl<>(Proc.IMUAD.class, t -> {
-			t.mult = Math.min(t.mult, 100);
 			t.block = Math.min(t.block, 100);
+			if (t.block == 100)
+				t.mult = Math.min(0, t.mult);
+			t.mult = Math.min(t.mult, 100);
 			if (t.mult != 0 || t.block != 0)
 				t.smartImu = MathUtil.clip(t.smartImu, -1, 1);
 			else
 				t.smartImu = 0;
-		});
+		}, eg -> t -> setComponentVisibility(eg, t.mult != 0 || t.block != 0, 2));
 
 		EditControl<Proc.MULT> wavei = new EditControl<>(Proc.MULT.class, t -> t.mult = Math.min(t.mult, 100));
 
@@ -676,7 +672,7 @@ public class Editors {
 			if (t.prob == 0) {
 				t.amount = t.slot = t.type = 0;
 			} else {
-				t.slot = MathUtil.clip(t.slot, -1, 10);
+				t.slot = MathUtil.clip(t.slot, -1, 11);
 				t.type = MathUtil.clip(t.type, 0, 2);
 				if (t.type == 1)
 					t.amount = MathUtil.clip(t.amount, 0, 100);
@@ -697,7 +693,7 @@ public class Editors {
 				t.min_dis = Math.min(min, t.max_dis);
 				t.max_dis = Math.max(min, t.max_dis);
 			}
-		}));
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 4)));
 
 		map().put("STRONGAURA", new EditControl<>(Proc.AURA.class, (t) -> {
 			if (t.amult + t.dmult + t.smult + t.tmult == 0) {
@@ -709,7 +705,7 @@ public class Editors {
 				t.min_dis = Math.min(min, t.max_dis);
 				t.max_dis = Math.max(min, t.max_dis);
 			}
-		}));
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 4)));
 
 		map().put("REMOTESHIELD", new EditControl<>(Proc.REMOTESHIELD.class, (t) -> {
 			if (t.prob == 0) {
@@ -741,7 +737,9 @@ public class Editors {
 			t.retreatDist = Math.max(0, t.retreatDist);
 			if (t.retreatDist == 0)
 				t.retreatSpeed = 0;
-		}, eg -> t -> setComponentVisibility(eg, t.retreatDist > 0, 1, 2)));
+		}, eg -> t -> {
+			setComponentVisibility(eg, t.retreatDist > 0, 1, 2);
+		}));
 
 		map().put("DEMONVOLC", new EditControl<>(Proc.PM.class, (t) -> {
 			t.prob = MathUtil.clip(t.prob, 0, 100);

@@ -348,8 +348,10 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		if (c.perform(b.r)) {
 			if (c.slot == 10)
 				proc.CDSETTER.set(c);
-			else
+			else if (c.slot < 11)
 				b.changeUnitCooldown(c.amount, c.slot, c.type);
+			else
+				b.changeUnitsCooldown(c.amount, c.type);
 		}
 
 		if (proc.CRIT.exists() && proc.CRIT.mult == 0)
