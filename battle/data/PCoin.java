@@ -146,7 +146,13 @@ public class PCoin extends Data {
 						break;
 				}
 			}
-			/*switch (data[0]) {
+			if (Data.PC_CORRES[data[0]][3] != -1) {
+				data[1] = Data.PC_CORRES[Data.PC_CORRES[data[0]][3]][1];
+				data[2] = data[3] = 100 - proc.getArr(type).get(0);
+				return;
+			}
+
+			switch (data[0]) {
 				case 0:
 					break;
 				case 56: case 65:

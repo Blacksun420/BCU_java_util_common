@@ -215,7 +215,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		}
 
 		/**
-		 * get a effect icon
+		 * get an effect icon
 		 */
 		@SuppressWarnings("unchecked")
 		public void getEff(int t) {
@@ -1898,9 +1898,9 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		float dist = 1 + f * 0.1f;
 		if (atk.getProc().STOP.time != 0 || atk.getProc().STOP.prob > 0) {
 			int val = (int) (atk.getProc().STOP.time * time);
-			int rst = getProc().IMUSTOP.mult;
+			float rst = getResistValue(atk, "IMUSTOP", getProc().IMUSTOP.mult);
 			if (rst < 100) {
-				val = val * (100 - rst) / 100;
+				val = (int) (val * rst);
 				if (val < 0)
 					status.stop = Math.max(status.stop, Math.abs(val));
 				else
@@ -1909,11 +1909,12 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			} else
 				anim.getEff(INV);
 		}
+
 		if (atk.getProc().SLOW.time != 0 || atk.getProc().SLOW.prob > 0) {
 			int val = (int) (atk.getProc().SLOW.time * time);
-			int rst = getProc().IMUSLOW.mult;
+			float rst = getResistValue(atk, "IMUSLOW", getProc().IMUSLOW.mult);
 			if (rst < 100) {
-				val = val * (100 - rst) / 100;
+				val = (int) (val * rst);
 				if (val < 0)
 					status.slow = Math.max(status.slow, Math.abs(val));
 				else
@@ -1924,8 +1925,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		}
 		if (atk.getProc().WEAK.time > 0) {
 			int val = (int) (atk.getProc().WEAK.time * time);
-			int rst = checkAIImmunity(atk.getProc().WEAK.mult - 100, getProc().IMUWEAK.smartImu, getProc().IMUWEAK.mult > 0) ? getProc().IMUWEAK.mult : 0;
-			val = val * (100 - rst) / 100;
+			float rst = getResistValue(atk, "IMUWEAK", checkAIImmunity(atk.getProc().WEAK.mult - 100, getProc().IMUWEAK.smartImu, getProc().IMUWEAK.mult > 0) ? getProc().IMUWEAK.mult : 0);
+			val = (int)(val * (100 - rst) / 100);
 
 			if (rst < 100) {
 				if (val < 0)
@@ -1970,9 +1971,9 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		}
 		if (atk.getProc().CURSE.time != 0 || atk.getProc().CURSE.prob > 0) {
 			int val = (int) (atk.getProc().CURSE.time * time);
-			int rst = getProc().IMUCURSE.mult;
+			float rst = getProc().IMUCURSE.mult;
 			if (rst < 100) {
-				val = val * (100 - rst) / 100;
+				val = (int) (val * rst);
 				if (val < 0)
 					status.curse = Math.max(status.curse, Math.abs(val));
 				else
@@ -1982,7 +1983,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				anim.getEff(INV);
 		}
 		if (atk.getProc().KB.dis != 0) {
-			int rst = getProc().IMUKB.mult;
+			float rst = getResistValue(atk, "IMUKB", getProc().IMUKB.mult);
 			if (rst < 100) {
 				status.kb = atk.getProc().KB.time;
 				interrupt(atk.getProc().KB.time == KB_TIME[INT_HB] ? INT_HB : P_KB, atk.getProc().KB.dis * dist * (100 - rst) / 100);
@@ -2027,7 +2028,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				POISON ws = (POISON) atk.getProc().POISON.clone();
 				ws.time = ws.time * (100 - res) / 100;
 				if (atk.atk != 0 && ws.type.modifAffected)
-					ws.damage *= (float) getDamage(atk, atk.atk) / atk.atk;
+					ws.damage = (int) (ws.damage * (float) getDamage(atk, atk.atk) / atk.atk);
 
 				pois.add(ws);
 				anim.getEff(P_POISON);
@@ -2091,6 +2092,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		}
 	}
 
+	public abstract float getResistValue(AttackAb atk, String procName, int procResist);
 	private boolean checkAIImmunity(int val, int side, boolean invert) {
 		if (side == 0)
 			return true;
@@ -2158,7 +2160,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	}
 
 	/**
-	 * This function stops enemy attack when a continue is used
+	 * This function stops enemy attack when continue is used
 	 */
 	public void cont() {
 		atkm.stopAtk();
@@ -2174,9 +2176,9 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		long ext = health * hb % maxH;
 		if (ext == 0)
 			ext = maxH;
-		if (status.armor[0] > 0) {
-			damage *= (100 + status.armor[1]) / 100.0;
-		}
+		if (status.armor[0] > 0)
+			damage = (long) (damage * (100 + status.armor[1]) / 100.0);
+
 		damage *= auras.getDefAura();
 		if (!isBase && damage > 0 && kbTime <= 0 && kbTime != -1 && (ext <= damage * hb || health < damage))
 			interrupt(INT_HB, KB_DIS[INT_HB]);
@@ -2239,7 +2241,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	}
 
 	/**
-	 * Sets the animation that will be used for the summon
+	 * Sets the animation that will be used for summon
 	 * @param conf The type of animation used
 	 */
 	public void setSummon(int conf, Entity bond) {
@@ -2308,14 +2310,14 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	@Override
 	public boolean ctargetable(SortedPackSet<Trait> t, Entity attacker) {
 		if (attacker != null) {
-			if (attacker.dire == -1 && attacker.traits.size() > 0) {
+			if (attacker.dire == -1 && !attacker.traits.isEmpty()) {
 				for (int i = 0; i < traits.size(); i++) {
 					if (traits.get(i).BCTrait())
 						continue;
 					if (traits.get(i).others.contains(((MaskUnit) attacker.data).getPack()))
 						return true;
 				}
-			} else if (dire == -1 && traits.size() > 0) {
+			} else if (dire == -1 && !traits.isEmpty()) {
 				for (int i = 0; i < attacker.traits.size(); i++) {
 					if (attacker.traits.get(i).BCTrait())
 						continue;
@@ -2499,22 +2501,22 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	protected int critCalc(boolean isMetal, int ans, AttackAb atk) {
 		int satk = atk.getProc().SATK.mult;
 		if (satk > 0)
-			ans *= (100 + satk) * 0.01;
+			ans = (int) (ans * (100 + satk) * 0.01);
 		int crit = atk.getProc().CRIT.mult;
 		int criti = getProc().CRITI.mult;
 		if (criti == 100)
 			crit = 0;
 		else if (criti != 0)
-			crit *= (100 - getProc().CRITI.mult) / 100.0;
+			crit = (int) (crit * (100 - getProc().CRITI.mult) / 100.0);
 		if (isMetal)
 			if (crit > 0)
-				ans *= 0.01 * crit;
+				ans = (int) (ans * 0.01 * crit);
 			else if (crit < 0)
 				ans = (int) Math.ceil(health * crit / -100.0);
 			else
 				ans = ans > 0 ? 1 : 0;
 		else if (crit > 0)
-			ans *= 0.01 * crit;
+			ans = (int) (ans * 0.01 * crit);
 		else if (crit < 0)
 			ans = (int) Math.ceil(health * 0.001);
 		return ans;
@@ -2717,7 +2719,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 	private void drawAxis(FakeGraphics gra, P p, float siz) {
 		// after this is the drawing of hit boxes
-		siz *= 1.25;
+		siz *= 1.25f;
 		float rat = BattleConst.ratio;
 		float poa = p.x - pos * rat * siz;
 		int py = (int) p.y;

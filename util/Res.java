@@ -161,6 +161,7 @@ public class Res extends ImgCore {
 		aux.icon[2] = new VImg[ATK_TOT];
 		aux.icon[3] = new VImg[TRAIT_TOT];
 		aux.icon[4] = new VImg[PC2_TOT];
+
 		aux.icon[0][ABI_EKILL] = new VImg(parts[110]);
 		aux.icon[0][ABI_ONLY] = new VImg(parts[202]);
 		aux.icon[0][ABI_METALIC] = new VImg(parts[209]);
@@ -174,6 +175,7 @@ public class Res extends ImgCore {
 		aux.icon[0][ABI_SNIPERI] = new VImg("./org/page/icons/SnipeX.png");
 		aux.icon[0][ABI_GHOST] = new VImg("./org/page/icons/Ghost.png");
 		aux.icon[0][ABI_GLASS] = new VImg("./org/page/icons/Suicide.png");
+		aux.icon[0][ABI_SKILL] = new VImg(parts[319]);
 
 		aux.icon[1][P_IMUCURSE] = new VImg(parts[116]);
 		aux.icon[1][P_WEAK] = new VImg(parts[195]);
@@ -205,6 +207,7 @@ public class Res extends ImgCore {
 		aux.icon[1][P_POIATK] = new VImg("./org/page/icons/BCPoison.png");
 		aux.icon[1][P_MINIWAVE] = new VImg(parts[293]);
 		aux.icon[1][P_SHIELDBREAK] = new VImg(parts[296]);
+		aux.icon[1][P_SPIRIT] = new VImg(parts[317]);
 		aux.icon[1][P_DEMONSHIELD] = new VImg("./org/page/icons/DemonShield.png");
 		aux.icon[1][P_DEATHSURGE] = new VImg("./org/page/icons/DeathSurge.png");
 		aux.icon[1][P_BURROW] = new VImg("./org/page/icons/Burrow.png");
@@ -255,6 +258,7 @@ public class Res extends ImgCore {
 		aux.icon[3][TRAIT_EVA] = new VImg("./org/page/icons/Eva.png");
 		aux.icon[3][TRAIT_BARON] = new VImg("./org/page/icons/Baron.png");
 		aux.icon[3][TRAIT_BEAST] = new VImg("./org/page/icons/Beast.png");
+		aux.icon[3][TRAIT_SAGE] = new VImg("./org/page/icons/SuperSage.png");
 		aux.icon[3][TRAIT_INFH] = new VImg("./org/page/icons/Base.png");
 
 		//These are used for talent edit page icons

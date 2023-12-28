@@ -202,7 +202,7 @@ public class Level implements BattleStatic, LevelInterface {
 
 	@JsonField(tag = "lvs", io = JsonField.IOType.R, generic = Integer.class)
 	public void parseOldLevel(ArrayList<Integer> levels) {
-		if (levels.size() > 0) {
+		if (!levels.isEmpty()) {
 			level = levels.get(0);
 			if (levels.size() > 1) {
 				talents = new int[levels.size() - 1];

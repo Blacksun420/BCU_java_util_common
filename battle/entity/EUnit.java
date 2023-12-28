@@ -130,6 +130,27 @@ public class EUnit extends Entity {
 	}
 
 	@Override
+	public float getResistValue(AttackAb atk, String procName, int procResist) {
+		float ans = 1f - procResist / 100f;
+
+		boolean canBeApplied = false;
+
+		for (int i = 0; i < SUPER_SAGE_RESIST_TYPE.length; i++) {
+			if (procName.equals(SUPER_SAGE_RESIST_TYPE[i])) {
+				canBeApplied = true;
+
+				break;
+			}
+		}
+
+		if (atk.trait.contains(BCTraits.get(TRAIT_SAGE)) && canBeApplied && (getAbi() & AB_SKILL) != 0) {
+			ans *= (1f - SUPER_SAGE_HUNTER_RESIST);
+		}
+
+		return ans;
+	}
+
+	@Override
 	protected int getDamage(AttackAb atk, int ans) {
 		ans = super.getDamage(atk, ans);
 		if (atk.model instanceof AtkModelEnemy) {
@@ -150,6 +171,8 @@ public class EUnit extends Entity {
 				ans *= 0.7;
 			if (atk.trait.contains(UserProfile.getBCData().traits.get(Data.TRAIT_BEAST)) && getProc().BSTHUNT.type.active)
 				ans *= 0.6; //Not sure
+			if (atk.trait.contains(UserProfile.getBCData().traits.get(Data.TRAIT_SAGE)) && (getAbi() & AB_SKILL) > 0)
+				ans = (int) (ans * SUPER_SAGE_HUNTER_HP);
 		}
 		// Perform orb
 		ans = getOrb(atk.trait, ans, false);

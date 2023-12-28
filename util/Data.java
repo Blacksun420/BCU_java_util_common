@@ -667,6 +667,9 @@ public class Data {
 
 							if (((Integer) o) != 0)
 								return true;
+						} else if (f.getType() == Identifier.class) {
+							if (f.get(this) != null)
+								return true;
 						} else {
 							if (((IntType) f.get(this)).toInt() > 0)
 								return true;
@@ -774,6 +777,12 @@ public class Data {
 				return JsonEncoder.encode(this).toString();
 			}
 
+		}
+
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class SPIRIT extends ProcItem {
+			@Order(0)
+			public Identifier<?> id;
 		}
 
 		public static Proc blank() {
@@ -932,6 +941,8 @@ public class Data {
 		public final MULT DEFINC = new MULT(); //Merges Strong against, Resistant, and Insane Resist
 		@Order(71)
 		public final RANGESHIELD RANGESHIELD = new RANGESHIELD();
+		@Order(72)
+		public final SPIRIT SPIRIT = new SPIRIT();
 
 		@Override
 		public Proc clone() {
@@ -1076,6 +1087,7 @@ public class Data {
 	public static final short SE_SHIELD_BREAKER = 137;
 	public static final short SE_DEATH_SURGE = 143;
 	public static final short SE_COUNTER_SURGE = 159;
+	public static final short SE_SPIRIT_SUMMON = 162;
 
 	public static final byte[][] SE_CANNON = { { 25, 26 }, { 60 }, { 61 }, { 36, 37 }, { 65, 83 }, { 84, 85 }, { 86 },
 			{ 124 } };
@@ -1116,8 +1128,9 @@ public class Data {
 	public static final byte TRAIT_WITCH = 11;
 	public static final byte TRAIT_BARON = 12;
 	public static final byte TRAIT_BEAST = 13;
-	public static final byte TRAIT_INFH = 14;
-	public static final byte TRAIT_TOT = 15;
+	public static final byte TRAIT_SAGE = 14;
+	public static final byte TRAIT_INFH = 15;
+	public static final byte TRAIT_TOT = 16;
 
 	// treasure
 	public static final byte T_RED = 0;
@@ -1174,6 +1187,7 @@ public class Data {
 	public static final short AB_IMUSW = 1 << 10;
 	public static final short AB_BAKILL = 1 << 11;
 	public static final short AB_CKILL = 1 << 12;
+	public static final int AB_SKILL = 1 << 13;
 
 	public static final byte ABI_ONLY = 0;
 	public static final byte ABI_METALIC = 1;
@@ -1188,7 +1202,8 @@ public class Data {
 	public static final byte ABI_IMUSW = 10;
 	public static final byte ABI_BAKILL = 11;
 	public static final byte ABI_CKILL = 12;
-	public static final byte ABI_TOT = 13;// 18 currently
+	public static final byte ABI_SKILL = 13;
+	public static final byte ABI_TOT = 14;// 18 currently
 
 	// proc index
 	public static final byte P_KB = 0;
@@ -1291,7 +1306,8 @@ public class Data {
 	public static final byte P_DMGINC = 69; // nice
 	public static final byte P_DEFINC = 70;
 	public static final byte P_RANGESHIELD = 71;
-	public static final byte PROC_TOT = 72;// 72
+	public static final byte P_SPIRIT = 72;
+	public static final byte PROC_TOT = 73;// 72
 
 	public static final boolean[] procSharable = {
 			false, //kb
@@ -1365,7 +1381,8 @@ public class Data {
 			true,  //Counter Volc
 			true,  //Massive DMG but good
 			true,  //Resistant but good
-			true   //Range Shield
+			true,  //Range Shield
+			true   //spirit summon
 	};
 
 	/**
@@ -1463,7 +1480,8 @@ public class Data {
 			{ 0, P_MINIWAVE }, //62 : mini-wave
 			{ 1, AB_BAKILL }, //63 : baron killer
 			{ 0, P_BSTHUNT, 1 }, //64 : behemoth slayer
-			{ 0, P_MINIVOLC } //65 : MiniSurge
+			{ 0, P_MINIVOLC }, //65 : MiniSurge
+			{ 1, AB_SKILL, 0, -1 }, //66 : super sage hunter
 	};
 	public static final int[][] PC_CUSTOM = new int[][] { //Use negative ints to handle (it would be so awesome, it would be so cool)
 			{ -1, 0 }, // 0:
@@ -1755,6 +1773,12 @@ public class Data {
 	public static final float SHAKE_STABILIZER = 2.5f;
 	public static final int COUNTER_SURGE_FORESWING = 50;
 	public static final int COUNTER_SURGE_SOUND = 18;
+	public static final int SPIRIT_SUMMON_RANGE = 150;
+	public static final float SUPER_SAGE_RESIST = 0.7f;
+	public static final String[] SUPER_SAGE_RESIST_TYPE = { "IMUWEAK", "IMUSTOP", "IMUSLOW", "IMUCURSE", "IMUKB" };
+	public static final float SUPER_SAGE_HUNTER_ATTACK = 1.2f;
+	public static final float SUPER_SAGE_HUNTER_HP = 0.5f;
+	public static final float SUPER_SAGE_HUNTER_RESIST = 0.7f;
 
 	public static final char[] SUFX = new char[] { 'f', 'c', 's', 'u' };
 

@@ -37,9 +37,10 @@ public class EEnemy extends Entity {
 	@Override
 	public void kill(boolean atk) {
 		super.kill(atk);
+
 		if (!basis.st.trail && !atk) {
 			float mul = basis.b.t().getDropMulti() * (1 + (status.money / 100f));
-			basis.money += mul * ((MaskEnemy) data).getDrop();
+			basis.money += (int) (basis.money + mul * ((MaskEnemy) data).getDrop());
 		}
 
 		if (rev != null) {
@@ -95,6 +96,8 @@ public class EEnemy extends Entity {
 				ans *= 1.6;
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_BEAST)) && atk.getProc().BSTHUNT.type.active)
 				ans *= 2.5;
+			if (traits.contains(BCTraits.get(TRAIT_SAGE)) && (atk.abi & AB_SKILL) > 0)
+				ans = (int) (ans * SUPER_SAGE_HUNTER_ATTACK);
 		}
 		if (atk.canon == 16)
 			if ((touchable() & TCH_UG) > 0)
@@ -119,6 +122,22 @@ public class EEnemy extends Entity {
 		else
 			ans = pos - minPos;
 		return Math.max(0, ans);
+	}
+
+	@Override
+	public float getResistValue(AttackAb atk, String procName, int procResist) {
+		float ans = 1f - procResist / 100f;
+		boolean canBeApplied = false;
+
+		for (int i = 0; i < SUPER_SAGE_RESIST_TYPE.length; i++)
+			if (procName.equals(SUPER_SAGE_RESIST_TYPE[i])) {
+				canBeApplied = true;
+				break;
+			}
+
+		if ((atk.abi & AB_SKILL) == 0 && traits.contains(BCTraits.get(TRAIT_SAGE)) && canBeApplied)
+			ans = (1f - SUPER_SAGE_RESIST);
+		return ans;
 	}
 
 	@Override

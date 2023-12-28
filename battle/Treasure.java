@@ -284,9 +284,7 @@ public class Treasure extends Data {
 		}
 		if(traits.contains(BCTraits.get(trait))) {
 			CannonLevelCurve clc = baseData.get(id);
-			if(clc == null)
-				return ans;
-			if(base[id - 1] == 0)
+			if(clc == null || base[id - 1] == 0)
 				return ans;
 			ans = clc.applyFormula(traitData, base[id - 1]);
 		}
@@ -297,8 +295,7 @@ public class Treasure extends Data {
 		if(deco[id - 1] == 0)
 			return 1f;
 		CannonLevelCurve clc = decorationData.get(id);
-
-		if(clc == null)
+		if (clc == null)
 			return 1f;
 		return clc.applyFormula(id - 1, deco[id - 1]);
 	}
