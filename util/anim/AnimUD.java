@@ -47,9 +47,11 @@ public class AnimUD extends AnimU<AnimUD.DefImgLoader> {
 		@Override
 		public MaAnim[] getMA() {
 			MaAnim[] ma;
-			if (VFile.get(spath + ".maanim") != null) {
-				ma = new MaAnim[] { MaAnim.newIns(spath + ".maanim") };
-			} else {
+			if (VFile.get(spath + ".maanim") != null)
+				ma = new MaAnim[]{MaAnim.newIns(spath + ".maanim")};
+			else if (VFile.get(spath + "00.maanim") == null && VFile.get(spath + "02.maanim") != null)
+				ma = new MaAnim[]{MaAnim.newIns(spath + "02.maanim")};
+			else {
 				if (VFile.get(spath + "_zombie00.maanim") != null)
 					ma = new MaAnim[7];
 				else if (VFile.get(spath + "_entry.maanim") != null)
@@ -137,6 +139,12 @@ public class AnimUD extends AnimU<AnimUD.DefImgLoader> {
 		super(path + name, new DefImgLoader(path, name, edi, uni));
 		this.name = name;
 		id = new Source.ResourceLocation(Identifier.DEF, name);
+	}
+
+	@Override
+	public int getAtkLen(int atk) {
+		partial(); //BC units only have 1 attack 100% of the time, so why bother using the param
+		return anims[Math.min(anims.length - 1, 2)].len + 1; //The min is there due to spirits
 	}
 
 	@Override

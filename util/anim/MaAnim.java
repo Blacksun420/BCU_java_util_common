@@ -129,7 +129,7 @@ public class MaAnim extends Data implements BattleStatic {
 			float frame;
 			if (prot) {
 				int mf = loop == -1 ? smax : max + 1;
-				frame = mf == 0 ? 0 : (f + parts[i].off) % mf;
+				frame = mf == 0 ? 0 : loop == -1 ? (f + parts[i].off) % mf : (f % mf) + parts[i].off;
 			} else
 				frame = f + parts[i].off;
 			if (loop > 0 && lmax != 0) {

@@ -37,6 +37,8 @@ import java.util.function.Consumer;
 
 public abstract class Source {
 
+	public static boolean warn = true;
+
 	public interface AnimLoader {
 		VImg getEdi();
 
@@ -181,13 +183,8 @@ public abstract class Source {
 		@Override
 		public ImgCut getIC() {
 			FileData fd = loader.loadFile(id.base, id, IC);
-			if (fd == null) {
+			if (fd == null && warn) {
 				CommonStatic.ctx.printErr(ErrType.WARN, "Corrupted imgcut found for " + id);
-				try {
-					byte[] b = fd.getBytes();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
 			}
 			return ImgCut.newIns(fd);
 		}
@@ -212,7 +209,7 @@ public abstract class Source {
 		@Override
 		public MaModel getMM() {
 			FileData fd = loader.loadFile(id.base, id, MM);
-			if (fd == null)
+			if (fd == null && warn)
 				CommonStatic.ctx.printErr(ErrType.WARN, "Corrupted mamodel found for " + id);
 			return MaModel.newIns(fd);
 		}

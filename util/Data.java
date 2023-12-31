@@ -783,6 +783,18 @@ public class Data {
 		public static class SPIRIT extends ProcItem {
 			@Order(0)
 			public Identifier<?> id;
+			@Order(1)
+			public int cd0;
+			@Order(2)
+			public int cd1;
+			@Order(3)
+			public int amount;
+			@Order(4)
+			public int summonerCd;
+			@Order(5)
+			public int animType;
+			@Order(6)
+			public int form;
 		}
 
 		public static Proc blank() {
@@ -1466,7 +1478,7 @@ public class Data {
 			{ 3, P_IMUWAVE }, // 48: immune to wave
 			{ 3, P_IMUWARP }, // 49: immune to warp
 			{ 0, P_SATK }, // 50: savage blow
-			{ 0, P_IMUATK }, // 51: immune to attack
+			{ 0, P_IMUATK }, // 51: dodge
 			{ 0, P_IMUPOIATK }, // 52: resist to poison ?
 			{ 3, P_IMUPOIATK }, // 53: immune to poison
 			{ 0, P_IMUVOLC }, // 54: resist to surge ?

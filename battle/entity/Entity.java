@@ -589,17 +589,17 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		}
 	}
 
-	private static class AtkManager extends BattleObj {
+	protected static class AtkManager extends BattleObj {
 
 		/**
 		 * atk FSM time
 		 */
-		private int atkTime;
+		protected int atkTime;
 
 		/**
 		 * attack times remain
 		 */
-		private int loop;
+		protected int loop;
 
 		/**
 		 * atk id primarily for display
@@ -670,14 +670,15 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				if (old != e.aam.atkType)
 					setAtk();
 			}
-			setUpAtk();
+			setUpAtk(true);
 		}
 
-		public void setUpAtk() {
+		public void setUpAtk(boolean anim) {
 			atkTime = e.data.getAnimLen(e.aam.atkType);
 			preID = 0;
 			preTime = pres[0] - 1;
-			e.anim.setAtk(e.aam.atkType);
+			if (anim)
+				e.anim.setAtk(e.aam.atkType);
 		}
 
 		private void stopAtk() {
@@ -689,7 +690,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		/**
 		 * update attack state
 		 */
-		private void updateAttack() {
+		protected void updateAttack() {
 			tempAtk = -1; //set tempAtk to -1, as axis display isn't needed anymore
 			atkTime--;
 			if (preTime >= 0) {
@@ -1336,7 +1337,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 	public final AnimManager anim;
 
-	private final AtkManager atkm;
+	protected final AtkManager atkm;
 
 	private final ZombX zx = new ZombX(this);
 
@@ -1439,7 +1440,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	/**
 	 * acted: temp field, for update sync
 	 */
-	private boolean acted;
+	protected boolean acted;
 
 	/**
 	 * remaining burrow distance
@@ -1493,7 +1494,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 */
 	private boolean killCounted = false;
 
-	protected Entity(StageBasis b, MaskEntity de, EAnimU ea, float atkMagnif, float hpMagnif) {
+	protected Entity(StageBasis b, MaskEntity de, EAnimU ea, float atkMagnif, float hpMagnif) {//EEnemy constructor
 		super((int) (de.getHp() * hpMagnif));
 		basis = b;
 		data = de;
@@ -1505,14 +1506,14 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		ini(hpMagnif);
 	}
 
-	protected Entity(StageBasis b, MaskEntity de, EAnimU ea, float lvMagnif, float tAtk, float tHP, PCoin pc, Level lv) {
+	protected Entity(StageBasis b, MaskEntity de, EAnimU ea, float lvMagnif, float tHP, PCoin pc, Level lv) {//EUnit constructor
 		super((pc != null && lv != null && lv.getTalents().length == pc.max.length) ?
 				(int) ((1 + b.elu.getInc(Data.C_DEF) * 0.01) * (int) ((int) (Math.round(de.getHp() * lvMagnif) * tHP) * pc.getStatMultiplication(Data.PC2_HP, lv.getTalents()))) :
 				(int) ((1 + b.elu.getInc(Data.C_DEF) * 0.01) * (int) (Math.round(de.getHp() * lvMagnif) * tHP))
 		);
 		basis = b;
 		data = de;
-		aam = AtkModelEntity.getUnitAtk(this, tAtk, lvMagnif, pc, lv);
+		aam = AtkModelEntity.getUnitAtk(this, b.b.t().getAtkMulti(), lvMagnif, pc, lv);
 		anim = new AnimManager(this, ea);
 		atkm = new AtkManager(this);
 		shieldMagnification = lvMagnif;
@@ -2861,7 +2862,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		if (!le.contains(basis.getBase(getDire()))) {
 			if (poss * getDire() >= bpos)
 				le.add(basis.getBase(getDire()));
-			blds &= le.size() == 0;
+			blds &= le.isEmpty();
 		}
 
 		if (blds)

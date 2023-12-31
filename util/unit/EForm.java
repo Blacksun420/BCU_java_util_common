@@ -4,7 +4,9 @@ import common.CommonStatic;
 import common.battle.StageBasis;
 import common.battle.data.MaskUnit;
 import common.battle.data.PCoin;
+import common.battle.entity.ESpirit;
 import common.battle.entity.EUnit;
+import common.pack.Identifier;
 import common.util.Data;
 import common.util.anim.AnimU;
 import common.util.anim.EAnimU;
@@ -42,6 +44,21 @@ public class EForm extends Data implements IForm {
 		float d = f.unit.lv.getMult(level.getTotalLv());
 		EAnimU anim = getEntryAnim();
 		return new EUnit(b, du, anim, d, du.getFront(), du.getBack(), level, f.du.getPCoin(), index, isBase);
+	}
+
+	public EUnit invokeSpirit(StageBasis b, int[] index) {
+		if (!b.elu.readySpirit(index[0],index[1]))
+			return null;
+		Form spirit = Identifier.getOr(du.getProc().SPIRIT.id, Unit.class).forms[du.getProc().SPIRIT.form];
+		if (b.entityCount(-1) >= b.max_num - spirit.du.getWill())
+			return null;
+
+		float d = spirit.unit.lv.getMult(level.getTotalLv());
+		int lay = b.elu.slayer[index[0]][index[1]];
+		spirit.anim.partial();
+		if (spirit.anim.anims.length == 1)
+			return new ESpirit(b, spirit.du, spirit.getEAnim(AnimU.SOUL[0]), d, lay, level, index); //For BC-Accurate Spirits
+		return new EUnit(b, spirit.du, spirit.getEAnim(AnimU.SOUL[0]), d, lay, lay, level, spirit.du.getPCoin(), index, false); //For Custom Units with spirits
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import common.pack.SortedPackSet;
 import common.util.pack.Soul;
 import common.util.unit.Form;
 import common.util.unit.Trait;
+import common.util.unit.Unit;
 
 public class DataUnit extends DefaultData implements MaskUnit, Cloneable {
 
@@ -200,8 +201,11 @@ public class DataUnit extends DefaultData implements MaskUnit, Cloneable {
 			}
 			if (ints[109] == 1)
 				proc.DEMONVOLC.prob = proc.DEMONVOLC.mult = 100;
-			if (ints[110] != -1)
+			if (ints[110] != -1) {
 				proc.SPIRIT.id = Identifier.parseInt(ints[110], Unit.class);
+				proc.SPIRIT.amount = 1;
+				proc.SPIRIT.cd0 = 15;
+			}
 
 			if (ints[111] == 1)
 				a |= AB_SKILL; //This is Sage Killer, nice naming upstream devs

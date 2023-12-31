@@ -2,14 +2,14 @@ package common.util;
 
 import common.CommonStatic;
 import common.battle.BattleField;
+import common.io.BCUException;
+import common.io.assets.Admin.StaticPermitted;
+import common.pack.Context.ErrType;
 import common.util.pack.bgeffect.BackgroundEffect;
 import common.util.stage.Revival;
 import common.util.unit.EneRand;
 import common.util.unit.Enemy;
 import common.util.unit.Trait;
-import common.io.BCUException;
-import common.io.assets.Admin.StaticPermitted;
-import common.pack.Context.ErrType;
 import common.util.unit.UniRand;
 
 import java.lang.reflect.Array;

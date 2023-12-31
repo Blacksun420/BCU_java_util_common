@@ -432,7 +432,7 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 		@Order(87)
 		public EffAnim<RangeShieldEff> A_E_RANGESHIELD;
 		@Order(88)
-		public EffAnim<DefEff> A_MEGAWAVE;//TODO
+		public EffAnim<DefEff> A_MEGAWAVE;
 		@Order(89)
 		public EffAnim<DefEff> A_E_MEGAWAVE;
 

@@ -15,6 +15,7 @@ import common.pack.UserProfile;
 import common.util.BattleObj;
 import common.util.Data;
 import common.util.anim.EAnimU;
+import common.util.unit.Form;
 import common.util.unit.Level;
 import common.util.unit.Trait;
 
@@ -47,7 +48,7 @@ public class EUnit extends Entity {
 	protected final Level level;
 
 	public EUnit(StageBasis b, MaskUnit de, EAnimU ea, float d0, int layer0, int layer1, Level level, PCoin pc, int[] index, boolean isBase) {
-		super(b, de, ea, d0, b.b.t().getAtkMulti(), b.b.t().getDefMulti(), pc, level);
+		super(b, de, ea, d0, b.b.t().getDefMulti(), pc, level);
 		layer = layer0 == layer1 ? layer0 : layer0 + (int) (b.r.nextFloat() * (layer1 - layer0 + 1));
 		traits = de.getTraits();
 		lvl = level.getTotalLv();
@@ -63,7 +64,7 @@ public class EUnit extends Entity {
 
 	//used for waterblast
 	public EUnit(StageBasis b, MaskUnit de, EAnimU ea, float d0) {
-		super(b, de, ea, d0, b.b.t().getAtkMulti(), b.b.t().getDefMulti(), null, null);
+		super(b, de, ea, d0, b.b.t().getDefMulti(), null, null);
 		layer = de.getFront() + (int) (b.r.nextFloat() * (de.getBack() - de.getFront() + 1));
 		traits = de.getTraits();
 		this.index = null;
@@ -84,6 +85,8 @@ public class EUnit extends Entity {
 	public void update() {
 		super.update();
 		traits = status.curse == 0 && status.seal == 0 ? data.getTraits() : blank;
+		if (index != null)
+			basis.elu.spos[index[0]][index[1]] = pos;
 	}
 
 	@Override
@@ -156,7 +159,7 @@ public class EUnit extends Entity {
 		if (atk.model instanceof AtkModelEnemy) {
 			SortedPackSet<Trait> sharedTraits = traits.inCommon(atk.trait);
 			boolean isAntiTraited = targetTraited(atk.trait);
-			sharedTraits.addIf(traits, t -> !t.BCTrait() && ((t.targetType && isAntiTraited) || t.others.contains(data.getPack())));//Ignore the warning, atk.attacker will always be an unit
+			sharedTraits.addIf(atk.trait, t -> !t.BCTrait() && ((t.targetType && isAntiTraited) || t.others.contains((Form)data.getPack())));
 			if (!sharedTraits.isEmpty()) {
 				if (status.curse == 0 && getProc().DEFINC.mult != 0)
 					ans *= basis.b.t().getDEF(getProc().DEFINC.mult, atk.trait, sharedTraits, ((MaskUnit) data).getOrb(), level);

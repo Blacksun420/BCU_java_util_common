@@ -247,7 +247,7 @@ public class Editors {
 				t.time = 0;
 			else if (t.time == 0)
 				t.time = 1;
-		});
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1));
 
 		EditControl<Proc.IMU> imu = new EditControl<>(Proc.IMU.class, t -> {
 			t.block = Math.min(t.block, 100);
@@ -279,7 +279,7 @@ public class Editors {
 				if (t.time <= 0)
 					t.time = Data.KB_TIME[Data.INT_KB];
 			}
-		}));
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("STOP", pt);
 
@@ -295,14 +295,14 @@ public class Editors {
 				t.mult = 0;
 			else if (t.mult == 0)
 				t.mult = 200;
-		}));
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("WAVE", new EditControl<>(Proc.WAVE.class, (t) -> {
 			t.prob = MathUtil.clip(t.prob, 0, 100);
 			t.lv = MathUtil.clip(t.lv, 1, 35);
 			if (t.prob == 0)
 				t.lv = 0;
-		}));
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("WEAK", new EditControl<>(Proc.PTM.class, (t) -> {
 			t.prob = MathUtil.clip(t.prob, 0, 100);
@@ -311,7 +311,7 @@ public class Editors {
 			else {
 				t.time = Math.max(t.time, 1);
 			}
-		}));
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("LETHARGY", new EditControl<>(Proc.LETHARGY.class, (t) -> {
 			t.prob = MathUtil.clip(t.prob, 0, 100);
@@ -322,7 +322,7 @@ public class Editors {
 					t.prob = Math.max(t.prob, -100);
 				t.time = Math.max(t.time, 1);
 			}
-		}));
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("BREAK", prob);
 
@@ -335,7 +335,7 @@ public class Editors {
 				t.dis = Math.min(t.dis, t.dis_1);
 				t.dis_1 = Math.max(oDis, t.dis_1);
 			}
-		}));
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("CURSE", pt);
 
@@ -343,7 +343,7 @@ public class Editors {
 			t.health = MathUtil.clip(t.health, 0, 99);
 			if (t.health == 0)
 				t.mult = 0;
-		}));
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("LETHAL", prob);
 
@@ -353,7 +353,7 @@ public class Editors {
 				t.dis = 0;
 			else
 				t.dis = Math.max(t.dis, 1);
-		}));
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("REVIVE", new EditControl<>(Proc.REVIVE.class, (t) -> {
 			t.count = Math.max(t.count, -1);
@@ -376,7 +376,10 @@ public class Editors {
 					t.type.range_type = MathUtil.clip(t.type.range_type, 0, 3);
 				}
 			}
-		}, eg -> t -> setComponentVisibility(eg, t.type.revive_others, 3, 4, 5, 7)));
+		}, eg -> t -> {
+			setComponentVisibility(eg, t.exists(), 1);
+			setComponentVisibility(eg, t.type.revive_others, 3, 4, 5, 7);
+		}));
 
 		map().put("SNIPER", prob);
 
@@ -390,7 +393,7 @@ public class Editors {
 			} else {
 				t.time = t.intensity = 0;
 			}
-		}));
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("SEAL", pt);
 
@@ -432,6 +435,7 @@ public class Editors {
 			}
 		}, eg -> t -> {
 			EditorSupplier edi = UserProfile.getStatic("Editor_Supplier", () -> null);
+			setComponentVisibility(eg, t.exists(), 1);
 			setComponentVisibility(eg, t.prob > 0 && ((!edi.isEnemy() && t.id == null) || (t.id != null && t.id.cls == Unit.class)), 17);
 		}));
 
@@ -444,7 +448,7 @@ public class Editors {
 				t.time = Math.max(1, t.time);
 				t.itv = Math.max(1, t.itv);
 			}
-		}));
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("THEME", new EditControl<>(Proc.THEME.class, (t) -> {
 			t.prob = MathUtil.clip(t.prob, 0, 100);
@@ -454,7 +458,7 @@ public class Editors {
 				t.mus = null;
 				t.type.kill = false;
 			}
-		}));
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("POISON", new EditControl<>(Proc.POISON.class, (t) -> {
 			t.prob = MathUtil.clip(t.prob, 0, 100);
@@ -466,7 +470,7 @@ public class Editors {
 				t.itv = Math.max(1, t.itv);
 				t.type.damage_type = MathUtil.clip(t.type.damage_type, 0, 3);
 			}
-		}));
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("BOSS", prob);
 
@@ -476,7 +480,7 @@ public class Editors {
 			t.prob = MathUtil.clip(t.prob, 0, 100);
 			if (t.prob == 0)
 				t.mult = 0;
-		}));
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("COUNTER", new EditControl<>(Proc.COUNTER.class, (t) -> {
 			t.prob = MathUtil.clip(t.prob,0,100);
@@ -490,7 +494,7 @@ public class Editors {
 				t.damage = t.minRange = t.maxRange = t.type.procType = t.type.counterWave = 0;
 				t.type.useOwnDamage = t.type.outRange = t.type.areaAttack = false;
 			}
-		}));
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("IMUATK", new EditControl<>(Proc.IMUATK.class, (t) -> {
 			t.prob = MathUtil.clip(t.prob, 0, 100);
@@ -500,7 +504,7 @@ public class Editors {
 				t.time = Math.max(t.time, 1);
 				t.cd = Math.max(t.cd, 0);
 			}
-		}));
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("DMGCUT", new EditControl<>(Proc.DMGCUT.class, (t) -> {
 			t.prob = MathUtil.clip(t.prob, 0, 100);
@@ -510,7 +514,7 @@ public class Editors {
 				t.type.traitIgnore = t.type.procs = t.type.magnif = false;
 			} else
 				t.dmg = Math.max(t.dmg,0);
-		}));
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("DMGCAP", new EditControl<>(Proc.DMGCAP.class, (t) -> {
 			t.prob = MathUtil.clip(t.prob, 0, 100);
@@ -519,7 +523,7 @@ public class Editors {
 				t.type.traitIgnore = t.type.nullify = t.type.procs = t.type.magnif = false;
 			} else
 				t.dmg = Math.max(t.dmg,0);
-		}));
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("POIATK", new EditControl<>(Proc.PM.class, (t) -> {
 			t.prob = MathUtil.clip(t.prob, 0, 100);
@@ -534,7 +538,7 @@ public class Editors {
 			} else {
 				t.time = Math.max(1, t.time / Data.VOLC_ITV) * Data.VOLC_ITV;
 			}
-		}));
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("MINIVOLC", new EditControl<>(Proc.MINIVOLC.class, (t) -> {
 			t.prob = MathUtil.clip(t.prob, 0, 100);
@@ -546,7 +550,7 @@ public class Editors {
 				if(t.mult == 0)
 					t.mult = 20;
 			}
-		}));
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("ARMOR", new EditControl<>(Proc.PTM.class, (t) -> {
 			t.prob = MathUtil.clip(t.prob, 0, 100);
@@ -555,7 +559,7 @@ public class Editors {
 			} else {
 				t.time = Math.max(1, t.time);
 			}
-		}));
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("SPEED", new EditControl<>(Proc.SPEED.class, (t) -> {
 			t.prob = MathUtil.clip(t.prob, 0, 100);
@@ -565,7 +569,7 @@ public class Editors {
 				t.time = Math.max(1, t.time);
 				t.type = MathUtil.clip(t.type, 0, 2);
 			}
-		}));
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("MINIWAVE", new EditControl<>(Proc.MINIWAVE.class, (t) -> {
 			t.prob = MathUtil.clip(t.prob, 0, 100);
@@ -578,7 +582,7 @@ public class Editors {
 				if(t.multi == 0)
 					t.multi = 20;
 			}
-		}));
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("IMUKB", imu);
 
@@ -616,7 +620,7 @@ public class Editors {
 				t.type = MathUtil.clip(t.type, 1, 127);
 			else
 				t.type = 0;
-		}));
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("IMUPOI", imuad);
 
@@ -633,7 +637,7 @@ public class Editors {
 				t.regentime = t.timeout = 0;
 				t.type.magnif = false;
 			}
-		}));
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("DEMONSHIELD", new EditControl<>(Proc.DSHIELD.class, t -> {
 			t.hp = Math.max(0, t.hp);
@@ -642,7 +646,7 @@ public class Editors {
 				t.regen = 0;
 			else
 				t.regen = Math.max(0, t.regen);
-		}));
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("SHIELDBREAK", prob);
 
@@ -652,7 +656,10 @@ public class Editors {
 				t.dis_0 = t.dis_1 = t.time = 0;
 			else
 				t.time = Math.max(1, t.time / Data.VOLC_ITV) * Data.VOLC_ITV;
-		}, eg -> t -> setComponentVisibility(eg, false, 4)));
+		}, eg -> t -> {
+			setComponentVisibility(eg, t.exists(), 1, 4);
+			setComponentVisibility(eg, false, 4);
+		}));
 
 		map().put("BOUNTY", new EditControl<>(Proc.MULT.class, t -> {}));
 		map().put("ATKBASE", new EditControl<>(Proc.MULT.class, t -> {}));
@@ -665,7 +672,7 @@ public class Editors {
 				t.mult = 1;
 			else
 				t.mult = MathUtil.clip(t.mult, -7, 7);
-		}));
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("CDSETTER", new EditControl<>(Proc.CDSETTER.class, (t) -> {
 			t.prob = MathUtil.clip(t.prob, 0, 100);
@@ -681,10 +688,10 @@ public class Editors {
 				else if (t.amount == 0)
 					t.amount = 1;
 			}
-		}));
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("WEAKAURA", new EditControl<>(Proc.AURA.class, (t) -> {
-			if (t.amult + t.dmult + t.smult + t.tmult == 0) {
+			if (t.amult == 0 && t.dmult == 0 && t.smult == 0 && t.tmult == 0) {
 				t.min_dis = t.max_dis = 0;
 				t.type.trait = false;
 			} else {
@@ -716,7 +723,7 @@ public class Editors {
 				t.minrange = Math.min(min, t.maxrange);
 				t.maxrange = Math.max(min, t.maxrange);
 			}
-		}));
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("BSTHUNT", new EditControl<>(Proc.BSTHUNT.class, (t) -> {
 			if (t.type.active) {
@@ -737,9 +744,7 @@ public class Editors {
 			t.retreatDist = Math.max(0, t.retreatDist);
 			if (t.retreatDist == 0)
 				t.retreatSpeed = 0;
-		}, eg -> t -> {
-			setComponentVisibility(eg, t.retreatDist > 0, 1, 2);
-		}));
+		}, eg -> t -> setComponentVisibility(eg, t.retreatDist > 0, 1, 2)));
 
 		map().put("DEMONVOLC", new EditControl<>(Proc.PM.class, (t) -> {
 			t.prob = MathUtil.clip(t.prob, 0, 100);
@@ -747,7 +752,7 @@ public class Editors {
 				t.mult = 0;
 			else if (t.mult == 0)
 				t.mult = 100;
-		}));
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("DMGINC", new EditControl<>(Proc.MULT.class, (t) -> {
 			if (t.mult == 100)
@@ -766,6 +771,31 @@ public class Editors {
 				t.type.range = false;
 			} else if (t.mult == 0)
 				t.mult = 1;
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
+
+		map().put("SPIRIT", new EditControl<>(Proc.SPIRIT.class, (t) -> {
+			if (t.id == null) {
+				t.cd0 = t.cd1 = t.amount = t.summonerCd = t.form = t.animType = 0;
+			} else {
+				t.amount = Math.max(t.amount, 1);
+				t.cd0 = Math.max(t.cd0, 15);
+				t.cd1 = Math.max(t.cd1, 15);
+
+				Unit u = Identifier.getOr(t.id, Unit.class);
+				t.form = MathUtil.clip(t.form, 1, u.forms.length);
+				if (u.forms[t.form - 1].anim.anims.length == 1) //BC spirit
+					t.animType = 0;
+				else
+					t.animType = MathUtil.clip(t.animType, 0, 4);
+			}
+		}, eg -> t -> {
+			setComponentVisibility(eg, t.id != null, 1);
+			if (t.id == null)
+				return;
+			Unit u = Identifier.getOr(t.id, Unit.class);
+			setComponentVisibility(eg, t.amount > 1, 2, 3);
+			setComponentVisibility(eg, u.forms.length > 1, 5, 6);
+			setComponentVisibility(eg, u.forms[t.form - 1].anim.anims.length > 1, 6);
 		}));
 	}
 

@@ -91,7 +91,7 @@ public abstract class AnimU<T extends AnimU.ImageKeeper> extends AnimD<AnimU<?>,
 		return types.length - TYPEDEF.length + 1;
 	}
 
-	public final int getAtkLen(int atk) {
+	public int getAtkLen(int atk) {
 		partial();
 		return anims[2 + atk].len + 1;
 	}

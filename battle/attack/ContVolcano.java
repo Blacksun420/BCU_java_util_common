@@ -80,6 +80,11 @@ public class ContVolcano extends ContAb {
 					if (volcs > 0)
 						((Entity) e).anim.getEff(STPWAVE);
 					if (volcs == 100) {
+						if (e.getProc().IMUVOLC.mult < 0) {
+							e.getProc().IMUVOLC.mult += 100;
+							e.damaged(v);
+							e.getProc().IMUVOLC.mult -= 100;
+						}
 						activate = false;
 						v.active = false;
 						return;

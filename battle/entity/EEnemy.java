@@ -40,7 +40,7 @@ public class EEnemy extends Entity {
 
 		if (!basis.st.trail && !atk) {
 			float mul = basis.b.t().getDropMulti() * (1 + (status.money / 100f));
-			basis.money += (int) (basis.money + mul * ((MaskEnemy) data).getDrop());
+			basis.money = (int) (basis.money + mul * ((MaskEnemy) data).getDrop());
 		}
 
 		if (rev != null) {

@@ -37,6 +37,7 @@ public class SBRply extends Mirror {
 		rl = m.rl;
 		while (prog() < perc)
 			update();
+		UISet();
 	}
 
 	public int size() {
@@ -53,6 +54,10 @@ public class SBRply extends Mirror {
 		mir.add(this);
 	}
 
+	public void UISet() {
+		if (sb.ebase.health > 0 && sb.ubase.health > 0)
+			endFrames = 0;
+	}
 }
 
 class Mirror extends BattleField {
@@ -116,7 +121,7 @@ class MirrorSet {
 
 	protected MirrorSet(Replay r) {
 		len = r.len + 1;
-		size = (int) Math.sqrt(len);
+		size = (int)Math.round(Math.sqrt(len));
 		mis = new Mirror[size];
 	}
 

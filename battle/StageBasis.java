@@ -17,10 +17,14 @@ import common.util.pack.bgeffect.BackgroundEffect;
 import common.util.stage.*;
 import common.util.stage.MapColc.DefMapColc;
 import common.util.unit.AbForm;
+import common.util.unit.EForm;
 import common.util.unit.Enemy;
 import common.util.unit.IForm;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.TreeMap;
 
 public class StageBasis extends BattleObj {
 
@@ -117,7 +121,6 @@ public class StageBasis extends BattleObj {
 		ubase = eu != null ? eu : new ECastle(this, bas);
 		ubase.added(-1, st.len - 800);
 		est.assign(this);
-
 		int sttime = 3;
 		if (st.getCont().getCont() == DefMapColc.getMap("CH")) {
 			if (st.getCont().id.id == 9)
@@ -454,13 +457,24 @@ public class StageBasis extends BattleObj {
 			}
 		}
 
-		if (elu.cool[i][j] > 0) {
+		if (elu.cool[i][j] > 0 && !elu.validSpirit(i,j)) {
 			if(manual)
 				CommonStatic.setSE(SE_SPEND_FAIL);
 			return false;
 		}
 		if (elu.price[i][j] == -1)
 			return false;
+
+		//Oh, yeah? I think my scary otherworldly shadowy spirit friends might have something to say about that
+		if (b.lu.efs[i][j] instanceof EForm) {
+			EUnit spirit = locks[i][j] || manual ? ((EForm) b.lu.efs[i][j]).invokeSpirit(this, new int[]{i, j}) : null;
+			if (spirit != null) {
+				elu.deploySpirit(i, j, this, spirit);
+				return true;
+			} else if (elu.validSpirit(i,j))
+				return false;
+		}
+
 		if (elu.price[i][j] > money) {
 			if(manual)
 				CommonStatic.setSE(SE_SPEND_FAIL);
@@ -485,6 +499,7 @@ public class StageBasis extends BattleObj {
 			}
 			CommonStatic.setSE(SE_SPEND_SUC);
 			elu.resetCD(i, j);
+			elu.slayer[i][j] = eu.layer + 1;
 			totalSpawned[i][j]++;
 			eu.added(-1, st.len - 700);
 
@@ -585,9 +600,8 @@ public class StageBasis extends BattleObj {
 				respawnTime--;
 
 			elu.update();
-			if(cannon == maxCannon -1) {
+			if(cannon == maxCannon -1)
 				CommonStatic.setSE(SE_CANNON_CHARGE);
-			}
 			if (active) {
 				cannon++;
 				maxMoney = b.t().getMaxMon(work_lv);
