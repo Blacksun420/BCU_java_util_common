@@ -27,7 +27,7 @@ public class CustomUnit extends CustomEntity implements MaskUnit, Cloneable {
 
 	public CustomUnit(AnimU<?> uni) {
 		this();
-		share = new int[uni.anim.getAtkCount()];
+		share = new int[Math.max(1, uni.anim.getAtkCount())];
 		share[0] = 1;
 		for (int i = hits.size(); i < share.length; i++) {
 			hits.add(new AtkDataModel[1]);

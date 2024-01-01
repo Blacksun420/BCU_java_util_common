@@ -783,7 +783,7 @@ public class Editors {
 
 				Unit u = Identifier.getOr(t.id, Unit.class);
 				t.form = MathUtil.clip(t.form, 1, u.forms.length);
-				if (u.forms[t.form - 1].anim.anims.length == 1) //BC spirit
+				if (u.forms[t.form - 1].anim.getAtkCount() == 0) //BC spirit
 					t.animType = 0;
 				else
 					t.animType = MathUtil.clip(t.animType, 0, 4);

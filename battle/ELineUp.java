@@ -59,8 +59,10 @@ public class ELineUp extends BattleObj {
 	 */
 	protected void resetCD(int i, int j) {
 		cool[i][j] = maxC[i][j];
-		scd[i][j] = spData[i][j].cd0;
-		scount[i][j] = spData[i][j].amount;
+		if (spData[i][j] != null) {
+			scd[i][j] = spData[i][j].cd0;
+			scount[i][j] = spData[i][j].amount;
+		}
 	}
 
 	/**
