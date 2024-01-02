@@ -49,7 +49,7 @@ public class EForm extends Data implements IForm {
 	public EUnit invokeSpirit(StageBasis b, int[] index) {
 		if (!b.elu.readySpirit(index[0],index[1]))
 			return null;
-		Form spirit = Identifier.getOr(du.getProc().SPIRIT.id, Unit.class).forms[du.getProc().SPIRIT.form];
+		Form spirit = Identifier.getOr(du.getProc().SPIRIT.id, Unit.class).forms[du.getProc().SPIRIT.form - 1];
 		if (b.entityCount(-1) >= b.max_num - spirit.du.getWill())
 			return null;
 

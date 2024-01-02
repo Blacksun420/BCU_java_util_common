@@ -12,6 +12,7 @@ import common.pack.SortedPackSet;
 import common.util.pack.Background;
 import common.util.unit.AbEnemy;
 import common.util.unit.Trait;
+import common.util.unit.Unit;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -76,7 +77,10 @@ public class Formatter {
 			return tim;
 		}
 
-		public String entity(Identifier<?> id) {
+		public String entity(Identifier<?> id, int form) {
+			Object obj = Identifier.get(id);
+			if (obj instanceof Unit)
+				return ((Unit)obj).forms[form - 1].toString();
 			return Identifier.get(id) + "";
 		}
 
