@@ -40,12 +40,14 @@ public class CommonStatic {
 	public static class BCAuxAssets {
 
 		// Res resources
-		public VImg[] slot = new VImg[3];
-		public VImg[][] ico = new VImg[2][];
-		public VImg[][] num = new VImg[9][11];
-		public VImg[][] battle = new VImg[3][];
-		public VImg[][] icon = new VImg[5][];
-		public VImg[] timer = new VImg[11];
+		public final VImg[] slot = new VImg[3];
+		public final VImg[][] ico = new VImg[2][];
+		public final VImg[][] num = new VImg[9][11];
+		public final VImg[][] battle = new VImg[3][];
+		public final VImg[][] icon = new VImg[5][];
+		public final VImg[] timer = new VImg[11];
+		public final VImg[] spiritSummon = new VImg[4];
+
 		public VImg emptyEdi = null;
 
 		public Map<Integer, VImg> gatyaitem = new HashMap<>();

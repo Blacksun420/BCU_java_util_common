@@ -35,14 +35,13 @@ public class EEnemy extends Entity {
 	}
 
 	@Override
-	public void kill(boolean atk) {
-		super.kill(atk);
+	public void kill(boolean glass) {
+		super.kill(glass);
 
-		if (!basis.st.trail && !atk) {
+		if (!basis.st.trail && !glass) {
 			float mul = basis.b.t().getDropMulti() * (1 + (status.money / 100f));
 			basis.money = (int) (basis.money + mul * ((MaskEnemy) data).getDrop());
 		}
-
 		if (rev != null) {
 			rev.triggerRevival(basis, basis.est.mul, layer, group, pos);
 			if (!anim.deathSurge && rev.soul != null)
@@ -125,18 +124,11 @@ public class EEnemy extends Entity {
 	}
 
 	@Override
-	public float getResistValue(AttackAb atk, String procName, int procResist) {
+	public float getResistValue(AttackAb atk, boolean SageRes, int procResist) {
 		float ans = 1f - procResist / 100f;
-		boolean canBeApplied = false;
 
-		for (int i = 0; i < SUPER_SAGE_RESIST_TYPE.length; i++)
-			if (procName.equals(SUPER_SAGE_RESIST_TYPE[i])) {
-				canBeApplied = true;
-				break;
-			}
-
-		if ((atk.abi & AB_SKILL) == 0 && traits.contains(BCTraits.get(TRAIT_SAGE)) && canBeApplied)
-			ans = (1f - SUPER_SAGE_RESIST);
+		if (SageRes && (atk.abi & AB_SKILL) == 0 && traits.contains(BCTraits.get(TRAIT_SAGE)))
+			ans *= SUPER_SAGE_RESIST;
 		return ans;
 	}
 

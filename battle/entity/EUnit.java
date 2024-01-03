@@ -46,6 +46,10 @@ public class EUnit extends Entity {
 	public final int[] index;
 
 	protected final Level level;
+	/**
+	 * Last position where entity moved without interruption
+	 */
+	public float lastPosition;
 
 	public EUnit(StageBasis b, MaskUnit de, EAnimU ea, float d0, int layer0, int layer1, Level level, PCoin pc, int[] index, boolean isBase) {
 		super(b, de, ea, d0, b.b.t().getDefMulti(), pc, level);
@@ -75,18 +79,26 @@ public class EUnit extends Entity {
 	}
 
 	@Override
-	public void kill(boolean atk) {
-		super.kill(atk);
-		if (status.money != 0)
+	public void added(int d, float p) {
+		super.added(d,p);
+		lastPosition = p;
+	}
+
+	@Override
+	public void kill(boolean glass) {
+		super.kill(glass);
+		if (!glass && status.money != 0)
 			basis.money -= (status.money / 100.0) * (index != null ? basis.elu.price[index[0]][index[1]] : ((MaskUnit)data).getPrice());
+		if (index != null && basis.elu.smnd[index[0]][index[1]] == this)
+			basis.elu.smnd[index[0]][index[1]] = null;
  	}
 
 	@Override
 	public void update() {
 		super.update();
 		traits = status.curse == 0 && status.seal == 0 ? data.getTraits() : blank;
-		if (index != null)
-			basis.elu.spos[index[0]][index[1]] = pos;
+		if (kbTime == 0)
+			lastPosition = pos;
 	}
 
 	@Override
@@ -133,23 +145,11 @@ public class EUnit extends Entity {
 	}
 
 	@Override
-	public float getResistValue(AttackAb atk, String procName, int procResist) {
+	public float getResistValue(AttackAb atk, boolean SageRes, int procResist) {
 		float ans = 1f - procResist / 100f;
 
-		boolean canBeApplied = false;
-
-		for (int i = 0; i < SUPER_SAGE_RESIST_TYPE.length; i++) {
-			if (procName.equals(SUPER_SAGE_RESIST_TYPE[i])) {
-				canBeApplied = true;
-
-				break;
-			}
-		}
-
-		if (atk.trait.contains(BCTraits.get(TRAIT_SAGE)) && canBeApplied && (getAbi() & AB_SKILL) != 0) {
-			ans *= (1f - SUPER_SAGE_HUNTER_RESIST);
-		}
-
+		if (SageRes && atk.trait.contains(BCTraits.get(TRAIT_SAGE)) && (getAbi() & AB_SKILL) != 0)
+			ans *= SUPER_SAGE_HUNTER_RESIST;
 		return ans;
 	}
 
@@ -208,7 +208,7 @@ public class EUnit extends Entity {
 	@Override
 	protected float getMov(float extmov) {
 		if (status.slow == 0)
-			extmov += data.getSpeed() * basis.elu.getInc(C_SPE) / 200.0;
+			extmov = extmov + data.getSpeed() * basis.elu.getInc(C_SPE) / 200f;
 		return super.getMov(extmov);
 	}
 

@@ -99,8 +99,6 @@ public class StageBasis extends BattleObj {
 		st = est.s;
 		elu = new ELineUp(bas.lu, this, sav);
 		setBackground(st.bg);
-		if (bg.bgEffect != null) //TODO: Move BG Effect setting to setBG function
-			bgEffect = bg.bgEffect.get();
 		boss_spawn = Identifier.getOr(st.castle, CastleImg.class).boss_spawn;
 
 		EEnemy ee = est.base(this);
@@ -409,10 +407,7 @@ public class StageBasis extends BattleObj {
 			lw.clear();
 			tlw.clear();
 			for (Entity e : le)
-				if (e.dire == 1) {
-					e.pos = ebase.pos;
-					e.cont();
-				}
+				e.cont();
 			for(int[] c : elu.cool)
 				Arrays.fill(c, 0);
 			return true;
@@ -501,7 +496,7 @@ public class StageBasis extends BattleObj {
 			}
 			CommonStatic.setSE(SE_SPEND_SUC);
 			elu.resetCD(i, j);
-			elu.slayer[i][j] = eu.layer + 1;
+			elu.smnd[i][j] = eu;
 			totalSpawned[i][j]++;
 			eu.added(-1, st.len - 700);
 
@@ -522,7 +517,7 @@ public class StageBasis extends BattleObj {
 	}
 
 	/**
-	 * process actions and add enemies from stage first then update each entities
+	 * process actions and add enemies from stage first then update each entity
 	 * and receive attacks then excuse attacks and do post update then delete dead
 	 * entities
 	 */

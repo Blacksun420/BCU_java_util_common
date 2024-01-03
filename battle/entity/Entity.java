@@ -1430,7 +1430,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 * positive: KB time count-down <br>
 	 * negative: burrow FSM type
 	 */
-	private int kbTime;
+	protected int kbTime;
 
 	/**
 	 * wait FSM time
@@ -1864,11 +1864,11 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 	protected void processProcs0(AttackAb atk, int dmg) {
 		if (atk.getProc().POIATK.mult > 0) {
-			int rst = getProc().IMUPOIATK.mult;
-			if (rst == 100)
+			float rst = getResistValue(atk, false, getProc().IMUPOIATK.mult);
+			if (rst == 0f)
 				anim.getEff(INV);
 			else {
-				float poiDmg = atk.getProc().POIATK.mult * (100 - rst) / 10000f;
+				float poiDmg = atk.getProc().POIATK.mult * rst / 100f;
 				damage += maxH * poiDmg;
 				basis.lea.add(new EAnimCont(pos, layer, effas().A_POISON.getEAnim(DefEff.DEF)));
 				CommonStatic.setSE(SE_POISON);
@@ -1899,8 +1899,9 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		float dist = 1 + f * 0.1f;
 		if (atk.getProc().STOP.time != 0 || atk.getProc().STOP.prob > 0) {
 			int val = (int) (atk.getProc().STOP.time * time);
-			float rst = getResistValue(atk, "IMUSTOP", getProc().IMUSTOP.mult);
-			if (rst < 100) {
+			float rst = getResistValue(atk, true, getProc().IMUSTOP.mult);
+
+			if (rst > 0f) {
 				val = (int) (val * rst);
 				if (val < 0)
 					status.stop = Math.max(status.stop, Math.abs(val));
@@ -1913,8 +1914,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 		if (atk.getProc().SLOW.time != 0 || atk.getProc().SLOW.prob > 0) {
 			int val = (int) (atk.getProc().SLOW.time * time);
-			float rst = getResistValue(atk, "IMUSLOW", getProc().IMUSLOW.mult);
-			if (rst < 100) {
+			float rst = getResistValue(atk, true, getProc().IMUSLOW.mult);
+			if (rst > 0f) {
 				val = (int) (val * rst);
 				if (val < 0)
 					status.slow = Math.max(status.slow, Math.abs(val));
@@ -1926,10 +1927,10 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		}
 		if (atk.getProc().WEAK.time > 0) {
 			int val = (int) (atk.getProc().WEAK.time * time);
-			float rst = getResistValue(atk, "IMUWEAK", checkAIImmunity(atk.getProc().WEAK.mult - 100, getProc().IMUWEAK.smartImu, getProc().IMUWEAK.mult > 0) ? getProc().IMUWEAK.mult : 0);
+			float rst = getResistValue(atk, true, checkAIImmunity(atk.getProc().WEAK.mult - 100, getProc().IMUWEAK.smartImu, getProc().IMUWEAK.mult > 0) ? getProc().IMUWEAK.mult : 0);
 			val = (int)(val * (100 - rst) / 100);
 
-			if (rst < 100) {
+			if (rst > 0f) {
 				if (val < 0)
 					status.weak[0] = Math.max(status.weak[0], Math.abs(val));
 				else
@@ -1947,9 +1948,9 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		}
 		if (atk.getProc().LETHARGY.time > 0) {
 			int val = (int) (atk.getProc().LETHARGY.time * time);
-			int rst = checkAIImmunity(atk.getProc().LETHARGY.mult, getProc().IMULETHARGY.smartImu, getProc().IMULETHARGY.mult > 0) ? getProc().IMULETHARGY.mult : 0;
-			val = val * (100 - rst) / 100;
-			if (rst < 100) {
+			float rst = getResistValue(atk, true, checkAIImmunity(atk.getProc().LETHARGY.mult, getProc().IMULETHARGY.smartImu, getProc().IMULETHARGY.mult > 0) ? getProc().IMULETHARGY.mult : 0);
+			if (rst > 0f) {
+				val = (int)(val * rst);
 				if (val < 0)
 					status.lethargy[0] = Math.max(status.lethargy[0], Math.abs(val));
 				else
@@ -1972,8 +1973,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		}
 		if (atk.getProc().CURSE.time != 0 || atk.getProc().CURSE.prob > 0) {
 			int val = (int) (atk.getProc().CURSE.time * time);
-			float rst = getProc().IMUCURSE.mult;
-			if (rst < 100) {
+			float rst = getResistValue(atk, true, getProc().IMUCURSE.mult);
+			if (rst > 0f) {
 				val = (int) (val * rst);
 				if (val < 0)
 					status.curse = Math.max(status.curse, Math.abs(val));
@@ -1984,10 +1985,10 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				anim.getEff(INV);
 		}
 		if (atk.getProc().KB.dis != 0) {
-			float rst = getResistValue(atk, "IMUKB", getProc().IMUKB.mult);
-			if (rst < 100) {
+			float rst = getResistValue(atk, true, getProc().IMUKB.mult);
+			if (rst > 0f) {
 				status.kb = atk.getProc().KB.time;
-				interrupt(atk.getProc().KB.time == KB_TIME[INT_HB] ? INT_HB : P_KB, atk.getProc().KB.dis * dist * (100 - rst) / 100);
+				interrupt(atk.getProc().KB.time == KB_TIME[INT_HB] ? INT_HB : P_KB, atk.getProc().KB.dis * dist * rst);
 			} else
 				anim.getEff(INV);
 		}
@@ -1997,24 +1998,24 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		if (atk.getProc().BOSS.prob > 0)
 			interrupt(INT_SW, KB_DIS[INT_SW]);
 
-		if (atk.getProc().WARP.exists())
-			if (getProc().IMUWARP.mult < 100) {
+		if (atk.getProc().WARP.exists()) {
+			float rst = getResistValue(atk, false, getProc().IMUWARP.mult);
+			if (rst > 0f) {
 				Data.Proc.WARP warp = atk.getProc().WARP;
-				interrupt(INT_WARP, warp.dis == warp.dis_1 ? warp.dis : warp.dis + (int)(basis.r.nextFloat() * (warp.dis_1 - warp.dis)));
+				interrupt(INT_WARP, warp.dis == warp.dis_1 ? warp.dis : warp.dis + (int) (basis.r.nextFloat() * (warp.dis_1 - warp.dis)));
 				EffAnim<WarpEff> e = effas().A_W;
 				int len = e.len(WarpEff.ENTER) + e.len(WarpEff.EXIT);
-				int val = atk.getProc().WARP.time;
-				int rst = getProc().IMUWARP.mult;
-				val = val * (100 - rst) / 100;
+				int val = (int)(atk.getProc().WARP.time * rst);
 				status.warp[0] = val + len;
 			} else
 				anim.getEff(INVWARP);
+		}
 
 		if (atk.getProc().SEAL.prob > 0) {
-			int rst = data.getProc().IMUSEAL.mult;
-			if (rst < 100) {
+			float rst = getResistValue(atk, true, data.getProc().IMUSEAL.mult);
+			if (rst > 0f) {
 				int val = (int) (atk.getProc().SEAL.time * time);
-				val = val * (100 - rst) / 100;
+				val = (int) (val * rst);
 				if (val < 0)
 					status.seal = Math.max(status.seal, Math.abs(val));
 				else
@@ -2024,10 +2025,10 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				anim.getEff(INV);
 		}
 		if (atk.getProc().POISON.time > 0) {
-			int res = checkAIImmunity(atk.getProc().POISON.damage, getProc().IMUPOI.smartImu, getProc().IMUPOI.mult < 0) ? getProc().IMUPOI.mult : 0;
-			if (res < 100) {
+			float res = getResistValue(atk, true, checkAIImmunity(atk.getProc().POISON.damage, getProc().IMUPOI.smartImu, getProc().IMUPOI.mult < 0) ? getProc().IMUPOI.mult : 0);
+			if (res > 0f) {
 				POISON ws = (POISON) atk.getProc().POISON.clone();
-				ws.time = ws.time * (100 - res) / 100;
+				ws.time = (int)(ws.time * res);
 				if (atk.atk != 0 && ws.type.modifAffected)
 					ws.damage = (int) (ws.damage * (float) getDamage(atk, atk.atk) / atk.atk);
 
@@ -2037,18 +2038,17 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				anim.getEff(INV);
 		}
 		if (!isBase && atk.getProc().ARMOR.time > 0) {
-			int res = checkAIImmunity(atk.getProc().ARMOR.mult, getProc().IMUARMOR.smartImu, getProc().IMUARMOR.mult < 0) ? getProc().IMUARMOR.mult : 0;
-			if (res < 100) {
-				int val = (int) (atk.getProc().ARMOR.time * time);
-				status.armor[0] = val * (100 - res) / 100;
+			float res = getResistValue(atk, true, checkAIImmunity(atk.getProc().ARMOR.mult, getProc().IMUARMOR.smartImu, getProc().IMUARMOR.mult < 0) ? getProc().IMUARMOR.mult : 0);
+			if (res > 0f) {
+				int val = (int) (atk.getProc().ARMOR.time * time * res);
+				status.armor[0] = val;
 				status.armor[1] = atk.getProc().ARMOR.mult;
 				anim.getEff(P_ARMOR);
 			} else
 				anim.getEff(INV);
 		}
 		if (atk.getProc().SPEED.time > 0) {
-			int res = getProc().IMUSPEED.mult;
-
+			float res = getResistValue(atk, true, getProc().IMUSPEED.mult);
 			boolean b;
 			if (atk.getProc().SPEED.type == 2)
 				b = (data.getSpeed() > atk.getProc().SPEED.speed && res > 0) || (data.getSpeed() < atk.getProc().SPEED.speed && res < 0);
@@ -2057,9 +2057,9 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			if (checkAIImmunity(atk.getProc().SPEED.speed, getProc().IMUSPEED.smartImu, b))
 				res = 0;
 
-			if (res < 100) {
-				int val = (int) (atk.getProc().SPEED.time * time);
-				status.speed[0] = val * (100 - res) / 100;
+			if (res > 0f) {
+				int val = (int) (atk.getProc().SPEED.time * time * res);
+				status.speed[0] = val;
 				status.speed[1] = atk.getProc().SPEED.speed;
 				status.speed[2] = atk.getProc().SPEED.type;
 				anim.getEff(P_SPEED);
@@ -2067,9 +2067,9 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				anim.getEff(INV);
 		}
 		if (atk.getProc().RAGE.time > 0) {
-			int res = getProc().IMURAGE.mult;
-			if (res < 100) {
-				int t = (int) ((atk.getProc().RAGE.time * time) * (100 - res) / 100.0);
+			float res = getResistValue(atk, true, getProc().IMURAGE.mult);
+			if (res > 0f) {
+				int t = (int) ((atk.getProc().RAGE.time * time) * res);
 				if (t < 0)
 					status.rage = Math.max(Math.abs(t), status.rage);
 				else
@@ -2078,11 +2078,10 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			} else
 				anim.getEff(INV);
 		}
-
 		if (atk.getProc().HYPNO.time > 0) {
-			int res = getProc().IMUHYPNO.mult;
-			if (res < 100) {
-				int t = (int) ((atk.getProc().HYPNO.time * time) * (100 - res) / 100.0);
+			float res = getResistValue(atk, true, getProc().IMUHYPNO.mult);
+			if (res > 0f) {
+				int t = (int) ((atk.getProc().HYPNO.time * time) * res);
 				if (t < 0)
 					status.hypno = Math.max(Math.abs(t), status.hypno);
 				else
@@ -2093,7 +2092,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		}
 	}
 
-	public abstract float getResistValue(AttackAb atk, String procName, int procResist);
+	public abstract float getResistValue(AttackAb atk, boolean SageRes, int procResist);
 	private boolean checkAIImmunity(int val, int side, boolean invert) {
 		if (side == 0)
 			return true;
@@ -2149,10 +2148,10 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	/**
 	 * save it dead, proceed death animation
 	 *
-	 * @param atk if this is true, it means it dies because of self-destruct,
+	 * @param glass if this is true, it means it dies because of self-destruct,
 	 * and entity will not drop money because of this
 	 */
-	public void kill(boolean atk) {
+	public void kill(boolean glass) {
 		if (kbTime == -1)
 			return;
 		kbTime = -1;
@@ -2164,6 +2163,9 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 * This function stops enemy attack when continue is used
 	 */
 	public void cont() {
+		if (dire != 1)
+			return;
+		pos = basis.ebase.pos;
 		atkm.stopAtk();
 		anim.cont();
 	}

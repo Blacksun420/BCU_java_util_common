@@ -2,7 +2,7 @@ package common.battle;
 
 import common.CommonStatic;
 import common.battle.entity.ESpirit;
-import common.battle.entity.Entity;
+import common.battle.entity.EUnit;
 import common.pack.SortedPackSet;
 import common.util.BattleObj;
 import common.util.stage.Limit;
@@ -12,22 +12,16 @@ import common.util.unit.Form;
 
 public class ELineUp extends BattleObj {
 
-	public final int[][] price, cool, maxC;
+	public final int[][] price = new int[2][5], cool = new int[2][5], maxC = new int[2][5];
 
-	Proc.SPIRIT[][] spData = new Proc.SPIRIT[2][5];
-	public final int[][] scd, scount, slayer;
-	public final float[][] spos = new float[2][5];
+	private final Proc.SPIRIT[][] spData = new Proc.SPIRIT[2][5];
+	public final int[][] scd = new int[2][5], scount = new int[2][5], sGlow = new int[2][5];
+	public final EUnit[][] smnd = new EUnit[2][5];
+
 
 	public final int[] inc;
 
 	protected ELineUp(LineUp lu, StageBasis sb, boolean sav) {
-		price = new int[2][5];
-		cool = new int[2][5];
-		maxC = new int[2][5];
-
-		scd = new int[2][5];
-		scount = new int[2][5];
-		slayer = new int[2][5];
 		inc = lu.inc.clone();
 		SortedPackSet<Combo> coms = new SortedPackSet<>(lu.coms);
 		Limit lim = sb.est.lim;
@@ -55,7 +49,7 @@ public class ELineUp extends BattleObj {
 	}
 
 	/**
-	 * reset recharge time of a unit, as well as the values of a spirit
+	 * reset cooldown of a unit, as well as the values of a spirit
 	 */
 	protected void resetCD(int i, int j) {
 		cool[i][j] = maxC[i][j];
@@ -68,8 +62,8 @@ public class ELineUp extends BattleObj {
 	/**
 	 * reset recharge time of a spirit and spawn it
 	 */
-	protected final void deploySpirit(int i, int j, StageBasis sb, Entity spi) {//spi will always be an EUnit I just don't want to import it
-		spi.added(-1, Math.min(Math.max(sb.ebase.pos + spi.data.getRange(), spos[i][j] + SPIRIT_SUMMON_RANGE), sb.ubase.pos));
+	protected final void deploySpirit(int i, int j, StageBasis sb, EUnit spi) {//spi will always be an EUnit I just don't want to import it
+		spi.added(-1, Math.min(Math.max(sb.ebase.pos + spi.data.getRange(), smnd[i][j].lastPosition + SPIRIT_SUMMON_RANGE), sb.ubase.pos));
 		CommonStatic.setSE(SE_SPIRIT_SUMMON); //money -= ((MaskUnit)spi.data).getPrice() * (1 + sb.st.getCont().price * 50);
 		scount[i][j]--;
 		scd[i][j] = spData[i][j].cd1;
@@ -80,7 +74,7 @@ public class ELineUp extends BattleObj {
 	}
 
 	public final boolean validSpirit(int i, int j) {
-		return spData[i][j] != null && spos[i][j] < Float.MAX_VALUE;
+		return spData[i][j] != null && smnd[i][j] != null;
 	}
 
 	public final boolean readySpirit(int i, int j) {
@@ -88,7 +82,7 @@ public class ELineUp extends BattleObj {
 	}
 
 	/**
-	 * count down the cool down time
+	 * count down the cooldown
 	 */
 	protected void update() {
 		for (int i = 0; i < 2; i++) {
@@ -96,9 +90,10 @@ public class ELineUp extends BattleObj {
 				if (cool[i][j] > 0 && --cool[i][j] == 0)
 					CommonStatic.setSE(SE_SPEND_REF);
 
-				if (validSpirit(i,j) && scd[i][j] > 0 && scount[i][j] > 0)
-					scd[i][j]--;
-				spos[i][j] = Float.MAX_VALUE;
+				if (sGlow[i][j] > 0)
+					sGlow[i][j]--;
+				if (validSpirit(i,j) && scount[i][j] > 0 && scd[i][j] > 0 && --scd[i][j] == 0)
+					sGlow[i][j] = 44;
 			}
 		}
 	}
