@@ -69,8 +69,8 @@ public class ELineUp extends BattleObj {
 	 * reset recharge time of a spirit and spawn it
 	 */
 	protected final void deploySpirit(int i, int j, StageBasis sb, Entity spi) {//spi will always be an EUnit I just don't want to import it
-		spi.added(-1, Math.min(Math.max(sb.ebase.pos + spi.data.getRange(), spos[i][j] + 150), sb.st.len - 700));
-		CommonStatic.setSE(SE_SPEND_SUC); //money -= ((MaskUnit)spirit.data).getPrice() * (1 + st.getCont().price * 50);
+		spi.added(-1, Math.min(Math.max(sb.ebase.pos + spi.data.getRange(), spos[i][j] + SPIRIT_SUMMON_RANGE), sb.ubase.pos));
+		CommonStatic.setSE(SE_SPIRIT_SUMMON); //money -= ((MaskUnit)spi.data).getPrice() * (1 + sb.st.getCont().price * 50);
 		scount[i][j]--;
 		scd[i][j] = spData[i][j].cd1;
 		cool[i][j] = Math.min(Math.max(0, cool[i][j] + spData[i][j].summonerCd), maxC[i][j]);
@@ -96,8 +96,8 @@ public class ELineUp extends BattleObj {
 				if (cool[i][j] > 0 && --cool[i][j] == 0)
 					CommonStatic.setSE(SE_SPEND_REF);
 
-				if (validSpirit(i,j) && scd[i][j] > 0 && scount[i][j] > 0 && --scd[i][j] == 0)
-					CommonStatic.setSE(SE_SPIRIT_SUMMON);
+				if (validSpirit(i,j) && scd[i][j] > 0 && scount[i][j] > 0)
+					scd[i][j]--;
 				spos[i][j] = Float.MAX_VALUE;
 			}
 		}

@@ -471,8 +471,10 @@ public class StageBasis extends BattleObj {
 			if (spirit != null) {
 				elu.deploySpirit(i, j, this, spirit);
 				return true;
-			} else if (elu.validSpirit(i,j))
+			} else if (elu.validSpirit(i,j)) {
+				CommonStatic.setSE(SE_SPEND_FAIL);
 				return false;
+			}
 		}
 
 		if (elu.price[i][j] > money) {
