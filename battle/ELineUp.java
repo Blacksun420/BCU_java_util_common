@@ -84,16 +84,14 @@ public class ELineUp extends BattleObj {
 	/**
 	 * count down the cooldown
 	 */
-	protected void update() {
+	protected void update(int time) {
 		for (int i = 0; i < 2; i++) {
 			for (int j = 0; j < 5; j++) {
 				if (cool[i][j] > 0 && --cool[i][j] == 0)
 					CommonStatic.setSE(SE_SPEND_REF);
 
-				if (sGlow[i][j] > 0)
-					sGlow[i][j]--;
 				if (validSpirit(i,j) && scount[i][j] > 0 && scd[i][j] > 0 && --scd[i][j] == 0)
-					sGlow[i][j] = 44;
+					sGlow[i][j] = time;
 			}
 		}
 	}

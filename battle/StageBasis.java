@@ -596,7 +596,7 @@ public class StageBasis extends BattleObj {
 			if(respawnTime > 0 && active)
 				respawnTime--;
 
-			elu.update();
+			elu.update(time);
 			if(cannon == maxCannon -1)
 				CommonStatic.setSE(SE_CANNON_CHARGE);
 			if (active) {
