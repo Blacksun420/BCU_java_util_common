@@ -11,10 +11,8 @@ import common.util.unit.Level;
 
 public class ESpirit extends EUnit {
 
-    private EAnimD<DefEff> imuAnim = null;
-
-    public ESpirit(StageBasis b, MaskUnit de, EAnimU ea, float lvd, int layer, Level lv, int[] ind) {
-        super(b, de, ea, lvd, layer, layer, lv, null, ind, false);
+    public ESpirit(StageBasis b, MaskUnit de, EAnimU ea, float lvd, int minlayer, int maxlayer, Level lv, int[] ind) {
+        super(b, de, ea, lvd, minlayer, maxlayer, lv, null, ind, false);
         auras.updateAuras();
         atkm.setUpAtk(false);
     }
@@ -26,8 +24,8 @@ public class ESpirit extends EUnit {
 
     @Override
     public void damaged(AttackAb atk) {
-        if (imuAnim == null)
-            imuAnim = effas().A_IMUATK.getEAnim(DefEff.DEF);
+        status.inv[0] = Integer.MAX_VALUE;
+        anim.getEff(P_IMUATK);
     }
 
     @Override
@@ -47,13 +45,6 @@ public class ESpirit extends EUnit {
         else
             atkm.atkTime--;
         updateAnimation();
-    }
-
-    @Override
-    public void updateAnimation() {
-        if (imuAnim != null)
-            imuAnim.update(false);
-        super.updateAnimation();
     }
 
     @Override

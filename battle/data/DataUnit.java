@@ -204,7 +204,7 @@ public class DataUnit extends DefaultData implements MaskUnit, Cloneable {
 			if (ints[110] != -1) {
 				proc.SPIRIT.id = Identifier.parseInt(ints[110], Unit.class);
 				proc.SPIRIT.amount = 1;
-				proc.SPIRIT.cd0 = 15;
+				proc.SPIRIT.cd0 = SPIRIT_SUMMON_DELAY;
 			}
 
 			if (ints[111] == 1)

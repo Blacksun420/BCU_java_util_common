@@ -21,10 +21,6 @@ public abstract class AbEntity extends BattleObj {
 	 * Current Position of this Entity
 	 */
 	public float pos;
-	/**
-	 * Last position where entity moved without interruption
-	 */
-	public float lastPosition;
 
 	/**
 	 * Base shake
@@ -44,7 +40,6 @@ public abstract class AbEntity extends BattleObj {
 	 */
 	public void added(int d, float p) {
 		pos = p;
-		lastPosition = p;
 		dire = d;
 	}
 
