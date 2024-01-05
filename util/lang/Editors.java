@@ -795,7 +795,7 @@ public class Editors {
 			Unit u = Identifier.getOr(t.id, Unit.class);
 			setComponentVisibility(eg, t.amount > 1, 2, 3);
 			setComponentVisibility(eg, u.forms.length > 1, 5, 6);
-			setComponentVisibility(eg, u.forms[t.form - 1].anim.anims.length > 1, 6);
+			setComponentVisibility(eg, u.forms[t.form - 1].anim.getAtkCount() > 0, 6);
 		}));
 	}
 
