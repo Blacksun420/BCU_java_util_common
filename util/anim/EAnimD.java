@@ -99,9 +99,13 @@ public class EAnimD<T extends AnimI.AnimType<?, T>> extends EAnimI {
 
 	@Override
 	public void setTime(float value) {
+		setTime(value, true);
+	}
+
+	public void setTime(float value, boolean rot) {
 		setup();
 		f = value;
-		ma.update(f, this, true);
+		ma.update(f, this, rot);
 	}
 
 	public void setup() {

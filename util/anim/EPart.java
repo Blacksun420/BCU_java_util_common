@@ -279,7 +279,7 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 		extendX = extendY = 0;
 	}
 
-	private P getSize() {
+	public P getSize() {
 		float mi = 1f / model.ints[0];
 		if (fa == null)
 			return P.newP(sca).times(gsca * mi * mi);
