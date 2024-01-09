@@ -86,7 +86,7 @@ public class AnimCE extends AnimCI {
 	 * for conversion only
 	 */
 	@Deprecated
-	public AnimCE(Source.AnimLoader al) {
+	public AnimCE(Source.SourceAnimLoader al) {
 		super(al);
 	}
 

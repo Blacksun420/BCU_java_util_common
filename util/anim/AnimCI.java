@@ -13,15 +13,15 @@ import java.util.ArrayList;
 @JsonClass.JCGeneric(ResourceLocation.class)
 public class AnimCI extends AnimU<AnimCI.AnimCIKeeper> {
 
-	protected static class AnimCIKeeper implements AnimU.ImageKeeper {
+	public static class AnimCIKeeper implements AnimU.ImageKeeper {
 
-		public final Source.AnimLoader loader;
+		public final Source.SourceAnimLoader loader;
 		private FakeImage num;
 		private boolean ediLoaded = false;
 		private VImg edi;
 		private VImg uni;
 
-		private AnimCIKeeper(Source.AnimLoader al) {
+		private AnimCIKeeper(Source.SourceAnimLoader al) {
 			loader = al;
 		}
 
@@ -119,7 +119,7 @@ public class AnimCI extends AnimU<AnimCI.AnimCIKeeper> {
 	@JsonClass.JCIdentifier
 	public ResourceLocation id;
 
-	public AnimCI(Source.AnimLoader acl) {
+	public AnimCI(Source.SourceAnimLoader acl) {
 		super(new AnimCIKeeper(acl));
 		id = loader.getName();
 	}

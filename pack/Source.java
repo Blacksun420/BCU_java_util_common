@@ -39,24 +39,6 @@ public abstract class Source {
 
 	public static boolean warn = true;
 
-	public interface AnimLoader {
-		VImg getEdi();
-
-		ImgCut getIC();
-
-		MaAnim[] getMA();
-
-		MaModel getMM();
-
-		ResourceLocation getName();
-
-		FakeImage getNum();
-
-		int getStatus();
-
-		VImg getUni();
-	}
-
 	public interface SourceLoader {
 
 		FileData loadFile(BasePath base, ResourceLocation id, String str);
@@ -145,7 +127,7 @@ public abstract class Source {
 	}
 
 	@StaticPermitted
-	public static class SourceAnimLoader implements Source.AnimLoader {
+	public static class SourceAnimLoader {
 
 		public static final String IC = "imgcut.txt";
 		public static final String MM = "mamodel.txt";
@@ -172,7 +154,6 @@ public abstract class Source {
 				return AnimU.BGEFFECT;
 		}
 
-		@Override
 		public VImg getEdi() {
 			FileData edi = loader.loadFile(id.base, id, EDI);
 			if (edi == null)
@@ -180,16 +161,13 @@ public abstract class Source {
 			return new VImg(FakeImage.read(edi));
 		}
 
-		@Override
 		public ImgCut getIC() {
 			FileData fd = loader.loadFile(id.base, id, IC);
-			if (fd == null && warn) {
+			if (fd == null && warn)
 				CommonStatic.ctx.printErr(ErrType.WARN, "Corrupted imgcut found for " + id);
-			}
 			return ImgCut.newIns(fd);
 		}
 
-		@Override
 		public MaAnim[] getMA() {
 			ArrayList<MaAnim> ans = new ArrayList<>();
 			for (int i = 0; i < getBaseUT().length; i++)
@@ -206,7 +184,6 @@ public abstract class Source {
 			return ans.toArray(new MaAnim[0]);
 		}
 
-		@Override
 		public MaModel getMM() {
 			FileData fd = loader.loadFile(id.base, id, MM);
 			if (fd == null && warn)
@@ -214,22 +191,18 @@ public abstract class Source {
 			return MaModel.newIns(fd);
 		}
 
-		@Override
 		public ResourceLocation getName() {
 			return id;
 		}
 
-		@Override
 		public FakeImage getNum() {
 			return FakeImage.read(loader.loadFile(id.base, id, SP));
 		}
 
-		@Override
 		public int getStatus() {
 			return id.pack.equals("_local") ? 0 : 1;
 		}
 
-		@Override
 		public VImg getUni() {
 			FileData uni = loader.loadFile(id.base, id, UNI);
 			if (uni == null)
@@ -272,7 +245,7 @@ public abstract class Source {
 				write("mamodel.txt", anim.mamodel::write);
 				if (id.base.equals(BasePath.ANIM)) {
 					for (int i = 0; i < anim.anims.length; i++) {
-						if (anim.anims[i].parts.length > 0)
+						if ((JsonEncoder.backCompat && i < 4) || anim.anims[i].parts.length > 0)
 							write("maanim_" + anim.types[i].toString() + ".txt", anim.anims[i]::write);
 						else
 							dispose("maanim_" + anim.types[i].toString() + ".txt");
@@ -280,8 +253,11 @@ public abstract class Source {
 				} else if (id.base.equals(BasePath.SOUL))
 					write(SourceAnimLoader.MA_SOUL[0], anim.anims[0]::write);
 				else {
-					write(SourceAnimLoader.MA_BACKGROUND[0], anim.anims[0]::write);
-					write(SourceAnimLoader.MA_BACKGROUND[1], anim.anims[1]::write);
+					for (int i = 0; i < 2; i++)
+						if (anim.anims[i].parts.length > 0)
+							write(SourceAnimLoader.MA_BACKGROUND[i], anim.anims[i]::write);
+						else
+							dispose(SourceAnimLoader.MA_BACKGROUND[i]);
 				}
 			} catch (IOException e) {
 				CommonStatic.ctx.noticeErr(e, ErrType.ERROR, "Error during saving animation data: " + anim);
@@ -463,10 +439,14 @@ public abstract class Source {
 			for (Enemy e : pack.enemies)
 				if (e.anim instanceof AnimCE)
 					addAnim(pack, (AnimCE)e.anim, anims);
+				else if (backComp && e.anim instanceof AnimUD)
+					CommonStatic.ctx.printErr(ErrType.WARN, "Animation for " + e + " uses BC animation, so pack won't work outside of fork BCU builds");
 			for (Unit u : pack.units)
 				for (Form f : u.forms)
 					if (f.anim instanceof AnimCE)
 						addAnim(pack, (AnimCE)f.anim, anims);
+					else if (backComp && f.anim instanceof AnimUD)
+						CommonStatic.ctx.printErr(ErrType.WARN, "Animation for " + f + " uses BC animation, so pack won't work outside of fork BCU builds");
 			for (Soul s : pack.souls)
 				addAnim(pack, (AnimCE)s.anim, anims);
 			for (BackgroundEffect bge : pack.bgEffects)
