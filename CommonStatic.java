@@ -93,13 +93,16 @@ public class CommonStatic {
 	}
 
 	@JsonClass(noTag = NoTag.LOAD)
-	public static class Config {
-
+	public static class LocalMaps {
 		@JsonField(generic = { String.class, String.class })
 		public HashMap<String, String> localLangMap = new HashMap<>();
 
 		@JsonField(generic = { Integer.class, String.class })
 		public HashMap<Integer, String> localMusicMap = new HashMap<>();
+	}
+
+	@JsonClass(noTag = NoTag.LOAD)
+	public static class Config {
 
 		// ImgCore
 		public int deadOpa = 10, fullOpa = 90;
@@ -284,6 +287,9 @@ public class CommonStatic {
 		return UserProfile.getStatic("BCAuxAssets", BCAuxAssets::new);
 	}
 
+	public static LocalMaps getDataMaps() {
+		return UserProfile.getStatic("localMaps", LocalMaps::new);
+	}
 	public static Config getConfig() {
 		return UserProfile.getStatic("config", Config::new);
 	}

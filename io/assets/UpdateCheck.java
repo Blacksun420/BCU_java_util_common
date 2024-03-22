@@ -153,7 +153,7 @@ public class UpdateCheck {
 	}
 
 	public static Context.SupExc<List<Downloader>> checkLang(String[] files) {
-		Map<String, String> local = CommonStatic.getConfig().localLangMap;
+		Map<String, String> local = CommonStatic.getDataMaps().localLangMap;
 		File f = CommonStatic.ctx.getAssetFile("./lang");
 		String path = f.getPath() + "/";
 		return () -> {
@@ -247,7 +247,7 @@ public class UpdateCheck {
 			for(ContentJson content : fcont)
 				map.put(content.name, content);
 
-			HashMap<Integer, String> local = CommonStatic.getConfig().localMusicMap;
+			HashMap<Integer, String> local = CommonStatic.getDataMaps().localMusicMap;
 			File[] musicList = music.listFiles();
 			if (music.exists() && musicList != null)
 				for (File m : musicList)
