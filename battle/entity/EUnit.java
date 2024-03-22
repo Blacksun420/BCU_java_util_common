@@ -52,7 +52,7 @@ public class EUnit extends Entity {
 	public float lastPosition;
 
 	public EUnit(StageBasis b, MaskUnit de, EAnimU ea, float d0, int layer0, int layer1, Level level, PCoin pc, int[] index, boolean isBase) {
-		super(b, de, ea, d0, b.b.t().getDefMulti(), pc, level);
+		super(b, de, ea, d0, pc, level);
 		layer = layer0 == layer1 ? layer0 : layer0 + (int) (b.r.nextFloat() * (layer1 - layer0 + 1));
 		traits = de.getTraits();
 		lvl = level.getTotalLv();
@@ -68,7 +68,7 @@ public class EUnit extends Entity {
 
 	//used for waterblast
 	public EUnit(StageBasis b, MaskUnit de, EAnimU ea, float d0) {
-		super(b, de, ea, d0, b.b.t().getDefMulti(), null, null);
+		super(b, de, ea, d0, null, null);
 		layer = de.getFront() + (int) (b.r.nextFloat() * (de.getBack() - de.getFront() + 1));
 		traits = de.getTraits();
 		this.index = null;
@@ -267,6 +267,7 @@ public class EUnit extends Entity {
 
 	@Override
 	protected void onLastBreathe() {
+		super.onLastBreathe();
 		basis.notifyUnitDeath();
 	}
 

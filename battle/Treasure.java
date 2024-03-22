@@ -301,7 +301,7 @@ public class Treasure extends Data {
 	}
 
 	/**
-	 * get cat health multiplication
+	 * get cat health multiplication from treasures
 	 */
 	public float getDefMulti() {
 		return 1 + trea[T_DEF] * 0.005f;

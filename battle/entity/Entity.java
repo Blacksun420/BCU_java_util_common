@@ -1228,7 +1228,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		public void damaged(AttackAb atk, int dmg, boolean proc) {
 			for (Entity child : children) {
 				if (proc)
-					child.processProcs(atk);
+					child.processProcs0(atk, dmg);
 				child.damage += dmg;
 			}
 		}
@@ -1250,6 +1250,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			e = ent;
 		}
 
+		/**Update proc timers*/
 		public void update() {
 			if (stop > 0)
 				stop--;
@@ -1281,6 +1282,10 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				hypno--;
 		}
 
+		/**
+		 * Passes procs from one manager to another. Used for *pass procs* summon
+		 * @param pm The "another" proc
+		 */
 		public void pass(ProcManager pm) {
 			stop = Math.max(stop, pm.stop);
 			if (stop != 0)
@@ -1329,20 +1334,29 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			}
 		}
 
+		/**
+		 * Clears all procs
+		 * @param one Sets procs to 1 instead of 0 if true
+		 */
 		public void removeActive(boolean one) {
 			e.pois.list.clear();
 			stop = slow = weak[0] = curse = seal = poison = armor[0] = speed[0] = lethargy[0] = one ? 1 : 0;
 		}
 	}
 
+	/**Manages animations*/
 	public final AnimManager anim;
 
+	/**Manages attacks*/
 	protected final AtkManager atkm;
 
+	/**Manages revival*/
 	private final ZombX zx = new ZombX(this);
 
+	/**Manages entity auras*/
 	public final AuraManager auras;
 
+	/**Connects the summoner to the summoned if bonds are set*/
 	private final SummonManager bondTree = new SummonManager();
 
 	/**
@@ -1468,6 +1482,9 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 */
 	private boolean touchEnemy;
 
+	/**
+	 * Alternate abilities changed by attacks
+	 */
 	private int altAbi = 0;
 
 	/**
@@ -1490,11 +1507,19 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	private final float shieldMagnification;
 
 	/**
-	 * Whether onLastBreathe is called or not
+	 * true if unit is dead and can't be revived
 	 */
 	private boolean killCounted = false;
 
-	protected Entity(StageBasis b, MaskEntity de, EAnimU ea, float atkMagnif, float hpMagnif) {//EEnemy constructor
+	/**
+	 * EEnemy Constructor
+	 * @param b Stage Data
+	 * @param de Enemy Data
+	 * @param ea Animations
+	 * @param atkMagnif Atk Buff
+	 * @param hpMagnif Health Buff
+	 */
+	protected Entity(StageBasis b, MaskEntity de, EAnimU ea, float atkMagnif, float hpMagnif) {
 		super((int) (de.getHp() * hpMagnif));
 		basis = b;
 		data = de;
@@ -1506,10 +1531,19 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		ini(hpMagnif);
 	}
 
-	protected Entity(StageBasis b, MaskEntity de, EAnimU ea, float lvMagnif, float tHP, PCoin pc, Level lv) {//EUnit constructor
+	/**
+	 * Entity constructor used by EUnit
+	 * @param b Stage Data
+	 * @param de Unit Data
+	 * @param ea Animations
+	 * @param lvMagnif Level
+	 * @param pc PCoin Data
+	 * @param lv Effective Entity level
+	 */
+	protected Entity(StageBasis b, MaskEntity de, EAnimU ea, float lvMagnif, PCoin pc, Level lv) {
 		super((pc != null && lv != null && lv.getTalents().length == pc.max.length) ?
-				(int) ((1 + b.elu.getInc(Data.C_DEF) * 0.01) * (int) ((int) (Math.round(de.getHp() * lvMagnif) * tHP) * pc.getStatMultiplication(Data.PC2_HP, lv.getTalents()))) :
-				(int) ((1 + b.elu.getInc(Data.C_DEF) * 0.01) * (int) (Math.round(de.getHp() * lvMagnif) * tHP))
+				(int) ((1 + b.elu.getInc(Data.C_DEF) * 0.01) * (int) ((int) (Math.round(de.getHp() * lvMagnif) * b.b.t().getDefMulti()) * pc.getStatMultiplication(Data.PC2_HP, lv.getTalents()))) :
+				(int) ((1 + b.elu.getInc(Data.C_DEF) * 0.01) * (int) (Math.round(de.getHp() * lvMagnif) * b.b.t().getDefMulti()))
 		);
 		basis = b;
 		data = de;
@@ -1537,12 +1571,16 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			waitTime = Math.max(data.getTBA() - 1, 0);
 	}
 
+	/**
+	 * Switches out entity abilities as dictated by atk alt abis.
+	 * @param alt the attack's alt abis
+	 */
 	public void altAbi(int alt) {
 		altAbi ^= alt;
 	}
 
 	/**
-	 * accept attack
+	 * Receive attack. Also processes shields
 	 */
 	@Override
 	public void damaged(AttackAb atk) {
@@ -1860,8 +1898,18 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			processProcs0(atk, FDmg);
 	}
 
+	/**
+	 * Sums damage to statistics
+	 * @param atk Damage dealt
+	 * @param raw true if damage isn't affected by procs and abilities
+	 */
 	protected abstract void sumDamage(int atk, boolean raw);
 
+	/**
+	 * Inflict the applying procs on this entity.
+	 * @param atk Attack Data
+	 * @param dmg Effective damage
+	 */
 	protected void processProcs0(AttackAb atk, int dmg) {
 		if (atk.getProc().POIATK.mult > 0) {
 			float rst = getResistValue(atk, false, getProc().IMUPOIATK.mult);
@@ -1889,6 +1937,10 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		processProcs(atk);
 	}
 
+	/**
+	 * Inflict the applying procs which don't need effective damage on this entity.
+	 * @param atk Attack data
+	 */
 	private void processProcs(AttackAb atk) {
 		// process proc part
 		if (!btargetable(atk))
@@ -2092,15 +2144,28 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		}
 	}
 
+	/**
+	 * Gets the properly formatted resistance value to a certain proc, and adds SuperSage-related resistances if those apply.
+	 * @param atk The Attack. Used to check for ability/trait compatibility atm
+	 * @param SageRes Whether Sage Resistances are to be applied.
+	 * @param procResist The raw amount of resistance
+	 * @return formatted resistance value
+	 */
 	public abstract float getResistValue(AttackAb atk, boolean SageRes, int procResist);
+
+	/**
+	 * Used exclusively for smartImu, which rids of immunities for exclusively buffs/debuffs, depending on the side param.
+	 * @param val The resistance value
+	 * @param side The kind of proc targetted by the Immunity Ignorance. 0 is none, 1 is buff, -1 is debuff.
+	 * @param invert Invert the result if condition passes
+	 * @return true if immunity applies
+	 */
 	private boolean checkAIImmunity(int val, int side, boolean invert) {
 		if (side == 0)
 			return true;
-		if (invert) {
+		if (invert)
 			return val * side < 0;
-		} else {
-			return val * side > 0;
-		}
+		return val * side > 0;
 	}
 
 	/**
@@ -2114,7 +2179,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	}
 
 	/**
-	 * get the currently attack, only used in display and counter
+	 * Get total damage, only used in display and counter
 	 */
 	public int getAtk() {
 		return aam.getAtk();
@@ -2131,7 +2196,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	}
 
 	/**
-	 * receive an interrupt
+	 * Interrupt the current animation and set up KB/Warp/BossWave.
 	 */
 	public void interrupt(int t, float d) {
 		if(isBase && health <= 0)
@@ -2235,10 +2300,9 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 		acted = false;
 
-		if(health <= 0 && zx.canRevive() == 0 && !killCounted) {
+		if(health <= 0 && zx.canRevive() == 0 && !killCounted)
 			onLastBreathe();
-			killCounted = true;
-		}
+
 		if (health > 0)
 			status.money = 0;
 	}
@@ -2501,6 +2565,13 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		anim.updateAnimation();
 	}
 
+	/**
+	 * Add multipliers from crit and savage blow, process metal trait damage reduction too
+	 * @param isMetal If metal ability effects apply to entity
+	 * @param ans Effective Damage modified by other procs/abilities
+	 * @param atk Non-Damage attack data
+	 * @return
+	 */
 	protected int critCalc(boolean isMetal, int ans, AttackAb atk) {
 		int satk = atk.getProc().SATK.mult;
 		if (satk > 0)
@@ -2534,6 +2605,13 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		return ans;
 	}
 
+	/**
+	 * Damage score prediction for AI attack selection. Used to
+	 * @param dmg Effective damage
+	 * @param e The attacked entity
+	 * @param matk The Attack Data
+	 * @return Damage score
+	 */
 	@Override
 	public float calcDamageMult(int dmg, Entity e, MaskAtk matk) {
 		if ((e.getAbi() & AB_ONLY) > 0 && !targetable(e))
@@ -2606,6 +2684,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 * called when entity starts final hb, no revive, no lethal strike
 	 */
 	protected void onLastBreathe() {
+		killCounted = true;
 	}
 
 	/**
@@ -2613,6 +2692,10 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 */
 	protected abstract float getLim();
 
+	/**
+	 * Used to determine the faction of the entity (and apply hypno proc), which affects target entities, and moving direction.
+	 * @return The facing direction of the entity
+	 */
 	public int getDire() {
 		if (status.hypno > 0)
 			return -dire;
@@ -2636,6 +2719,11 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		return mov;
 	}
 
+	/**
+	 * Gets distance needed to move forward, if it can. Also flips animation if speed is negative.
+	 * @param extmov Distance added to movement speed
+	 * @return Unit speed altered by battle factors
+	 */
 	protected float getMov(float extmov) {
 		if (cantGoMore())
 			return 0;
@@ -2648,6 +2736,12 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		return mov;
 	}
 
+	/**
+	 * Get speed after applying Slow/Haste, the extmov parameter, and auras
+	 * @param spd raw speed
+	 * @param extmov additional distance
+	 * @return Effective Speed
+	 */
 	public float getSpeed(int spd, float extmov) {
 		float mov = status.slow > 0 ? 0.25f : spd * 0.5f;
 		if (status.speed[0] > 0 && status.slow == 0) {
@@ -2664,6 +2758,11 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		return mov;
 	}
 
+	/**
+	 * Used for AI evasion. Refrain from moving or move backwards if danger is near.
+	 * @param mov Moving distance
+	 * @return Moving speed, 0 or negative depending on AI-Proc settings
+	 */
 	private float AIMove(float mov) {
 		float mv = mov, predictedPos = pos + mv * getDire();
 
@@ -2679,7 +2778,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				continue;
 			float[] ds = e.aam.inRange(e.atkm.preID);
 			float sta = Math.min(ds[0], ds[1]), end = Math.max(ds[0], ds[1]);
-			if (pos < sta || predictedPos < sta || predictedPos > end) //Is already on blindspot if there is one, or doesn't runs into risk of receiving an attack if it moves
+			if (pos < sta || predictedPos < sta || predictedPos > end) //Is already on blindspot if there is one, or doesn't run into risk of receiving an attack if it moves
 				continue;
 			if (e.data.getAtkModel(e.aam.atkType, e.atkm.preID).isLD() && sta >= data.getRange() && predictedPos * e.atkm.preTime < sta)
 				continue; //Calculate if unit is fast enough to make it to blindspot before attacking
@@ -2720,6 +2819,12 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		}
 	}
 
+	/**
+	 * Draw the hitboxes for the unit and its attacks
+	 * @param gra Canvas
+	 * @param p Position
+	 * @param siz Zoom Size
+	 */
 	private void drawAxis(FakeGraphics gra, P p, float siz) {
 		// after this is the drawing of hit boxes
 		siz *= 1.25f;
@@ -2838,7 +2943,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	}
 
 	/**
-	 * get touch state
+	 * get touch state, which is used to determine which state of entities will this one detect
 	 */
 	public int getTouch() {
 		if ((getAbi() & AB_CKILL) > 0)
@@ -2847,7 +2952,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	}
 
 	/**
-	 * verify touch state
+	 * detect nearby entities
 	 */
 	public void checkTouch() {
 		touch = true;
