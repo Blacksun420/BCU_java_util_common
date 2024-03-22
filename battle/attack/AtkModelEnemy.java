@@ -14,7 +14,7 @@ public class AtkModelEnemy extends AtkModelEntity {
 	@Override
 	protected int getAttack(MaskAtk matk, Proc proc) {
 		int atk = getEffAtk(matk);
-		if (matk.getProc() != empty && matk.canProc())
+		if (matk.getProc() != empty)
 			setProc(matk, proc, e.status.curse > 0 ? cursedProcs : 1);
 		else {
 			if (matk.getProc().MOVEWAVE.perform(b.r)) //Movewave procs regardless of seal state

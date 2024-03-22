@@ -333,9 +333,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		for (int i = startOff; i < par.length; i++)
 			if (getProc(matk).get(par[i]).perform(b.r))
 				proc.get(par[i]).set(getProc(matk).get(par[i]));
-
-		if (data instanceof CustomEntity || matk.canProc())
-			for (int b : BCShareable) proc.getArr(b).set(getProc(matk).getArr(b));
+		for (int b : BCShareable) proc.getArr(b).set(getProc(matk).getArr(b));
 		if (getProc(matk).SUMMON.perform(b.r)) {
 			SUMMON sprc = getProc(matk).SUMMON;
 			SUMMON.TYPE conf = sprc.type;
@@ -397,7 +395,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 					int lvl = proc.mult;
 					if (!conf.fix_buff)
 						lvl = (int) e.buff(lvl);
-					lvl *= (100.0 - resist) / 100;
+					lvl = (int) (lvl * (100.0 - resist) / 100);
 					lvl = MathUtil.clip(lvl, 1, u.getCap());
 
 					for (int i = 0; i < proc.amount; i++) {
@@ -426,16 +424,16 @@ public abstract class AtkModelEntity extends AtkModelAb {
 					float mult = proc.mult * 0.01f;
 					if (!conf.fix_buff) {
 						if (e instanceof EUnit) {
-							mula *= 1 + ((((EUnit) e).lvl - 1) * 0.2);
-							mult *= 1 + ((((EUnit) e).lvl - 1) * 0.2);
+							mula = (float) (mula + ((((EUnit) e).lvl - 1) * 0.2));
+							mult = (float) (mult + ((((EUnit) e).lvl - 1) * 0.2));
 						} else {
-							mult *= ((EEnemy) e).mult;
-							mula *= ((EEnemy) e).mula;
+							mult = (float) (mult * ((EEnemy) e).mult);
+							mula = (float) (mula * ((EEnemy) e).mula);
 						}
 					}
 
-					mula *= (100.0 - resist) / 100;
-					mult *= (100.0 - resist) / 100;
+					mula = (float) (mula * (100.0 - resist) / 100);
+					mult = (float) (mult * (100.0 - resist) / 100);
 					for (int i = 0; i < proc.amount; i++) {
 						int dis = proc.dis == proc.max_dis ? proc.dis : (int) (proc.dis + b.r.nextDouble() * (proc.max_dis - proc.dis + 1));
 						float up = ent.pos + getDire() * dis;
