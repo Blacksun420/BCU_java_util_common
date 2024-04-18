@@ -70,7 +70,7 @@ public class AssetLoader {
 
 	}
 
-	public static final String CORE_VER = "0.7.6.0";
+	public static final String CORE_VER = "0.7.7.0";
 	public static final byte FORK_VER = 10;
 
 	private static final int LEN = 1024;
@@ -79,7 +79,12 @@ public class AssetLoader {
 		try {
 			File folder = CommonStatic.ctx.getAssetFile("./assets/");
 			TreeMap<String, File> map = new TreeMap<>();
-			for (File f : folder.listFiles())
+
+			File[] fileList = folder.listFiles();
+			if (fileList == null)
+				return;
+
+			for (File f : fileList)
 				if (f.getName().endsWith(".assets.bcuzips"))
 					map.put(f.getName(), f);
 			int i = 0;
@@ -169,7 +174,13 @@ public class AssetLoader {
 				fos.flush();
 				fos.close();
 				Context.delete(target);
-				dst.renameTo(target);
+
+				if (!dst.renameTo(target)) {
+					System.out.println("W/AssetLoader::merge - Failed to rename the file : \n" +
+							"\n" +
+							"Target : " + target.getAbsolutePath() + "\n" +
+							"Destination : " + dst.getAbsolutePath());
+				}
 			}
 		} catch (Exception e) {
 			CommonStatic.ctx.noticeErr(e, ErrType.FATAL, "failed to merge asset");
@@ -182,7 +193,12 @@ public class AssetLoader {
 			Set<String> ans = new TreeSet<>();
 			if (!folder.exists())
 				return ans;
-			for (File f : folder.listFiles()) {
+
+			File[] fileList = folder.listFiles();
+			if (fileList == null)
+				return ans;
+
+			for (File f : fileList) {
 				if (f.getName().endsWith(".assets.bcuzips")) {
 					AssetHeader header = new AssetHeader();
 					FileInputStream fis = new FileInputStream(f);
@@ -201,7 +217,11 @@ public class AssetLoader {
 	}
 
 	private static void add(VFile vf, File f) {
-		for (File fi : f.listFiles())
+		File[] fileList = f.listFiles();
+		if (fileList == null)
+			return;
+
+		for (File fi : fileList)
 			if (fi.isDirectory())
 				add(new VFile(vf, fi.getName()), fi);
 			else

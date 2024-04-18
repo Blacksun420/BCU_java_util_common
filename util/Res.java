@@ -208,6 +208,7 @@ public class Res extends ImgCore {
 		aux.icon[1][P_MINIWAVE] = new VImg(parts[293]);
 		aux.icon[1][P_SHIELDBREAK] = new VImg(parts[296]);
 		aux.icon[1][P_SPIRIT] = new VImg(parts[317]);
+		aux.icon[1][P_METALKILL] = new VImg(parts[321]);
 		aux.icon[1][P_DEMONSHIELD] = new VImg("./org/page/icons/DemonShield.png");
 		aux.icon[1][P_DEATHSURGE] = new VImg("./org/page/icons/DeathSurge.png");
 		aux.icon[1][P_BURROW] = new VImg("./org/page/icons/Burrow.png");
@@ -220,7 +221,7 @@ public class Res extends ImgCore {
 		aux.icon[1][P_DMGCAP] = new VImg("./org/page/icons/DmgCap.png");
 		aux.icon[1][P_IMUARMOR] = new VImg("./org/page/icons/ArmorBreakX.png");
 		aux.icon[1][P_IMUSPEED] = new VImg("./org/page/icons/SpeedX.png");
-		aux.icon[1][P_BARRIER] = new VImg("./org/page/icons/Barrier.png");
+		aux.icon[1][P_BARRIER] = new VImg(parts[330]);
 		aux.icon[1][P_COUNTER] = new VImg("./org/page/icons/Counter.png");
 		aux.icon[1][P_IMUCANNON] = new VImg("./org/page/icons/CannonX.png");
 		aux.icon[1][P_THEME] = new VImg("./org/page/icons/Theme.png");

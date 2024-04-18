@@ -207,9 +207,10 @@ public class DataUnit extends DefaultData implements MaskUnit, Cloneable {
 				proc.SPIRIT.cd0 = SPIRIT_SUMMON_DELAY;
 				proc.SPIRIT.form = 1;
 			}
-
 			if (ints[111] == 1)
 				a |= AB_SKILL; //This is Sage Killer, nice naming upstream devs
+			if (ints[112] != 0)
+				proc.METALKILL.mult = ints[112];
 		} catch (IndexOutOfBoundsException ignored) {
 		}
 

@@ -1,6 +1,5 @@
 package common.battle.attack;
 
-import common.battle.data.CustomEntity;
 import common.battle.data.MaskAtk;
 import common.battle.data.MaskEntity;
 import common.battle.data.PCoin;
@@ -17,7 +16,7 @@ import java.util.List;
 public abstract class AtkModelEntity extends AtkModelAb {
 
 	public static final String[] par = { "SUMMON", "KB", "STOP", "SLOW", "WEAK", "WARP", "CURSE", "SNIPER", "SEAL", "POISON", "BOSS", "RAGE", "HYPNO", "POIATK",
-			"ARMOR", "SPEED", "LETHARGY", "ATKBASE", "CRIT", "WAVE", "BREAK", "SATK", "VOLC", "MINIVOLC", "MINIWAVE", "MOVEWAVE", "SHIELDBREAK", "WORKERLV", "CDSETTER"};
+			"ARMOR", "SPEED", "LETHARGY", "ATKBASE", "CRIT", "WAVE", "BREAK", "SATK", "VOLC", "MINIVOLC", "MINIWAVE", "MOVEWAVE", "SHIELDBREAK", "WORKERLV", "CDSETTER", "METALKILL"};
 	/**
 	 * @param e The entity
 	 * @param d0 Level multiplication for EUnit, Magnification for EEnemy

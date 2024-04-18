@@ -797,6 +797,11 @@ public class Editors {
 			setComponentVisibility(eg, u.forms.length > 1, 5, 6);
 			setComponentVisibility(eg, u.forms[t.form - 1].anim.getAtkCount() > 0, 6);
 		}));
+
+		map().put("METALKILL", new EditControl<>(Proc.MULT.class, (t) -> {
+			if (t.mult == 100)
+				t.mult = 0;
+		}));
 	}
 
 	private static void setComponentVisibility(EditorGroup egg, boolean boo, int... fields) {

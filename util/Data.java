@@ -18,6 +18,7 @@ import common.util.stage.Music;
 import java.lang.annotation.*;
 import java.lang.reflect.Field;
 
+@SuppressWarnings("unused")
 @StaticPermitted
 public class Data {
 
@@ -955,6 +956,8 @@ public class Data {
 		public final RANGESHIELD RANGESHIELD = new RANGESHIELD();
 		@Order(72)
 		public final SPIRIT SPIRIT = new SPIRIT();
+		@Order(73)
+		public final MULT METALKILL = new MULT();
 
 		@Override
 		public Proc clone() {
@@ -1319,7 +1322,8 @@ public class Data {
 	public static final byte P_DEFINC = 70;
 	public static final byte P_RANGESHIELD = 71;
 	public static final byte P_SPIRIT = 72;
-	public static final byte PROC_TOT = 73;// 72
+	public static final byte P_METALKILL = 73;
+	public static final byte PROC_TOT = 74;
 
 	public static final boolean[] procSharable = {
 			false, //kb
@@ -1394,7 +1398,8 @@ public class Data {
 			true,  //Massive DMG but good
 			true,  //Resistant but good
 			true,  //Range Shield
-			true   //spirit summon
+			true,  //spirit summon
+			false  //TOTAL METALHEAD DEATH
 	};
 
 	/**

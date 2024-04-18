@@ -26,8 +26,11 @@ public class ImgCut extends Data implements Cloneable {
 	}
 
 	public static ImgCut newIns(String path) {
-		return new ImgCut(VFile.readLine(path));
+		Queue<String> lines = VFile.readLine(path);
 
+		assert lines != null;
+
+		return new ImgCut(lines);
 	}
 
 	public String name;
@@ -44,12 +47,20 @@ public class ImgCut extends Data implements Cloneable {
 	protected ImgCut(Queue<String> qs) {
 		qs.poll();
 		qs.poll();
-		name = restrict(qs.poll());
-		n = Integer.parseInt(qs.poll().trim());
+
+		String line = qs.poll();
+
+		name = restrict(line == null ? "" : line);
+
+		line = qs.poll();
+
+		n = Integer.parseInt(line == null ? "0" : line.trim());
 		cuts = new int[n][4];
 		strs = new String[n];
 		for (int i = 0; i < n; i++) {
-			String[] ss = qs.poll().trim().split(",");
+			line = qs.poll();
+
+			String[] ss = (line == null ? "0, 0, 1, 1" : line).trim().split(",");
 			for (int j = 0; j < 4; j++)
 				cuts[i][j] = Integer.parseInt(ss[j].trim());
 			if (ss.length == 5)
@@ -91,10 +102,10 @@ public class ImgCut extends Data implements Cloneable {
 				cut[2] = 1;
 			if (cut[3] <= 0)
 				cut[3] = 1;
-			if (cut[2] + cut[0] > w - 1)
-				cut[2] = w - 1 - cut[0];
-			if (cut[3] + cut[1] > h - 1)
-				cut[3] = h - 1 - cut[1];
+			if (cut[2] + cut[0] > w)
+				cut[2] = w - cut[0];
+			if (cut[3] + cut[1] > h)
+				cut[3] = h - cut[1];
 			parts[i] = bimg.getSubimage(cut[0], cut[1], cut[2], cut[3]);
 		}
 		return parts;

@@ -66,7 +66,7 @@ public class AttackSimple extends AttackAb {
 				if (e.isBase() || e.ctargetable(trait, attacker))
 					capt.add(e);
 		if (!range) {
-			if (capt.size() == 0)
+			if (capt.isEmpty())
 				return;
 
 			List<AbEntity> ents = new ArrayList<>();
@@ -99,7 +99,7 @@ public class AttackSimple extends AttackAb {
 		if (ce != null && !capt.contains(ce))
 			capt.add(ce);
 		excuse();
-		return capt.size() > 0;
+		return !capt.isEmpty();
 	}
 
 	@Override
@@ -127,7 +127,7 @@ public class AttackSimple extends AttackAb {
 			else if (!b)
 				CommonStatic.setSE(sfx1);
 		}
-		if (proc.WAVE.exists() && (capt.size() > 0 || proc.WAVE.type.hitless)) {
+		if (proc.WAVE.exists() && (!capt.isEmpty() || proc.WAVE.type.hitless)) {
 			int dire = model.getDire();
 			int wid = dire == 1 ? W_E_WID : W_U_WID;
 			float addp = (dire == 1 ? W_E_INI : W_U_INI) + wid / 2f;
@@ -139,7 +139,7 @@ public class AttackSimple extends AttackAb {
 			if(attacker != null)
 				attacker.summoned.add(wave);
 		}
-		if(proc.MINIWAVE.exists() && (capt.size() > 0 || proc.MINIWAVE.type.hitless)) {
+		if(proc.MINIWAVE.exists() && (!capt.isEmpty() || proc.MINIWAVE.type.hitless)) {
 			int dire = model.getDire();
 			int wid = dire == 1 ? W_E_WID : W_U_WID;
 			float addp = (dire == 1 ? W_E_INI : W_U_INI) + wid / 2f;
@@ -151,7 +151,7 @@ public class AttackSimple extends AttackAb {
 			if(attacker != null)
 				attacker.summoned.add(wave);
 		}
-		if (proc.VOLC.exists() && (capt.size() > 0 || proc.VOLC.type.hitless)) {
+		if (proc.VOLC.exists() && (!capt.isEmpty() || proc.VOLC.type.hitless)) {
 			int dire = model.getDire();
 			VOLC volc = proc.VOLC;
 			int addp = volc.dis_0 == volc.dis_1 ? volc.dis_0 : volc.dis_0 + (int) (model.b.r.nextFloat() * (volc.dis_1 - volc.dis_0));
@@ -163,7 +163,7 @@ public class AttackSimple extends AttackAb {
 			if(attacker != null)
 				attacker.summoned.add(volcano);
 		}
-		if (proc.MINIVOLC.exists() && (capt.size() > 0 || proc.MINIVOLC.type.hitless)) {
+		if (proc.MINIVOLC.exists() && (!capt.isEmpty() || proc.MINIVOLC.type.hitless)) {
 			int dire = model.getDire();
 			Proc.MINIVOLC volc = proc.MINIVOLC;
 			int addp = volc.dis_0 == volc.dis_1 ? volc.dis_0 : volc.dis_0 + (int) (model.b.r.nextDouble() * (volc.dis_1 - volc.dis_0));
@@ -172,7 +172,7 @@ public class AttackSimple extends AttackAb {
 			float end = p0 - (dire == 1 ? W_VOLC_INNER : W_VOLC_PIERCE);
 
 			ContVolcano volcano = new ContVolcano(new AttackVolcano(attacker, this, sta, end, WT_MIVC), p0, layer, volc.time, false);
-			volcano.v.raw *= proc.MINIVOLC.mult / 100.0;
+			volcano.v.raw *= (int)(proc.MINIVOLC.mult / 100.0);
 
 			if(attacker != null)
 				attacker.summoned.add(volcano);

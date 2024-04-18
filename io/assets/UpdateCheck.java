@@ -101,7 +101,9 @@ public class UpdateCheck {
 				"100906", "100907", "101000", "101002", "110000", "110002", "110100", "110101", "110200", "110300",
 				"110400", "110403", "110500", "110503", "110504", "110505", "110506", "110600", "110603", "110604",
 				"110700", "110703", "110800", "110900", "110903", "111000", "111003", "111005", "120000", "120100",
-				"120200", "120203", "120300", "120400", "120500", "120503", "120600", "120700", "130000", "130100");
+				"120200", "120203", "120300", "120400", "120500", "120503", "120600", "120700", "130000", "130100",
+				"130200", "130300"
+		);
 	}
 
 	public static final String REPO = "Blacksun420/sun-";
@@ -123,7 +125,7 @@ public class UpdateCheck {
 		Set<String> req = new HashSet<>(UserProfile.getPool(REG_REQLIB));
 		if(local != null)
 			req.removeIf(id -> local.contains("asset_" + id));
-		if (json == null && req.size() > 0)
+		if (json == null && !req.isEmpty())
 			throw new Exception("internet connection required: missing required libraries: " + req);
 		List<Downloader> set = new ArrayList<>();
 		if (json == null)
@@ -284,9 +286,13 @@ public class UpdateCheck {
 		if (json != null) {
 			Set<String> str = new HashSet<>();
 			Collections.addAll(str, json.pc_libs);
-			if (lib.exists())
-				for (File f : lib.listFiles())
-					str.remove(f.getName());
+			if (lib.exists()) {
+				File[] libraryList = lib.listFiles();
+				if (libraryList != null) {
+					for (File f : libraryList)
+						str.remove(f.getName());
+				}
+			}
 			for (String s : str) {
 				String url = URL_LIB + s;
 				libs.add(new Downloader(new File(CommonStatic.ctx.getBCUFolder(), "./BCU_lib/" + s), new File(CommonStatic.ctx.getBCUFolder(), "./BCU_lib/.jar.temp"),

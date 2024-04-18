@@ -1750,6 +1750,14 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			}
 		}
 
+		boolean metalKillerActivate = atk.getProc().METALKILL.mult > 0;
+		if (dire == 1) {
+			metalKillerActivate &= data.getTraits().contains(UserProfile.getBCData().traits.get(TRAIT_METAL));
+		} else if (dire == -1)
+			metalKillerActivate &= (data.getAbi() & AB_METALIC) != 0;
+		if (metalKillerActivate)
+			dmg = dmg + (int) Math.max(health * atk.getProc().METALKILL.mult / 100f, 1f);
+
 		if (!shieldContinue) {
 			if (atk.getProc().SHIELDBREAK.prob > 0) {
 				status.shield[0] = 0;
@@ -1782,6 +1790,10 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			basis.lea.add(new EAnimCont(pos, layer, effas().A_SATK.getEAnim(DefEff.DEF), -75f));
 			CommonStatic.setSE(SE_SATK);
 		}
+
+		if (metalKillerActivate)
+			basis.lea.add(new EAnimCont(pos, layer, (dire == 1 ? effas().A_E_METAL_KILLER : effas().A_METAL_KILLER).getEAnim(DefEff.DEF), -75f));
+
 		if (!shieldContinue)
 			return;
 

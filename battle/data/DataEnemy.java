@@ -193,6 +193,9 @@ public class DataEnemy extends DefaultData implements MaskEnemy {
 				proc.DEMONVOLC.prob = proc.DEMONVOLC.mult = 100;
 			if (ints[104] == 1)
 				traits.add(BCTraits.get(TRAIT_SAGE));
+
+			if (ints[105] == 1)
+				proc.IMUCURSE.mult = 100;
 		} catch (IndexOutOfBoundsException ignored) {
 
 		}
