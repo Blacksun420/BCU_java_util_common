@@ -75,7 +75,7 @@ public class ContVolcano extends ContAb {
 		v.capture();
 		for (AbEntity e : v.capt)
 			if (e instanceof Entity) {
-				int volcs = e.getProc().IMUVOLC.block;
+				float volcs = e.getProc().IMUVOLC.block;
 				if (volcs != 0) {
 					if (volcs > 0)
 						((Entity) e).anim.getEff(STPWAVE);
@@ -89,7 +89,7 @@ public class ContVolcano extends ContAb {
 						v.active = false;
 						return;
 					} else
-						v.raw = v.raw * (100 - volcs) / 100;
+						v.raw = (int) (v.raw * (100 - volcs) / 100);
 				}
 			}
 		if (t >= aliveTime + VOLC_POST + VOLC_PRE) {

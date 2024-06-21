@@ -245,7 +245,7 @@ public abstract class AttackAb extends BattleObj {
 	 * @param invert Inverts the >,< signs depending on the proc
 	 * @return idk
 	 */
-	private boolean checkAIImmunity(int val, int side, boolean invert) {
+	private boolean checkAIImmunity(double val, int side, boolean invert) {
 		if (side == 0)
 			return true;
 		if (invert) {

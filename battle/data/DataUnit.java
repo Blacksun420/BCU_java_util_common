@@ -199,8 +199,10 @@ public class DataUnit extends DefaultData implements MaskUnit, Cloneable {
 				proc.BSTHUNT.prob = ints[106];
 				proc.BSTHUNT.time = ints[107];
 			}
-			if (ints[109] == 1)
-				proc.DEMONVOLC.prob = proc.DEMONVOLC.mult = 100;
+			if (ints[109] == 1) {
+				proc.DEMONVOLC.prob = 100;
+				proc.DEMONVOLC.mult = 100;
+			}
 			if (ints[110] != -1) {
 				proc.SPIRIT.id = Identifier.parseInt(ints[110], Unit.class);
 				proc.SPIRIT.amount = 1;

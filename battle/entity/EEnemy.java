@@ -103,7 +103,7 @@ public class EEnemy extends Entity {
 				ans = (int) (maxH * basis.b.t().getCannonMagnification(5, BASE_HOLY_ATK_UNDERGROUND));
 			else
 				ans = (int) (maxH * basis.b.t().getCannonMagnification(5, BASE_HOLY_ATK_SURFACE));
-		ans = critCalc(data.getTraits().contains(UserProfile.getBCData().traits.get(TRAIT_METAL)), ans, atk);
+		ans = critCalc((getAbi() & AB_METALIC) != 0 || data.getTraits().contains(UserProfile.getBCData().traits.get(TRAIT_METAL)), ans, atk);
 
 		// Perform Orb
 		ans += EUnit.OrbHandler.getOrbAtk(atk, this);
@@ -124,8 +124,8 @@ public class EEnemy extends Entity {
 	}
 
 	@Override
-	public float getResistValue(AttackAb atk, boolean SageRes, int procResist) {
-		float ans = 1f - procResist / 100f;
+	public float getResistValue(AttackAb atk, boolean SageRes, double procResist) {
+		float ans = (float) (1f - procResist / 100f);
 
 		if (SageRes && (atk.abi & AB_SKILL) == 0 && traits.contains(BCTraits.get(TRAIT_SAGE)))
 			ans *= SUPER_SAGE_RESIST;

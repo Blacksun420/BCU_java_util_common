@@ -1188,13 +1188,13 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		}
 		public void updateAuras() {
 			faura = daura = saura = taura = 1;
-			while (atkAuras.size() != 0)
+			while (!atkAuras.isEmpty())
 				faura *= atkAuras.pop();
-			while (defAuras.size() != 0)
+			while (!defAuras.isEmpty())
 				daura *= defAuras.pop();
-			while (spdAuras.size() != 0)
+			while (!spdAuras.isEmpty())
 				saura *= spdAuras.pop();
-			while (tbaAuras.size() != 0)
+			while (!tbaAuras.isEmpty())
 				taura *= tbaAuras.pop();
 			taura--;
 
@@ -1241,8 +1241,9 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 		public boolean lethal;
 		public int kb, slow, stop, curse, seal, strengthen, money, dcut, dcap, poison, wild, rage, hypno;
-		public final int[] weak = new int[2], shield = new int[2], burs = new int[2], revs = new int[2], armor = new int[2], speed = new int[3], inv = new int[2];
+		public final int[] shield = new int[2], burs = new int[2], revs = new int[2], speed = new int[3], inv = new int[2];
 		public final int[] lethargy = new int[3], warp = new int[3];
+		public final double[] weak = new double[2], armor = new double[2];
 
 		private final Entity e;
 
@@ -1340,7 +1341,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		 */
 		public void removeActive(boolean one) {
 			e.pois.list.clear();
-			stop = slow = weak[0] = curse = seal = poison = armor[0] = speed[0] = lethargy[0] = one ? 1 : 0;
+			stop = slow = curse = seal = poison = speed[0] = lethargy[0] = one ? 1 : 0;
+			armor[0] = weak[0] = one ? 1 : 0;
 		}
 	}
 
@@ -1597,22 +1599,22 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				if (cRes.mult == 100)
 					return;
 				else {
-					dmg = dmg * (100 - cRes.mult) / 100;
+					dmg = (int) (dmg * (100 - cRes.mult) / 100);
 					switch (atk.canon) {
 						case 2:
-							atk.getProc().SLOW.time = atk.getProc().SLOW.time * (100 - cRes.mult) / 100;
+							atk.getProc().SLOW.time = (int) (atk.getProc().SLOW.time * (100 - cRes.mult) / 100);
 							break;
 						case 4:
 						case 16:
-							atk.getProc().STOP.time = atk.getProc().STOP.time * (100 - cRes.mult) / 100;
+							atk.getProc().STOP.time = (int) (atk.getProc().STOP.time * (100 - cRes.mult) / 100);
 							break;
 						case 32:
 							if (cRes.mult > 0 && basis.r.nextFloat() * 100 < cRes.mult)
 								atk.getProc().BREAK.clear();
-							atk.getProc().KB.dis = atk.getProc().KB.dis * (100 - cRes.mult) / 100;
+							atk.getProc().KB.dis = (int) (atk.getProc().KB.dis * (100 - cRes.mult) / 100);
 							break;
 						case 64:
-							atk.getProc().CURSE.time = atk.getProc().CURSE.time * (100 - cRes.mult) / 100;
+							atk.getProc().CURSE.time = (int) (atk.getProc().CURSE.time * (100 - cRes.mult) / 100);
 					}
 				}
 			}
@@ -1623,7 +1625,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			if (getProc().IMUWAVE.mult == 100)
 				return;
 			else
-				dmg = dmg * (100 - getProc().IMUWAVE.mult) / 100;
+				dmg = (int) (dmg * (100 - getProc().IMUWAVE.mult) / 100);
 		}
 
 		if ((atk.waveType & WT_MOVE) > 0) {
@@ -1632,7 +1634,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			if (getProc().IMUMOVING.mult == 100)
 				return;
 			else
-				dmg = dmg * (100 - getProc().IMUMOVING.mult) / 100;
+				dmg = (int) (dmg * (100 - getProc().IMUMOVING.mult) / 100);
 		}
 
 		if ((atk.waveType & (WT_VOLC | WT_MIVC)) > 0) {
@@ -1641,7 +1643,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			if (getProc().IMUVOLC.mult == 100)
 				return;
 			else
-				dmg = dmg * (100 - getProc().IMUVOLC.mult) / 100;
+				dmg = (int) (dmg * (100 - getProc().IMUVOLC.mult) / 100);
 		}
 
 		Proc.IMUATK imuatk = getProc().IMUATK;
@@ -1731,7 +1733,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					return;
 				dmg = 0;
 			} else if (rngs.mult != 0)
-				dmg = dmg * (100 - rngs.mult) / 100;
+				dmg = (int) (dmg * (100 - rngs.mult) / 100);
 		}
 
 		boolean barrierContinue = !hasBarrier();
@@ -1811,7 +1813,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		hit = 2;
 		damage += dmg;
 		zx.damaged(atk);
-		status.money = atk.getProc().BOUNTY.mult;
+		status.money = (int) atk.getProc().BOUNTY.mult;
 		if (dmg < 0)
 			anim.getEff(HEAL);
 
@@ -1870,7 +1872,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 						}
 					}
 					if (status.weak[0] > 0)
-						reflectAtk = reflectAtk * status.weak[1] / 100;
+						reflectAtk = (int) (reflectAtk * status.weak[1] / 100);
 					if (status.strengthen != 0)
 						reflectAtk += reflectAtk * status.strengthen / 100;
 					reflectAtk *= auras.getAtkAura();
@@ -1928,7 +1930,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			if (rst == 0f)
 				anim.getEff(INV);
 			else {
-				float poiDmg = atk.getProc().POIATK.mult * rst / 100f;
+				float poiDmg = (float) (atk.getProc().POIATK.mult * rst / 100f);
 				damage += maxH * poiDmg;
 				basis.lea.add(new EAnimCont(pos, layer, effas().A_POISON.getEAnim(DefEff.DEF)));
 				CommonStatic.setSE(SE_POISON);
@@ -2021,11 +2023,11 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					status.lethargy[0] = val;
 
 				if (atk.getProc().LETHARGY.mult > 0)
-					status.lethargy[1] = Math.max(status.lethargy[1], atk.getProc().LETHARGY.mult);
+					status.lethargy[1] = (int) Math.max(status.lethargy[1], atk.getProc().LETHARGY.mult);
 				else if (val < 0)
-					status.lethargy[1] = Math.min(status.lethargy[1], atk.getProc().LETHARGY.mult);
+					status.lethargy[1] = (int) Math.min(status.lethargy[1], atk.getProc().LETHARGY.mult);
 				else
-					status.lethargy[1] = atk.getProc().LETHARGY.mult;
+					status.lethargy[1] = (int) atk.getProc().LETHARGY.mult;
 
 				boolean t = atk.getProc().LETHARGY.type.percentage;
 				if (status.lethargy[2] == -1 || (t && status.lethargy[1] * data.getTBA() > status.lethargy[1] + data.getTBA()) ||
@@ -2163,7 +2165,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 * @param procResist The raw amount of resistance
 	 * @return formatted resistance value
 	 */
-	public abstract float getResistValue(AttackAb atk, boolean SageRes, int procResist);
+	public abstract float getResistValue(AttackAb atk, boolean SageRes, double procResist);
 
 	/**
 	 * Used exclusively for smartImu, which rids of immunities for exclusively buffs/debuffs, depending on the side param.
@@ -2172,7 +2174,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 * @param invert Invert the result if condition passes
 	 * @return true if immunity applies
 	 */
-	private boolean checkAIImmunity(int val, int side, boolean invert) {
+	private boolean checkAIImmunity(double val, int side, boolean invert) {
 		if (side == 0)
 			return true;
 		if (invert)
@@ -2269,7 +2271,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		damage = 0;
 
 		// increase damage
-		int strong = getProc().STRONG.health;
+		float strong = getProc().STRONG.health;
 		if ((touchable() & TCH_CORPSE) == 0 && status.strengthen == 0 && strong > 0 && health * 100 <= maxH * strong) {
 			status.strengthen = getProc().STRONG.mult;
 			anim.getEff(P_STRONG);
@@ -2585,15 +2587,15 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 * @return
 	 */
 	protected int critCalc(boolean isMetal, int ans, AttackAb atk) {
-		int satk = atk.getProc().SATK.mult;
+		double satk = atk.getProc().SATK.mult;
 		if (satk > 0)
 			ans = (int) (ans * (100 + satk) * 0.01);
-		int crit = atk.getProc().CRIT.mult;
-		int criti = getProc().CRITI.mult;
+		double crit = atk.getProc().CRIT.mult;
+		double criti = getProc().CRITI.mult;
 		if (criti == 100)
 			crit = 0;
 		else if (criti != 0)
-			crit = (int) (crit * (100 - getProc().CRITI.mult) / 100.0);
+			crit = crit * (100 - getProc().CRITI.mult) / 100.0;
 		if (isMetal)
 			if (crit > 0)
 				ans = (int) (ans * 0.01 * crit);

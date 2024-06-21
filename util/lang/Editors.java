@@ -93,6 +93,14 @@ public class Editors {
 			return Data.err(() -> f0.getInt(obj));
 		}
 
+		public float getFloat() {
+			return Data.err(() -> f0.getFloat(obj));
+		}
+
+		public double getDouble() {
+			return Data.err(() -> f0.getDouble(obj));
+		}
+
 		public Class<?> getType() {
 			return f0.getType();
 		}
@@ -239,10 +247,10 @@ public class Editors {
 	}
 
 	static {
-		EditControl<Proc.PROB> prob = new EditControl<>(Proc.PROB.class, t -> t.prob = MathUtil.clip(t.prob, 0, 100));
+		EditControl<Proc.PROB> prob = new EditControl<>(Proc.PROB.class, t -> t.prob = Math.max(0, Math.min(t.prob, 100)));
 
 		EditControl<Proc.PT> pt = new EditControl<>(Proc.PT.class, t -> {
-			t.prob = MathUtil.clip(t.prob, 0, 100);
+			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0)
 				t.time = 0;
 			else if (t.time == 0)
@@ -270,7 +278,7 @@ public class Editors {
 		EditControl<Proc.MULT> wavei = new EditControl<>(Proc.MULT.class, t -> t.mult = Math.min(t.mult, 100));
 
 		map().put("KB", new EditControl<>(Proc.PTD.class, (t) -> {
-			t.prob = MathUtil.clip(t.prob, 0, 100);
+			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0) {
 				t.dis = t.time = 0;
 			} else {
@@ -290,7 +298,7 @@ public class Editors {
 		map().put("HYPNO", pt);
 
 		map().put("CRIT", new EditControl<>(Proc.PM.class, (t) -> {
-			t.prob = MathUtil.clip(t.prob, 0, 100);
+			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0)
 				t.mult = 0;
 			else if (t.mult == 0)
@@ -298,14 +306,14 @@ public class Editors {
 		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("WAVE", new EditControl<>(Proc.WAVE.class, (t) -> {
-			t.prob = MathUtil.clip(t.prob, 0, 100);
+			t.prob = Math.max(0, Math.min(t.prob, 100));
 			t.lv = MathUtil.clip(t.lv, 1, 35);
 			if (t.prob == 0)
 				t.lv = 0;
 		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("WEAK", new EditControl<>(Proc.PTM.class, (t) -> {
-			t.prob = MathUtil.clip(t.prob, 0, 100);
+			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0)
 				t.mult = t.time = 0;
 			else {
@@ -314,7 +322,7 @@ public class Editors {
 		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("LETHARGY", new EditControl<>(Proc.LETHARGY.class, (t) -> {
-			t.prob = MathUtil.clip(t.prob, 0, 100);
+			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0)
 				t.mult = t.time = 0;
 			else {
@@ -327,7 +335,7 @@ public class Editors {
 		map().put("BREAK", prob);
 
 		map().put("WARP", new EditControl<>(Proc.WARP.class, (t) -> {
-			t.prob = MathUtil.clip(t.prob, 0, 100);
+			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0) {
 				t.dis = t.dis_1 = t.time = 0;
 			} else {
@@ -340,7 +348,7 @@ public class Editors {
 		map().put("CURSE", pt);
 
 		map().put("STRONG", new EditControl<>(Proc.STRONG.class, (t) -> {
-			t.health = MathUtil.clip(t.health, 0, 99);
+			t.health = Math.max(0, Math.min(t.health, 99.9999999f));
 			if (t.health == 0)
 				t.mult = 0;
 		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
@@ -384,7 +392,7 @@ public class Editors {
 		map().put("SNIPER", prob);
 
 		map().put("TIME", new EditControl<>(Proc.TIME.class, (t) -> {
-			t.prob = MathUtil.clip(t.prob, 0, 100);
+			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob > 0) {
 				t.time = Math.max(1, t.time);
 				t.intensity = Math.min(t.intensity, t.time);
@@ -398,7 +406,7 @@ public class Editors {
 		map().put("SEAL", pt);
 
 		map().put("SUMMON", new EditControl<>(Proc.SUMMON.class, (t) -> {
-			t.prob = MathUtil.clip(t.prob, 0, 100);
+			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0) {
 				t.dis = t.max_dis = 0;
 				t.id = null;
@@ -440,7 +448,7 @@ public class Editors {
 		}));
 
 		map().put("MOVEWAVE", new EditControl<>(Proc.MOVEWAVE.class, (t) -> {
-			t.prob = MathUtil.clip(t.prob, 0, 100);
+			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0) {
 				t.dis = t.itv = t.speed = t.time = t.width = 0;
 			} else {
@@ -451,7 +459,7 @@ public class Editors {
 		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("THEME", new EditControl<>(Proc.THEME.class, (t) -> {
-			t.prob = MathUtil.clip(t.prob, 0, 100);
+			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0) {
 				t.time = 0;
 				t.id = null;
@@ -461,7 +469,7 @@ public class Editors {
 		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("POISON", new EditControl<>(Proc.POISON.class, (t) -> {
-			t.prob = MathUtil.clip(t.prob, 0, 100);
+			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0) {
 				t.damage = t.itv = t.time = t.type.damage_type = 0;
 				t.type.unstackable = t.type.ignoreMetal = t.type.modifAffected = false;
@@ -477,13 +485,13 @@ public class Editors {
 		map().put("CRITI", imu);
 
 		map().put("SATK", new EditControl<>(Proc.PM.class, (t) -> {
-			t.prob = MathUtil.clip(t.prob, 0, 100);
+			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0)
 				t.mult = 0;
 		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("COUNTER", new EditControl<>(Proc.COUNTER.class, (t) -> {
-			t.prob = MathUtil.clip(t.prob,0,100);
+			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob > 0) {
 				t.type.procType = MathUtil.clip(t.type.procType,0,3);
 				t.type.counterWave = MathUtil.clip(t.type.counterWave, 0, 2);
@@ -497,7 +505,7 @@ public class Editors {
 		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("IMUATK", new EditControl<>(Proc.IMUATK.class, (t) -> {
-			t.prob = MathUtil.clip(t.prob, 0, 100);
+			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0)
 				t.time = t.cd = 0;
 			else {
@@ -507,7 +515,7 @@ public class Editors {
 		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("DMGCUT", new EditControl<>(Proc.DMGCUT.class, (t) -> {
-			t.prob = MathUtil.clip(t.prob, 0, 100);
+			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0) {
 				t.dmg = 0;
 				t.reduction = 0;
@@ -517,7 +525,7 @@ public class Editors {
 		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("DMGCAP", new EditControl<>(Proc.DMGCAP.class, (t) -> {
-			t.prob = MathUtil.clip(t.prob, 0, 100);
+			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0) {
 				t.dmg = 0;
 				t.type.traitIgnore = t.type.nullify = t.type.procs = t.type.magnif = false;
@@ -526,13 +534,13 @@ public class Editors {
 		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("POIATK", new EditControl<>(Proc.PM.class, (t) -> {
-			t.prob = MathUtil.clip(t.prob, 0, 100);
+			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0)
 				t.mult = 0;
 		}));
 
 		map().put("VOLC", new EditControl<>(Proc.VOLC.class, (t) -> {
-			t.prob = MathUtil.clip(t.prob, 0, 100);
+			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0) {
 				t.dis_0 = t.dis_1 = t.time = 0;
 			} else {
@@ -541,7 +549,7 @@ public class Editors {
 		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("MINIVOLC", new EditControl<>(Proc.MINIVOLC.class, (t) -> {
-			t.prob = MathUtil.clip(t.prob, 0, 100);
+			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0) {
 				t.dis_0 = t.dis_1 = t.time = t.mult = 0;
 			} else {
@@ -553,7 +561,7 @@ public class Editors {
 		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("ARMOR", new EditControl<>(Proc.PTM.class, (t) -> {
-			t.prob = MathUtil.clip(t.prob, 0, 100);
+			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0) {
 				t.mult = t.time = 0;
 			} else {
@@ -562,7 +570,7 @@ public class Editors {
 		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("SPEED", new EditControl<>(Proc.SPEED.class, (t) -> {
-			t.prob = MathUtil.clip(t.prob, 0, 100);
+			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0) {
 				t.speed = t.time = t.type = 0;
 			} else {
@@ -572,7 +580,7 @@ public class Editors {
 		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("MINIWAVE", new EditControl<>(Proc.MINIWAVE.class, (t) -> {
-			t.prob = MathUtil.clip(t.prob, 0, 100);
+			t.prob = Math.max(0, Math.min(t.prob, 100));
 
 			if (t.prob == 0) {
 				t.lv = t.multi = 0;
@@ -651,7 +659,7 @@ public class Editors {
 		map().put("SHIELDBREAK", prob);
 
 		map().put("DEATHSURGE", new EditControl<>(Proc.VOLC.class, t -> {
-			t.prob = MathUtil.clip(t.prob, 0, 100);
+			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0)
 				t.dis_0 = t.dis_1 = t.time = 0;
 			else
@@ -664,8 +672,8 @@ public class Editors {
 		map().put("BOUNTY", new EditControl<>(Proc.MULT.class, t -> {}));
 		map().put("ATKBASE", new EditControl<>(Proc.MULT.class, t -> {}));
 
-		map().put("WORKERLV", new EditControl<>(Proc.PM.class, t -> {
-			t.prob = MathUtil.clip(t.prob, 0, 100);
+		map().put("WORKERLV", new EditControl<>(Proc.WORKLV.class, t -> {
+			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0)
 				t.mult = 0;
 			else if (t.mult == 0)
@@ -675,7 +683,7 @@ public class Editors {
 		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("CDSETTER", new EditControl<>(Proc.CDSETTER.class, (t) -> {
-			t.prob = MathUtil.clip(t.prob, 0, 100);
+			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0) {
 				t.amount = t.slot = t.type = 0;
 			} else {
@@ -727,7 +735,7 @@ public class Editors {
 
 		map().put("BSTHUNT", new EditControl<>(Proc.BSTHUNT.class, (t) -> {
 			if (t.type.active) {
-				t.prob = MathUtil.clip(t.prob, 0, 100);
+				t.prob = Math.max(0, Math.min(t.prob, 100));
 				if (t.prob == 0)
 					t.time = 0;
 				else
@@ -747,7 +755,7 @@ public class Editors {
 		}, eg -> t -> setComponentVisibility(eg, t.retreatDist > 0, 1, 2)));
 
 		map().put("DEMONVOLC", new EditControl<>(Proc.PM.class, (t) -> {
-			t.prob = MathUtil.clip(t.prob, 0, 100);
+			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0)
 				t.mult = 0;
 			else if (t.mult == 0)
@@ -765,7 +773,7 @@ public class Editors {
 		}));
 
 		map().put("RANGESHIELD", new EditControl<>(Proc.RANGESHIELD.class, (t) -> {
-			t.prob = MathUtil.clip(t.prob, 0, 100);
+			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0) {
 				t.mult = 0;
 				t.type.range = false;

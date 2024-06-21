@@ -133,7 +133,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 	}
 	public int getEffMult(int dmg) {
 		if (e.status.weak[0] > 0)
-			dmg = dmg * e.status.weak[1] / 100;
+			dmg = (int) (dmg * e.status.weak[1] / 100);
 		if (e.status.strengthen != 0)
 			dmg += dmg * e.status.strengthen / 100;
 		dmg *= e.auras.getAtkAura();
@@ -203,9 +203,9 @@ public abstract class AtkModelEntity extends AtkModelAb {
 	/**
 	 * Generate counter surge
 	 */
-	public void getCounterSurge(float pos, Proc.ProcItem itm) { //Item will always be either minisurge or surge, so no worries
+	public void getCounterSurge(float pos, Proc.VOLC itm) {
 		Proc p = Proc.blank();
-		int mult = e.getProc().DEMONVOLC.mult;
+		double mult = e.getProc().DEMONVOLC.mult;
 
 		int atk = (int)(getAttack(data.getAtkModel(data.firstAtk(), 0), p) * (mult / 100.0));
 		if (itm instanceof Proc.MINIVOLC) {
@@ -214,12 +214,12 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		}
 
 		AttackSimple as = new AttackSimple(e, this, atk, e.traits, getAbi(), p, 0, 0, data.getAtkModel(data.firstAtk(), 0), 0, false);
-		int addp = itm.get(1) == itm.get(2) ? itm.get(1) : itm.get(1) + (int) (b.r.nextFloat() * (itm.get(2) - itm.get(1)));
+		int addp = itm.dis_0 == itm.dis_1 ? itm.dis_0 : itm.dis_0 + (int) (b.r.nextFloat() * (itm.dis_1 - itm.dis_0));
 		float p0 = pos + getDire() * addp;
 		float sta = p0 + (getDire() == 1 ? W_VOLC_PIERCE : W_VOLC_INNER);
 		float end = p0 - (getDire() == 1 ? W_VOLC_INNER : W_VOLC_PIERCE);
 
-		e.summoned.add(new ContVolcano(new AttackVolcano(e, as, sta, end, mult >= 100 ? WT_VOLC : WT_MIVC), p0, e.layer, itm.get(3), true));
+		e.summoned.add(new ContVolcano(new AttackVolcano(e, as, sta, end, mult >= 100 ? WT_VOLC : WT_MIVC), p0, e.layer, itm.time, true));
 	}
 
 	@Override
@@ -262,7 +262,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		if (proc.exists()) {
 			SUMMON.TYPE conf = proc.type;
 			if (conf.on_hit || (conf.on_kill && e.health <= 0)) {
-				int rst = e.getProc().IMUSUMMON.mult;
+				double rst = e.getProc().IMUSUMMON.mult;
 				summon(proc, e, atk, rst);
 			}
 		}
@@ -301,7 +301,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		Proc.THEME t = getProc(matk).THEME;
 		if (t.prob != 0 && (t.prob == 100 || b.r.nextFloat() * 100 < t.prob))
 			b.changeTheme(t);
-		Proc.PM w = getProc(matk).WORKERLV;
+		Proc.WORKLV w = getProc(matk).WORKERLV;
 		if (w.prob != 0 && (w.prob == 100 || b.r.nextFloat() * 100 < w.prob))
 			b.changeWorkerLv(w.mult);
 	}
@@ -378,7 +378,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		return blindspot;
 	}
 
-	protected void summon(SUMMON proc, Entity ent, Object acs, int resist) {
+	protected void summon(SUMMON proc, Entity ent, Object acs, double resist) {
 		if (resist < 100) {
 			SUMMON.TYPE conf = proc.type;
 			if (conf.same_health && ent.health <= 0)

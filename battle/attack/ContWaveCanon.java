@@ -73,7 +73,7 @@ public class ContWaveCanon extends ContWaveAb {
 			atk.capture();
 			for (AbEntity e : atk.capt)
 				if (e instanceof Entity) {
-					int waves = e.getProc().IMUWAVE.block;
+					float waves = e.getProc().IMUWAVE.block;
 					if (waves != 0) {
 						if (waves > 0)
 							((Entity) e).anim.getEff(STPWAVE);
@@ -81,7 +81,7 @@ public class ContWaveCanon extends ContWaveAb {
 							deactivate(e);
 							return;
 						} else
-							atk.raw = atk.raw * (100 - waves) / 100;
+							atk.raw = (int) (atk.raw * (100 - waves) / 100);
 					}
 				}
 		}

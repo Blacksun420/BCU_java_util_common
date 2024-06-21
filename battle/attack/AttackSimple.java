@@ -88,7 +88,7 @@ public class AttackSimple extends AttackAb {
 			int r = (int) (model.b.r.nextFloat() * ents.size());
 			capt.add(ents.get(r));
 		} else
-			capt.sort(Comparator.comparingInt(e -> -e.getProc().REMOTESHIELD.prob));
+			capt.sort(Comparator.comparingDouble(e -> -e.getProc().REMOTESHIELD.prob));
 	}
 
 	/**

@@ -18,6 +18,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
@@ -53,7 +54,7 @@ public class Formatter {
 				fruitMag = 1 + BasisSet.current().t().getFruit(trs) * 0.2 / 3;
 		}
 
-		public String abs(int v) {
+		public String abs(double v) {
 			return "" + Math.abs(v);
 		}
 
@@ -112,7 +113,7 @@ public class Formatter {
 			return df.format((isEnemy ? 467.25 : 332.5) + 200 * (lv - 1));
 		}
 
-		public String resDiv(int mult) {
+		public String resDiv(double mult) {
 			return df.format(mult / 100.0);
 		}
 	}
@@ -414,7 +415,12 @@ public class Formatter {
 			int pre = ind;
 			while (ch != '+' && ch != '-' && ch != '*' && ch != '/' && ch != '%' && ch != '&' && ch != '|' && ch != '^' && ind < p1)
 				ch = str.charAt(++ind);
-			return neg * (Integer) new RefObj(pre, ind).eval();
+			Number n = (Number) new RefObj(pre, ind).eval();
+			if (n instanceof Integer)
+				return neg * (Integer) new RefObj(pre, ind).eval();
+			if (n instanceof Double)
+				return (int)(neg * (Double) new RefObj(pre, ind).eval());
+			return (int)(neg * (Float) new RefObj(pre, ind).eval());
 		}
 
 		private int readNumber() {

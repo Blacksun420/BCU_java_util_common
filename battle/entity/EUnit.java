@@ -27,7 +27,7 @@ public class EUnit extends Entity {
 
 	public static class OrbHandler extends BattleObj {
 
-		protected static float getOrb(int mult, AttackAb atk, SortedPackSet<Trait> traits, Treasure t) {
+		protected static float getOrb(double mult, AttackAb atk, SortedPackSet<Trait> traits, Treasure t) {
 			if(atk.origin.model instanceof AtkModelUnit)
 				return ((EUnit) ((AtkModelUnit) atk.origin.model).e).getOrb(mult, atk.trait, traits, t);
 			return ((EUnit) ((AtkModelUnit)atk.model).e).getOrb(mult, atk.trait, traits, t);
@@ -145,8 +145,8 @@ public class EUnit extends Entity {
 	}
 
 	@Override
-	public float getResistValue(AttackAb atk, boolean SageRes, int procResist) {
-		float ans = 1f - procResist / 100f;
+	public float getResistValue(AttackAb atk, boolean SageRes, double procResist) {
+		float ans = (float) (1f - procResist / 100f);
 
 		if (SageRes && atk.trait.contains(BCTraits.get(TRAIT_SAGE)) && (getAbi() & AB_SKILL) != 0)
 			ans *= SUPER_SAGE_HUNTER_RESIST;
@@ -238,13 +238,13 @@ public class EUnit extends Entity {
 		return ans;
 	}
 
-	private float getOrb(int mult, SortedPackSet<Trait> eTraits, SortedPackSet<Trait> traits, Treasure t) {
+	private float getOrb(double mult, SortedPackSet<Trait> eTraits, SortedPackSet<Trait> traits, Treasure t) {
 		final int ORB_LV = mult < 500 && mult > 100 ? mult < 300 ? ORB_STRONG : ORB_MASSIVE : -1;
 		final float[] ORB_MULTIS = ORB_LV == -1 ? new float[0] : ORB_LV == ORB_STRONG ? ORB_STR_ATK_MULTI : ORB_MASSIVE_MULTI;
 
 		float ini = 1;
 		if (!traits.isEmpty())
-			ini = (mult/100f) + (ORB_LV == ORB_STRONG ? 0.3f : mult > 100 ? 1f : 0f) / 3 * t.getFruit(traits);
+			ini = (float) ((mult/100f) + (ORB_LV == ORB_STRONG ? 0.3f : mult > 100 ? 1f : 0f) / 3 * t.getFruit(traits));
 
 		Orb orbs = ((MaskUnit)data).getOrb();
 		if(orbs != null && level.getOrbs() != null) {

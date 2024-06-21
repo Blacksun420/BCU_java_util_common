@@ -22,7 +22,7 @@ public class AtkModelUnit extends AtkModelEntity {
 	@Override
 	public int getEffMult(int dmg) {
 		if (e.status.weak[0] > 0)
-			dmg = dmg * e.status.weak[1] / 100;
+			dmg = (int)(dmg * e.status.weak[1] / 100);
 		if (e.status.strengthen != 0)
 			dmg += dmg * (e.status.strengthen + elu.getInc(C_STRONG)) / 100;
 		dmg *= e.auras.getAtkAura();

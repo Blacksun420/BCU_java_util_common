@@ -32,7 +32,7 @@ public class ECastle extends AbEntity {
 
 	@Override
 	public float calcDamageMult(int dmg, Entity e, MaskAtk matk) {
-		float ans = 1 + (matk.getProc().ATKBASE.mult / 100f);
+		float ans = (float)(1 + (matk.getProc().ATKBASE.mult / 100f));
 		Proc.PM satk = matk.getProc().SATK;
 		if (satk.mult > 0) {
 			ans *= 1 + ((100 + satk.mult) * 0.01 / (satk.prob / 100f));
@@ -58,7 +58,7 @@ public class ECastle extends AbEntity {
 		int ans = atk.atk;
 		ans *= 1 + atk.getProc().ATKBASE.mult / 100.0;
 
-		int satk = atk.getProc().SATK.mult;
+		double satk = atk.getProc().SATK.mult;
 		if (satk > 0) {
 			ans *= (100 + satk) * 0.01;
 			sb.lea.add(new EAnimCont(pos, 9, effas().A_SATK.getEAnim(DefEff.DEF), -75f));

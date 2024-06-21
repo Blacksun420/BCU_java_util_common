@@ -281,7 +281,7 @@ public class CommonStatic {
 	@StaticPermitted(StaticPermitted.Type.FINAL)
 	public static final BigInteger min = new BigInteger(String.valueOf(Integer.MIN_VALUE));
 	@StaticPermitted(StaticPermitted.Type.FINAL)
-	public static final BigDecimal mindbl = new BigDecimal(String.valueOf(Double.MIN_VALUE));
+	public static final BigDecimal maxfbl = new BigDecimal(String.valueOf(Float.MAX_VALUE));
 
 	public static BCAuxAssets getBCAssets() {
 		return UserProfile.getStatic("BCAuxAssets", BCAuxAssets::new);
@@ -409,12 +409,10 @@ public class CommonStatic {
 				return Integer.MAX_VALUE;
 			} else if(big.compareTo(min) < 0) {
 				return Integer.MIN_VALUE;
-			} else {
+			} else
 				return Integer.parseInt(v);
-			}
-		} else {
+		} else
 			throw new IllegalStateException("Value "+v+" isn't a number");
-		}
 	}
 
 	public static double safeParseDouble(String v) {
@@ -423,30 +421,22 @@ public class CommonStatic {
 
 			if(big.compareTo(maxdbl) > 0) {
 				return Double.MAX_VALUE;
-			} else if(big.compareTo(mindbl) < 0) {
-				return Double.MIN_VALUE;
-			} else {
+			} else
 				return Double.parseDouble(v);
-			}
-		} else {
+		} else
 			throw new IllegalStateException("Value "+v+" isn't a number");
-		}
 	}
 
 	public static float safeParseFloat(String v) {
 		if(isDouble(v)) {
 			BigDecimal big = new BigDecimal(v);
 
-			if(big.compareTo(maxdbl) > 0) {
+			if(big.compareTo(maxfbl) > 0) {
 				return Float.MAX_VALUE;
-			} else if(big.compareTo(mindbl) < 0) {
-				return Float.MIN_VALUE;
-			} else {
+			} else
 				return Float.parseFloat(v);
-			}
-		} else {
+		} else
 			throw new IllegalStateException("Value "+v+" isn't a number");
-		}
 	}
 
 	public static String[] getPackContentID(String input) {

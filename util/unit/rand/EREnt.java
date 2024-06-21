@@ -1,14 +1,13 @@
 package common.util.unit.rand;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-import common.io.json.JsonField;
-import common.util.unit.AbEnemy;
 import common.io.json.JsonClass;
+import common.io.json.JsonField;
 import common.pack.Identifier;
 import common.system.Copable;
 import common.util.BattleStatic;
+import common.util.unit.AbEnemy;
 import org.jetbrains.annotations.Nullable;
 
 @JsonClass(noTag = JsonClass.NoTag.LOAD)

@@ -18,21 +18,6 @@ import java.util.function.Consumer;
 public class WebFileIO {
 
 	public static final int BUFFER = 1 << 12, CHUNK = 1 << 20;
-	public static final String token;
-	static {
-		String path = "common/Security.properties";
-		InputStreamReader strm = new InputStreamReader(ClassLoader.getSystemResourceAsStream(path));
-		BufferedReader br = new BufferedReader(strm);
-		String temp = "=";
-		try {
-			temp = br.readLine();
-			strm.close();
-			br.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		token = temp.split("=")[1];
-	}
 
 	@StaticPermitted(StaticPermitted.Type.TEMP)
 	private static HttpTransport transport;
@@ -105,20 +90,13 @@ public class WebFileIO {
 			downloader.setChunkSize(size);
 			downloader.setProgressListener(new Progress(c));
 		}
-		HttpHeaders headers = null;
-		if (url.contains(UpdateCheck.REPO)) {
-			headers = new HttpHeaders();
-			headers.setAuthorization(token);
-		}
-		downloader.download(gurl, headers, out);
+
+		downloader.download(gurl, out);
 		out.flush();
 		out.close();
 	}
 
 	public static URLConnection getConnection(String url) throws IOException {
-		URLConnection conn = new URL(url).openConnection();
-		if (url.contains(UpdateCheck.REPO))
-			conn.setRequestProperty("Authorization", token);
-		return conn;
+        return new URL(url).openConnection();
 	}
 }

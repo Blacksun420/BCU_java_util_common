@@ -38,7 +38,7 @@ public abstract class DataEntity extends Data implements MaskEntity {
 				nabi |= 1 << i + abiSub;
 		}
 
-		int str = getProc().DMGINC.mult;
+		int str = (int) getProc().DMGINC.mult;
 		if ((str >= 150 && str < 300) || (str >= 450 && str < 500) || (str >= 750 && str < 1500) || str >= 2250)
 			nabi |= 1;
 		if ((str >= 300 && str < 500) || str >= 1500)
@@ -46,7 +46,7 @@ public abstract class DataEntity extends Data implements MaskEntity {
 		if (str >= 500)
 			nabi |= 1 << 16;
 
-		str = getProc().DEFINC.mult;
+		str = (int) getProc().DEFINC.mult;
 		if ((str >= 200 && str < 400) || (str >= 800 && str < 2400) || str >= 4800)
 			nabi |= 1;
 		if ((str >= 400 && str < 600) || (str >= 800 && str < 1200) || str >= 2400)

@@ -80,8 +80,8 @@ public class BasisSet extends Basis implements Copable<BasisSet> {
 							boolean res = false;
 
 							for(Form f : u.forms) {
-								int atk = f.du.getProc().DMGINC.mult;
-								int def = f.du.getProc().DEFINC.mult;
+								int atk = (int) f.du.getProc().DMGINC.mult;
+								int def = (int) f.du.getProc().DEFINC.mult;
 								str |= (atk > 100 && atk < 300) || (def > 100 && def < 400);
 								mas |= atk >= 300 && atk < 500;
 								res |= def >= 400 && def < 600;

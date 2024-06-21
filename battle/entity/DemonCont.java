@@ -7,7 +7,7 @@ import common.util.pack.EffAnim;
 public class DemonCont extends EAnimCont {
 
     private final Entity ent;
-    private final Proc.ProcItem volc;
+    private final Proc.VOLC volc;
 
     public DemonCont(Entity e, AttackVolcano atk) {
         super(e.pos, e.layer, (e.dire == -1 ? effas().A_COUNTERSURGE : effas().A_E_COUNTERSURGE).getEAnim(EffAnim.DefEff.DEF));

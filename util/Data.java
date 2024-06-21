@@ -29,7 +29,7 @@ public class Data {
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class PROB extends ProcItem {
 			@Order(0)
-			public int prob;
+			public float prob;
 
 			@Override
 			public boolean perform(CopRand r) {
@@ -44,13 +44,13 @@ public class Data {
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class MULT extends ProcItem {
 			@Order(0)
-			public int mult;
+			public double mult;
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class PM extends PROB {
 			@Order(1)
-			public int mult;
+			public double mult;
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -68,13 +68,13 @@ public class Data {
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class PTM extends PT {
 			@Order(2)
-			public int mult;
+			public double mult;
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class IMU extends MULT {
 			@Order(1)
-			public int block;
+			public float block;
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -82,15 +82,20 @@ public class Data {
 			@Order(2)
 			public int smartImu;
 		}
+
 		@JsonClass(noTag = NoTag.LOAD)
-		public static class WAVE extends ProcItem {
+		public static class WORKLV extends PROB {
+			@Order(1)
+			public int mult; //The same as PM, but mult is an int
+		}
+
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class WAVE extends PROB {
 			@JsonClass(noTag = NoTag.LOAD)
 			public static class TYPE extends IntType {
 				@Order(0)
 				public boolean hitless;
 			}
-			@Order(0)
-			public int prob;
 			@Order(1)
 			public int lv;
 			@Order(2)
@@ -98,20 +103,9 @@ public class Data {
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
-		public static class MINIWAVE extends ProcItem {
-			@JsonClass(noTag = NoTag.LOAD)
-			public static class TYPE extends IntType {
-				@Order(0)
-				public boolean hitless;
-			}
-			@Order(0)
-			public int prob;
-			@Order(1)
-			public int lv;
-			@Order(2)
-			public int multi;
+		public static class MINIWAVE extends WAVE {
 			@Order(3)
-			public TYPE type = new TYPE();
+			public int multi;
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -121,14 +115,12 @@ public class Data {
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
-		public static class VOLC extends ProcItem {
+		public static class VOLC extends PROB {
 			@JsonClass(noTag = NoTag.LOAD)
 			public static class TYPE extends IntType {
 				@Order(0)
 				public boolean hitless;
 			}
-			@Order(0)
-			public int prob;
 			@Order(1)
 			public int dis_0;
 			@Order(2)
@@ -140,30 +132,15 @@ public class Data {
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
-		public static class MINIVOLC extends ProcItem {
-			@JsonClass(noTag = NoTag.LOAD)
-			public static class TYPE extends IntType {
-				@Order(0)
-				public boolean hitless;
-			}
-			@Order(0)
-			public int prob;
-			@Order(1)
-			public int dis_0;
-			@Order(2)
-			public int dis_1;
-			@Order(3)
-			public int time;
-			@Order(4)
-			public int mult;
+		public static class MINIVOLC extends VOLC {
 			@Order(5)
-			public TYPE type = new TYPE();
+			public int mult;
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class STRONG extends ProcItem {
 			@Order(0)
-			public int health;
+			public float health;
 			@Order(1)
 			public int mult;
 		}
@@ -248,15 +225,13 @@ public class Data {
 			@Order(0)
 			public TYPE type = new TYPE();
 			@Order(1)
-			public int prob;
+			public float prob;
 			@Order(2)
 			public int time;
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
-		public static class CDSETTER extends ProcItem {
-			@Order(0)
-			public int prob;
+		public static class CDSETTER extends PROB {
 			@Order(1)
 			public int amount;
 			@Order(2)
@@ -300,9 +275,7 @@ public class Data {
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
-		public static class MOVEWAVE extends ProcItem {
-			@Order(0)
-			public int prob;
+		public static class MOVEWAVE extends PROB {
 			@Order(1)
 			public int speed;
 			@Order(2)
@@ -316,7 +289,7 @@ public class Data {
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
-		public static class POISON extends ProcItem {
+		public static class POISON extends PT {
 
 			@JsonClass(noTag = NoTag.LOAD)
 			public static class TYPE extends IntType {
@@ -330,11 +303,6 @@ public class Data {
 				@Order(3)
 				public boolean modifAffected;
 			}
-
-			@Order(0)
-			public int prob;
-			@Order(1)
-			public int time;
 			@Order(2)
 			public int damage;
 			@Order(3)
@@ -366,7 +334,7 @@ public class Data {
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
-		public static class SUMMON extends ProcItem {
+		public static class SUMMON extends PROB {
 
 			@JsonClass(noTag = NoTag.LOAD)
 			public static class TYPE extends IntType {
@@ -390,8 +358,6 @@ public class Data {
 				public int pass_proc;
 			}
 
-			@Order(0)
-			public int prob;
 			@Order(1)
 			public Identifier<?> id;
 			@Order(2)
@@ -431,7 +397,7 @@ public class Data {
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
-		public static class COUNTER extends ProcItem {
+		public static class COUNTER extends PROB {
 			@JsonClass(noTag = NoTag.LOAD)
 			public static class TYPE extends IntType {
 				@BitCount(2)
@@ -448,8 +414,6 @@ public class Data {
 				public boolean areaAttack;
 			}
 
-			@Order(0)
-			public int prob;
 			@Order(1)
 			public int damage;
 			@Order(2)
@@ -461,7 +425,7 @@ public class Data {
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
-		public static class DMGCUT extends ProcItem {
+		public static class DMGCUT extends PROB {
 			@JsonClass(noTag = NoTag.LOAD)
 			public static class TYPE extends IntType {
 				@Order(0)
@@ -471,8 +435,6 @@ public class Data {
 				@Order(2)
 				public boolean magnif;
 			}
-			@Order(0)
-			public int prob;
 			@Order(1)
 			public int dmg;
 			@Order(2)
@@ -482,7 +444,7 @@ public class Data {
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
-		public static class DMGCAP extends ProcItem {
+		public static class DMGCAP extends PROB {
 			@JsonClass(noTag = NoTag.LOAD)
 			public static class TYPE extends IntType {
 				@Order(0)
@@ -494,8 +456,6 @@ public class Data {
 				@Order(3)
 				public boolean magnif;
 			}
-			@Order(0)
-			public int prob;
 			@Order(1)
 			public int dmg;
 			@Order(2)
@@ -503,7 +463,7 @@ public class Data {
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
-		public static class REMOTESHIELD extends ProcItem {
+		public static class REMOTESHIELD extends PROB {
 			@JsonClass(noTag = NoTag.LOAD)
 			public static class TYPE extends IntType {
 				@Order(0)
@@ -513,8 +473,6 @@ public class Data {
 				@Order(2)
 				public boolean waves;
 			}
-			@Order(0)
-			public int prob;
 			@Order(1)
 			public int minrange;
 			@Order(2)
@@ -660,13 +618,15 @@ public class Data {
 				try {
 					Field[] fs = getDeclaredFields();
 					for (Field f : fs)
-						if (f.getType() == int.class) {
-							Object o = f.get(this);
-
-							if(f.getName().equals("prob") && ((Integer) o) == 0)
+						if (f.getType() == double.class || f.getType() == float.class) {
+							double d = f.getDouble(this);
+							if(f.getName().equals("prob") && d == 0)
 								return false;
 
-							if (((Integer) o) != 0)
+							if (d != 0)
+								return true;
+						} else if (f.getType() == int.class) {
+							if (f.getInt(this) != 0)
 								return true;
 						} else if (f.getType() == Identifier.class) {
 							if (f.get(this) != null)
@@ -684,7 +644,8 @@ public class Data {
 			public int get(int i) {
 				try {
 					Field f = getDeclaredFields()[i];
-					return f.getType() == int.class ? f.getInt(this) : ((IntType) f.get(this)).toInt();
+					return f.getType() == int.class ? f.getInt(this) : f.getType() == double.class || f.getType() == float.class ? (int)f.getDouble(this) :
+							((IntType) f.get(this)).toInt();
 				} catch (Exception e) {
 					e.printStackTrace();
 					return 0;
@@ -746,10 +707,10 @@ public class Data {
 							loc += len;
 						}
 					Field f = fs[i - loc];
-					if (f.getType() == int.class)
-						f.set(this, v);
-					else if (IntType.class.isAssignableFrom(f.getType()))
+					if (IntType.class.isAssignableFrom(f.getType()))
 						((IntType)f.get(this)).set(lastloc, v);
+					else
+						f.set(this, v);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -921,7 +882,7 @@ public class Data {
 		@Order(54)
 		public final BSTHUNT BSTHUNT = new BSTHUNT();
 		@Order(55)
-		public final PM WORKERLV = new PM();
+		public final WORKLV WORKERLV = new WORKLV();
 		@Order(56)
 		public final CDSETTER CDSETTER = new CDSETTER();
 		@Order(57)
@@ -1022,9 +983,8 @@ public class Data {
 					String tag = f.getName();
 					ProcItem proc = (ProcItem) f.get(this);
 
-					if(proc.exists()) {
+					if(proc.exists())
 						obj.add(tag, JsonEncoder.encode(proc));
-					}
 				} catch (IllegalAccessException e) {
 					e.printStackTrace();
 				}

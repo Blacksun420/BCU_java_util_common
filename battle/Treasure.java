@@ -377,20 +377,20 @@ public class Treasure extends Data {
 	 * @param traits Trait list for fruit buff
 	 * @return Multiplied value
 	 */
-	public float getATK(int mult, SortedPackSet<Trait> traits) {
-		float ini = (mult/100f) + (mult >= 300 ? 1f : mult > 100 ? 0.3f : 0f) / 3 * getFruit(traits);
+	public float getATK(double mult, SortedPackSet<Trait> traits) {
+		float ini = (float) ((mult/100f) + (mult >= 300 ? 1f : mult > 100 ? 0.3f : 0f) / 3 * getFruit(traits));
 		if (mult > 100 && mult < 500)
 			return ini * 1 - (b.getInc(mult >= 300 ? C_MASSIVE : C_GOOD) * 0.01f);
 		return ini;
 	}
 
-	public float getDEF(int mult, SortedPackSet<Trait> eTraits, SortedPackSet<Trait> traits, Orb orb, Level level) {
+	public float getDEF(double mult, SortedPackSet<Trait> eTraits, SortedPackSet<Trait> traits, Orb orb, Level level) {
 		final int ORB_LV = mult < 600 && mult > 100 ? mult < 400 ? ORB_STRONG : ORB_RESISTANT : -1;
 		final byte[] ORB_MULTIS = ORB_LV == -1 ? new byte[0] : ORB_LV == ORB_STRONG ? ORB_STR_DEF_MULTI : ORB_RESISTANT_MULTI;
 
 		float ini = 1;
 		if (!traits.isEmpty()) {
-			ini = (100f/mult);
+			ini = (float) (100f/mult);
 			if (ORB_LV != -1)
 				ini = ini - (ORB_LV == ORB_STRONG ? 0.1f : 0.05f) / 3 * getFruit(traits);
 			else if (mult >= 600)

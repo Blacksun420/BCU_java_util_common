@@ -4,9 +4,7 @@ import common.battle.StageBasis;
 import common.battle.attack.AttackAb;
 import common.battle.data.MaskAtk;
 import common.battle.data.MaskUnit;
-import common.util.anim.EAnimD;
 import common.util.anim.EAnimU;
-import common.util.pack.EffAnim.DefEff;
 import common.util.unit.Level;
 
 public class ESpirit extends EUnit {
