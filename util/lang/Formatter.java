@@ -62,6 +62,12 @@ public class Formatter {
 			return Identifier.get(id) + "";
 		}
 
+		public String dispTimeD(double time) {
+			if (useSecond)
+				return toSecond((int)time) + "s";
+			return (int)time + "f";
+		}
+
 		public String dispTime(int time) {
 			if (useSecond)
 				return toSecond(time) + "s";
