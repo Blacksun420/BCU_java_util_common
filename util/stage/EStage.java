@@ -66,8 +66,12 @@ public class EStage extends BattleObj {
 				else
 					rem[i] = data.respawn_0 + (int) (b.r.nextFloat() * (data.respawn_1 - data.respawn_0));
 
-				if (data.boss >= 1 && !b.shock)
-					b.shock = true;
+				if (data.boss >= 1) {
+					if (!b.shock)
+						b.shock = true;
+					if (s.bossBarrier)
+						b.baseBarrier++;
+				}
 
 				if (CommonStatic.getConfig().shake && data.boss == 2 && b.shakeCoolDown[1] == 0) {
 					b.shake = SHAKE_MODE_BOSS;

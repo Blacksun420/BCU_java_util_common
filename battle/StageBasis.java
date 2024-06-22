@@ -90,6 +90,7 @@ public class StageBasis extends BattleObj {
 	public Identifier<Music> mus = null;
 	private THEME.TYPE themeType;
 	private boolean bgEffectInitialized = false;
+	public int baseBarrier = 0;
 
 	public StageBasis(BattleField bf, EStage stage, BasisLU bas, int[] ints, long seed, boolean buttonDelayOn, boolean sav) {
 		b = bas;

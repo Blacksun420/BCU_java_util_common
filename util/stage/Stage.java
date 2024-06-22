@@ -68,6 +68,7 @@ public class Stage extends Data
 	public Limit lim;
 	@JsonField(generic = Replay.class, alias = ResourceLocation.class)
 	public ArrayList<Replay> recd = new ArrayList<>();
+	public boolean bossBarrier = false;
 
 	@JsonClass.JCConstructor
 	public Stage() {

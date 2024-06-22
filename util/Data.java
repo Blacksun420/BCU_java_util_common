@@ -1532,6 +1532,8 @@ public class Data {
 	public static final byte A_WEAKAURASTR = -16;
 	public static final byte A_STRAURAWEAK = -17;
 	public static final byte RANGESHIELD_SINGLE = -18;
+	public static final byte A_GUARD = -19;
+	public static final byte A_GUARD_BRK = -20;
 
 	// Combo index
 	public static final byte C_ATK = 0;

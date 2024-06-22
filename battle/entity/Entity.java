@@ -299,6 +299,14 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					CommonStatic.setSE(ind == 0 ? SE_WARP_ENTER : SE_WARP_EXIT);
 					e.status.warp[ind] = ea.len(pa);
 					break;
+				} case A_GUARD: {
+					effs[A_B] = effas().A_E_GUARD.getEAnim(GuardEff.NONE);
+					CommonStatic.setSE(SE_BARRIER_NON);
+					break;
+				} case A_GUARD_BRK: {
+					effs[A_B] = effas().A_E_GUARD.getEAnim(GuardEff.BREAK);
+					CommonStatic.setSE(SE_BARRIER_ATK);
+					break;
 				} case BREAK_ABI: {
 					effs[A_B] = (dire == -1 ? effas().A_B : effas().A_E_B).getEAnim(BarrierEff.BREAK);
 					CommonStatic.setSE(SE_BARRIER_ABI);

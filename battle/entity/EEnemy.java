@@ -8,8 +8,10 @@ import common.battle.data.MaskAtk;
 import common.battle.data.MaskEnemy;
 import common.pack.SortedPackSet;
 import common.pack.UserProfile;
+import common.util.Data;
 import common.util.anim.AnimU;
 import common.util.anim.EAnimU;
+import common.util.pack.EffAnim;
 import common.util.stage.Revival;
 import common.util.unit.Enemy;
 import common.util.unit.Trait;
@@ -47,6 +49,16 @@ public class EEnemy extends Entity {
 			if (!anim.deathSurge && rev.soul != null)
 				anim.dead = rev.soul.get().getEAnim(AnimU.SOUL[0]).len();
 		}
+		if (mark >= 1 && basis.st.bossBarrier) {
+			basis.baseBarrier--;
+			if (basis.baseBarrier == 0) {
+				if (basis.ebase instanceof ECastle) {
+					((ECastle) basis.ebase).guard = effas().A_E_GUARD.getEAnim(EffAnim.GuardEff.BREAK);
+					CommonStatic.setSE(SE_BARRIER_ATK);
+				} else
+					((EEnemy)basis.ebase).anim.getEff(A_GUARD_BRK);
+			}
+		}
 	}
 
 	@Override
@@ -71,6 +83,15 @@ public class EEnemy extends Entity {
 	protected void sumDamage(int atk, boolean raw) {
 		if (CommonStatic.getConfig().rawDamage == raw)
 			basis.enemyStatistics.get((Enemy)data.getPack())[1] += atk;
+	}
+
+	@Override
+	public void damaged(AttackAb atk) {
+		if (isBase && dire == 1 && basis.baseBarrier > 0) {
+			anim.getEff(A_GUARD);
+			return;
+		}
+		super.damaged(atk);
 	}
 
 	@Override

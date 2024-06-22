@@ -7,6 +7,7 @@ import common.battle.attack.AttackAb;
 import common.battle.attack.AttackVolcano;
 import common.battle.data.MaskAtk;
 import common.util.anim.EAnimD;
+import common.util.pack.EffAnim.GuardEff;
 import common.util.pack.EffAnim.DefEff;
 import common.util.unit.Enemy;
 
@@ -17,6 +18,7 @@ public class ECastle extends AbEntity {
 	private final StageBasis sb;
 
 	public EAnimD<DefEff> smoke;
+	public EAnimD<GuardEff> guard;
 	public int smokeLayer = -1;
 	public int smokeX = -1;
 
@@ -45,6 +47,12 @@ public class ECastle extends AbEntity {
 
 	@Override
 	public void damaged(AttackAb atk) {
+		if (dire == 1 && sb.baseBarrier > 0) {
+			guard = effas().A_E_GUARD.getEAnim(GuardEff.NONE);
+			CommonStatic.setSE(SE_BARRIER_NON);
+			return;
+		}
+
 		hit = 2;
 
 		if(atk.isLongAtk || atk instanceof AttackVolcano)
@@ -135,6 +143,11 @@ public class ECastle extends AbEntity {
 			} else
 				smoke.update(false);
 		}
+		if (guard != null)
+			if (guard.done())
+				guard = null;
+			else
+				guard.update(false);
 	}
 
 	@Override
