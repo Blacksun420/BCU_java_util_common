@@ -120,6 +120,7 @@ public class StageBasis extends BattleObj {
 		ubase = eu != null ? eu : new ECastle(this, bas);
 		ubase.added(-1, st.len - 800);
 		est.assign(this);
+		est.setBaseBarrier();
 		int sttime = 3;
 		if (st.getCont().getCont() == DefMapColc.getMap("CH")) {
 			if (st.getCont().id.id == 9)

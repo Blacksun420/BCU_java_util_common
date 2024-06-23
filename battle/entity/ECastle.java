@@ -99,6 +99,8 @@ public class ECastle extends AbEntity {
 			sb.shake = SHAKE_MODE_HIT;
 			sb.shakeDuration = SHAKE_MODE_HIT[SHAKE_DURATION];
 			sb.shakeCoolDown[0] = SHAKE_MODE_HIT[SHAKE_COOL_DOWN];
+		} else if (dire == 1) {
+			sb.est.setBaseBarrier();
 		}
 	}
 

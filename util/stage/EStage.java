@@ -66,12 +66,8 @@ public class EStage extends BattleObj {
 				else
 					rem[i] = data.respawn_0 + (int) (b.r.nextFloat() * (data.respawn_1 - data.respawn_0));
 
-				if (data.boss >= 1) {
-					if (!b.shock)
-						b.shock = true;
-					if (s.bossBarrier)
-						b.baseBarrier++;
-				}
+				if (data.boss >= 1 && !b.shock)
+					b.shock = true;
 
 				if (CommonStatic.getConfig().shake && data.boss == 2 && b.shakeCoolDown[1] == 0) {
 					b.shake = SHAKE_MODE_BOSS;
@@ -92,6 +88,18 @@ public class EStage extends BattleObj {
 			}
 		}
 		return null;
+	}
+
+	public void setBaseBarrier() {
+		if (!s.bossBarrier || (s.trail && s.timeLimit != 0 && s.timeLimit * 30 - b.time < 0))
+			return;
+
+		for (int i = 0; i < rem.length; i++) {
+			SCDef.Line data = s.data.getSimple(i);
+
+			if (data.boss >= 1 && num[i] > 0 && killCounter[i] == 0 && inHealth(data) && s.data.allow(b, data.group, Identifier.getOr(data.enemy, AbEnemy.class)))
+				b.baseBarrier += num[i];
+		}
 	}
 
 	public void assign(StageBasis sb) {
