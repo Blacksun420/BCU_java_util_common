@@ -305,7 +305,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					break;
 				} case A_GUARD_BRK: {
 					effs[A_B] = effas().A_E_GUARD.getEAnim(GuardEff.BREAK);
-					CommonStatic.setSE(SE_BARRIER_ATK);
+					CommonStatic.setSE(SE_BARRIER_ABI);
 					break;
 				} case BREAK_ABI: {
 					effs[A_B] = (dire == -1 ? effas().A_B : effas().A_E_B).getEAnim(BarrierEff.BREAK);
@@ -2002,9 +2002,9 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		if (atk.getProc().WEAK.time > 0) {
 			int val = (int) (atk.getProc().WEAK.time * time);
 			float rst = getResistValue(atk, true, checkAIImmunity(atk.getProc().WEAK.mult - 100, getProc().IMUWEAK.smartImu, getProc().IMUWEAK.mult > 0) ? getProc().IMUWEAK.mult : 0);
-			val = (int)(val * (100 - rst) / 100);
 
 			if (rst > 0f) {
+				val = (int)(val * rst);
 				if (val < 0)
 					status.weak[0] = Math.max(status.weak[0], Math.abs(val));
 				else
@@ -2129,7 +2129,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			else
 				b = res < 0;
 			if (checkAIImmunity(atk.getProc().SPEED.speed, getProc().IMUSPEED.smartImu, b))
-				res = 0;
+				res = 1;
 
 			if (res > 0f) {
 				int val = (int) (atk.getProc().SPEED.time * time * res);

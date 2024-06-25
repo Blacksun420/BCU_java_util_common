@@ -308,13 +308,13 @@ public class CommonStatic {
 	}
 
 	public static boolean isDouble(String str) {
-		int dots = 0;
+		boolean dotted = false;
 		for (int i = 0; i < str.length(); i++)
 			if (!Character.isDigit(str.charAt(i))) {
-				if((i == 0 && str.charAt(i) != '-') || str.charAt(i) != '.' || dots > 0)
+				if((i == 0 && str.charAt(i) != '-') || (i > 0 && str.charAt(i) != '.') || dotted)
 					return false;
 				else
-					dots++;
+					dotted = str.charAt(i) == '.';
 			}
 		return true;
 	}

@@ -146,7 +146,7 @@ public class EUnit extends Entity {
 
 	@Override
 	public float getResistValue(AttackAb atk, boolean SageRes, double procResist) {
-		float ans = (float) (1f - procResist / 100f);
+		float ans = (float) ((100f - procResist) / 100f);
 
 		if (SageRes && atk.trait.contains(BCTraits.get(TRAIT_SAGE)) && (getAbi() & AB_SKILL) != 0)
 			ans *= SUPER_SAGE_HUNTER_RESIST;

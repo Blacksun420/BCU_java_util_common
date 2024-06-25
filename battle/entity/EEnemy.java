@@ -54,7 +54,7 @@ public class EEnemy extends Entity {
 			if (basis.baseBarrier == 0) {
 				if (basis.ebase instanceof ECastle) {
 					((ECastle) basis.ebase).guard = effas().A_E_GUARD.getEAnim(EffAnim.GuardEff.BREAK);
-					CommonStatic.setSE(SE_BARRIER_ATK);
+					CommonStatic.setSE(SE_BARRIER_ABI);
 				} else
 					((EEnemy)basis.ebase).anim.getEff(A_GUARD_BRK);
 			}
@@ -146,7 +146,7 @@ public class EEnemy extends Entity {
 
 	@Override
 	public float getResistValue(AttackAb atk, boolean SageRes, double procResist) {
-		float ans = (float) (1f - procResist / 100f);
+		float ans = (float) ((100f - procResist) / 100f);
 
 		if (SageRes && (atk.abi & AB_SKILL) == 0 && traits.contains(BCTraits.get(TRAIT_SAGE)))
 			ans *= SUPER_SAGE_RESIST;
