@@ -565,9 +565,9 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 		ImgCut iccs = ImgCut.newIns("./org/battle/s17/skill017.imgcut");
 		VImg vcs = new VImg("./org/battle/s17/skill017.png");
 		effas.A_E_COUNTERSURGE = new EffAnim<>("./org/battle/s17/skill_demonsummon_e", vcs, iccs, DefEff.values());
-		iccs = ImgCut.newIns("./org/battle/s18/skill018.imgcut");
-		vcs = new VImg("./org/battle/s18/skill018.png");
-		effas.A_COUNTERSURGE = new EffAnim<>("./org/battle/s18/skill_demonsummon", vcs, iccs, DefEff.values());
+		ImgCut icct = ImgCut.newIns("./org/battle/s18/skill018.imgcut");
+		VImg vct = new VImg("./org/battle/s18/skill018.png");
+		effas.A_COUNTERSURGE = new EffAnim<>("./org/battle/s18/skill_demonsummon", vct, icct, DefEff.values());
 		VImg vgd = new VImg("./org/battle/s19/skill019.png");
 		ImgCut icgd = ImgCut.newIns("./org/battle/s19/skill019.imgcut");
 		effas.A_E_GUARD = new EffAnim<>("./org/battle/s19/skill_guard_e", vgd, icgd, GuardEff.values());
