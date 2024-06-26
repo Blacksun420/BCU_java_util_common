@@ -2073,7 +2073,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			interrupt(INT_SW, KB_DIS[INT_SW]);
 
 		if (atk.getProc().WARP.exists()) {
-			float rst = getResistValue(atk, false, getProc().IMUWARP.mult);
+			float rst = getResistValue(atk, true, getProc().IMUWARP.mult);
 			if (rst > 0f) {
 				Data.Proc.WARP warp = atk.getProc().WARP;
 				interrupt(INT_WARP, warp.dis == warp.dis_1 ? warp.dis : warp.dis + (int) (basis.r.nextFloat() * (warp.dis_1 - warp.dis)));
