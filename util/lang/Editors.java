@@ -784,6 +784,7 @@ public class Editors {
 		map().put("SPIRIT", new EditControl<>(Proc.SPIRIT.class, (t) -> {
 			if (t.id == null) {
 				t.cd0 = t.cd1 = t.amount = t.summonerCd = t.form = t.animType = 0;
+				t.type.inv = false;
 			} else {
 				t.amount = Math.max(t.amount, 1);
 				t.cd0 = Math.max(t.cd0, 15);
@@ -791,10 +792,12 @@ public class Editors {
 
 				Unit u = Identifier.getOr(t.id, Unit.class);
 				t.form = MathUtil.clip(t.form, 1, u.forms.length);
-				if (u.forms[t.form - 1].anim.getAtkCount() == 0) //BC spirit
+				if (u.forms[t.form - 1].anim.getAtkCount() == 0) { //BC spirit
 					t.animType = 0;
-				else
+					t.type.inv = true;
+				} else {
 					t.animType = MathUtil.clip(t.animType, 0, 4);
+				}
 			}
 		}, eg -> t -> {
 			setComponentVisibility(eg, t.id != null, 1);
@@ -802,8 +805,8 @@ public class Editors {
 				return;
 			Unit u = Identifier.getOr(t.id, Unit.class);
 			setComponentVisibility(eg, t.amount > 1, 2, 3);
-			setComponentVisibility(eg, u.forms.length > 1, 5, 6);
-			setComponentVisibility(eg, u.forms[t.form - 1].anim.getAtkCount() > 0, 6);
+			setComponentVisibility(eg, u.forms[t.form - 1].anim.getAtkCount() > 0, 5);
+			setComponentVisibility(eg, u.forms.length > 1, 6, 7);
 		}));
 
 		map().put("METALKILL", new EditControl<>(Proc.MULT.class, (t) -> {

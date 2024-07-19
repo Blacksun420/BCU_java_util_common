@@ -18,7 +18,7 @@ public abstract class AtkModelAb extends BattleObj {
 	public abstract int getAbi();
 
 	/**
-	 * get the direction of the entity
+	 * get the direction of the entity. -1 is cat unit, 1 is enemy unit.
 	 */
 	public abstract int getDire();
 
@@ -33,6 +33,9 @@ public abstract class AtkModelAb extends BattleObj {
 	public void invokeLater(AttackAb atk, Entity e) {
 	}
 
+	/**
+	 * Gets the layer the attack will be placed at.
+	 */
 	protected int getLayer() {
 		return 10;
 	}

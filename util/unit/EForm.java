@@ -54,11 +54,13 @@ public class EForm extends Data implements IForm {
 			return null;
 
 		float d = spirit.unit.lv.getMult(level.getTotalLv());
-		int lay = b.elu.smnd[index[0]][index[1]].layer + 1;
 		spirit.anim.partial();
 		if (spirit.anim.getAtkCount() == 0)
 			return new ESpirit(b, spirit.du, spirit.getEAnim(AnimU.SOUL[0]), d, du.getFront(), du.getBack(), level, index); //For BC-Accurate Spirits
-		return new EUnit(b, spirit.du, spirit.getEAnim(AnimU.SOUL[0]), d, du.getFront(), du.getBack(), level, spirit.du.getPCoin(), index, false); //For Custom Units with spirits
+		EUnit esp = new EUnit(b, spirit.du, spirit.getEAnim(AnimU.SOUL[0]), d, du.getFront(), du.getBack(), level, spirit.du.getPCoin(), index, false);
+		if (du.getProc().SPIRIT.type.inv)
+			esp.status.inv[0] = -1;
+		return esp; //For Custom Units with spirits
 	}
 
 	@Override

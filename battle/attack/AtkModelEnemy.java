@@ -5,6 +5,10 @@ import common.battle.entity.EEnemy;
 
 public class AtkModelEnemy extends AtkModelEntity {
 
+	/**
+	 * Any proc whose index is before this number will not apply when entity is cursed.
+	 * See AtkModelEntity.par for proc indexes
+	 */
 	protected static final int cursedProcs = 16;
 
 	protected AtkModelEnemy(EEnemy ent, float d0) {

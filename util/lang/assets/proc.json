@@ -1711,7 +1711,8 @@
         "format": [
             "Summon (_entity(id)) as spirit up to (amount) times[(amount>1){s}] per summoner, with a [(amount>1&cd0!=cd1){initial }]cooldown of (_dispTime(cd0))",
             "[(amount>1&cd0!=cd1){, and a subsequent cooldown of (_dispTime(cd1))}]",
-            "[(summonerCd!=0){, and [(summonerCd<0){decreases}(summonerCd>0){increases}] summoner's cooldown by (_dispTime(_abs(summonerCd)))}]"
+            "[(summonerCd!=0){, and [(summonerCd<0){decreases}(summonerCd>0){increases}] summoner's cooldown by (_dispTime(_abs(summonerCd)))}]",
+            "[(!type.inv){ (_left)This spirit can be killed(_right)}]"
         ],
         "class": {
             "id": {
@@ -1745,6 +1746,10 @@
             "form": {
                 "name": "Form",
                 "tooltip": "Form of the summoned spirit."
+            },
+            "type.inv": {
+                "name": "Invincible",
+                "tooltip": "Makes unit spirits unkillable, much like the soul ones"
             }
         }
     },

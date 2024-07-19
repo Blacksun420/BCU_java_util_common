@@ -743,6 +743,11 @@ public class Data {
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class SPIRIT extends ProcItem {
+			@JsonClass(noTag = NoTag.LOAD)
+			public static class TYPE extends IntType {
+				@Order(0)
+				public boolean inv;
+			}
 			@Order(0)
 			public Identifier<?> id;
 			@Order(1)
@@ -757,6 +762,8 @@ public class Data {
 			public int animType;
 			@Order(6)
 			public int form;
+			@Order(7)
+			public TYPE type = new TYPE();
 		}
 
 		public static Proc blank() {

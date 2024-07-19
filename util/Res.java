@@ -11,6 +11,9 @@ import common.system.fake.FakeGraphics;
 import common.system.fake.FakeImage;
 import common.system.fake.ImageBuilder;
 
+/**
+ * This class gets UI images, as well as reading them during the initial loading.
+ */
 public class Res extends ImgCore {
 
 	public static P getBase(AbEntity ae, SymCoord coor, boolean dojo) {
@@ -150,6 +153,9 @@ public class Res extends ImgCore {
 		return input;
 	}
 
+	/**
+	 * Reads the icons for procs, abilities, BC Traits, Atk types, and talents
+	 */
 	private static void readAbiIcon() {
 		BCAuxAssets aux = CommonStatic.getBCAssets();
 		CommonStatic.getConfig().icon = true;
@@ -161,7 +167,7 @@ public class Res extends ImgCore {
 		aux.icon[2] = new VImg[ATK_TOT];
 		aux.icon[3] = new VImg[TRAIT_TOT];
 		aux.icon[4] = new VImg[PC2_TOT];
-
+		//Icons for abilities
 		aux.icon[0][ABI_EKILL] = new VImg(parts[110]);
 		aux.icon[0][ABI_ONLY] = new VImg(parts[202]);
 		aux.icon[0][ABI_METALIC] = new VImg(parts[209]);
@@ -176,7 +182,7 @@ public class Res extends ImgCore {
 		aux.icon[0][ABI_GHOST] = new VImg("./org/page/icons/Ghost.png");
 		aux.icon[0][ABI_GLASS] = new VImg("./org/page/icons/Suicide.png");
 		aux.icon[0][ABI_SKILL] = new VImg(parts[319]);
-
+		//Icons for procs
 		aux.icon[1][P_IMUCURSE] = new VImg(parts[116]);
 		aux.icon[1][P_WEAK] = new VImg(parts[195]);
 		aux.icon[1][P_STRONG] = new VImg(parts[196]);
@@ -204,12 +210,12 @@ public class Res extends ImgCore {
 		aux.icon[1][P_IMUPOIATK] = new VImg(parts[237]);
 		aux.icon[1][P_IMUVOLC] = new VImg(parts[243]);
 		aux.icon[1][P_CURSE] = new VImg(parts[289]);
-		aux.icon[1][P_POIATK] = new VImg("./org/page/icons/BCPoison.png");
+		aux.icon[1][P_POIATK] = new VImg(parts[329]);
 		aux.icon[1][P_MINIWAVE] = new VImg(parts[293]);
 		aux.icon[1][P_SHIELDBREAK] = new VImg(parts[296]);
 		aux.icon[1][P_SPIRIT] = new VImg(parts[317]);
 		aux.icon[1][P_METALKILL] = new VImg(parts[321]);
-		aux.icon[1][P_DEMONSHIELD] = new VImg("./org/page/icons/DemonShield.png");
+		aux.icon[1][P_DEMONSHIELD] = new VImg(parts[331]);
 		aux.icon[1][P_DEATHSURGE] = new VImg(parts[332]);
 		aux.icon[1][P_BURROW] = new VImg("./org/page/icons/Burrow.png");
 		aux.icon[1][P_REVIVE] = new VImg("./org/page/icons/Revive.png");
@@ -253,8 +259,8 @@ public class Res extends ImgCore {
 		aux.icon[1][P_RANGESHIELD] = new VImg("./org/page/icons/TargetShield.png");
 
 		langIcons();
+		//Trait icons that remain the same regardless of language
 		aux.icon[3][TRAIT_WHITE] = new VImg(parts[86]);
-
 		aux.icon[3][TRAIT_WITCH] = new VImg("./org/page/icons/Witch.png");
 		aux.icon[3][TRAIT_EVA] = new VImg("./org/page/icons/Eva.png");
 		aux.icon[3][TRAIT_BARON] = new VImg("./org/page/icons/Baron.png");
@@ -271,7 +277,7 @@ public class Res extends ImgCore {
 		aux.icon[4][PC2_HB] = new VImg(parts[98]);
 		aux.icon[4][PC2_TBA] = new VImg(parts[305]);
 		aux.icon[4][PC2_RNG] = new VImg("./org/page/icons/PlusRange.png");
-
+		//miscellaneous
 		aux.waveShield = new VImg(parts[218]);
 		aux.dmgIcons[0] = new VImg(parts[203]); //strong vs
 		aux.dmgIcons[1] = new VImg(parts[122]); //ins resist
@@ -279,6 +285,9 @@ public class Res extends ImgCore {
 		CommonStatic.getConfig().icon = false;
 	}
 
+	/**
+	 * Gets icons that change depending on the language set in config. Currently only EN and JP available.
+	 */
 	public static void langIcons() {
 		BCAuxAssets aux = CommonStatic.getBCAssets();
 		ImgCut ic015 = ImgCut.newIns("./org/page/img015.imgcut");

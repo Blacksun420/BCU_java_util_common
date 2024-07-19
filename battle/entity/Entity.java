@@ -1596,6 +1596,23 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	public void damaged(AttackAb atk) {
 		damageTaken += atk.atk;
 		sumDamage(atk.atk, true);
+
+		if (status.inv[0] == -1) {//Spirit
+			anim.getEff(P_IMUATK);
+			return;
+		}
+
+		Proc.IMUATK imuatk = getProc().IMUATK;
+		if (imuatk.prob > 0 && (atk.dire == -1 || receive(-1) || ctargetable(atk.trait, atk.attacker))) {
+			if (status.inv[0] + status.inv[1] == 0 && (imuatk.prob == 100 || basis.r.nextFloat() * 100 < imuatk.prob)) {
+				status.inv[0] = (int) (imuatk.time * (1 + 0.2 / 3 * getFruit(atk.trait, atk.dire, -1)));
+				status.inv[1] = imuatk.cd;
+				anim.getEff(P_IMUATK);
+			}
+			if (status.inv[0] > 0)
+				return;
+		}
+
 		int dmg = getDamage(atk, atk.atk);
 
 		Proc.CANNI cRes = getProc().IMUCANNON;
@@ -1652,17 +1669,6 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				return;
 			else
 				dmg = (int) (dmg * (100 - getProc().IMUVOLC.mult) / 100);
-		}
-
-		Proc.IMUATK imuatk = getProc().IMUATK;
-		if (imuatk.prob > 0 && (atk.dire == -1 || receive(-1) || ctargetable(atk.trait, atk.attacker))) {
-			if (status.inv[0] + status.inv[1] == 0 && (imuatk.prob == 100 || basis.r.nextFloat() * 100 < imuatk.prob)) {
-				status.inv[0] = (int) (imuatk.time * (1 + 0.2 / 3 * getFruit(atk.trait, atk.dire, -1)));
-				status.inv[1] = imuatk.cd;
-				anim.getEff(P_IMUATK);
-			}
-			if (status.inv[0] > 0)
-				return;
 		}
 		boolean proc = true;
 

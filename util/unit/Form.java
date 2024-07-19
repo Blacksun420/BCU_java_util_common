@@ -159,6 +159,12 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 							for (int[] dat : form.pcoin.info)
 								if (dat.length == 14 && dat[13] == 1)
 									dat[13] = 60;
+						if (form.getProc().SPIRIT.id != null) {
+							form.getProc().SPIRIT.amount = 1;
+							form.getProc().SPIRIT.cd0 = SPIRIT_SUMMON_DELAY;
+							form.getProc().SPIRIT.form = 1;
+							form.getProc().SPIRIT.type.inv = true;
+						}
 					} //Finish FORK_VERSION 1 checks
 					if (form.getPCoin() != null) {
 						form.pcoin.info.replaceAll(data -> {
@@ -166,7 +172,7 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 							int[] trueArr;
 							switch (corres[0]) {
 								case Data.PC_P:
-									trueArr = Arrays.copyOf(data, 3 + (du.getProc().getArr(corres[1]).getDeclaredFields().length - (corres.length >= 3 ? corres[2] : 0)) * 2);
+									trueArr = Arrays.copyOf(data, 3 + (form.getProc().getArr(corres[1]).getDeclaredFields().length - (corres.length >= 3 ? corres[2] : 0)) * 2);
 									break;
 								case Data.PC_BASE:
 									trueArr = Arrays.copyOf(data, 5);

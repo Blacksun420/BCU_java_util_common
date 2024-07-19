@@ -18,18 +18,28 @@ public abstract class AtkModelEntity extends AtkModelAb {
 	public static final String[] par = { "SUMMON", "KB", "STOP", "SLOW", "WEAK", "WARP", "CURSE", "SNIPER", "SEAL", "POISON", "BOSS", "RAGE", "HYPNO", "POIATK",
 			"ARMOR", "SPEED", "LETHARGY", "ATKBASE", "CRIT", "WAVE", "BREAK", "SATK", "VOLC", "MINIVOLC", "MINIWAVE", "MOVEWAVE", "SHIELDBREAK", "WORKERLV", "CDSETTER", "METALKILL"};
 	/**
+	 * Gets Attack Model for enemies
 	 * @param e The entity
-	 * @param d0 Level multiplication for EUnit, Magnification for EEnemy
+	 * @param mult Magnification
 	 * @return returns AtkModelEntity with specified magnification values
 	 */
-	public static AtkModelEntity getEnemyAtk(Entity e, float d0) {
+	public static AtkModelEntity getEnemyAtk(Entity e, float mult) {
 		if (e instanceof EEnemy) {
 			EEnemy ee = (EEnemy) e;
-			return new AtkModelEnemy(ee, d0);
+			return new AtkModelEnemy(ee, mult);
 		}
 		return null;
 	}
 
+	/**
+	 * Gets Attack Model for cat Units
+	 * @param e The entity
+	 * @param treasure Treasure Effects
+	 * @param level Level stat multiplier
+	 * @param pcoin Talents
+	 * @param lv Misc level data
+	 * @return returns AtkModelEntity with specified magnification values
+	 */
 	public static AtkModelEntity getUnitAtk(Entity e, float treasure, float level, PCoin pcoin, Level lv) {
 		if(!(e instanceof EUnit))
 			return null;
@@ -37,10 +47,19 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		return new AtkModelUnit(e, treasure, level, pcoin, lv);
 	}
 
+	/**
+	 * Current index for multi-attacks
+	 */
 	public int atkType;
 	protected final double d0, d1;
+	/**
+	 * Base stat data of the entity
+	 */
 	protected final MaskEntity data;
 	public final Entity e;
+	/**
+	 * How many times can the given attack be done, per attack
+	 */
 	protected final int[][] act;
 
 	protected AtkModelEntity(Entity ent, float d0, float d1) {
