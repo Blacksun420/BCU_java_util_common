@@ -58,7 +58,7 @@ public class EUnit extends Entity {
 		lvl = level.getTotalLv();
 		this.index = index;
 		this.isBase = isBase;
-		if (isBase) {
+		if (isBase && !b.isBanned(C_BASE)) {
 			maxH *= (100 + b.elu.getInc(C_BASE)) * 0.01;
 			health = maxH;
 		}
@@ -162,14 +162,14 @@ public class EUnit extends Entity {
 			sharedTraits.addIf(atk.trait, t -> !t.BCTrait() && ((t.targetType && isAntiTraited) || t.others.contains((Form)data.getPack())));
 			if (!sharedTraits.isEmpty()) {
 				if (status.curse == 0 && getProc().DEFINC.mult != 0)
-					ans *= basis.b.t().getDEF(getProc().DEFINC.mult, atk.trait, sharedTraits, ((MaskUnit) data).getOrb(), level);
+					ans *= basis.b.t().getDEF(getProc().DEFINC.mult, atk.trait, sharedTraits, ((MaskUnit) data).getOrb(), level, basis.isBanned(getProc().DEFINC.mult < 400 ? C_GOOD : C_RESIST));
 				if (atk.attacker.status.curse == 0 && atk.attacker.getProc().DMGINC.mult != 0)
 					ans *= atk.attacker.getProc().DMGINC.mult / 100.0;
 			}
 			if (atk.trait.contains(UserProfile.getBCData().traits.get(TRAIT_WITCH)) && (getAbi() & AB_WKILL) > 0)
-				ans *= basis.b.t().getWKDef();
+				ans *= basis.b.t().getWKDef(basis.isBanned(C_WKILL));
 			if (atk.trait.contains(UserProfile.getBCData().traits.get(TRAIT_EVA)) && (getAbi() & AB_EKILL) > 0)
-				ans *= basis.b.t().getEKDef();
+				ans *= basis.b.t().getEKDef(basis.isBanned(C_EKILL));
 			if (atk.trait.contains(UserProfile.getBCData().traits.get(TRAIT_BARON)) && (getAbi() & AB_BAKILL) > 0)
 				ans *= 0.7;
 			if (atk.trait.contains(UserProfile.getBCData().traits.get(Data.TRAIT_BEAST)) && getProc().BSTHUNT.type.active)
@@ -201,14 +201,14 @@ public class EUnit extends Entity {
 	@Override
 	protected float updateMove(float extmov) {
 		if (status.slow == 0)
-			extmov += data.getSpeed() * basis.elu.getInc(C_SPE) / 200.0;
+			extmov += (float)(data.getSpeed() * basis.elu.getInc(C_SPE) / 50) / 4f;
 		return super.updateMove(extmov);
 	}
 
 	@Override
 	protected float getMov(float extmov) {
 		if (status.slow == 0)
-			extmov = extmov + data.getSpeed() * basis.elu.getInc(C_SPE) / 200f;
+			extmov = extmov + (float)(data.getSpeed() * basis.elu.getInc(C_SPE) / 50) / 4f;
 		return super.getMov(extmov);
 	}
 
@@ -261,7 +261,7 @@ public class EUnit extends Entity {
 		}
 		if (ini == 1 || ORB_LV == -1)
 			return ini;
-		float com = 1 + t.b.getInc(ORB_LV == ORB_STRONG ? C_GOOD : C_MASSIVE) * 0.01f;
+		float com = 1 + basis.elu.getInc(ORB_LV == ORB_STRONG ? C_GOOD : C_MASSIVE) * 0.01f;
 		return ini * com;
 	}
 

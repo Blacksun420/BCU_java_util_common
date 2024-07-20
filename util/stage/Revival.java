@@ -53,7 +53,7 @@ public class Revival extends Data {
                 b.shakeDuration = SHAKE_MODE_BOSS[SHAKE_DURATION];
                 b.shakeCoolDown[1] = SHAKE_MODE_BOSS[SHAKE_COOL_DOWN];
             }
-            if (b.st.bossBarrier)
+            if (b.st.bossGuard)
                 b.baseBarrier++;
 
             for (Entity entity : b.le)

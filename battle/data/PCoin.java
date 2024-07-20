@@ -156,13 +156,14 @@ public class PCoin extends Data {
 				case 0:
 					break;
 				case 56: case 65:
-					data[2] = MathUtil.clip(data[2], 0, 99 - proc.getArr(type).get(0));
-					data[3] = MathUtil.clip(data[3], data[2], 99 - proc.getArr(type).get(0));
+					data[2] = MathUtil.clip(data[2], 0, 100 - proc.getArr(type).get(0));
+					data[3] = MathUtil.clip(data[3], data[2], 100 - proc.getArr(type).get(0));
 					data[8] = Math.max(1, data[8] / Data.VOLC_ITV) * Data.VOLC_ITV;
 					data[9] = Math.max(Math.max(1, data[9] / Data.VOLC_ITV) * Data.VOLC_ITV, data[8]);
+					break;
 				case 10:
-					data[2] = MathUtil.clip(data[2], 0, 99 - proc.getArr(type).get(0));
-					data[3] = MathUtil.clip(data[3], data[2], 99 - proc.getArr(type).get(0));
+					data[2] = MathUtil.clip(data[2], 0, 100 - proc.getArr(type).get(0));
+					data[3] = MathUtil.clip(data[3], data[2], 100 - proc.getArr(type).get(0));
 					data[4] = Math.max(data[4], 0);
 					data[5] = Math.max(data[5], data[4]);
 					break;
@@ -215,7 +216,7 @@ public class PCoin extends Data {
 				continue;
 
 			//Targettings that come with a talent, such as Hyper Mr's
-			if (this.trait.size() > 0)
+			if (!this.trait.isEmpty() && talents[i] > 0)
 				ans.getTraits().addAll(this.trait);
 
 			int offset = type.length >= 3 && type[0] == PC_P ? type[2] : 0;
@@ -251,10 +252,10 @@ public class PCoin extends Data {
 						if (type[1] == P_MINIVOLC && tar.get(4) == 0)
 							tar.set(4, 20);
 					} else {
-						tar.set(0, modifs[0]);
-						tar.set(1, Math.min(modifs[1], modifs[2]));
-						tar.set(2, Math.max(modifs[1], modifs[2]));
-						tar.set(3, modifs[3]);
+						tar.set(0, tar.get(0) + modifs[0]);
+						tar.set(1, tar.get(1) + Math.min(modifs[1], modifs[2]));
+						tar.set(2, tar.get(2) + Math.max(modifs[1], modifs[2]));
+						tar.set(3, tar.get(3) + modifs[3]);
 					}
 				} else
 					for (int j = 0; j < fieldTOT; j++)

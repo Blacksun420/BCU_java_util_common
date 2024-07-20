@@ -23,6 +23,10 @@ public class ELineUp extends BattleObj {
 
 	protected ELineUp(LineUp lu, StageBasis sb, boolean sav) {
 		inc = lu.inc.clone();
+		for (byte i = 0; i < inc.length; i++)
+			if (sb.isBanned(i))
+				inc[i] = 0;
+
 		SortedPackSet<Combo> coms = new SortedPackSet<>(lu.coms);
 		Limit lim = sb.est.lim;
 		for (int i = 0; i < 2; i++)
@@ -41,7 +45,7 @@ public class ELineUp extends BattleObj {
 					continue;
 				}
 				price[i][j] = (int) (lu.efs[i][j].getPrice(sb.st.getCont().price) * 100);
-				maxC[i][j] = sb.b.t().getFinRes(lu.efs[i][j].getRespawn());
+				maxC[i][j] = sb.globalCdLimit() > 0 ? sb.b.t().getFinRes(lu.efs[i][j].getRespawn()) : sb.b.t().getFinRes(lu.efs[i][j].du.getRespawn(), sb.isBanned(C_RESP));
 
 				spData[i][j] = lu.fs[i][j] instanceof Form && ((Form) lu.fs[i][j]).du.getProc().SPIRIT.exists() ? ((Form) lu.fs[i][j]).du.getProc().SPIRIT : null;
 				scount[i][j] = spData[i][j] == null ? -1 : 0;
@@ -96,7 +100,12 @@ public class ELineUp extends BattleObj {
 		}
 	}
 
-	public int getInc(int type) {
-		return inc[type];
+	/**
+	 * Takes combo bans into account
+	 * @param id combo ID
+	 * @return buff of the specificed combo (0 if banned)
+	 */
+	public int getInc(int id) {
+		return inc[id];
 	}
 }

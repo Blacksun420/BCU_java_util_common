@@ -1683,6 +1683,7 @@ public class Data {
 	public static final byte W_TIME = 3;
 	public static final byte W_MINI_TIME = 1; // mini wave spawn interval
 	public static final byte W_MEGA_TIME = 6;
+	public static final short W_VOLC = 375;
 	public static final short W_VOLC_INNER = 250; // volcano inner width
 	public static final byte W_VOLC_PIERCE = 125; // volcano pierce width
 	public static final byte VOLC_ITV = 20;
@@ -1691,12 +1692,12 @@ public class Data {
 	public static final byte VOLC_POST = 10; // volcano post-atk
 	public static final byte VOLC_SE = 30; // volcano se loop duration
 
-	public static final byte[] NYPRE = new byte[] { 18, 2, -1, 28, 37, 18, 10, 2 };// not sure, 10f for bblast
-	public static final short[] NYRAN = new short[] { 710, 600, -1, 500, 500, 710, 100, 600 };// not sure
-	public static final short SNIPER_CD = 300;// not sure
-	public static final byte SNIPER_PRE = 10;// not sure
+	public static final byte[] NYPRE = new byte[] { 18, 1, -1, 27, 37, 18, 10, 1 };
+	public static final float[] NYRAN = new float[] { 400, 82.5f, -1, 500, 500, 400, 100, 82.5f };
+	public static final short SNIPER_CD = 300;
+	public static final byte SNIPER_PRE = 10;
 	public static final float SNIPER_POS = 442.5f;
-	public static final byte REVIVE_SHOW_TIME = 16;
+	public static final byte REVIVE_SHOW_TIME = 14;
 
 	public static final int ORB_ATK = 0;
 	public static final int ORB_RES = 1;

@@ -8,7 +8,6 @@ import common.battle.data.MaskAtk;
 import common.battle.data.MaskEnemy;
 import common.pack.SortedPackSet;
 import common.pack.UserProfile;
-import common.util.Data;
 import common.util.anim.AnimU;
 import common.util.anim.EAnimU;
 import common.util.pack.EffAnim;
@@ -33,7 +32,7 @@ public class EEnemy extends Entity {
 		layer = d0 == d1 ? d0 : d0 + (int) (b.r.nextFloat() * (d1 - d0 + 1));
 		traits = de.getTraits();
 
-		canBurrow = mark < 1;
+		skipSpawnBurrow = mark >= 1;
 	}
 
 	@Override
@@ -49,7 +48,7 @@ public class EEnemy extends Entity {
 			if (!anim.deathSurge && rev.soul != null)
 				anim.dead = rev.soul.get().getEAnim(AnimU.SOUL[0]).len();
 		}
-		if (mark >= 1 && basis.st.bossBarrier) {
+		if (mark >= 1 && basis.st.bossGuard) {
 			basis.baseBarrier--;
 			if (basis.baseBarrier == 0) {
 				if (basis.ebase instanceof ECastle) {
@@ -68,9 +67,9 @@ public class EEnemy extends Entity {
 			return 0;
 		if (e instanceof EUnit) {
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_WITCH)) && (e.getAbi() & AB_WKILL) > 0)
-				ans *= basis.b.t().getWKAtk();
+				ans *= basis.b.t().getWKAtk(basis.isBanned(C_WKILL));
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_EVA)) && (e.getAbi() & AB_EKILL) > 0)
-				ans *= basis.b.t().getEKAtk();
+				ans *= basis.b.t().getEKAtk(basis.isBanned(C_EKILL));
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_BARON)) && (e.getAbi() & AB_BAKILL) > 0)
 				ans *= 1.6;
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_BEAST)) && matk.getProc().BSTHUNT.type.active)
@@ -109,9 +108,9 @@ public class EEnemy extends Entity {
 					ans /= getProc().DEFINC.mult/100.0;
 			}
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_WITCH)) && (atk.abi & AB_WKILL) > 0)
-				ans *= basis.b.t().getWKAtk();
+				ans *= basis.b.t().getWKAtk(basis.isBanned(C_WKILL));
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_EVA)) && (atk.abi & AB_EKILL) > 0)
-				ans *= basis.b.t().getEKAtk();
+				ans *= basis.b.t().getEKAtk(basis.isBanned(C_EKILL));
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_BARON)) && (atk.abi & AB_BAKILL) > 0)
 				ans *= 1.6;
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_BEAST)) && atk.getProc().BSTHUNT.type.active)

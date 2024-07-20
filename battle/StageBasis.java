@@ -130,11 +130,22 @@ public class StageBasis extends BattleObj {
 		}
 		int max = est.lim != null ? est.lim.num : 50;
 		max_num = max <= 0 ? 50 : max;
-		maxCannon = bas.t().CanonTime(sttime);
+		maxCannon = bas.t().CanonTime(sttime, isBanned(C_C_SPE));
 		le.initCapacity(max_num + st.max);
 
-		work_lv = 1 + elu.getInc(C_M_LV);
-		money = elu.getInc(C_M_INI) * 100;
+		int bank = maxBankLimit();
+		int cd = globalCdLimit();
+		if (bank > 0 || cd > 0)
+			for (int i = 0; i < 2; i++)
+				for (int j = 0; j < 5; j++)
+					elu.resetCD(i, j);
+		if (bank > 0) {
+			work_lv = 8;
+			money = bank * 100;
+		} else {
+			work_lv = 1 + elu.getInc(C_M_LV);
+			money = elu.getInc(C_M_INI) * 100;
+		}
 		cannon = maxCannon * elu.getInc(C_C_INI) / 100;
 		canon = new Cannon(this, nyc);
 		conf = ints;
@@ -146,6 +157,7 @@ public class StageBasis extends BattleObj {
 		else
 			respawnTime = st.minSpawn + (int) ((st.maxSpawn - st.minSpawn) * r.nextFloat());
 
+		respawnTime--;
 		if ((conf[0] & 1) > 0)
 			work_lv = 8;
 		if ((conf[0] & 2) > 0)
@@ -170,7 +182,7 @@ public class StageBasis extends BattleObj {
 	 * returns visual money.
 	 */
 	public int getMoney() {
-		return (int) Math.floor(money / 100.0);
+		return money / 100;
 	}
 
 	/**
@@ -204,7 +216,7 @@ public class StageBasis extends BattleObj {
 		work_lv = Math.min(8, work_lv);
 
 		upgradeCost = b.t().getLvCost(work_lv);
-		maxMoney = b.t().getMaxMon(work_lv);
+		maxMoney = b.t().getMaxMon(work_lv, isBanned(C_M_MAX));
 		money = Math.min(money, maxMoney);
 	}
 
@@ -374,7 +386,7 @@ public class StageBasis extends BattleObj {
 			money -= upgradeCost;
 			work_lv++;
 			upgradeCost = b.t().getLvCost(work_lv);
-			maxMoney = b.t().getMaxMon(work_lv);
+			maxMoney = b.t().getMaxMon(work_lv, isBanned(C_M_MAX));
 			return true;
 		}
 		CommonStatic.setSE(SE_SPEND_FAIL);
@@ -400,7 +412,7 @@ public class StageBasis extends BattleObj {
 			if (work_lv < 8) {
 				work_lv = 8;
 				upgradeCost = -1;
-				maxMoney = b.t().getMaxMon(8);
+				maxMoney = b.t().getMaxMon(8, isBanned(C_M_MAX));
 			}
 
 			money = maxMoney;
@@ -475,7 +487,7 @@ public class StageBasis extends BattleObj {
 		}
 
 		if (elu.price[i][j] > money) {
-			if(manual)
+			if (manual)
 				CommonStatic.setSE(SE_SPEND_FAIL);
 			return false;
 		}
@@ -556,7 +568,6 @@ public class StageBasis extends BattleObj {
 			ebase.preUpdate();
 			ebase.update();
 		}
-
 		if (s_stop == 0 || (ubase.getAbi() & AB_TIMEI) != 0) {
 			ubase.preUpdate();
 			ubase.update();
@@ -603,14 +614,17 @@ public class StageBasis extends BattleObj {
 				CommonStatic.setSE(SE_CANNON_CHARGE);
 			if (active) {
 				cannon++;
-				maxMoney = b.t().getMaxMon(work_lv);
-				money += b.t().getMonInc(work_lv) * (elu.getInc(C_M_INC) / 100 + 1);
+				int bank = maxBankLimit();
+				if (bank > 0)
+					maxMoney = bank * 100;
+				else {
+					maxMoney = b.t().getMaxMon(work_lv, isBanned(C_M_MAX));
+					money += b.t().getMonInc(work_lv) * (elu.getInc(C_M_INC) / 100 + 1);
+				}
 			}
 
 			if (active)
 				est.update();
-
-			canon.update();
 
 			if (sniper != null && active)
 				sniper.update();
@@ -639,7 +653,7 @@ public class StageBasis extends BattleObj {
 			updateEntities(false);
 			n_inten--;
 		}
-
+		canon.update();
 		if (s_stop == 0) {
 			lea.forEach(EAnimCont::update);
 			doors.forEach(EAnimCont::update);
@@ -866,5 +880,26 @@ public class StageBasis extends BattleObj {
 				bgEffect = newBg.bgEffect.get();
 		}
 		bg = newBg;
+	}
+
+	public boolean isBanned(byte comboId) {
+		if (st.getCont().stageLimit == null)
+			return false;
+		else
+			return st.getCont().stageLimit.bannedCatCombo.contains((int) comboId);
+	}
+
+	public int maxBankLimit() {
+		if (st.getCont().stageLimit == null)
+			return 0;
+		else
+			return st.getCont().stageLimit.maxMoney;
+	}
+
+	public int globalCdLimit() {
+		if (st.getCont().stageLimit == null)
+			return 0;
+		else
+			return st.getCont().stageLimit.globalCooldown;
 	}
 }

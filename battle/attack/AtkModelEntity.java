@@ -7,7 +7,6 @@ import common.battle.entity.*;
 import common.pack.Identifier;
 import common.util.Data;
 import common.util.Data.Proc.SUMMON;
-import common.util.pack.EffAnim.DefEff;
 import common.util.unit.*;
 import org.jcodec.common.tools.MathUtil;
 
@@ -376,8 +375,6 @@ public abstract class AtkModelEntity extends AtkModelAb {
 			proc.KB.dis = KB_DIS[INT_KB];
 		if (proc.KB.exists() && proc.KB.time == 0)
 			proc.KB.time = KB_TIME[INT_KB];
-		if (proc.BOSS.exists())
-			b.lea.add(new EAnimCont(e.pos, e.layer, effas().A_SHOCKWAVE.getEAnim(DefEff.DEF)));
 		if (proc.MINIWAVE.exists() && proc.MINIWAVE.multi == 0)
 			proc.MINIWAVE.multi = 20;
 		if (proc.MINIVOLC.exists() && proc.MINIVOLC.mult == 0)

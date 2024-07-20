@@ -16,10 +16,7 @@ public class Part extends Data implements Cloneable, Comparable<Part> {
 	public int[][] moves;
 
 	public Part() {
-		ints = new int[] { 0, 5, -1 };
-		name = "";
-		n = 0;
-		moves = new int[0][];
+		this(0, 5);
 	}
 
 	public Part(int id, int modif) {
@@ -29,7 +26,7 @@ public class Part extends Data implements Cloneable, Comparable<Part> {
 		moves = new int[0][];
 	}
 
-	protected Part(Queue<String> qs) {
+	protected Part(Queue<String> qs, boolean isOld) {
 		String[] ss = qs.poll().trim().split(",");
 		for (int i = 0; i < 3; i++)
 			ints[i] = Integer.parseInt(ss[i].trim());
@@ -37,6 +34,9 @@ public class Part extends Data implements Cloneable, Comparable<Part> {
 			name = restrict(ss[ss.length - 1]);
 		else
 			name = "";
+		if (isOld && ints[1] == 8)
+			ints[1] = 53;
+
 		n = Integer.parseInt(qs.poll().trim());
 		moves = new int[n][4];
 		for (int i = 0; i < n; i++) {

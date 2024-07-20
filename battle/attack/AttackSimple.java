@@ -3,6 +3,7 @@ package common.battle.attack;
 import common.CommonStatic;
 import common.battle.data.MaskAtk;
 import common.battle.entity.AbEntity;
+import common.battle.entity.EAnimCont;
 import common.battle.entity.Entity;
 import common.battle.entity.Sniper;
 import common.pack.Identifier;
@@ -10,6 +11,7 @@ import common.pack.SortedPackSet;
 import common.util.Data.Proc.MOVEWAVE;
 import common.util.Data.Proc.VOLC;
 import common.util.stage.Music;
+import common.util.pack.EffAnim;
 import common.util.unit.Trait;
 
 import java.util.*;
@@ -72,16 +74,26 @@ public class AttackSimple extends AttackAb {
 			List<AbEntity> ents = new ArrayList<>();
 			ents.add(capt.get(0));
 
-			double dis = Math.abs(pos - ents.get(0).pos);
-			for (AbEntity e: capt) {
-				double targetDis = Math.abs(pos - e.pos);
-				if (targetDis < dis) {
-					ents.clear();
-					ents.add(e);
-
-					dis = targetDis;
-				} else if (targetDis == dis)
-					ents.add(e);
+			if (dire == 1) {
+				double leftMost = ents.get(0).pos;
+				for (AbEntity e: capt) {
+					if (e.pos < leftMost) {
+						leftMost = e.pos;
+						ents.clear();
+						ents.add(e);
+					} else if (e.pos == leftMost)
+						ents.add(e);
+				}
+			} else {
+				double rightMost = ents.get(0).pos;
+				for (AbEntity e: capt) {
+					if (e.pos > rightMost) {
+						rightMost = e.pos;
+						ents.clear();
+						ents.add(e);
+					} else if (e.pos == rightMost)
+						ents.add(e);
+				}
 			}
 
 			capt.clear();
@@ -106,6 +118,10 @@ public class AttackSimple extends AttackAb {
 	public void excuse() {
 		process();
 		int layer = model.getLayer();
+		if (proc.BOSS.exists()) {
+			model.b.lea.add(new EAnimCont(model.getPos(), model.getLayer(), effas().A_SHOCKWAVE.getEAnim(EffAnim.DefEff.DEF)));
+			CommonStatic.setSE(SE_BOSS);
+		}
 		if (proc.MOVEWAVE.exists()) {
 			MOVEWAVE mw = proc.MOVEWAVE;
 			int dire = model.getDire();
@@ -133,9 +149,7 @@ public class AttackSimple extends AttackAb {
 			float addp = (dire == 1 ? W_E_INI : W_U_INI) + wid / 2f;
 			float p0 = model.getPos() + dire * addp;
 			// generate a wave when hits somebody
-
 			ContWaveDef wave = new ContWaveDef(new AttackWave(attacker, this, p0, wid, WT_WAVE), p0, layer, true);
-
 			if(attacker != null)
 				attacker.summoned.add(wave);
 		}

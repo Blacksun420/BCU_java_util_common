@@ -125,7 +125,7 @@ public class Cannon extends AtkModelAb {
         updateAnimation();
 
         if (anim == null && atka == null && exta == null) {
-            if (id > 2 && id < 5) {
+            if (id == 3 || id == 4) {
                 pos = b.ubase.pos;
                 for (Entity e : b.le)
                     if (e.dire == -1 && e.pos < pos && (e.touchable() & (TCH_N | TCH_KB)) != 0)
@@ -161,17 +161,17 @@ public class Cannon extends AtkModelAb {
                     proc.SNIPER.prob = 1;
                     float wid = NYRAN[0];
                     float p = b.ubase.pos - wid / 2 + 100;
-                    int atk = b.b.t().getCanonAtk();
+                    int atk = b.b.t().getCanonAtk(b.isBanned(C_C_ATK));
                     AttackCanon eatk = new AttackCanon(this, atk, CTrait, 0, proc, 0, 0, 1);
                     new ContWaveCanon(new AttackWave(eatk.attacker, eatk, p, wid, WT_CANN | WT_WAVE), p, 0);
                 } else if (id == 1) {
                     // slow canon
                     proc.SLOW.time = (int) (b.b.t().getCannonMagnification(id, Data.BASE_SLOW_TIME) * (100 + b.elu.getInc(C_SLOW)) / 100);
-                    int wid = NYRAN[1];
+                    float wid = NYRAN[1];
                     int spe = 137;
                     float p = b.ubase.pos - wid / 2f + spe;
                     AttackCanon eatk = new AttackCanon(this, 0, CTrait, 0, proc, 0, 0, 1);
-                    new ContExtend(eatk, p, wid, spe, 1, 31, 0, 9);
+                    new ContExtend(eatk, p, (int)wid, spe, 1, 31, 0, 9);
                 } else if (id == 2) {
                     // wall canon
                     if (wall != null)
@@ -181,14 +181,14 @@ public class Cannon extends AtkModelAb {
                     // freeze canon
                     duration = 1;
                     proc.STOP.time = (int) (b.b.t().getCannonMagnification(id, Data.BASE_TIME) * (100 + b.elu.getInc(C_STOP)) / 100.0);
-                    int atk = (int) (b.b.t().getCanonAtk() * b.b.t().getCannonMagnification(id, Data.BASE_ATK_MAGNIFICATION) / 100.0);
-                    int rad = NYRAN[3] / 2;
+                    int atk = (int) (b.b.t().getCanonAtk(b.isBanned(C_C_ATK)) * b.b.t().getCannonMagnification(id, Data.BASE_ATK_MAGNIFICATION) / 100.0);
+                    int rad = (int) (NYRAN[3] / 2);
                     b.getAttack(new AttackCanon(this, atk, CTrait, 0, proc, pos - rad, pos + rad, duration));
                 } else if (id == 4) {
                     // water canon
                     duration = 1;
                     proc.CRIT.mult = -(int) (b.b.t().getCannonMagnification(id, Data.BASE_HEALTH_PERCENTAGE));
-                    int rad = NYRAN[4] / 2;
+                    int rad = (int) (NYRAN[4] / 2);
                     b.getAttack(new AttackCanon(this, 1, new SortedPackSet<>(), 0, proc, pos - rad, pos + rad, duration));
                 } else if (id == 5) {
                     // zombie canon
@@ -207,7 +207,7 @@ public class Cannon extends AtkModelAb {
                     proc.BREAK.prob = 1;
                     proc.KB.dis = KB_DIS[INT_KB];
                     proc.KB.time = KB_TIME[INT_KB];
-                    int atk = (int) (b.b.t().getCanonAtk() * b.b.t().getCannonMagnification(id, Data.BASE_ATK_MAGNIFICATION) / 100.0);
+                    int atk = (int) (b.b.t().getCanonAtk(b.isBanned(C_C_ATK)) * b.b.t().getCannonMagnification(id, Data.BASE_ATK_MAGNIFICATION) / 100.0);
                     float rad = b.b.t().getCannonMagnification(id, Data.BASE_RANGE);
                     float newPos = getBreakerSpawnPoint(pos, rad);
                     b.getAttack(new AttackCanon(this, atk, CTrait, AB_CKILL, proc, newPos - rad, newPos - 1, duration));
@@ -217,11 +217,11 @@ public class Cannon extends AtkModelAb {
                 } else if (id == 7) {
                     // curse cannon
                     proc.CURSE.time = (int) b.b.t().getCannonMagnification(id, Data.BASE_CURSE_TIME);
-                    int wid = NYRAN[7];
+                    float wid = NYRAN[7];
                     int spe = 137;
                     float p = b.ubase.pos - wid / 2f + spe;
                     AttackCanon eatk = new AttackCanon(this, 0, CTrait, 0, proc, 0, 0, 1);
-                    new ContExtend(eatk, p, wid, spe, 1, 31, 0, 9);
+                    new ContExtend(eatk, p, (int)wid, spe, 1, 31, 0, 9);
                 }
             }
         }

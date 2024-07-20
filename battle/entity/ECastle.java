@@ -7,8 +7,8 @@ import common.battle.attack.AttackAb;
 import common.battle.attack.AttackVolcano;
 import common.battle.data.MaskAtk;
 import common.util.anim.EAnimD;
-import common.util.pack.EffAnim.GuardEff;
 import common.util.pack.EffAnim.DefEff;
+import common.util.pack.EffAnim.GuardEff;
 import common.util.unit.Enemy;
 
 import java.util.Arrays;
@@ -23,13 +23,15 @@ public class ECastle extends AbEntity {
 	public int smokeX = -1;
 
 	public ECastle(StageBasis b) {
-		super(b.st.trail ? Integer.MAX_VALUE : b.st.health);
+		super(b.st.trail ? Integer.MAX_VALUE
+				: b.st.getCont().getCont().getSID().equals("000003") ? b.st.health * (b.est.star + 1) // might be bodged but EoC is the only sm with stars
+				: b.st.health);
 		sb = b;
 	}
 
-	public ECastle(StageBasis xb, BasisLU b) {
-		super(b.t().getBaseHealth());
-		sb = xb;
+	public ECastle(StageBasis b, BasisLU lu) {
+		super(lu.t().getBaseHealth(b.isBanned(C_BASE)));
+		sb = b;
 	}
 
 	@Override
@@ -154,7 +156,5 @@ public class ECastle extends AbEntity {
 
 	@Override
 	public void preUpdate() {
-
 	}
-
 }

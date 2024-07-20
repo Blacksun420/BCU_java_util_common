@@ -11,4 +11,3 @@ public interface StageInfo {
 
     float[] getExChances();
 }
-

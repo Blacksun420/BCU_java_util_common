@@ -368,5 +368,4 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 		if (fa != null)
 			P.delete(siz);
 	}
-
 }

@@ -65,6 +65,7 @@ public class EStage extends BattleObj {
 					rem[i] = data.respawn_0;
 				else
 					rem[i] = data.respawn_0 + (int) (b.r.nextFloat() * (data.respawn_1 - data.respawn_0));
+				rem[i]++;
 
 				if (data.boss >= 1 && !b.shock)
 					b.shock = true;
@@ -91,7 +92,7 @@ public class EStage extends BattleObj {
 	}
 
 	public void setBaseBarrier() {
-		if (!s.bossBarrier || (s.trail && s.timeLimit != 0 && s.timeLimit * 30 - b.time < 0))
+		if (!s.bossGuard || (s.trail && s.timeLimit != 0 && s.timeLimit * 30 - b.time < 0))
 			return;
 
 		for (int i = 0; i < rem.length; i++) {

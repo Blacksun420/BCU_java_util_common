@@ -34,7 +34,7 @@ public class ContWaveDef extends ContWaveAb {
 		// guessed wave block time compared from BC
 		if (t == 0)
 			CommonStatic.setSE(soundEffect);
-		if (t >= (isMini ? 1 : 2) && t <= attack) {
+		if (t <= attack) {
 			atk.capture();
 			for (AbEntity e : atk.capt)
 				if (e instanceof Entity) {

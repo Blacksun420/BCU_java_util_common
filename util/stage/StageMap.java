@@ -101,6 +101,8 @@ public class StageMap extends Data implements BasedCopable<StageMap, MapColc>,
 	@JsonField(generic = Limit.class)
 	public final ArrayList<Limit> lim = new ArrayList<>();
 	public StageMapInfo info;
+	@JsonField
+	public StageLimit stageLimit;
 
 	@JsonField(generic = Stage.class)
 	public final FixIndexMap<Stage> list = new FixIndexMap<>(Stage.class);
@@ -152,8 +154,12 @@ public class StageMap extends Data implements BasedCopable<StageMap, MapColc>,
 
 		sm.price = price;
 		sm.stars = stars.clone();
+		sm.price = price;
+		sm.stageLimit = stageLimit != null ? stageLimit.clone() : null;
+
 		for (Stage st : list)
 			sm.add(st.copy(sm));
+
 		return sm;
 	}
 
@@ -175,10 +181,10 @@ public class StageMap extends Data implements BasedCopable<StageMap, MapColc>,
 	@Override
 	public String toString() {
 		String desp = MultiLangCont.get(this);
-		if (desp != null && desp.length() > 0)
+		if (desp != null && !desp.isEmpty())
 			return desp;
 		String stName = names.toString();
-		if (stName.length() == 0)
+		if (stName.isEmpty())
 			return id + " (" + list.size() + ")";
 		return stName;
 	}

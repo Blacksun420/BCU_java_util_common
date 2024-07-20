@@ -26,7 +26,7 @@ public abstract class ContWaveAb extends ContAb {
 		anim = ead;
 		maxt = anim.len();
 		if (delay)
-			t = -2;
+			t = -3;
 	}
 
 	@Override
