@@ -103,10 +103,10 @@ public class ProcLang {
 
 	public static class ProcLangStore {
 
-		private final ProcLang[] langs = new ProcLang[CommonStatic.Lang.LOC_CODE.length];
+		private final ProcLang[] langs = new ProcLang[CommonStatic.Lang.pref.length];
 
 		private ProcLang getLang() {
-			return getLang(CommonStatic.getConfig().lang);
+			return getLang(CommonStatic.getConfig().lang.ordinal());
 		}
 
 		private ProcLang getLang(int lang) {

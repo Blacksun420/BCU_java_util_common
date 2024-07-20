@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import common.CommonStatic;
+import common.CommonStatic.Lang.Locale;
 import common.io.assets.Admin.StaticPermitted;
 import common.util.anim.AnimI;
 import common.util.anim.AnimU;
@@ -51,7 +52,7 @@ public class AnimTypeLocale {
 	}
 
 	public static void read() {
-		String loc = CommonStatic.Lang.LOC_CODE[CommonStatic.getConfig().lang];
+		Locale loc = CommonStatic.getConfig().lang;
 		InputStream f = CommonStatic.ctx.getLangFile("animation_type.json");
 
 		JsonElement je = JsonParser.parseReader(new InputStreamReader(f, StandardCharsets.UTF_8));

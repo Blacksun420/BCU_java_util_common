@@ -45,7 +45,7 @@ public class ELineUp extends BattleObj {
 					continue;
 				}
 				price[i][j] = (int) (lu.efs[i][j].getPrice(sb.st.getCont().price) * 100);
-				maxC[i][j] = sb.globalCdLimit() > 0 ? sb.b.t().getFinRes(lu.efs[i][j].getRespawn()) : sb.b.t().getFinRes(lu.efs[i][j].du.getRespawn(), sb.isBanned(C_RESP));
+				maxC[i][j] = sb.globalCdLimit() > 0 ? sb.b.t().getFinResGlobal(sb.globalCdLimit(), sb.isBanned(C_RESP)) : sb.b.t().getFinRes(lu.efs[i][j].getRespawn(), sb.isBanned(C_RESP));
 
 				spData[i][j] = lu.fs[i][j] instanceof Form && ((Form) lu.fs[i][j]).du.getProc().SPIRIT.exists() ? ((Form) lu.fs[i][j]).du.getProc().SPIRIT : null;
 				scount[i][j] = spData[i][j] == null ? -1 : 0;

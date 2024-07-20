@@ -43,8 +43,10 @@ public class DefStageInfo implements StageInfo {
         energy = data[0];
         xp = data[1];
         s.mus0 = Identifier.parseInt(data[2], Music.class);
-        s.mush = data[3];
-        s.mus1 = Identifier.parseInt(data[4], Music.class);
+        if (data[3] != 0 && data[3] != 100) {
+            s.mush = data[3];
+            s.mus1 = Identifier.parseInt(data[4], Music.class);
+        }
 
         once = data[data.length - 1];
         boolean isTime = data.length > 15;
@@ -126,6 +128,14 @@ public class DefStageInfo implements StageInfo {
 
         if (st.getCont().info.unskippable)
             ans.append("<br> You can't use gold CPU in this stage");
+        if (st.getCont().stageLimit != null && !st.getCont().stageLimit.bannedCatCombo.isEmpty()) {
+            String[] comboData = new String[st.getCont().stageLimit.bannedCatCombo.size()];
+            ans.append("<br> Banned combos: ");
+            int i = 0;
+            for (int id : st.getCont().stageLimit.bannedCatCombo)
+                comboData[i++] = CommonStatic.def.getUILang(2, "nb" + id);
+            ans.append(String.join(", ", comboData));
+        }
 
         if (exConnection) {
             ans.append("<br><br> EX Map Name: ")

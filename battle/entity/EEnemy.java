@@ -39,8 +39,8 @@ public class EEnemy extends Entity {
 	public void kill(boolean glass) {
 		super.kill(glass);
 
-		if (!basis.st.trail && !glass) {
-			float mul = basis.b.t().getDropMulti() * (1 + (status.money / 100f));
+		if (!basis.st.trail && !glass && basis.maxBankLimit() <= 0) {
+			float mul = basis.b.t().getDropMulti(basis.isBanned(C_MEAR)) * (1 + (status.money / 100f));
 			basis.money = (int) (basis.money + mul * ((MaskEnemy) data).getDrop());
 		}
 		if (rev != null) {
@@ -154,8 +154,8 @@ public class EEnemy extends Entity {
 
 	@Override
 	public void postUpdate() {
-		if (!canBurrow && notAttacking())
-			canBurrow = status.burs[0] != 0;
+		if (skipSpawnBurrow && notAttacking())
+			skipSpawnBurrow = status.burs[0] == 0;
 		super.postUpdate();
 	}
 

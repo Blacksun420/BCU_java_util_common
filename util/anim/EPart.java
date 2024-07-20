@@ -52,7 +52,7 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 	public void alter(int m, float v) {
 		if (m == 0)
 			if (v < ent.length && v >= 0 && v != ind)
-				fa = ent[(int)v];
+				fa = ent[(int) v];
 			else
 				fa = null;
 		else if (m == 1)
@@ -79,7 +79,10 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 			piv.x = (args[6] + v) * (flipped && fa == null ? -1 : 1);
 		else if (m == 7)
 			piv.y = args[7] + v;
-		else if (m == 8)
+		else if (m == 8) {
+			sca.x = 1f * args[8] * v / model.ints[0];
+			sca.y = 1f * args[9] * v / model.ints[0];
+		} else if (m == 53)
 			gsca = v;
 		else if (m == 9)
 			sca.x = 1f * args[8] * v / model.ints[0] * (flipped && fa == null ? -1 : 1);
@@ -149,6 +152,8 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 			return extendX;
 		else if (m == 52)
 			return extendY;
+		else if (m == 53)
+			return gsca;
 		else
 			System.out.println("EPart modification can be: " + m);
 		return -1;
@@ -161,6 +166,10 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 
 	public MaModel getModel() {
 		return model;
+	}
+
+	public P getSca() {
+		return sca;
 	}
 
 	public EPart[] getParts() {

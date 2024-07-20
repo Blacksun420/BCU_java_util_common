@@ -14,9 +14,8 @@ import java.util.Queue;
 public class MaAnim extends Data implements BattleStatic {
 
 	public static MaAnim newIns(FileData f, boolean isOld) {
-		if(f == null) {
+		if(f == null)
 			return new MaAnim();
-		}
 
 		try {
 			return new MaAnim(f.readLine(), isOld);
@@ -56,7 +55,6 @@ public class MaAnim extends Data implements BattleStatic {
 			validate();
 		} else {
 			n = 0;
-
 			parts = new Part[n];
 
 			validate();

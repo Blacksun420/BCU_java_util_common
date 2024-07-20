@@ -337,6 +337,10 @@ public class JsonDecoder {
 		if (elem.isJsonNull())
 			return null;
 		Object[] constants = cls.getEnumConstants();
+		if (elem.getAsJsonPrimitive().isNumber()) {
+			int ord = elem.getAsInt();
+			return constants[ord];
+		}
 		String name = getString(elem);
 		for (Object constant : constants)
 			if (constant.toString().equals(name))

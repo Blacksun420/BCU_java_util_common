@@ -60,6 +60,14 @@ public class CustomStageInfo implements StageInfo {
     public String getHTML() {
         StringBuilder ans = new StringBuilder();
         ans.append("<html>");
+        if (st.getCont().stageLimit != null && !st.getCont().stageLimit.bannedCatCombo.isEmpty()) {
+            String[] comboData = new String[st.getCont().stageLimit.bannedCatCombo.size()];
+            ans.append("<br> Banned combos: ");
+            int i = 0;
+            for (int id : st.getCont().stageLimit.bannedCatCombo)
+                comboData[i++] = CommonStatic.def.getUILang(2, "nb" + id);
+            ans.append(String.join(", ", comboData));
+        }
         if (stages.size() > 0) {
             ans.append("<table><tr><th>List of Followup Stages:</th></tr>");
             for (int i = 0; i < stages.size(); i++)

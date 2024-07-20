@@ -2986,7 +2986,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					basis.getAttack(aam.getSpAttack(RESU, i));
 			if (status.burs[1] <= 0) {
 				kbTime = 0;
-				canBurrow = status.burs[0] != 0;
+				skipSpawnBurrow = status.burs[0] == 0;
 			}
 		}
 
