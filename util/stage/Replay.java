@@ -1,6 +1,7 @@
 package common.util.stage;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import common.CommonStatic;
 import common.battle.BasisLU;
@@ -86,7 +87,7 @@ public class Replay extends Data {
 	@JsonField
 	public long seed;
 	@JsonField
-	public int[] conf;
+	public int cfg;
 	@JsonField
 	public int star, len;
 	@JsonField
@@ -94,7 +95,9 @@ public class Replay extends Data {
 	@JsonField
 	public BasisLU lu;
 	@JsonField
-	public boolean buttonDelay = false, sav = false;
+	public boolean buttonDelay = false;
+	@JsonField
+	public byte[] bans;
 	public int[] action;
 	@JsonField(generic = {Integer.class, double[].class})
 	public HashMap<Integer, double[]> sniperCoords;
@@ -106,19 +109,19 @@ public class Replay extends Data {
 
 	}
 
-	public Replay(BasisLU blu, Identifier<Stage> sta, int stars, int[] con, long se, boolean buttonDelay, boolean save) {
+	public Replay(BasisLU blu, Identifier<Stage> sta, int stars, int con, long se, boolean buttonDelay, byte[] bans) {
 		lu = blu;
 		st = sta;
 		star = stars;
-		conf = con;
+		cfg = con;
 		seed = se;
 		this.buttonDelay = buttonDelay;
-		this.sav = save;
+		this.bans = bans;
 	}
 
 	@Override
 	public Replay clone() {
-		return new Replay(lu.copy(), st, star, conf.clone(), seed, buttonDelay, sav);
+		return new Replay(lu.copy(), st, star, cfg, seed, buttonDelay, bans.clone());
 	}
 
 	public int getLen() {
@@ -212,8 +215,12 @@ public class Replay extends Data {
 	}
 
 	@JsonDecoder.OnInjected
-	public void onInjected() {
+	public void onInjected(JsonObject jobj) {
 		if (sniperCoords == null)
 			sniperCoords = new HashMap<>();
+		if (jobj.has("conf"))
+			cfg = jobj.getAsJsonArray("conf").get(0).getAsByte();
+		if (bans == null)
+			bans = new byte[10];
 	}
 }

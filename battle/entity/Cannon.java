@@ -161,7 +161,7 @@ public class Cannon extends AtkModelAb {
                     proc.SNIPER.prob = 1;
                     float wid = NYRAN[0];
                     float p = b.ubase.pos - wid / 2 + 100;
-                    int atk = b.b.t().getCanonAtk(b.isBanned(C_C_ATK));
+                    int atk = b.b.t().getCanonAtk(b.elu.getInc(C_C_ATK));
                     AttackCanon eatk = new AttackCanon(this, atk, CTrait, 0, proc, 0, 0, 1);
                     new ContWaveCanon(new AttackWave(eatk.attacker, eatk, p, wid, WT_CANN | WT_WAVE), p, 0);
                 } else if (id == 1) {
@@ -181,7 +181,7 @@ public class Cannon extends AtkModelAb {
                     // freeze canon
                     duration = 1;
                     proc.STOP.time = (int) (b.b.t().getCannonMagnification(id, Data.BASE_TIME) * (100 + b.elu.getInc(C_STOP)) / 100.0);
-                    int atk = (int) (b.b.t().getCanonAtk(b.isBanned(C_C_ATK)) * b.b.t().getCannonMagnification(id, Data.BASE_ATK_MAGNIFICATION) / 100.0);
+                    int atk = (int) (b.b.t().getCanonAtk(b.elu.getInc(C_C_ATK)) * b.b.t().getCannonMagnification(id, Data.BASE_ATK_MAGNIFICATION) / 100.0);
                     int rad = (int) (NYRAN[3] / 2);
                     b.getAttack(new AttackCanon(this, atk, CTrait, 0, proc, pos - rad, pos + rad, duration));
                 } else if (id == 4) {
@@ -207,7 +207,7 @@ public class Cannon extends AtkModelAb {
                     proc.BREAK.prob = 1;
                     proc.KB.dis = KB_DIS[INT_KB];
                     proc.KB.time = KB_TIME[INT_KB];
-                    int atk = (int) (b.b.t().getCanonAtk(b.isBanned(C_C_ATK)) * b.b.t().getCannonMagnification(id, Data.BASE_ATK_MAGNIFICATION) / 100.0);
+                    int atk = (int) (b.b.t().getCanonAtk(b.elu.getInc(C_C_ATK)) * b.b.t().getCannonMagnification(id, Data.BASE_ATK_MAGNIFICATION) / 100.0);
                     float rad = b.b.t().getCannonMagnification(id, Data.BASE_RANGE);
                     float newPos = getBreakerSpawnPoint(pos, rad);
                     b.getAttack(new AttackCanon(this, atk, CTrait, AB_CKILL, proc, newPos - rad, newPos - 1, duration));

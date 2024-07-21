@@ -21,7 +21,7 @@ public class ELineUp extends BattleObj {
 
 	public final int[] inc;
 
-	protected ELineUp(LineUp lu, StageBasis sb, boolean sav) {
+	protected ELineUp(LineUp lu, StageBasis sb, byte[] bans) {
 		inc = lu.inc.clone();
 		for (byte i = 0; i < inc.length; i++)
 			if (sb.isBanned(i))
@@ -31,21 +31,20 @@ public class ELineUp extends BattleObj {
 		Limit lim = sb.est.lim;
 		for (int i = 0; i < 2; i++)
 			for (int j = 0; j < 5; j++) {
-				if (lu.fs[i][j] == null ||
-						(lim != null && ((lim.line > 0 && 2 - (lim.line - i) != 1) || (lu.efs[i][j] instanceof EForm && lim.unusable(((EForm) lu.efs[i][j]).du, sb.st.getCont().price))))
-						|| (sav && sb.st.getCont().getCont().getSave(true).locked(lu.fs[i][j]))) {
-					price[i][j] = -1;
-					if (sav && lu.fs[i][j] instanceof Form && sb.st.getCont().getCont().getSave(true).locked(lu.fs[i][j]))
+				if (lu.fs[i][j] == null || bans[(i * 5) + j] != 0 || (lim != null && ((lim.line > 0 && 2 - (lim.line - i) != 1)))) {
+					price[i][j] = -bans[i];
+					if (price[i][j] == -2)
 						for (int k = 0; k < coms.size(); k++)
 							if (coms.get(k).containsForm((Form)lu.fs[i][j])) {
 								Combo c = coms.get(k);
 								coms.remove(k--);
+								lu.inc[c.type] -= CommonStatic.getBCAssets().values[c.type][c.lv];
 								inc[c.type] -= CommonStatic.getBCAssets().values[c.type][c.lv];
 							}
 					continue;
 				}
 				price[i][j] = (int) (lu.efs[i][j].getPrice(sb.st.getCont().price) * 100);
-				maxC[i][j] = sb.globalCdLimit() > 0 ? sb.b.t().getFinResGlobal(sb.globalCdLimit(), sb.isBanned(C_RESP)) : sb.b.t().getFinRes(lu.efs[i][j].getRespawn(), sb.isBanned(C_RESP));
+				maxC[i][j] = sb.globalCdLimit() > 0 ? sb.b.t().getFinResGlobal(sb.globalCdLimit(), getInc(C_RESP)) : sb.b.t().getFinRes(lu.efs[i][j].getRespawn(), getInc(C_RESP));
 
 				spData[i][j] = lu.fs[i][j] instanceof Form && ((Form) lu.fs[i][j]).du.getProc().SPIRIT.exists() ? ((Form) lu.fs[i][j]).du.getProc().SPIRIT : null;
 				scount[i][j] = spData[i][j] == null ? -1 : 0;

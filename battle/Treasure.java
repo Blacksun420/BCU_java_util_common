@@ -138,20 +138,20 @@ public class Treasure extends Data {
 	/**
 	 * get base health
 	 */
-	public int getBaseHealth(boolean noCombo) {
+	public int getBaseHealth(int comboInc) {
 		int t = tech[LV_BASE];
 		int base = t < 6 ? t * 1000 : t < 8 ? 5000 + (t - 5) * 2000 : 9000 + (t - 7) * 3000;
 		base += trea[T_BASE] * 70;
 		base += (bslv[0] - 1) * 4000;
-		return base * (100 + (noCombo ? 0 : b.getInc(C_BASE))) / 100;
+		return base * (100 + comboInc) / 100;
 	}
 
 	/**
 	 * get normal canon attack
 	 */
-	public int getCanonAtk(boolean noCombo) {
+	public int getCanonAtk(int comboInc) {
 		int base = 50 + tech[LV_CATK] * 50 + trea[T_CATK] * 5;
-		return base * (100 + (noCombo ? 0 : b.getInc(C_C_ATK))) / 100;
+		return base * (100 + comboInc) / 100;
 	}
 
 	public float getCannonMagnification(int id, int type) {
@@ -223,31 +223,31 @@ public class Treasure extends Data {
 	/**
 	 * get accounting multiplication
 	 */
-	public float getDropMulti(boolean noCombo) {
-		return (0.95f + 0.05f * tech[LV_ACC] + 0.005f * trea[T_ACC]) * (1 + (noCombo ? 0 : b.getInc(C_MEAR)) * 0.01f);
+	public float getDropMulti(int comboInc) {
+		return (0.95f + 0.05f * tech[LV_ACC] + 0.005f * trea[T_ACC]) * (1 + comboInc * 0.01f);
 	}
 
 	/**
 	 * get EVA kill ability attack multiplication
 	 */
-	public float getEKAtk(boolean noCombo) {
-		return 0.05f * (100 + (noCombo ? 0 : b.getInc(C_EKILL)));
+	public float getEKAtk(int comboInc) {
+		return 0.05f * (100 + comboInc);
 	}
 
 	/**
 	 * get EVA kill ability reduce damage multiplication
 	 */
-	public float getEKDef(boolean noCombo) {
-		return 20f / (100 + (noCombo ? 0 : b.getInc(C_EKILL)));
+	public float getEKDef(int comboInc) {
+		return 20f / (100 + comboInc);
 	}
 
 	/**
 	 * get processed cat cool down time
 	 * max treasure & level should lead to -264f recharge
 	 */
-	public int getFinRes(int ori, boolean noCombo) {
+	public int getFinRes(int ori, int comboInc) {
 		float research = (tech[LV_RES] - 1) * 6 + trea[T_RES] * 0.3f;
-		float deduction = research + (float) Math.floor(research * (noCombo ? 0 : b.getInc(C_RESP)) / 100);
+		float deduction = research + (float) Math.floor(research * comboInc / 100);
 		return (int) Math.max(60, ori - deduction);
 	}
 
@@ -255,11 +255,11 @@ public class Treasure extends Data {
 	 * get processed cat cool down time w/ global restriction
 	 * ignores research and treasure data
 	 */
-	public int getFinResGlobal(int ori, boolean noCombo) {
+	public int getFinResGlobal(int ori, int comboInc) {
 		if (ori <= 60)
 			return ori;
 		float research = (tech[LV_RES] - 1) * 6 + trea[T_RES] * 0.3f;
-		float deduction = (float) Math.floor(research * (noCombo ? 0 : b.getInc(C_RESP)) / 100.0);
+		float deduction = (float) Math.floor(research * comboInc / 100.0);
 		return (int) Math.max(60, ori - deduction);
 	}
 
@@ -302,14 +302,14 @@ public class Treasure extends Data {
 	 * @param traits Trait list for fruit buff
 	 * @return Multiplied value
 	 */
-	public float getATK(double mult, SortedPackSet<Trait> traits, boolean noCombo) {
+	public float getATK(double mult, SortedPackSet<Trait> traits) {
 		float ini = (float) ((mult/100f) + (mult >= 300 ? 1f : mult > 100 ? 0.3f : 0f) / 3 * getFruit(traits));
 		if (mult > 100 && mult < 500)
-			return ini * (noCombo ? 1 : 1 - (b.getInc(mult >= 300 ? C_MASSIVE : C_GOOD) * 0.01f));
+			return ini * (1 - (b.getInc(mult >= 300 ? C_MASSIVE : C_GOOD) * 0.01f));
 		return ini;
 	}
 
-	public float getDEF(double mult, SortedPackSet<Trait> eTraits, SortedPackSet<Trait> traits, Orb orb, Level level, boolean noCombo) {
+	public float getDEF(double mult, SortedPackSet<Trait> eTraits, SortedPackSet<Trait> traits, Orb orb, Level level, int comboInc) {
 		final int ORB_LV = mult < 600 && mult > 100 ? mult < 400 ? ORB_STRONG : ORB_RESISTANT : -1;
 		final byte[] ORB_MULTIS = ORB_LV == -1 ? new byte[0] : ORB_LV == ORB_STRONG ? ORB_STR_DEF_MULTI : ORB_RESISTANT_MULTI;
 
@@ -335,7 +335,7 @@ public class Treasure extends Data {
 		}
 		if (ini == 1 || ORB_LV == -1)
 			return ini;
-		float com = 1 - (noCombo ? 0 : b.getInc(ORB_LV == ORB_STRONG ? C_GOOD : C_RESIST) * 0.01f);
+		float com = 1 - (comboInc * 0.01f);
 		return ini * com;
 	}
 
@@ -352,15 +352,15 @@ public class Treasure extends Data {
 	/**
 	 * get witch kill ability attack multiplication
 	 */
-	public float getWKAtk(boolean noCombo) {
-		return 0.05f * (100 + (noCombo ? 0 : b.getInc(C_WKILL)));
+	public float getWKAtk(int comboInc) {
+		return 0.05f * (100 + comboInc);
 	}
 
 	/**
 	 * get witch kill ability reduce damage multiplication
 	 */
-	public float getWKDef(boolean noCombo) {
-		return 10f / (100 + (noCombo ? 0 : b.getInc(C_WKILL)));
+	public float getWKDef(int comboInc) {
+		return 10f / (100 + comboInc);
 	}
 
 	public float getXPMult() {
@@ -373,7 +373,7 @@ public class Treasure extends Data {
 	/**
 	 * get canon recharge time
 	 */
-	protected int CanonTime(int map, boolean noCombo) {
+	protected int CanonTime(int map, int comboInc) {
 		int base = 1500 + 50 * (tech[LV_CATK] - tech[LV_RECH]);
 		if (trea[T_RECH] <= 300)
 			base -= (int) (1.5 * trea[T_RECH]);
@@ -381,7 +381,7 @@ public class Treasure extends Data {
 			base -= 3 * trea[T_RECH] - 450;
 
 		base += map * 450;
-		base -= (int) (base * (noCombo ? 0 : b.getInc(C_C_SPE)) / 100.0);
+		base -= (int) (base * comboInc / 100.0);
 
 		return Math.max(950, base);
 	}
@@ -398,11 +398,11 @@ public class Treasure extends Data {
 	/**
 	 * get wallet capacity
 	 */
-	protected int getMaxMon(int lv, boolean noCombo) {
+	protected int getMaxMon(int lv, int comboInc) {
 		int base = Math.max(25, 50 * tech[LV_WALT]);
 		base = base * (1 + lv);
 		base += trea[T_WALT] * 10;
-		return base * (100 + (noCombo ? 0 : b.getInc(C_M_MAX)));
+		return base * (100 + comboInc);
 	}
 
 	/**

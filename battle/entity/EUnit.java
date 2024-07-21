@@ -108,9 +108,9 @@ public class EUnit extends Entity {
 			return 0;
 		if (e instanceof EEnemy) {
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_WITCH)) && (e.getAbi() & AB_WKILL) > 0)
-				ans *= basis.b.t().getWKDef(basis.isBanned(C_WKILL));
+				ans *= basis.b.t().getWKDef(basis.elu.getInc(C_WKILL));
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_EVA)) && (e.getAbi() & AB_EKILL) > 0)
-				ans *= basis.b.t().getEKDef(basis.isBanned(C_EKILL));
+				ans *= basis.b.t().getEKDef(basis.elu.getInc(C_EKILL));
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_BARON)) && (e.getAbi() & AB_BAKILL) > 0)
 				ans *= 0.7;
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_BEAST)) && matk.getProc().BSTHUNT.type.active)
@@ -162,14 +162,14 @@ public class EUnit extends Entity {
 			sharedTraits.addIf(atk.trait, t -> !t.BCTrait() && ((t.targetType && isAntiTraited) || t.others.contains((Form)data.getPack())));
 			if (!sharedTraits.isEmpty()) {
 				if (status.curse == 0 && getProc().DEFINC.mult != 0)
-					ans *= basis.b.t().getDEF(getProc().DEFINC.mult, atk.trait, sharedTraits, ((MaskUnit) data).getOrb(), level, basis.isBanned(getProc().DEFINC.mult < 400 ? C_GOOD : C_RESIST));
+					ans *= basis.b.t().getDEF(getProc().DEFINC.mult, atk.trait, sharedTraits, ((MaskUnit) data).getOrb(), level, basis.elu.getInc(getProc().DEFINC.mult < 400 ? C_GOOD : C_RESIST));
 				if (atk.attacker.status.curse == 0 && atk.attacker.getProc().DMGINC.mult != 0)
 					ans *= atk.attacker.getProc().DMGINC.mult / 100.0;
 			}
 			if (atk.trait.contains(UserProfile.getBCData().traits.get(TRAIT_WITCH)) && (getAbi() & AB_WKILL) > 0)
-				ans *= basis.b.t().getWKDef(basis.isBanned(C_WKILL));
+				ans *= basis.b.t().getWKDef(basis.elu.getInc(C_WKILL));
 			if (atk.trait.contains(UserProfile.getBCData().traits.get(TRAIT_EVA)) && (getAbi() & AB_EKILL) > 0)
-				ans *= basis.b.t().getEKDef(basis.isBanned(C_EKILL));
+				ans *= basis.b.t().getEKDef(basis.elu.getInc(C_EKILL));
 			if (atk.trait.contains(UserProfile.getBCData().traits.get(TRAIT_BARON)) && (getAbi() & AB_BAKILL) > 0)
 				ans *= 0.7;
 			if (atk.trait.contains(UserProfile.getBCData().traits.get(Data.TRAIT_BEAST)) && getProc().BSTHUNT.type.active)

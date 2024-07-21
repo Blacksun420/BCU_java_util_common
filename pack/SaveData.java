@@ -9,6 +9,8 @@ import common.util.stage.info.CustomStageInfo;
 import common.util.unit.AbForm;
 import common.util.unit.AbUnit;
 import common.util.unit.Form;
+import common.util.unit.UniRand;
+import common.util.unit.rand.UREnt;
 
 import java.util.*;
 
@@ -149,6 +151,82 @@ public class SaveData {
                             if (ind == null || ind < reward.fid)
                                 ulkUni.put(reward.unit, reward.fid);
                         }
+    }
+
+    public Stage unlockedAt(Form f) {
+        for (int i = 0; i < pack.mc.si.size(); i++) {
+            CustomStageInfo csi = (CustomStageInfo)pack.mc.si.get(i);
+            for (Form ff : csi.rewards)
+                if (f.unit == ff.unit && ff.fid >= f.fid)
+                    return csi.st;
+        }
+        return null;
+    }
+
+    public HashMap<AbForm, Stage> getUnlockedsBeforeStage(Stage st, boolean includeRandom) {
+        HashMap<AbForm, Stage> ulK = new HashMap<>();
+        for (int i = st.getCont().list.indexOf(st) - 1; i >= 0; i--)
+            if (st.getCont().list.get(i).info instanceof CustomStageInfo) {
+                CustomStageInfo csi = (CustomStageInfo)st.getCont().list.get(i).info;
+                for (Form f : csi.rewards) {
+                    boolean ad = true;
+                    for (int j = f.fid + 1; j < f.unit.forms.length; j++)
+                        if (ulK.containsKey(f.unit.forms[j])) {
+                            ad = false;
+                            break;
+                        }
+                    if (ad)
+                        ulK.put(f, st);
+                }
+            }
+        for (StageMap uchp : st.getCont().unlockReq)
+            locRec(ulK, uchp);
+
+        if (includeRandom) {
+            for (Map.Entry<AbUnit, Integer> u : pack.defULK.entrySet())
+                for (int i = 0; i <= u.getValue(); i++)
+                    ulK.put(u.getKey().getForms()[i], null);
+            getRandsRec(ulK, pack);
+        }
+        return ulK;
+    }
+
+    private static void locRec(HashMap<AbForm, Stage> ulK, StageMap chp) {
+        for (int i = chp.list.size() - 1; i >= 0; i--)
+            if (chp.list.get(i).info instanceof CustomStageInfo) {
+                CustomStageInfo csi = (CustomStageInfo)chp.list.get(i).info;
+                for (Form f : csi.rewards) {
+                    boolean ad = true;
+                    for (int j = f.fid + 1; j < f.unit.forms.length; j++)
+                        if (ulK.containsKey(f.unit.forms[j])) {
+                            ad = false;
+                            break;
+                        }
+                    if (ad)
+                        ulK.put(f, chp.list.get(i));
+                }
+            }
+        for (StageMap uchp : chp.unlockReq)
+            locRec(ulK, uchp);
+    }
+    private static void getRandsRec(HashMap<AbForm, Stage> ulK, PackData.UserPack pk) {
+        for (UniRand rand : pk.randUnits)
+            getRandRec(ulK, rand);
+        for (String par : pk.desc.dependency)
+            getRandsRec(ulK, UserProfile.getUserPack(par));
+    }
+    private static void getRandRec(HashMap<AbForm, Stage> ulK, UniRand r) {
+        boolean add = true;
+        for (UREnt e : r.list) {
+            if (e.ent instanceof UniRand)
+                getRandRec(ulK, (UniRand) e.ent);
+            if (!ulK.containsKey(e.ent)) {
+                add = false;
+                break;
+            }
+        }
+        if (add)
+            ulK.put(r, null);
     }
 
     @OnInjected //Just like every game ever, update save data if something new is added designed for a point below the one you're at

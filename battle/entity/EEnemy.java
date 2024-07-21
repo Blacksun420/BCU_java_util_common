@@ -40,7 +40,7 @@ public class EEnemy extends Entity {
 		super.kill(glass);
 
 		if (!basis.st.trail && !glass && basis.maxBankLimit() <= 0) {
-			float mul = basis.b.t().getDropMulti(basis.isBanned(C_MEAR)) * (1 + (status.money / 100f));
+			float mul = basis.b.t().getDropMulti(basis.elu.getInc(C_MEAR)) * (1 + (status.money / 100f));
 			basis.money = (int) (basis.money + mul * ((MaskEnemy) data).getDrop());
 		}
 		if (rev != null) {
@@ -67,9 +67,9 @@ public class EEnemy extends Entity {
 			return 0;
 		if (e instanceof EUnit) {
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_WITCH)) && (e.getAbi() & AB_WKILL) > 0)
-				ans *= basis.b.t().getWKAtk(basis.isBanned(C_WKILL));
+				ans *= basis.b.t().getWKAtk(basis.elu.getInc(C_WKILL));
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_EVA)) && (e.getAbi() & AB_EKILL) > 0)
-				ans *= basis.b.t().getEKAtk(basis.isBanned(C_EKILL));
+				ans *= basis.b.t().getEKAtk(basis.elu.getInc(C_EKILL));
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_BARON)) && (e.getAbi() & AB_BAKILL) > 0)
 				ans *= 1.6;
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_BEAST)) && matk.getProc().BSTHUNT.type.active)
@@ -108,9 +108,9 @@ public class EEnemy extends Entity {
 					ans /= getProc().DEFINC.mult/100.0;
 			}
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_WITCH)) && (atk.abi & AB_WKILL) > 0)
-				ans *= basis.b.t().getWKAtk(basis.isBanned(C_WKILL));
+				ans *= basis.b.t().getWKAtk(basis.elu.getInc(C_WKILL));
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_EVA)) && (atk.abi & AB_EKILL) > 0)
-				ans *= basis.b.t().getEKAtk(basis.isBanned(C_EKILL));
+				ans *= basis.b.t().getEKAtk(basis.elu.getInc(C_EKILL));
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_BARON)) && (atk.abi & AB_BAKILL) > 0)
 				ans *= 1.6;
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_BEAST)) && atk.getProc().BSTHUNT.type.active)

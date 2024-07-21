@@ -50,9 +50,9 @@ public class StageBasis extends BattleObj {
 	public final List<EAnimCont> ebaseSmoke = new ArrayList<>();
 	public final List<EAnimCont> ubaseSmoke = new ArrayList<>();
 
-	public final int[] conf;
+	public final int conf;
 	public final CopRand r;
-	public final Recorder rx = new Recorder();
+	final Recorder rx = new Recorder();
 	public final boolean isOneLineup;
 	public final boolean buttonDelayOn;
 	public boolean goingUp = true;
@@ -92,13 +92,13 @@ public class StageBasis extends BattleObj {
 	private boolean bgEffectInitialized = false;
 	public int baseBarrier = 0;
 
-	public StageBasis(BattleField bf, EStage stage, BasisLU bas, int[] ints, long seed, boolean buttonDelayOn, boolean sav) {
+	public StageBasis(BattleField bf, EStage stage, BasisLU bas, int cnf, long seed, boolean buttonDelayOn, byte[] bans) {
 		b = bas;
 		r = new CopRand(seed);
 		nyc = bas.nyc;
 		est = stage;
 		st = est.s;
-		elu = new ELineUp(bas.lu, this, sav);
+		elu = new ELineUp(bas.lu, this, bans);
 		setBackground(st.bg);
 		boss_spawn = Identifier.getOr(st.castle, CastleImg.class).boss_spawn;
 
@@ -130,7 +130,7 @@ public class StageBasis extends BattleObj {
 		}
 		int max = est.lim != null ? est.lim.num : 50;
 		max_num = max <= 0 ? 50 : max;
-		maxCannon = bas.t().CanonTime(sttime, isBanned(C_C_SPE));
+		maxCannon = bas.t().CanonTime(sttime, elu.getInc(C_C_SPE));
 		le.initCapacity(max_num + st.max);
 
 		int bank = maxBankLimit();
@@ -148,7 +148,7 @@ public class StageBasis extends BattleObj {
 		}
 		cannon = maxCannon * elu.getInc(C_C_INI) / 100;
 		canon = new Cannon(this, nyc);
-		conf = ints;
+		conf = cnf;
 
 		if(st.minSpawn <= 0 || st.maxSpawn <= 0)
 			respawnTime = 1;
@@ -158,9 +158,9 @@ public class StageBasis extends BattleObj {
 			respawnTime = st.minSpawn + (int) ((st.maxSpawn - st.minSpawn) * r.nextFloat());
 
 		respawnTime--;
-		if ((conf[0] & 1) > 0)
+		if ((conf & 1) > 0)
 			work_lv = 8;
-		if ((conf[0] & 2) > 0)
+		if ((conf & 2) > 0)
 			sniper = new Sniper(this, bf);
 		else
 			sniper = null;
@@ -216,7 +216,7 @@ public class StageBasis extends BattleObj {
 		work_lv = Math.min(8, work_lv);
 
 		upgradeCost = b.t().getLvCost(work_lv);
-		maxMoney = b.t().getMaxMon(work_lv, isBanned(C_M_MAX));
+		maxMoney = b.t().getMaxMon(work_lv, elu.getInc(C_M_MAX));
 		money = Math.min(money, maxMoney);
 	}
 
@@ -386,7 +386,7 @@ public class StageBasis extends BattleObj {
 			money -= upgradeCost;
 			work_lv++;
 			upgradeCost = b.t().getLvCost(work_lv);
-			maxMoney = b.t().getMaxMon(work_lv, isBanned(C_M_MAX));
+			maxMoney = b.t().getMaxMon(work_lv, elu.getInc(C_M_MAX));
 			return true;
 		}
 		CommonStatic.setSE(SE_SPEND_FAIL);
@@ -412,7 +412,7 @@ public class StageBasis extends BattleObj {
 			if (work_lv < 8) {
 				work_lv = 8;
 				upgradeCost = -1;
-				maxMoney = b.t().getMaxMon(8, isBanned(C_M_MAX));
+				maxMoney = b.t().getMaxMon(8, elu.getInc(C_M_MAX));
 			}
 
 			money = maxMoney;
@@ -471,7 +471,7 @@ public class StageBasis extends BattleObj {
 				CommonStatic.setSE(SE_SPEND_FAIL);
 			return false;
 		}
-		if (elu.price[i][j] == -1)
+		if (elu.price[i][j] == -1 || elu.price[i][j] == -2)
 			return false;
 
 		//Oh, yeah? I think my scary otherworldly shadowy spirit friends might have something to say about that
@@ -618,7 +618,7 @@ public class StageBasis extends BattleObj {
 				if (bank > 0)
 					maxMoney = bank * 100;
 				else {
-					maxMoney = b.t().getMaxMon(work_lv, isBanned(C_M_MAX));
+					maxMoney = b.t().getMaxMon(work_lv, elu.getInc(C_M_MAX));
 					money += b.t().getMonInc(work_lv) * (elu.getInc(C_M_INC) / 100 + 1);
 				}
 			}

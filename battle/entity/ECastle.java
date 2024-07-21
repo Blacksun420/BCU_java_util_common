@@ -30,7 +30,7 @@ public class ECastle extends AbEntity {
 	}
 
 	public ECastle(StageBasis b, BasisLU lu) {
-		super(lu.t().getBaseHealth(b.isBanned(C_BASE)));
+		super(lu.t().getBaseHealth(b.elu.getInc(C_BASE)));
 		sb = b;
 	}
 

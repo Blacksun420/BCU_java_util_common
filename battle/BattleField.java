@@ -9,8 +9,8 @@ public abstract class BattleField {
 	public byte endFrames = 0;
 	private boolean btlTick = true;
 
-	protected BattleField(EStage stage, BasisLU bas, int[] ints, long seed, boolean buttonDelay, boolean sav) {
-		sb = new StageBasis(this, stage, bas, ints, seed, buttonDelay, sav);
+	protected BattleField(EStage stage, BasisLU bas, int conf, long seed, boolean buttonDelay, byte[] bans) {
+		sb = new StageBasis(this, stage, bas, conf, seed, buttonDelay, bans);
 	}
 
 	protected BattleField(StageBasis bas) {
