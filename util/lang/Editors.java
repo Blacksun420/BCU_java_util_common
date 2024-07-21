@@ -796,7 +796,7 @@ public class Editors {
 					t.animType = 0;
 					t.type.inv = true;
 				} else {
-					t.animType = MathUtil.clip(t.animType, 0, 4);
+					t.animType = MathUtil.clip(t.animType, 0, 5);
 				}
 			}
 		}, eg -> t -> {

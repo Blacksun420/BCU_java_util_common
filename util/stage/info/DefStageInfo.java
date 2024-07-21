@@ -12,6 +12,7 @@ import common.util.stage.StageMap;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -128,14 +129,8 @@ public class DefStageInfo implements StageInfo {
 
         if (st.getCont().info.unskippable)
             ans.append("<br> You can't use gold CPU in this stage");
-        if (st.getCont().stageLimit != null && !st.getCont().stageLimit.bannedCatCombo.isEmpty()) {
-            String[] comboData = new String[st.getCont().stageLimit.bannedCatCombo.size()];
-            ans.append("<br> Banned combos: ");
-            int i = 0;
-            for (int id : st.getCont().stageLimit.bannedCatCombo)
-                comboData[i++] = CommonStatic.def.getUILang(2, "nb" + id);
-            ans.append(String.join(", ", comboData));
-        }
+        if (st.getCont().stageLimit != null)
+            ans.append(st.getCont().stageLimit.getHTML());
 
         if (exConnection) {
             ans.append("<br><br> EX Map Name: ")
@@ -186,12 +181,45 @@ public class DefStageInfo implements StageInfo {
         }
 
         if (time.length > 0) {
-            ans.append("<br> Time scores").append("<br>");
+            ans.append("<b><h3><center>Time scores</center></h3></b>");
             ans.append("<table><tr><th>score</th><th>item name</th><th>number</th></tr>");
             for (int[] tm : time)
                 ans.append("<tr><td>").append(tm[0]).append("</td><td>").append(MultiLangCont.getStageDrop(tm[1])).append("</td><td>").append(tm[2]).append("</td><tr>");
             ans.append("</table>");
         }
+
+        if (maxMaterial == -1) {
+            ans.append("</html>");
+            return ans.toString();
+        }
+        ans.append("<b><h2><center>Material Drop Data</center></h2></b>");
+        ans.append(CommonStatic.def.getUILang(0, "maxmat")).append("<br>");
+        for (int i = 0; i < map.multiplier.length; i++) {
+            ans.append(i + 1).append(" ").append(CommonStatic.def.getUILang(1, "star")).append(": ")
+                    .append((int) (map.multiplier[i] * maxMaterial))
+                    .append("<br>");
+        }
+
+        ans.append("<br><table><tr><th>")
+                .append(CommonStatic.def.getUILang(1, "mat"))
+                .append("</th><th>")
+                .append(CommonStatic.def.getUILang(1, "chance"))
+                .append("</th></tr>");
+
+        int missChance = map.materialDrop[0];
+        int totalChances = Arrays.stream(map.materialDrop).reduce(0, Integer::sum) - missChance;
+        for (int i = 1 ; i < map.materialDrop.length; i++) {
+            int chance = map.materialDrop[i];
+            if (map.materialDrop[i] == 0)
+                continue;
+
+            ans.append("<tr><td>")
+                    .append(CommonStatic.def.getUILang(2, "m" + (i - 1)))
+                    .append("</td><td>")
+                    .append((double) (((100 - missChance) * chance * 100) / totalChances) / 100.0).append("%")
+                    .append("</td></tr>");
+        }
+        ans.append("</table></html>");
         return ans.toString();
     }
 

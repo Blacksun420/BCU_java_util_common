@@ -123,11 +123,19 @@ public abstract class Source {
 				this.id = "_mapped_" + this.id;
 			}
 			AnimU<?> anim = getAnim();
+
 			if (!(anim instanceof AnimCE))
 				return;
-			UserPack p = UserProfile.getUserPack(pack);
-			if (p.editable && UserProfile.isOlderPack(p, "0.7.8.0"))
-				((AnimCE)anim).unSave("Set new scale");
+			UserPack p = (UserPack) UserPack.getPack(zip instanceof Workspace ? ((Workspace) zip).id : pack);
+			if (p.editable && UserProfile.isOlderPack(p, "0.7.8.0")) {
+				anim.anims = anim.loader.getMA();
+				for (MaAnim maanim : anim.anims)
+					for (Part line : maanim.parts)
+						if (line.ints[1] == 8)
+							line.ints[1] = 53;
+				((AnimCE)anim).unSave("scale to new scale");
+				anim.unload();
+			}
 		}
 
 	}
@@ -175,7 +183,7 @@ public abstract class Source {
 		}
 
 		public MaAnim[] getMA() {
-			boolean old = UserProfile.isOlderPack(UserProfile.getUserPack(id.pack), "0.7.8.0");
+			boolean old = !id.pack.equals("_local") && UserProfile.isOlderPack(UserProfile.getUserPack(id.pack), "0.7.8.0");
 			ArrayList<MaAnim> ans = new ArrayList<>();
 			for (int i = 0; i < getBaseUT().length; i++)
 				ans.add(MaAnim.newIns(loader.loadFile(id.base, id, "maanim_" + getBaseUT()[i].toString() + ".txt"), old));

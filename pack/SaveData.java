@@ -9,7 +9,6 @@ import common.util.stage.info.CustomStageInfo;
 import common.util.unit.AbForm;
 import common.util.unit.AbUnit;
 import common.util.unit.Form;
-import common.util.unit.Unit;
 
 import java.util.*;
 
@@ -17,7 +16,6 @@ import java.util.*;
 public class SaveData {
 
     public final PackData.UserPack pack;
-    @JsonField(generic = { Unit.class, Integer.class }, alias = Identifier.class)
     public final TreeMap<AbUnit, Integer> ulkUni = new TreeMap<>();
     @JsonField(generic = { StageMap.class, Integer.class }, alias = Identifier.class)
     public HashMap<StageMap, Integer> cSt = new HashMap<>();//Integer points the number of stages cleared in the map
@@ -87,19 +85,6 @@ public class SaveData {
         return flags;
     }
 
-    public LinkedList<StageMap> getUnlockableMaps(StageMap smap) {
-        LinkedList<StageMap> reqMaps = new LinkedList<>();
-        for (StageMap sm : pack.mc.maps)
-            if (sm.unlockReq.contains(smap))
-                reqMaps.add(sm);
-        for (PackData.UserPack pac : UserProfile.getUserPacks())
-            if (pac.save != null && pac.desc.dependency.contains(pack.getSID()))
-                for (StageMap sm : pac.mc.maps)
-                    if (sm.unlockReq.contains(smap))
-                        reqMaps.add(sm);
-        return reqMaps;
-    }
-
     public boolean locked(AbForm f) {
         if (pack.syncPar.contains(f.getID().pack)) {
             PackData.UserPack upack = UserProfile.getUserPack(f.getID().pack);
@@ -116,15 +101,61 @@ public class SaveData {
                 (!ulkUni.containsKey(f.unit()) || ulkUni.get(f.unit()) < f.getFid());
     }
 
+    /**
+     * Required chapters still left to unlock a chapter
+     * @param sm The chapter
+     * @return All uncleared but required chapters, empty list if unlocked
+     */
+    public LinkedList<StageMap> requirements(StageMap sm) {
+        LinkedList<StageMap> cl = new LinkedList<>();
+        if (sm.unlockReq.isEmpty() || cSt.containsKey(sm))
+            return cl; //Chapter is unlocked
+        for (StageMap lsm : sm.unlockReq)
+            if (!cSt.containsKey(lsm) || cSt.get(lsm) < lsm.list.size())
+                cl.add(lsm); //A requirement chapter is uncleared, add
+        return cl;
+    }
+
+    /**
+     * A chapter is locked, but close to unlocking
+     * @param sm the chapter
+     * @return True if all chapter requirements are unlocked, but this chapter isn't
+     */
+    public boolean nearUnlock(StageMap sm) {
+        if (sm.unlockReq.isEmpty() || cSt.containsKey(sm))
+            return false; //Chapter is unlocked
+        for (StageMap lsm : sm.unlockReq)
+            if (!lsm.unlockReq.isEmpty() && !cSt.containsKey(lsm))
+                return false; //A requirement chapter is locked
+        return true;
+    }
+
     @JsonField(tag = "pack", io = JsonField.IOType.W)
     public String zser() {
         return pack.desc.id;
     }
 
+    /**
+     * Mostly used to lock units, and for startup
+     */
+    public void resetUnlockedUnits() {
+        ulkUni.clear();
+        for (StageMap sm : pack.mc.maps)
+            if (cSt.containsKey(sm))
+                for (int i = 0; i < cSt.get(sm); i++)
+                    if (sm.list.get(i).info instanceof CustomStageInfo)
+                        for (Form reward : ((CustomStageInfo)sm.list.get(i).info).rewards) {
+                            Integer ind = ulkUni.get(reward.unit);
+                            if (ind == null || ind < reward.fid)
+                                ulkUni.put(reward.unit, reward.fid);
+                        }
+    }
+
     @OnInjected //Just like every game ever, update save data if something new is added designed for a point below the one you're at
     public void injected() {
+        resetUnlockedUnits();
         for (StageMap sm : pack.mc.maps)
-            if (sm.unlockReq.size() > 0 && !cSt.containsKey(sm)) {
+            if (!sm.unlockReq.isEmpty() && !cSt.containsKey(sm)) {
                 boolean addable = true;
                 for (StageMap smp : sm.unlockReq)
                     if (smp.id.pack.equals(pack.getSID()) && (!cSt.containsKey(smp) || cSt.get(smp) < smp.list.size())) { //Verify if map is there AND cleared first before adding

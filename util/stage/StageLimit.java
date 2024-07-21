@@ -1,5 +1,6 @@
 package common.util.stage;
 
+import common.CommonStatic;
 import common.io.json.JsonClass;
 import common.io.json.JsonField;
 import common.util.BattleStatic;
@@ -32,5 +33,22 @@ public class StageLimit extends Data implements BattleStatic {
         sl.globalCooldown = globalCooldown;
         sl.bannedCatCombo.addAll(bannedCatCombo);
         return sl;
+    }
+
+    public String getHTML() {
+        StringBuilder ans = new StringBuilder();
+        if (!bannedCatCombo.isEmpty()) {
+            String[] comboData = new String[bannedCatCombo.size()];
+            ans.append("<br> Banned combos: ");
+            int i = 0;
+            for (int id : bannedCatCombo)
+                comboData[i++] = CommonStatic.def.getUILang(2, "nb" + id);
+            ans.append(String.join(", ", comboData));
+        }
+        if (maxMoney > 0)
+            ans.append("<br> Total Bank: ").append(maxMoney);
+        if (globalCooldown > 0)
+            ans.append("<br> Universal CD: ").append(globalCooldown);
+        return ans.toString();
     }
 }

@@ -257,21 +257,27 @@ public class CommonStatic {
 	public static class Lang {
 		@StaticPermitted
 		public enum Locale {
-			EN("en"),
-			ZH("zh"),
-			KR("kr"),
-			JP("jp"),
-			RU("ru"),
-			DE("de"),
-			FR("fr"),
-			ES("es"),
-			IT("it"),
-			TH("th");
+			EN("en", "English"),
+			ZH("zh", "\u4E2D\u6587"),
+			KR("kr", "\uD55C\uAD6D\uC5B4"),
+			JP("jp", "\u65E5\u672C\u8A9E"),
+			RU("ru", "Russian"),
+			DE("de", "Deutsche"),
+			FR("fr", "Français"),
+			ES("es", "Español"),
+			IT("it", "Italiano"),
+			TH("th", "Thai");
 
-			public final String code;
+			public final String code, name;
 
-			Locale(String localeCode) {
+			Locale(String localeCode, String n) {
 				code = localeCode;
+				name = n;
+			}
+
+			@Override
+			public String toString() {
+				return name;
 			}
 		}
 

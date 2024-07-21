@@ -6,7 +6,6 @@ import com.google.api.client.util.ExponentialBackOff;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import common.io.assets.Admin.StaticPermitted;
-import common.io.assets.UpdateCheck;
 import common.pack.Context;
 
 import java.io.*;

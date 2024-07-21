@@ -2250,7 +2250,6 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		kbTime = -1;
 		atkm.stopAtk();
 		anim.kill();
-		basis.checkGuard();
 	}
 
 	/**
@@ -2352,9 +2351,10 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			kbTime = -3; // conf 3 - Unborrow with Disabled burrow
 			status.burs[0] = 0;
 			bdist = -1;
-		} else if (conf != 4) {
+		} else if (conf == 5)
+			atkm.setUp(); // conf 5 - Sets animation to attack animation. Used mainly for spirits
+		else if (conf != 4)
 			anim.setAnim(AnimU.TYPEDEF[AnimU.WALK], true); // conf 0 - Sets animation to walk animation. conf 4 - sets the animation to entry, if unit has one
-		}
 
 		if (bond != null) {
 			bond.bondTree.children.add(this);
@@ -2847,18 +2847,6 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	}
 
 	/**
-	 * interrupt whatever this entity is doing
-	 */
-	private void clearState() {
-		atkm.stopAtk();
-		if (kbTime < -1 || status.burs[1] > 0) {
-			status.burs[1] = 0;
-			bdist = 0;
-			kbTime = 0;
-		}
-	}
-
-	/**
 	 * Draw the hitboxes for the unit and its attacks
 	 * @param gra Canvas
 	 * @param p Position
@@ -2926,17 +2914,6 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 */
 	private boolean receive(int dire) {
 		return this.dire != dire;
-	}
-
-	private void startBurrow() {
-		float bpos = basis.getBase(dire).pos;
-		boolean ntbs = (bpos - pos) * dire > data.touchBase();
-		if (ntbs) {
-			// setup burrow state
-			status[P_BURROW][0]--;
-			status[P_BURROW][2] = anim.setAnim(UType.BURROW_DOWN, false) - 1;
-			kbTime = -2;
-		}
 	}
 
 	/**

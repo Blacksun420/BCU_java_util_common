@@ -60,14 +60,8 @@ public class CustomStageInfo implements StageInfo {
     public String getHTML() {
         StringBuilder ans = new StringBuilder();
         ans.append("<html>");
-        if (st.getCont().stageLimit != null && !st.getCont().stageLimit.bannedCatCombo.isEmpty()) {
-            String[] comboData = new String[st.getCont().stageLimit.bannedCatCombo.size()];
-            ans.append("<br> Banned combos: ");
-            int i = 0;
-            for (int id : st.getCont().stageLimit.bannedCatCombo)
-                comboData[i++] = CommonStatic.def.getUILang(2, "nb" + id);
-            ans.append(String.join(", ", comboData));
-        }
+        if (st.getCont().stageLimit != null)
+            ans.append(st.getCont().stageLimit.getHTML());
         if (stages.size() > 0) {
             ans.append("<table><tr><th>List of Followup Stages:</th></tr>");
             for (int i = 0; i < stages.size(); i++)
@@ -153,6 +147,9 @@ public class CustomStageInfo implements StageInfo {
         ubase = null;
         ((PackMapColc)st.getCont().getCont()).si.remove(this);
         st.info = null;
+
+        if (!checkFirst && st.getCont().getCont().getSave(true).cSt.getOrDefault(st.getCont(), -1) > st.getCont().list.indexOf(st))
+            st.getCont().getCont().getSave(true).resetUnlockedUnits();
     }
 
     @JsonDecoder.OnInjected

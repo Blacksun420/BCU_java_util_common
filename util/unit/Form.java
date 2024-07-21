@@ -163,6 +163,7 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 							form.getProc().SPIRIT.amount = 1;
 							form.getProc().SPIRIT.cd0 = SPIRIT_SUMMON_DELAY;
 							form.getProc().SPIRIT.form = 1;
+							form.getProc().SPIRIT.animType = 5;
 							form.getProc().SPIRIT.type.inv = true;
 						}
 					} //Finish FORK_VERSION 1 checks

@@ -29,18 +29,18 @@ public class MultiLangData extends Data {
      * @return True if the value in the given lang changed
      */
     public boolean put(Lang.Locale lang, String data) {
-        if (data != null && data.length() > 0 && (lang == lang() || !toString().equals(data))) {
+        if (data != null && !data.isEmpty() && (lang == lang() || !toString().equals(data))) {
             String old = dat.put(lang, data);
             return old == null || !old.equals(data);
         }
         return dat.remove(lang) != null;
     }
 
-    public void remove(int lang) {
+    public void remove(Lang.Locale lang) {
         dat.remove(lang);
     }
 
-    public String get(int lang) {
+    public String get(Lang.Locale lang) {
         String temp = dat.get(lang);
         if (temp != null)
             return temp;

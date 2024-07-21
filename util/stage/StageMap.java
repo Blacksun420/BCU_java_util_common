@@ -9,6 +9,8 @@ import common.io.json.JsonField;
 import common.pack.FixIndexList.FixIndexMap;
 import common.pack.Identifier;
 import common.pack.IndexContainer;
+import common.pack.PackData;
+import common.pack.UserProfile;
 import common.system.BasedCopable;
 import common.system.files.FileData;
 import common.system.files.VFile;
@@ -17,10 +19,7 @@ import common.util.lang.MultiLangCont;
 import common.util.lang.MultiLangData;
 import common.util.stage.info.DefStageInfo;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Queue;
+import java.util.*;
 
 @IndexContainer.IndexCont(MapColc.class)
 @JsonClass
@@ -145,6 +144,19 @@ public class StageMap extends Data implements BasedCopable<StageMap, MapColc>,
 		if (s == null)
 			return;
 		list.add(s);
+	}
+
+	public LinkedList<StageMap> getUnlockableMaps() {
+		LinkedList<StageMap> reqMaps = new LinkedList<>();
+		for (StageMap sm : getCont().maps)
+			if (sm.unlockReq.contains(this))
+				reqMaps.add(sm);
+		for (PackData.UserPack pac : UserProfile.getUserPacks())
+			if (pac.desc.dependency.contains(id.pack))
+				for (StageMap sm : pac.mc.maps)
+					if (sm.unlockReq.contains(this))
+						reqMaps.add(sm);
+		return reqMaps;
 	}
 
 	@Override
