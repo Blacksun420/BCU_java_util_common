@@ -2,7 +2,9 @@ package common.battle;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 
 @SuppressWarnings("unchecked")
 public class BattleList<T extends Comparable<? super T>> implements Collection<T>, java.io.Serializable {
@@ -52,7 +54,11 @@ public class BattleList<T extends Comparable<? super T>> implements Collection<T
     public int indexOf(T t) {
         if (size == 0 || t == null || t.compareTo((T)arr[0]) < 0 || t.compareTo((T)arr[size-1]) > 0)
             return -1;
-        return recInd(t, 0, size - 1);
+        //return recInd(t, 0, size - 1);
+        for (int i = 0; i < size; i++)
+            if (arr[i].equals(t))
+                return i;
+        return -1;
     }
 
     private int recInd(T t, int f, int l) {
@@ -65,6 +71,20 @@ public class BattleList<T extends Comparable<? super T>> implements Collection<T
         else if (f < l)
             return recInd(t, f, mid - 1);
         return -1;
+    }
+
+    public void reSort(T r) {
+        if (size <= 1)
+            return;
+        int ind = indexOf(r) - 1;
+        if (ind < 0)
+            return;
+        while (ind >= 0 && r.compareTo(get(ind)) < 0) {
+            T cur = get(ind);
+            arr[ind] = r;
+            arr[ind + 1] = cur;
+            ind--;
+        }
     }
 
     @Override
@@ -140,7 +160,8 @@ public class BattleList<T extends Comparable<? super T>> implements Collection<T
             throw new ArrayIndexOutOfBoundsException("Index:" + ind + ", Size:" + size);
         T val = (T)arr[ind];
 
-        System.arraycopy(arr, ind + 1, arr, ind, size - 1 - ind);
+        for (int i = ind; i < size - 1; i++)
+            arr[i] = arr[i + 1];
         arr[--size] = null;
         return val;
     }

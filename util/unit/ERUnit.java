@@ -93,7 +93,7 @@ public class ERUnit extends Data implements IForm {
         eLv.setLevel(eLv.getLv() + level.getLv());
         eLv.setPlusLevel(eLv.getPlusLv() + level.getPlusLv());
         int[] eT = eLv.getTalents();
-        for (int k = 0; k < eT.length; k++)
+        for (int k = 0; k < Math.min(eT.length, level.getTalents().length); k++)
             eT[k] += level.getTalents()[k];
         eLv.setTalents(eT);
         return eLv;

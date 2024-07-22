@@ -7,7 +7,6 @@ import common.pack.SortedPackSet;
 import common.util.BattleObj;
 import common.util.stage.Limit;
 import common.util.unit.Combo;
-import common.util.unit.EForm;
 import common.util.unit.Form;
 
 public class ELineUp extends BattleObj {
@@ -32,7 +31,7 @@ public class ELineUp extends BattleObj {
 		for (int i = 0; i < 2; i++)
 			for (int j = 0; j < 5; j++) {
 				if (lu.fs[i][j] == null || bans[(i * 5) + j] != 0 || (lim != null && ((lim.line > 0 && 2 - (lim.line - i) != 1)))) {
-					price[i][j] = -bans[i];
+					price[i][j] = -bans[(i * 5) + j];
 					if (price[i][j] == -2)
 						for (int k = 0; k < coms.size(); k++)
 							if (coms.get(k).containsForm((Form)lu.fs[i][j])) {

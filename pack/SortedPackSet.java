@@ -158,7 +158,8 @@ public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, C
             throw new ArrayIndexOutOfBoundsException("Index:" + ind + ", Size:" + size);
         T val = (T)arr[ind];
 
-        System.arraycopy(arr, ind + 1, arr, ind, size - 1 - ind);
+        for (int i = ind; i < size - 1; i++)
+            arr[i] = arr[i + 1];
         arr[--size] = null;
         return val;
     }

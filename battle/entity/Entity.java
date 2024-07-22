@@ -525,6 +525,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				// converge souls layer: death on the same frame = same soul height
 				// still not sure how this precisely work in BC, it seems to have exceptions
 				e.layer = 0;
+				e.basis.le.reSort(e);
 				Soul s = Identifier.get(e.data.getDeathAnim());
 				dead = s == null ? 0 : (soul = s.getEAnim(AnimU.SOUL[0])).len();
 			}
@@ -2568,9 +2569,6 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					anim.setAnim(AnimU.TYPEDEF[AnimU.IDLE], true);
 			}
 		}
-
-		if (tba > 0)
-			waitTime--;
 
 		// update attack status while attacking
 		if (kbTime == 0 && atkm.atkTime > 0 && nstop)
