@@ -4,9 +4,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import common.CommonStatic;
 import common.io.assets.Admin.StaticPermitted;
-import common.io.json.*;
+import common.io.json.FieldOrder;
 import common.io.json.FieldOrder.Order;
+import common.io.json.JsonClass;
 import common.io.json.JsonClass.NoTag;
+import common.io.json.JsonDecoder;
+import common.io.json.JsonEncoder;
 import common.pack.Context.ErrType;
 import common.pack.Context.RunExc;
 import common.pack.Context.SupExc;
@@ -14,9 +17,11 @@ import common.pack.Identifier;
 import common.util.pack.Background;
 import common.util.pack.EffAnim;
 import common.util.stage.Music;
+import common.util.unit.Unit;
 
 import java.lang.annotation.*;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 
 @SuppressWarnings("unused")
 @StaticPermitted
@@ -39,48 +44,129 @@ public class Data {
 			public boolean exists() {
 				return prob != 0;
 			}
+
+			@Override
+			public int[] setTalent(int[] nps) {
+				if (prob == 0) {
+					nps[2] = Math.max(1, nps[2]);
+					nps[3] = Math.max(1, nps[3]);
+				}
+				nps[2] = Math.min(nps[2], (int)(100-prob));
+				nps[3] = Math.min(nps[3], (int)(100-prob));
+				return super.setTalent(nps);
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class MULT extends ProcItem {
 			@Order(0)
 			public double mult;
+
+			@Override
+			public int[] setTalent(int[] nps) {
+				if (!exists()) {
+					if (nps[2] == 0)
+						nps[2] = 1;
+					if (nps[3] == 0)
+						nps[3] = 1;
+				}
+				return super.setTalent(nps);
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class PM extends PROB {
 			@Order(1)
 			public double mult;
+
+			@Override
+			public int[] setTalent(int[] nps) {
+				if (mult == 0) {
+					if (nps[4] == 0)
+						nps[4] = 1;
+					if (nps[5] == 0)
+						nps[5] = 1;
+				}
+				return super.setTalent(nps);
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class PT extends PROB {
 			@Order(1)
 			public int time;
+
+			@Override
+			public int[] setTalent(int[] nps) {
+				if (time == 0) {
+					if (nps[4] == 0)
+						nps[4] = 1;
+					if (nps[5] == 0)
+						nps[5] = 1;
+				}
+				return super.setTalent(nps);
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class PTD extends PT {
 			@Order(2)
 			public int dis;
+
+			@Override
+			public int[] setTalent(int[] nps) {
+				if (time == 0) {
+					time = 1;
+					nps = super.setTalent(nps);
+					time = 0;
+				} else
+					nps = super.setTalent(nps);
+				return nps;
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class PTM extends PT {
 			@Order(2)
 			public double mult;
+
+			@Override
+			public int[] setTalent(int[] nps) {
+				if (mult == 0) {
+					if (nps[6] == 0)
+						nps[6] = 1;
+					if (nps[7] == 0)
+						nps[7] = 1;
+				}
+				return super.setTalent(nps);
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class IMU extends MULT {
 			@Order(1)
 			public float block;
+
+			@Override
+			public int[] setTalent(int[] nps) {
+				nps[2] = Math.min(nps[2], (int)(100-mult));
+				nps[3] = Math.min(nps[3], (int)(100-mult));
+				nps[4] = Math.min(nps[4], (int)(100-block));
+				nps[5] = Math.min(nps[5], (int)(100-block));
+				return super.setTalent(nps);
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class IMUAD extends IMU {
 			@Order(2)
 			public int smartImu;
+
+			@Override
+			public int[] setTalent(int[] nps) {
+				nps[6] = nps[7] = Math.max(-1,Math.min(nps[6] + smartImu, 1));
+				return super.setTalent(nps);
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -100,6 +186,14 @@ public class Data {
 			public int lv;
 			@Order(2)
 			public TYPE type = new TYPE();
+
+			@Override
+			public int[] setTalent(int[] nps) {
+				int min = lv == 0 ? 1 : 0;
+				nps[4] = Math.max(min, nps[4]);
+				nps[5] = Math.max(min, nps[5]);
+				return super.setTalent(nps);
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -129,6 +223,19 @@ public class Data {
 			public int time;
 			@Order(4)
 			public TYPE type = new TYPE();
+
+			@Override
+			public int[] setTalent(int[] nps) {
+				int min = time == 0 ? 1 : 0;
+				nps[8] = Math.max(min, nps[8] / Data.VOLC_ITV) * Data.VOLC_ITV;
+				nps[9] = Math.max(min, nps[9] / Data.VOLC_ITV) * Data.VOLC_ITV;
+				int d0 = nps[4], d1 = nps[5];
+				nps[4] = Math.min(d0, nps[6]);
+				nps[5] = Math.min(d1, nps[7]);
+				nps[6] = Math.max(d0, nps[6]);
+				nps[7] = Math.max(d1, nps[7]);
+				return super.setTalent(nps);
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -143,6 +250,14 @@ public class Data {
 			public float health;
 			@Order(1)
 			public int mult;
+
+			@Override
+			public int[] setTalent(int[] nps) {
+				int min = health == 0 ? 1 : 0;
+				for (byte i = 2; i < 6; i++)
+					nps[i] = Math.max(min, nps[i]);
+				return super.setTalent(nps);
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -157,6 +272,14 @@ public class Data {
 			public int count;
 			@Order(1)
 			public int dis;
+
+			@Override
+			public int[] setTalent(int[] nps) {
+				int min = count == 0 ? 1 : 0;
+				for (byte i = 2; i < 6; i++)
+					nps[i] = Math.max(min, nps[i]);
+				return super.setTalent(nps);
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -187,6 +310,19 @@ public class Data {
 			public int dis_1;
 			@Order(5)
 			public TYPE type = new TYPE();
+
+			@Override
+			public int[] setTalent(int[] nps) {
+				int min = count == 0 ? 1 : 0;
+				for (byte i = 2; i < 8; i++)
+					nps[i] = Math.max(min, nps[i]);
+				int d0 = nps[8], d1 = nps[9];
+				nps[8] = Math.min(d0, nps[10]);
+				nps[9] = Math.min(d1, nps[11]);
+				nps[10] = Math.max(d0, nps[10]);
+				nps[11] = Math.max(d1, nps[11]);
+				return super.setTalent(nps);
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD) // Starred Barrier
@@ -205,6 +341,14 @@ public class Data {
 			public int timeout;
 			@Order(3)
 			public TYPE type = new TYPE();
+
+			@Override
+			public int[] setTalent(int[] nps) {
+				int min = health == 0 ? 1 : 0;
+				nps[2] = Math.max(min, nps[2]);
+				nps[3] = Math.max(min, nps[3]);
+				return super.setTalent(nps);
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -213,6 +357,14 @@ public class Data {
 			public int hp;
 			@Order(1)
 			public int regen;
+
+			@Override
+			public int[] setTalent(int[] nps) {
+				int min = hp == 0 ? 1 : 0;
+				for (byte i = 2; i < 6; i++)
+					nps[i] = Math.max(min, nps[i]);
+				return super.setTalent(nps);
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -228,6 +380,16 @@ public class Data {
 			public float prob;
 			@Order(2)
 			public int time;
+
+			@Override
+			public int[] setTalent(int[] nps) {
+				int min = prob == 0 ? 1 : 0;
+				for (byte i = 2; i < 6; i++)
+					nps[i] = Math.max(min, nps[i]);
+				nps[2] = Math.min(nps[2], (int)(100-prob));
+				nps[3] = Math.min(nps[3], (int)(100-prob));
+				return super.setTalent(nps);
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -261,6 +423,25 @@ public class Data {
 			public int max_dis;
 			@Order(6)
 			public TYPE type = new TYPE();
+
+			@Override
+			public int[] setTalent(int[] nps) {
+				boolean ne = !exists();
+				if (ne)
+					for (byte i = 2; i < 10; i += 2)
+						if (nps[i] != 0) {
+							ne = false;
+							break;
+						}
+				if (ne)
+					nps[2] = nps[3] = 1;
+				int d0 = nps[10], d1 = nps[11], minus = exists() ? 0 : 1;
+				nps[10] = Math.min(d0, nps[12] - minus);
+				nps[11] = Math.min(d1, nps[13] - minus);
+				nps[12] = Math.max(d0, nps[12]);
+				nps[13] = Math.max(d1, nps[13]);
+				return super.setTalent(nps);
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -317,12 +498,30 @@ public class Data {
 			public int dis;
 			@Order(3)
 			public int dis_1;
+
+			@Override
+			public int[] setTalent(int[] nps) {
+				int d0 = nps[6], d1 = nps[7], minus = exists() ? 0 : 1;
+				nps[6] = Math.min(d0, nps[8] - minus);
+				nps[7] = Math.min(d1, nps[9] - minus);
+				nps[8] = Math.max(d0, nps[8]);
+				nps[9] = Math.max(d1, nps[9]);
+				return super.setTalent(nps);
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class TIME extends PT {
 			@Order(2)
 			public int intensity;
+
+			@Override
+			public int[] setTalent(int[] nps) {
+				int min = prob > 0 ? 0 : 1;
+				nps[6] = Math.max(min, Math.min(nps[6], time + nps[4]));
+				nps[7] = Math.max(min, Math.min(nps[7], time + nps[5]));
+				return super.setTalent(nps);
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -441,6 +640,14 @@ public class Data {
 			public int reduction;
 			@Order(3)
 			public TYPE type = new TYPE();
+
+			@Override
+			public int[] setTalent(int[] nps) {
+				int min = prob > 0 ? 0 : 1;
+				nps[4] = Math.max(min, nps[4]);
+				nps[5] = Math.max(min, nps[5]);
+				return super.setTalent(nps);
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -483,6 +690,21 @@ public class Data {
 			public int block;
 			@Order(5)
 			public TYPE type = new TYPE();
+
+			@Override
+			public int[] setTalent(int[] nps) {
+				int d0 = nps[4], d1 = nps[5], minus = exists() ? 0 : 1;
+				nps[4] = Math.min(d0, nps[6] - minus);
+				nps[5] = Math.min(d1, nps[7] - minus);
+				nps[6] = Math.max(d0, nps[6]);
+				nps[7] = Math.max(d1, nps[7]);
+
+				int min = prob == 0 && nps[10] == 0 ? 1 : 0;
+				nps[8] = Math.max(min, nps[8]);
+				nps[9] = Math.max(min, nps[9]);
+
+				return super.setTalent(nps);
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -641,11 +863,23 @@ public class Data {
 				return false;
 			}
 
-			public int get(int i) {
+			public int get(int i) { //Only used for talents
 				try {
-					Field f = getDeclaredFields()[i];
-					return f.getType() == int.class ? f.getInt(this) : f.getType() == double.class || f.getType() == float.class ? (int)f.getDouble(this) :
-							((IntType) f.get(this)).toInt();
+					Field[] fs = getDeclaredFields();
+					int loc = 0;
+					for (int j = 0; j < i; j++)
+						if (IntType.class.isAssignableFrom(fs[j].getType())) {
+							int len = ((IntType) fs[j].get(this)).getDeclaredFields().length - 1;
+							loc = Math.min(i - j, len);
+							break;
+						}
+					Field f = fs[i - loc];
+					if (IntType.class.isAssignableFrom(f.getType())) {
+						Field ff = ((IntType)f.get(this)).getDeclaredFields()[loc];
+						return ff.getType() == int.class ? ff.getInt(f.get(this)) : ff.getBoolean(f.get(this)) ? 1 : 0;
+					} else if (f.getType() == Identifier.class)
+						return ((Identifier<?>)f.get(this)).id;
+					return f.getType() == int.class ? f.getInt(this) : (int)f.getDouble(this);
 				} catch (Exception e) {
 					e.printStackTrace();
 					return 0;
@@ -665,6 +899,24 @@ public class Data {
 
 			public Field[] getDeclaredFields() {
 				return FieldOrder.getFields(this.getClass());
+			}
+
+			public Field[] getAllFields() { //Revive talent bug
+				Field[] dfs = getDeclaredFields();
+				for (int i = 0; i < dfs.length; i++)
+					if (IntType.class.isAssignableFrom(dfs[i].getType())) {
+						int postl = dfs.length - i - 1;
+						Field[] nf = dfs[i].getType().getDeclaredFields();
+						dfs = Arrays.copyOf(dfs, dfs.length + nf.length - 1);
+						dfs[i] = dfs[i].getType().getDeclaredFields()[0];
+						for (int j = 1; j < nf.length; j++) {
+							if (j < postl)
+								dfs[i + j + nf.length] = dfs[i + j];
+							dfs[i + j] = nf[j];
+						}
+						break;
+					}
+				return dfs;
 			}
 
 			public boolean perform(CopRand r) {
@@ -696,6 +948,30 @@ public class Data {
 			public void set(int i, int v) {
 				try {
 					Field[] fs = getDeclaredFields();
+					int loc = 0;
+					for (int j = 0; j < i; j++)
+						if (IntType.class.isAssignableFrom(fs[j].getType())) {
+							int len = ((IntType) fs[j].get(this)).getDeclaredFields().length - 1;
+							loc = Math.min(i - j, len);
+							break;
+						}
+					Field f = fs[i - loc];
+					if (IntType.class.isAssignableFrom(f.getType()))
+						((IntType)f.get(this)).set(loc, v);
+					else
+						f.set(this, v);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+
+			/**
+			 * Modifies Identifier, used for talents only
+			 */
+			@Deprecated
+			public void set(int i, Identifier<?> id) {
+				try {
+					Field[] fs = getDeclaredFields();
 					int loc = 0, lastloc = 0;
 					for (int j = 0; j < fs.length && loc < i; j++)
 						if (IntType.class.isAssignableFrom(fs[j].getType())) {
@@ -707,10 +983,7 @@ public class Data {
 							loc += len;
 						}
 					Field f = fs[i - loc];
-					if (IntType.class.isAssignableFrom(f.getType()))
-						((IntType)f.get(this)).set(lastloc, v);
-					else
-						f.set(this, v);
+					f.set(this, id);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -732,6 +1005,22 @@ public class Data {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+			}
+
+			public int[] setTalent(int[] nps) {
+				for (int i = 2; i < nps.length - 1; i += 2) {
+					int m = nps[i];
+					if (m * nps[i+1] < 0)
+						continue;
+					if (m >= 0 && nps[i + 1] > 0) {
+						nps[i] = Math.min(m, nps[i + 1]);
+						nps[i + 1] = Math.max(m, nps[i + 1]);
+					} else {
+						nps[i] = Math.max(m, nps[i + 1]);
+						nps[i + 1] = Math.min(m, nps[i + 1]);
+					}
+				}
+				return nps;
 			}
 
 			@Override
@@ -759,11 +1048,39 @@ public class Data {
 			@Order(4)
 			public int summonerCd;
 			@Order(5)
-			public int animType;
+			public int moneyCost;
 			@Order(6)
-			public int form;
+			public int animType;
 			@Order(7)
+			public int form;
+			@Order(8)
 			public TYPE type = new TYPE();
+
+			public int[] setTalent(int[] nps) {
+				if (id == null && nps[2] == 0)
+					nps[2] = nps[3] = 1;
+				nps[4] = Math.max(nps[4], 15-cd0);
+				nps[5] = Math.max(nps[5], 15-cd0);
+				nps[6] = Math.max(nps[6], 15-cd1);
+				nps[7] = Math.max(nps[7], 15-cd1);
+
+				nps[8] = Math.max(nps[8], amount == 0 ? 1 : 0);
+				nps[9] = Math.max(nps[9], amount == 0 ? 1 : 0);
+
+				nps[14] = nps[15] = Math.max(0,Math.min(nps[14], 5));
+				nps[16] = Math.max(nps[16], 1-form);
+				nps[17] = Math.max(nps[17], 1-form);
+				if (nps[2] > 0) {//Dunno how to custom unit
+					int fs = ((Unit)Identifier.rawParseInt(nps[2]-1, Unit.class).get()).forms.length - form;
+					nps[16] = Math.min(nps[16], fs);
+					nps[17] = Math.min(nps[17], fs);
+				} else if (id != null) {
+					int fs = ((Unit)id.get()).forms.length - form;
+					nps[16] = Math.min(nps[16], fs);
+					nps[17] = Math.min(nps[17], fs);
+				}
+				return super.setTalent(nps);
+			}
 		}
 
 		public static Proc blank() {
@@ -1400,115 +1717,116 @@ public class Data {
 	// 5 for special cases
 	public static final int[][] PC_CORRES = new int[][] { // NP value table
 			{ -1, 0 }, // 0:
-			{ 0, P_WEAK }, // 1: weak, reversed health or relic-weak
-			{ 0, P_STOP }, // 2: stop
-			{ 0, P_SLOW }, // 3: slow
-			{ 1, AB_ONLY }, // 4:Target Obnly
+			{ PC_P, P_WEAK }, // 1: weak, reversed health or relic-weak
+			{ PC_P, P_STOP }, // 2: stop
+			{ PC_P, P_SLOW }, // 3: slow
+			{ PC_AB, AB_ONLY }, // 4:Target Obnly
 			{ 5, P_DMGINC, 150 }, // 5:Strong Vs.
 			{ 5, P_DEFINC, 400 }, // 6:Resistant
 			{ 5, P_DMGINC, 300 }, // 7:Massive Dmg
-			{ 0, P_KB }, // 8: kb
-			{ 0, P_WARP }, // 9:Warp
-			{ 0, P_STRONG }, // 10: berserker, reversed health
-			{ 0, P_LETHAL }, // 11: lethal
-			{ 0, P_ATKBASE }, // 12: Base Destroyer
-			{ 0, P_CRIT }, // 13: crit
-			{ 1, AB_ZKILL }, // 14: zkill
-			{ 0, P_BREAK }, // 15: break
-			{ 0, P_BOUNTY }, // 16: 2x income
-			{ 0, P_WAVE }, // 17: wave
-			{ 0, P_IMUWEAK }, // 18: res weak
-			{ 0, P_IMUSTOP }, // 19: res stop
-			{ 0, P_IMUSLOW }, // 20: res slow
-			{ 0, P_IMUKB }, // 21: res kb
-			{ 0, P_IMUWAVE }, // 22: res wave
+			{ PC_P, P_KB }, // 8: kb
+			{ PC_P, P_WARP }, // 9:Warp
+			{ PC_P, P_STRONG }, // 10: berserker, reversed health
+			{ PC_P, P_LETHAL }, // 11: lethal
+			{ PC_P, P_ATKBASE }, // 12: Base Destroyer
+			{ PC_P, P_CRIT }, // 13: crit
+			{ PC_AB, AB_ZKILL }, // 14: zkill
+			{ PC_P, P_BREAK }, // 15: break
+			{ PC_P, P_BOUNTY }, // 16: 2x income
+			{ PC_P, P_WAVE }, // 17: wave
+			{ PC_P, P_IMUWEAK }, // 18: res weak
+			{ PC_P, P_IMUSTOP }, // 19: res stop
+			{ PC_P, P_IMUSLOW }, // 20: res slow
+			{ PC_P, P_IMUKB }, // 21: res kb
+			{ PC_P, P_IMUWAVE }, // 22: res wave
 			{ 5, P_IMUWAVE }, // 23: waveblock
-			{ 0, P_IMUWARP }, // 24: res warp
-			{ 2, PC2_COST }, // 25: reduce cost
-			{ 2, PC2_CD }, // 26: reduce cooldown
-			{ 2, PC2_SPEED }, // 27: inc speed
-			{ 2, PC2_HB }, // 28: inc knockbacks
-			{ 3, P_IMUCURSE }, // 29: imu curse
-			{ 0, P_IMUCURSE }, // 30: res curse
-			{ 2, PC2_ATK }, // 31: inc ATK
-			{ 2, PC2_HP }, // 32: inc HP
-			{ 4, TRAIT_RED }, // 33: target red
-			{ 4, TRAIT_FLOAT }, // 34: target floating
-			{ 4, TRAIT_BLACK }, // 35: target black
-			{ 4, TRAIT_METAL }, // 36: target metal
-			{ 4, TRAIT_ANGEL }, // 37: target angel
-			{ 4, TRAIT_ALIEN }, // 38: target alien
-			{ 4, TRAIT_ZOMBIE }, // 39: target zombie
-			{ 4, TRAIT_RELIC }, // 40: target relic
-			{ 4, TRAIT_WHITE }, // 41: target white
-			{ 4, TRAIT_WITCH }, // 42: target witch
-			{ 4, TRAIT_EVA }, // 43: target EVA
-			{ 3, P_IMUWEAK }, // 44: immune to weak
-			{ 3, P_IMUSTOP }, // 45: immune to freeze
-			{ 3, P_IMUSLOW }, // 46: immune to slow
-			{ 3, P_IMUKB }, // 47: immune to kb
-			{ 3, P_IMUWAVE }, // 48: immune to wave
-			{ 3, P_IMUWARP }, // 49: immune to warp
-			{ 0, P_SATK }, // 50: savage blow
-			{ 0, P_IMUATK }, // 51: dodge
-			{ 0, P_IMUPOIATK }, // 52: resist to poison ?
-			{ 3, P_IMUPOIATK }, // 53: immune to poison
-			{ 0, P_IMUVOLC }, // 54: resist to surge ?
-			{ 3, P_IMUVOLC }, // 55: immune to surge
-			{ 0, P_VOLC }, // 56: surge, level up to chance up
-			{ 4, TRAIT_DEMON }, // 57: Targetting Aku
-			{ 0, P_SHIELDBREAK }, //58 : shield piercing
-			{ 1, AB_CKILL }, //59 : corpse killer
-			{ 0, P_CURSE }, //60 : curse
-			{ 2, PC2_TBA }, //61 : tba
-			{ 0, P_MINIWAVE }, //62 : mini-wave
-			{ 1, AB_BAKILL }, //63 : baron killer
-			{ 0, P_BSTHUNT, 1 }, //64 : behemoth slayer
-			{ 0, P_MINIVOLC }, //65 : MiniSurge
-			{ 1, AB_SKILL, 0, -1 }, //66 : super sage hunter
+			{ PC_P, P_IMUWARP }, // 24: res warp
+			{ PC_BASE, PC2_COST }, // 25: reduce cost
+			{ PC_BASE, PC2_CD }, // 26: reduce cooldown
+			{ PC_BASE, PC2_SPEED }, // 27: inc speed
+			{ PC_BASE, PC2_HB }, // 28: inc knockbacks
+			{ PC_IMU, P_IMUCURSE }, // 29: imu curse
+			{ PC_P, P_IMUCURSE }, // 30: res curse
+			{ PC_BASE, PC2_ATK }, // 31: inc ATK
+			{ PC_BASE, PC2_HP }, // 32: inc HP
+			{ PC_TRAIT, TRAIT_RED }, // 33: target red
+			{ PC_TRAIT, TRAIT_FLOAT }, // 34: target floating
+			{ PC_TRAIT, TRAIT_BLACK }, // 35: target black
+			{ PC_TRAIT, TRAIT_METAL }, // 36: target metal
+			{ PC_TRAIT, TRAIT_ANGEL }, // 37: target angel
+			{ PC_TRAIT, TRAIT_ALIEN }, // 38: target alien
+			{ PC_TRAIT, TRAIT_ZOMBIE }, // 39: target zombie
+			{ PC_TRAIT, TRAIT_RELIC }, // 40: target relic
+			{ PC_TRAIT, TRAIT_WHITE }, // 41: target white
+			{ PC_TRAIT, TRAIT_WITCH }, // 42: target witch
+			{ PC_TRAIT, TRAIT_EVA }, // 43: target EVA
+			{ PC_IMU, P_IMUWEAK }, // 44: immune to weak
+			{ PC_IMU, P_IMUSTOP }, // 45: immune to freeze
+			{ PC_IMU, P_IMUSLOW }, // 46: immune to slow
+			{ PC_IMU, P_IMUKB }, // 47: immune to kb
+			{ PC_IMU, P_IMUWAVE }, // 48: immune to wave
+			{ PC_IMU, P_IMUWARP }, // 49: immune to warp
+			{ PC_P, P_SATK }, // 50: savage blow
+			{ PC_P, P_IMUATK }, // 51: dodge
+			{ PC_P, P_IMUPOIATK }, // 52: resist to poison ?
+			{ PC_IMU, P_IMUPOIATK }, // 53: immune to poison
+			{ PC_P, P_IMUVOLC }, // 54: resist to surge ?
+			{ PC_IMU, P_IMUVOLC }, // 55: immune to surge
+			{ PC_P, P_VOLC }, // 56: surge, level up to chance up
+			{ PC_TRAIT, TRAIT_DEMON }, // 57: Targetting Aku
+			{ PC_P, P_SHIELDBREAK }, //58 : shield piercing
+			{ PC_AB, AB_CKILL }, //59 : corpse killer
+			{ PC_P, P_CURSE }, //60 : curse
+			{ PC_BASE, PC2_TBA }, //61 : tba
+			{ PC_P, P_MINIWAVE }, //62 : mini-wave
+			{ PC_AB, AB_BAKILL }, //63 : baron killer
+			{ PC_P, P_BSTHUNT, 1 }, //64 : behemoth slayer
+			{ PC_P, P_MINIVOLC }, //65 : MiniSurge
+			{ PC_AB, AB_SKILL }, //66 : super sage hunter
 	};
 	public static final int[][] PC_CUSTOM = new int[][] { //Use negative ints to handle (it would be so awesome, it would be so cool)
 			{ -1, 0 }, // 0:
-			{ 0, P_BURROW}, // 1: Burrow
-			{ 0, P_REVIVE}, //2: Revive
-			{ 0, P_BARRIER}, //3: Barrier
-			{ 0, P_DEMONSHIELD}, //4: Aku Shield
-			{ 0, P_DEATHSURGE}, //5: Death Surge
-			{ 0, P_DEMONVOLC}, //6: Surge Counter
-			{ 0, P_SEAL}, // 7: Seal
-			{ 0, P_COUNTER}, // 8: Counter
-			{ 0, P_DMGCUT}, // 9: Super Armor
-			{ 0, P_DMGCAP}, // 10: Mystic Shield
-			{ 0, P_REMOTESHIELD}, // 11: Remote Shield
-			{ 0, P_ARMOR}, // 12: Armor break
-			{ 0, P_SPEED}, // 13: Haste
-			{ 0, P_RAGE}, // 14: Rage
-			{ 0, P_HYPNO}, // 15: Hypno
-			{ 0, P_CRITI}, // 16: Criti
-			{ 0, P_IMUSUMMON}, // 17: Summon immune
-			{ 0, P_IMUSEAL}, // 18: Seal immune
-			{ 0, P_IMUARMOR}, // 19: Armor Break immune
-			{ 0, P_IMUSPEED}, // 20: Haste immune
-			{ 0, P_IMULETHARGY}, // 21: Lethargy Immunity
-			{ 0, P_IMURAGE}, // 22: Rage Immunity
-			{ 0, P_IMUHYPNO}, // 23: Hypno Immunity
-			{ 2, PC2_RNG}, // 24: Range
-			{ 0, P_POIATK}, // 25: Toxic
-			{ 0, P_IMUPOI}, // 26: Imu. BCU Poison
-			{ 1, AB_SNIPERI}, // 27: IMU.Sniper
-			{ 1, AB_TIMEI}, // 28: IMU.TimeStop
-			{ 1, AB_THEMEI}, // 29: IMU.Theme
-			{ 1, AB_IMUSW}, // 30: IMU.BossWave
-			{ 0, P_LETHARGY}, // 31: Lethargy
-			{ 0, P_SNIPER}, // 32: Sniper KB
-			{ 0, P_BOSS}, // 33: Bosswave
-			{ 0, P_TIME}, // 34: Timestop
-			{ 0, P_IMUMOVING}, // 35: IMU.MoveATK
-			{ 0, P_WEAKAURA}, // 36: WeakenAura
-			{ 0, P_STRONGAURA}, // 37: StrengthAura
-			{ 0, P_DMGINC}, // 38: ExtraDmg
-			{ 0, P_DEFINC},  // 39: Resistance
-			{ 0, P_RANGESHIELD} //40: Range Shield
+			{ PC_P, P_BURROW}, // 1: Burrow
+			{ PC_P, P_REVIVE}, //2: Revive
+			{ PC_P, P_BARRIER}, //3: Barrier
+			{ PC_P, P_DEMONSHIELD}, //4: Aku Shield
+			{ PC_P, P_DEATHSURGE}, //5: Death Surge
+			{ PC_P, P_DEMONVOLC}, //6: Surge Counter
+			{ PC_P, P_SEAL}, // 7: Seal
+			{ PC_P, P_COUNTER}, // 8: Counter
+			{ PC_P, P_DMGCUT}, // 9: Super Armor
+			{ PC_P, P_DMGCAP}, // 10: Mystic Shield
+			{ PC_P, P_REMOTESHIELD}, // 11: Remote Shield
+			{ PC_P, P_ARMOR}, // 12: Armor break
+			{ PC_P, P_SPEED}, // 13: Haste
+			{ PC_P, P_RAGE}, // 14: Rage
+			{ PC_P, P_HYPNO}, // 15: Hypno
+			{ PC_P, P_CRITI}, // 16: Criti
+			{ PC_P, P_IMUSUMMON}, // 17: Summon immune
+			{ PC_P, P_IMUSEAL}, // 18: Seal immune
+			{ PC_P, P_IMUARMOR}, // 19: Armor Break immune
+			{ PC_P, P_IMUSPEED}, // 20: Haste immune
+			{ PC_P, P_IMULETHARGY}, // 21: Lethargy Immunity
+			{ PC_P, P_IMURAGE}, // 22: Rage Immunity
+			{ PC_P, P_IMUHYPNO}, // 23: Hypno Immunity
+			{ PC_BASE, PC2_RNG}, // 24: Range
+			{ PC_P, P_POIATK}, // 25: Toxic
+			{ PC_P, P_IMUPOI}, // 26: Imu. BCU Poison
+			{ PC_AB, AB_SNIPERI}, // 27: IMU.Sniper
+			{ PC_AB, AB_TIMEI}, // 28: IMU.TimeStop
+			{ PC_AB, AB_THEMEI}, // 29: IMU.Theme
+			{ PC_AB, AB_IMUSW}, // 30: IMU.BossWave
+			{ PC_P, P_LETHARGY}, // 31: Lethargy
+			{ PC_P, P_SNIPER}, // 32: Sniper KB
+			{ PC_P, P_BOSS}, // 33: Bosswave
+			{ PC_P, P_TIME}, // 34: Timestop
+			{ PC_P, P_IMUMOVING}, // 35: IMU.MoveATK
+			{ PC_P, P_WEAKAURA}, // 36: WeakenAura
+			{ PC_P, P_STRONGAURA}, // 37: StrengthAura
+			{ PC_P, P_DMGINC}, // 38: ExtraDmg
+			{ PC_P, P_DEFINC},  // 39: Resistance
+			{ PC_P, P_RANGESHIELD}, //40: Range Shield
+			{ PC_P, P_SPIRIT} //41: Spirit summon
 	};
 
 	public static int[] get_CORRES(int ind) {

@@ -104,7 +104,9 @@ public class Limit extends Data implements BattleStatic {
 				lvr = l.lvr;
 	}
 
-	public boolean unusable(MaskUnit du, int price) {
+	public boolean unusable(MaskUnit du, int price, byte row) {
+		if (line > 0 && 2 - (line - row) != 1)
+			return true;
 		double cost = du.getPrice() * (1 + price * 0.5);
 		if ((min > 0 && cost < min) || (max > 0 && cost > max))
 			return true;

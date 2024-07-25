@@ -308,8 +308,10 @@ public class Editors {
 		map().put("WAVE", new EditControl<>(Proc.WAVE.class, (t) -> {
 			t.prob = Math.max(0, Math.min(t.prob, 100));
 			t.lv = MathUtil.clip(t.lv, 1, 35);
-			if (t.prob == 0)
+			if (t.prob == 0) {
 				t.lv = 0;
+				t.type.hitless = false;
+			}
 		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("WEAK", new EditControl<>(Proc.PTM.class, (t) -> {
@@ -543,15 +545,16 @@ public class Editors {
 			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0) {
 				t.dis_0 = t.dis_1 = t.time = 0;
-			} else {
+				t.type.hitless = false;
+			} else
 				t.time = Math.max(1, t.time / Data.VOLC_ITV) * Data.VOLC_ITV;
-			}
 		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("MINIVOLC", new EditControl<>(Proc.MINIVOLC.class, (t) -> {
 			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0) {
 				t.dis_0 = t.dis_1 = t.time = t.mult = 0;
+				t.type.hitless = false;
 			} else {
 				t.time = Math.max(1, t.time / Data.VOLC_ITV) * Data.VOLC_ITV;
 
@@ -584,6 +587,7 @@ public class Editors {
 
 			if (t.prob == 0) {
 				t.lv = t.multi = 0;
+				t.type.hitless = false;
 			} else {
 				t.lv = MathUtil.clip(t.lv, 1, 35);
 
@@ -783,7 +787,7 @@ public class Editors {
 
 		map().put("SPIRIT", new EditControl<>(Proc.SPIRIT.class, (t) -> {
 			if (t.id == null) {
-				t.cd0 = t.cd1 = t.amount = t.summonerCd = t.form = t.animType = 0;
+				t.cd0 = t.cd1 = t.amount = t.summonerCd = t.moneyCost = t.form = t.animType = 0;
 				t.type.inv = false;
 			} else {
 				t.amount = Math.max(t.amount, 1);

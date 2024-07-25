@@ -524,8 +524,6 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			} else {
 				// converge souls layer: death on the same frame = same soul height
 				// still not sure how this precisely work in BC, it seems to have exceptions
-				e.layer = 0;
-				e.basis.le.reSort(e);
 				Soul s = Identifier.get(e.data.getDeathAnim());
 				dead = s == null ? 0 : (soul = s.getEAnim(AnimU.SOUL[0])).len();
 			}
@@ -2135,7 +2133,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				b = (data.getSpeed() > atk.getProc().SPEED.speed && res > 0) || (data.getSpeed() < atk.getProc().SPEED.speed && res < 0);
 			else
 				b = res < 0;
-			if (checkAIImmunity(atk.getProc().SPEED.speed, getProc().IMUSPEED.smartImu, b))
+			if (!checkAIImmunity(atk.getProc().SPEED.speed, getProc().IMUSPEED.smartImu, b))
 				res = 1;
 
 			if (res > 0f) {
@@ -2189,7 +2187,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 * @param invert Invert the result if condition passes
 	 * @return true if immunity applies
 	 */
-	private boolean checkAIImmunity(double val, int side, boolean invert) {
+	private static boolean checkAIImmunity(double val, int side, boolean invert) {
 		if (side == 0)
 			return true;
 		if (invert)
@@ -2779,16 +2777,12 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	public float getSpeed(int spd, float extmov) {
 		float mov = status.slow > 0 ? 0.25f : spd * 0.5f;
 		if (status.speed[0] > 0 && status.slow == 0) {
-			if (status.speed[2] == 0) {
-				mov += status.speed[1] * 0.5;
-			} else if (status.speed[2] == 1) {
+			if (status.speed[2] == 0)
+				mov += status.speed[1] * 0.5f;
+			else if (status.speed[2] == 1)
 				mov = mov * (100 + status.speed[1]) / 100;
-			} else if (status.speed[2] == 2) {
+			else if (status.speed[2] == 2)
 				mov = status.speed[1] * 0.5f;
-			}
-
-			pos += (mov + extmov) * dire;
-
 		}
 		mov += extmov;
 		mov *= auras.getSpdAura();
@@ -3015,6 +3009,12 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 */
 	public EAnimU getAnim() {
 		return anim.anim;
+	}
+
+	public int getLayer() {
+		if (!anim.deathSurge && anim.dead >= 0)
+			return 0;
+		return layer;
 	}
 
 	protected boolean notAttacking() {

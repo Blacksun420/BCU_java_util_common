@@ -1712,6 +1712,7 @@
             "Summon (_entity(id)) as spirit up to (amount) times[(amount>1){s}] per summoner, with a [(amount>1&cd0!=cd1){initial }]cooldown of (_dispTime(cd0))",
             "[(amount>1&cd0!=cd1){, and a subsequent cooldown of (_dispTime(cd1))}]",
             "[(summonerCd!=0){, and [(summonerCd<0){decreases}(summonerCd>0){increases}] summoner's cooldown by (_dispTime(_abs(summonerCd)))}]",
+            "[(moneyCost!=0){. Summoning a spirit costs (moneyCost)$}]",
             "[(!type.inv){ (_left)This spirit can be killed(_right)}]"
         ],
         "class": {
@@ -1734,6 +1735,10 @@
             "summonerCd": {
                 "name": "CD Penalty",
                 "tooltip": "Amount of Recharge time to be added (or removed if negative) to the main unit if a spirit is spawned"
+            },
+            "moneyCost": {
+                "name": "Cost Penalty",
+                "tooltip": "Makes the spirit cost money to summon"
             },
             "animType": {
                 "name": "Animation Type",

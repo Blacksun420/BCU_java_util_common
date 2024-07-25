@@ -73,20 +73,6 @@ public class BattleList<T extends Comparable<? super T>> implements Collection<T
         return -1;
     }
 
-    public void reSort(T r) {
-        if (size <= 1)
-            return;
-        int ind = indexOf(r) - 1;
-        if (ind < 0)
-            return;
-        while (ind >= 0 && r.compareTo(get(ind)) < 0) {
-            T cur = get(ind);
-            arr[ind] = r;
-            arr[ind + 1] = cur;
-            ind--;
-        }
-    }
-
     @Override
     public boolean contains(Object o) {
         return indexOf((T)o) != -1;

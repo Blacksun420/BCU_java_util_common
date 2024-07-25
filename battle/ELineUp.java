@@ -5,8 +5,8 @@ import common.battle.entity.ESpirit;
 import common.battle.entity.EUnit;
 import common.pack.SortedPackSet;
 import common.util.BattleObj;
-import common.util.stage.Limit;
 import common.util.unit.Combo;
+import common.util.unit.EForm;
 import common.util.unit.Form;
 
 public class ELineUp extends BattleObj {
@@ -27,10 +27,9 @@ public class ELineUp extends BattleObj {
 				inc[i] = 0;
 
 		SortedPackSet<Combo> coms = new SortedPackSet<>(lu.coms);
-		Limit lim = sb.est.lim;
-		for (int i = 0; i < 2; i++)
+        for (int i = 0; i < 2; i++)
 			for (int j = 0; j < 5; j++) {
-				if (lu.fs[i][j] == null || bans[(i * 5) + j] != 0 || (lim != null && ((lim.line > 0 && 2 - (lim.line - i) != 1)))) {
+				if (bans[(i * 5) + j] != 0) { //bans[(i*5)+j] will be equal to 1 if fs[i][j] is null, making the fs check above save
 					price[i][j] = -bans[(i * 5) + j];
 					if (price[i][j] == -2)
 						for (int k = 0; k < coms.size(); k++)
@@ -45,7 +44,7 @@ public class ELineUp extends BattleObj {
 				price[i][j] = (int) (lu.efs[i][j].getPrice(sb.st.getCont().price) * 100);
 				maxC[i][j] = sb.globalCdLimit() > 0 ? sb.b.t().getFinResGlobal(sb.globalCdLimit(), getInc(C_RESP)) : sb.b.t().getFinRes(lu.efs[i][j].getRespawn(), getInc(C_RESP));
 
-				spData[i][j] = lu.fs[i][j] instanceof Form && ((Form) lu.fs[i][j]).du.getProc().SPIRIT.exists() ? ((Form) lu.fs[i][j]).du.getProc().SPIRIT : null;
+				spData[i][j] = lu.efs[i][j] instanceof EForm && ((EForm) lu.efs[i][j]).du.getProc().SPIRIT.exists() ? ((EForm)lu.efs[i][j]).du.getProc().SPIRIT : null;
 				scount[i][j] = spData[i][j] == null ? -1 : 0;
 			}
 	}
@@ -66,7 +65,8 @@ public class ELineUp extends BattleObj {
 	 */
 	protected final void deploySpirit(int i, int j, StageBasis sb, EUnit spi) {//spi will always be an EUnit I just don't want to import it
 		spi.added(-1, Math.min(Math.max(sb.ebase.pos + spi.data.getRange(), smnd[i][j].lastPosition + SPIRIT_SUMMON_RANGE), sb.ubase.pos));
-		CommonStatic.setSE(SE_SPIRIT_SUMMON); //money -= ((MaskUnit)spi.data).getPrice() * (1 + sb.st.getCont().price * 50);
+		CommonStatic.setSE(SE_SPIRIT_SUMMON);
+		sb.money -= spiritCost(i, j, sb.st.getCont().price);
 		scount[i][j]--;
 		scd[i][j] = spData[i][j].cd1;
 		cool[i][j] = Math.min(Math.max(0, cool[i][j] + spData[i][j].summonerCd), maxC[i][j]);
@@ -81,6 +81,10 @@ public class ELineUp extends BattleObj {
 
 	public final boolean readySpirit(int i, int j) {
 		return validSpirit(i,j) && scd[i][j] == 0 && scount[i][j] > 0;
+	}
+
+	public final int spiritCost(int i, int j, int sta) {
+		return (int)(spData[i][j].moneyCost * (1 + sta * 0.5f) * 100);
 	}
 
 	/**

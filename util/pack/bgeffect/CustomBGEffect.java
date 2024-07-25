@@ -58,7 +58,7 @@ public class CustomBGEffect extends BackgroundEffect {
         int spaced = 0;
         while (spaced <= sw) {
             FakeTransform at = g.getTransform();
-            g.translate(convertP(1024 + spaced * 2, siz) + rect.x, convertP(7000 - midH, siz) - rect.y);
+            g.translate(convertP(1024 + spaced * 2, siz) + rect.x, convertP(4500 - midH, siz) - rect.y);
             ebg[0].drawBGEffect(g, origin, siz * 0.8f, 255, 1, 1);
             g.setTransform(at);
             g.delete(at);
@@ -74,7 +74,7 @@ public class CustomBGEffect extends BackgroundEffect {
         int spaced = 0;
         while (spaced <= sw) {
             FakeTransform at = g.getTransform();
-            g.translate(convertP(1024 + spaced * 2, siz) + rect.x, convertP(7000 - midH, siz) - rect.y);
+            g.translate(convertP(1024 + spaced * 2, siz) + rect.x, convertP(4500 - midH, siz) - rect.y);
             ebg[1].drawBGEffect(g, origin, siz * 0.8f, 255, 1, 1);
             g.setTransform(at);
             g.delete(at);

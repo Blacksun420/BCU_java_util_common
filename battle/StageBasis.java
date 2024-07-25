@@ -540,6 +540,12 @@ public class StageBasis extends BattleObj {
 			bgEffectInitialized = true;
 		}
 
+		if(unitRespawnTime > 0 && active)
+			unitRespawnTime--;
+		if(respawnTime > 0 && active)
+			respawnTime--;
+		elu.update(time);
+
 		if (buttonDelay > 0 && --buttonDelay == 0) {
 			act_spawn(selectedUnit[0], selectedUnit[1], true);
 			selectedUnit[0] = -1;
@@ -599,14 +605,6 @@ public class StageBasis extends BattleObj {
 						respawnTime = st.minSpawn + (int) ((st.maxSpawn - st.minSpawn) * r.nextFloat());
 				}
 			}
-
-			if(unitRespawnTime > 0 && active)
-				unitRespawnTime--;
-
-			if(respawnTime > 0 && active)
-				respawnTime--;
-
-			elu.update(time);
 			if(cannon == maxCannon -1)
 				CommonStatic.setSE(SE_CANNON_CHARGE);
 			if (active) {

@@ -69,11 +69,17 @@ public class PCoin extends Data {
 					data[j] = strs[2 + i * 14 + j];
 				if (data[13] == 1) //Super Talent
 					data[13] = 60;
-				if(data[0] == 62) //Miniwave
-					if(data[6] == 0 && data[7] == 0) {
-						data[6] = 20;
-						data[7] = 20;
+				if(data[0] == 62) {//Miniwave
+					if (data[6] == 0 && data[7] == 0) {
+						data[8] = 20;
+						data[9] = 20;
+					} else {
+						data[8] = data[6];
+						data[9] = data[7];
+						data[6] = 0;
+						data[7] = 0;
 					}
+				}
 
 				int[] corres = Data.get_CORRES(data[0]);
 				if (corres[0] == -1) {
@@ -83,7 +89,7 @@ public class PCoin extends Data {
 				int[] trueArr;
 				switch (corres[0]) {
 					case Data.PC_P:
-						trueArr = Arrays.copyOf(data, 3 + (du.getProc().getArr(corres[1]).getDeclaredFields().length - (corres.length >= 3 ? corres[2] : 0)) * 2); //The Math.min is for testing
+						trueArr = Arrays.copyOf(data, 3 + (du.getProc().getArr(corres[1]).getAllFields().length - (corres.length >= 3 ? corres[2] : 0)) * 2); //The Math.min is for testing
 						break;
 					case Data.PC_BASE:
 						trueArr = Arrays.copyOf(data, 5);
@@ -222,7 +228,7 @@ public class PCoin extends Data {
 			int offset = type.length >= 3 && type[0] == PC_P ? type[2] : 0;
 			int fieldTOT = -offset;
 			if (type[0] == PC_P)
-				fieldTOT += ans.getProc().getArr(type[1]).getDeclaredFields().length; //The Math.min is for testing
+				fieldTOT += ans.getProc().getArr(type[1]).getAllFields().length;
 			else if (type[0] == PC_BASE)
 				fieldTOT = 1;
 
@@ -249,18 +255,23 @@ public class PCoin extends Data {
 						tar.set(2, (modifs[2] + modifs[3]) / 4);
 						tar.set(3, modifs[1] * 20);
 
-						if (type[1] == P_MINIVOLC && tar.get(4) == 0)
-							tar.set(4, 20);
+						if (type[1] == P_MINIVOLC && tar.get(5) == 0)
+							tar.set(5, 20);
 					} else {
 						tar.set(0, tar.get(0) + modifs[0]);
 						tar.set(1, tar.get(1) + Math.min(modifs[1], modifs[2]));
 						tar.set(2, tar.get(2) + Math.max(modifs[1], modifs[2]));
-						tar.set(3, tar.get(3) + modifs[3]);
+						for (int j = 3; j < fieldTOT; j++)
+							tar.set(j + offset, tar.get(j + offset) + modifs[j]);
 					}
 				} else
 					for (int j = 0; j < fieldTOT; j++)
-						if (modifs[j] > 0)
-							tar.set(j + offset, tar.get(j + offset) + modifs[j]);
+						if (tar.getAllFields()[j].getType() == Identifier.class) {
+							if (modifs[j] == 0)
+								continue;
+							tar.set(j, (modifs[j] >= 0 ? UserProfile.getBCData() : du.getPack().getPack()).units.get(Math.abs(modifs[j])-1).getID());
+						} else if (modifs[j] != 0)
+							tar.set(j, tar.get(j) + modifs[j]);
 				if (type[1] == P_BSTHUNT)
 					ans.getProc().BSTHUNT.type.active |= modifs[0] > 0;
 
@@ -273,7 +284,7 @@ public class PCoin extends Data {
 						tar.set(0, 100);
 					else if (type[1] == P_ATKBASE)
 						tar.set(0, 300);
-				} else if (!((CustomEntity)du).common && !(type[1] == P_STRONG && modifs[0] != 0)) {
+				} else if (!((CustomEntity)du).common && !procSharable[type[1]]) {
 					for (AtkDataModel[] atkss : ((CustomEntity)ans).hits) {
 						for (AtkDataModel atk : atkss) {
 							ProcItem atks = atk.proc.getArr(type[1]);
@@ -282,7 +293,8 @@ public class PCoin extends Data {
 								atks.set(0, modifs[0]);
 								atks.set(1, Math.min(modifs[1], modifs[2]));
 								atks.set(2, Math.max(modifs[1], modifs[2]));
-								atks.set(3, modifs[3]);
+								for (int j = 3; j < fieldTOT; j++)
+									atks.set(j + offset, atks.get(j + offset) + modifs[j]);
 							} else
 								for (int j = 0; j < fieldTOT; j++)
 									if (modifs[j] > 0)
@@ -315,8 +327,8 @@ public class PCoin extends Data {
 					ans.getProc().getArr(type[1]).set(1, 100);
 				else {
 					if (type[2] == 150)
-						ans.getProc().DEFINC.mult = 200;
-					ans.getProc().getArr(type[1]).set(0, type[2]);
+						ans.getProc().DEFINC.mult += 200;
+					ans.getProc().getArr(type[1]).set(0,ans.getProc().getArr(type[1]).get(0) + type[2]);
 				}
 			}
 		}
@@ -357,7 +369,7 @@ public class PCoin extends Data {
 			if (type[0] != PC_P)
 				continue;
 
-			int fieldTOT = (type.length >= 3 ? -type[2] : 0) + du.getProc().getArr(type[1]).getDeclaredFields().length * 2; //The Math.min is for testing
+			int fieldTOT = (type.length >= 3 ? -type[2] : 0) + du.getProc().getArr(type[1]).getAllFields().length * 2;
 			if (info.get(i).length - 3 == fieldTOT)
 				continue;
 			int[] modifs = Arrays.copyOf(info.get(i), fieldTOT + 3);
@@ -378,22 +390,27 @@ public class PCoin extends Data {
 				ni[ii.length - 1] = 0;
 
 			int[] COR = Data.get_CORRES(ii[0]);
-			if (COR[1] == P_IMUWAVE && COR[5] >= 100)
-				ni[0] = 23;//Port old waveblock talent
-			else if (COR[1] == P_DMGINC)
-				ni[0] = ni[3] < 300 ? 5 : 7;
-			else if (COR[1] == P_DEFINC)
-				ni[0] = ni[3] < 400 ? 5 : 6;
+			if (COR[0] == 5) {
+				if (COR[1] == P_IMUWAVE && COR[5] >= 100)
+					ni[0] = 23;//Port old waveblock talent
+				else if (COR[1] == P_DMGINC)
+					ni[0] = ni[3] < 300 ? 5 : 7;
+				else if (COR[1] == P_DEFINC)
+					ni[0] = ni[3] < 400 ? 5 : 6;
+			} else if (COR[0] == PC_P && (COR[1] == P_MINIVOLC || COR[1] == P_MINIWAVE)) {
+				int ad = COR[1] == P_MINIVOLC ? 2 : 0; //The missless waves removal
+				ni[6 + ad] = ii[8 + ad];
+				ni[7 + ad] = ii[9 + ad];
+			}
 
-			boolean add = true;
+			boolean add = ni[0] > 0; //Prevent custom talent porting coz it crash main
 			if (ni[0] == 5) {
-				for (int[] iii : info)
+				for (int[] iii : oi)
 					if (iii[0] == 5) {
 						add = false;
 						break;
 					}
 			}
-
 			if (add)
 				oi.add(ni);
 		}

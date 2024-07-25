@@ -68,7 +68,7 @@ public class ERUnit extends Data implements IForm {
                     continue;
                 Level eLv = modifyLv(unit.list.get(i).lv.clone());
                 EForm ef = new EForm(f, f.regulateLv(null, eLv));
-                if (deploy && sb.st.lim != null && !sb.st.lim.unusable(ef.du, sb.st.getCont().price))
+                if (deploy && sb.st.lim != null && !sb.st.lim.unusable(ef.du, sb.st.getCont().price, (byte)0))
                     continue;
                 DH h = new DH(ef, unit.list.get(i).share);
                 iList.add(h);

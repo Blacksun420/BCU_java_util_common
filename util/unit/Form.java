@@ -173,7 +173,7 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 							int[] trueArr;
 							switch (corres[0]) {
 								case Data.PC_P:
-									trueArr = Arrays.copyOf(data, 3 + (form.getProc().getArr(corres[1]).getDeclaredFields().length - (corres.length >= 3 ? corres[2] : 0)) * 2);
+									trueArr = Arrays.copyOf(data, 3 + (form.getProc().getArr(corres[1]).getAllFields().length - (corres.length >= 3 ? corres[2] : 0)) * 2);
 									break;
 								case Data.PC_BASE:
 									trueArr = Arrays.copyOf(data, 5);

@@ -91,10 +91,8 @@ public class AnimCI extends AnimU<AnimCI.AnimCIKeeper> {
 
 		public void setEdi(VImg vedi) {
 			edi = vedi;
-
 			if (vedi != null)
 				vedi.mark(Marker.EDI);
-
 			ediLoaded = true;
 		}
 
@@ -103,8 +101,11 @@ public class AnimCI extends AnimU<AnimCI.AnimCIKeeper> {
 		}
 
 		public void setUni(VImg vuni) {
-			uni = vuni;
-			uni.mark(Marker.UNI);
+			if (vuni != null) {
+				uni = vuni;
+				uni.mark(Marker.UNI);
+			} else
+				uni = CommonStatic.getBCAssets().slot[0];
 		}
 
 		@Override
