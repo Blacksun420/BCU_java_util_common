@@ -805,7 +805,7 @@ public class Data {
 				try {
 					Field[] fs = getDeclaredFields();
 					for (Field f : fs)
-						if (f.getType() == int.class)
+						if (f.getType() == int.class || f.getType() == float.class || f.getType() == double.class)
 							f.set(this, 0);
 						else if (IntType.class.isAssignableFrom(f.getType()))
 							f.set(this, (f.getType().getDeclaredConstructor().newInstance()));

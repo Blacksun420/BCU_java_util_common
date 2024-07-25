@@ -262,16 +262,16 @@ public class PCoin extends Data {
 						tar.set(1, tar.get(1) + Math.min(modifs[1], modifs[2]));
 						tar.set(2, tar.get(2) + Math.max(modifs[1], modifs[2]));
 						for (int j = 3; j < fieldTOT; j++)
-							tar.set(j + offset, tar.get(j + offset) + modifs[j]);
+							tar.set(j, tar.get(j) + modifs[j]);
 					}
 				} else
 					for (int j = 0; j < fieldTOT; j++)
 						if (tar.getAllFields()[j].getType() == Identifier.class) {
 							if (modifs[j] == 0)
 								continue;
-							tar.set(j, (modifs[j] >= 0 ? UserProfile.getBCData() : du.getPack().getPack()).units.get(Math.abs(modifs[j])-1).getID());
+							tar.set(j, (modifs[j] > 0 ? UserProfile.getBCData() : du.getPack().getPack()).units.get(Math.abs(modifs[j])-1).getID());
 						} else if (modifs[j] != 0)
-							tar.set(j, tar.get(j) + modifs[j]);
+							tar.set(j+offset, tar.get(j+offset) + modifs[j]);
 				if (type[1] == P_BSTHUNT)
 					ans.getProc().BSTHUNT.type.active |= modifs[0] > 0;
 
@@ -294,11 +294,11 @@ public class PCoin extends Data {
 								atks.set(1, Math.min(modifs[1], modifs[2]));
 								atks.set(2, Math.max(modifs[1], modifs[2]));
 								for (int j = 3; j < fieldTOT; j++)
-									atks.set(j + offset, atks.get(j + offset) + modifs[j]);
+									atks.set(j, atks.get(j) + modifs[j]);
 							} else
 								for (int j = 0; j < fieldTOT; j++)
 									if (modifs[j] > 0)
-										atks.set(j, atks.get(j) + modifs[j]);
+										atks.set(j+offset, atks.get(j+offset) + modifs[j]);
 						}
 					}
 					for (AtkDataModel[] atks : ans.getSpAtks(true))
@@ -309,11 +309,12 @@ public class PCoin extends Data {
 								atkp.set(0, modifs[0]);
 								atkp.set(1, Math.min(modifs[1], modifs[2]));
 								atkp.set(2, Math.max(modifs[1], modifs[2]));
-								atkp.set(3, modifs[3]);
+								for (int j = 3; j < fieldTOT; j++)
+									atkp.set(j, atkp.get(j) + modifs[j]);
 							} else
 								for (int j = 0; j < fieldTOT; j++)
 									if (modifs[j] > 0)
-										atkp.set(j, atkp.get(j) + modifs[j]);
+										atkp.set(j, atkp.get(j+offset) + modifs[j]);
 						}
 				}
 			} else if (type[0] == PC_AB || type[0] == PC_BASE)

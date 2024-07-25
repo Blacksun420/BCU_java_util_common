@@ -809,8 +809,8 @@ public class Editors {
 				return;
 			Unit u = Identifier.getOr(t.id, Unit.class);
 			setComponentVisibility(eg, t.amount > 1, 2, 3);
-			setComponentVisibility(eg, u.forms[t.form - 1].anim.getAtkCount() > 0, 5);
-			setComponentVisibility(eg, u.forms.length > 1, 6, 7);
+			setComponentVisibility(eg, u.forms[t.form - 1].anim.getAtkCount() > 0, 6);
+			setComponentVisibility(eg, u.forms.length > 1, 7, 8);
 		}));
 
 		map().put("METALKILL", new EditControl<>(Proc.MULT.class, (t) -> {
