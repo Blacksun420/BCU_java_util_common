@@ -605,11 +605,18 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 
 		@JsonDecoder.OnInjected
 		public void onInjected() {
-			if (pack.desc.FORK_VERSION < 5)
-				for (StageMap smaps : maps)
-					for (Stage st : smaps.list)
-						if (st.timeLimit > 0)
+			if (pack.desc.FORK_VERSION < 11)
+				for (StageMap smaps : maps) {
+					for (Limit lim : smaps.lim)
+						lim.setStar(lim.star); //Convert star limit to bitmask. There's only 4 stars anyway
+
+					for (Stage st : smaps.list) {
+						if (st.lim != null)
+							st.lim.setStar(st.lim.star); //All star will have to be 0 coz 1 << 0 is 1 though
+						if (pack.desc.FORK_VERSION < 5 && st.timeLimit > 0)
 							st.timeLimit *= 60;
+					}
+				}
 		}
 	}
 

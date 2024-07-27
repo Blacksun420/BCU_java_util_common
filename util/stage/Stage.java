@@ -276,12 +276,11 @@ public class Stage extends Data
 
 	public Limit getLim(int star) {
 		Limit tl = new Limit();
-		if (lim != null && (lim.star == -1 || lim.star == star))
+		if (lim != null && (lim.star == 0 || (lim.star & (1 << star)) != 0))
 			tl.combine(lim);
 		for (Limit l : getCont().lim)
-			if (l.star == -1 || l.star == star)
-				if (l.sid == -1 || l.sid == id())
-					tl.combine(l);
+			if ((l.star == 0 || (l.star & (1 << star)) != 0))
+				tl.combine(l);
 		return tl;
 	}
 

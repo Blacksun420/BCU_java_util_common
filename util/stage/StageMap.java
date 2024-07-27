@@ -112,11 +112,11 @@ public class StageMap extends Data implements BasedCopable<StageMap, MapColc>,
 	public final HashSet<StageMap> unlockReq = new HashSet<>();
 
 	@JsonField
-	public int price = 1, cast = -1;
+	public int price = 1;
 	@JsonField
 	public int[] stars = new int[] { 100 };
 
-	public int starMask = 0;
+	public int starMask = 0, cast = -1;
 
 
 
@@ -206,6 +206,19 @@ public class StageMap extends Data implements BasedCopable<StageMap, MapColc>,
 		PostLoad();
 		if (jobj.has("name"))
 			names.put(jobj.get("name").getAsString());
+
+
+		for (int i = 0; i < lim.size(); i++)
+			if (lim.get(i).sid != -1) {
+				Limit l = lim.get(i);
+				Stage st = list.get(l.sid);
+				if (st.lim == null)
+					st.lim = l;
+				else
+					st.lim.combine(l);
+				l.sid = -1;
+				lim.remove(i--);
+			}
 	}
 
 	@JsonDecoder.PostLoad

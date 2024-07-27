@@ -13,6 +13,8 @@ import common.util.stage.MapColc.DefMapColc;
 import common.util.unit.AbForm;
 import common.util.unit.Form;
 
+import java.util.LinkedList;
+
 @JsonClass
 public class Limit extends Data implements BattleStatic {
 
@@ -22,11 +24,14 @@ public class Limit extends Data implements BattleStatic {
 			int mid = Integer.parseInt(strs[0]);
 			if(mid >= 22000 && mid < 22002)
 				mid -= 18985; //3015
-
 			StageMap map = DefMapColc.getMap(mid);
-			map.lim.add(this);
-			star = Integer.parseInt(strs[1]);
-			sid = Integer.parseInt(strs[2]);
+
+			setStar(Integer.parseInt(strs[1]));
+			int sid = Integer.parseInt(strs[2]);
+			if (sid != -1)
+				map.list.get(sid).lim = this;
+			else
+				map.lim.add(this);
 			rare = Integer.parseInt(strs[3]);
 			num = Integer.parseInt(strs[4]);
 			line = Integer.parseInt(strs[5]);
@@ -48,15 +53,17 @@ public class Limit extends Data implements BattleStatic {
 	}
 
 	@JsonField
-	public int star = -1, sid = -1;
-	@JsonField
 	public int rare, num, line, min, max;
 	@JsonField(backCompat = JsonField.CompatType.FORK)
-	public int fa; //last var could be named forceAmount, but that'd take too much json space
+	public int star = 0, fa; //last var could be named forceAmount, but that'd take too much json space
 	@JsonField(alias = Identifier.class)
 	public CharaGroup group;
 	@JsonField(alias = Identifier.class)
 	public LvRestrict lvr;
+
+	@JsonField(io = JsonField.IOType.R)
+	public int sid = -1; //Exclusively to parse sid from old packs
+
 
 	/**
 	 * for copy or combine only
@@ -69,7 +76,6 @@ public class Limit extends Data implements BattleStatic {
 		Limit l = new Limit();
 		l.fa = fa;
 		l.star = star;
-		l.sid = sid;
 		l.rare = rare;
 		l.num = num;
 		l.line = line;
@@ -149,9 +155,33 @@ public class Limit extends Data implements BattleStatic {
 				validForm(fSet, ff);
 	}
 
-	@Override
-	public String toString() {
-		return (sid == -1 ? "all stages" : ("" + sid)) + " - " + (star == -1 ? "all stars" : (star + 1) + " star");
+	private static LinkedList<Integer> formatStar(int star) {
+		if (star <= 0)
+			return new LinkedList<>();
+		LinkedList<Integer> ints = new LinkedList<>();
+		for (int i = 0; i < 4; i++)
+			if ((star & (1 << i)) != 0)
+				ints.add(i+1);
+		return ints;
 	}
 
+	public void setStar(int newStar) {
+		star = newStar < 0 ? 0 : 1 << newStar;
+	}
+
+	@Override
+	public String toString() {
+		if (star == 0)
+			return "all stars";
+		LinkedList<Integer> stars = formatStar(star);
+		return stars + " star" + (stars.size() >= 2 ? "s" : "");
+	}
+
+	@JsonField(tag = "star", io = JsonField.IOType.W, backCompat = JsonField.CompatType.UPST)
+	public int oldStar() {
+		for (int i = 0; i < 4; i++)
+			if ((star & (1 << i)) != 0)
+				return i;
+		return -1;
+	}
 }
