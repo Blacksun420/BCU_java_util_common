@@ -6,6 +6,7 @@ import common.battle.StageBasis;
 import common.battle.data.*;
 import common.battle.entity.EEnemy;
 import common.io.json.JsonClass;
+import common.io.json.JsonDecoder;
 import common.io.json.JsonDecoder.OnInjected;
 import common.io.json.JsonField;
 import common.pack.Identifier;
@@ -28,11 +29,26 @@ import java.util.*;
 @JsonClass
 public class Enemy extends Character implements AbEnemy {
 
+	public static void regType() { //Dictates if enemy is collab, special, or reocurring
+		for (Enemy e : UserProfile.getBCData().enemies) {
+			Map<MapColc.DefMapColc, Integer> lis = e.findMap();
+			final int recurring = lis.getOrDefault(MapColc.DefMapColc.getMap("N"), 0) + lis.getOrDefault(MapColc.DefMapColc.getMap("A"), 0)
+					+ lis.getOrDefault(MapColc.DefMapColc.getMap("Q"), 0) + lis.getOrDefault(MapColc.DefMapColc.getMap("ND"), 0);
+			if (recurring == 0 && (lis.containsKey(MapColc.DefMapColc.getMap("C")) || lis.containsKey(MapColc.DefMapColc.getMap("R")) || lis.containsKey(MapColc.DefMapColc.getMap("CH"))
+					|| lis.containsKey(MapColc.DefMapColc.getMap("CA"))))
+				e.filter = 2;
+			else if (recurring <= 3)
+				e.filter = 0;
+		}
+	}
+
 	@JsonClass.JCIdentifier
 	@JsonField
 	public final Identifier<AbEnemy> id;
 	@JsonField
 	public final MaskEnemy de;
+	@JsonField
+	public byte filter = 1; //Filter Type, used solely for filter pages: 0 is non-reocurring, 1 is reocurring, 2 is collab, 3 is hidden
 
 	@JsonClass.JCConstructor
 	public Enemy() {
@@ -59,7 +75,8 @@ public class Enemy extends Character implements AbEnemy {
 	public List<Stage> findApp() {
 		List<Stage> ans = new ArrayList<>();
 		for (Stage st : MapColc.getAllStage())
-			if (st != null && (st.getCont().getCont().getSave(false) == null || st.getCont().unlockReq.isEmpty() || st.getCont().getCont().getSave(false).cSt.containsKey(st.getCont())) && st.contains(this))
+			if (st != null && (st.getMC().getSave(false) == null || st.getMC().getSave(false).cSt.getOrDefault(st.getCont(), st.getCont().unlockReq.isEmpty() ? 0 : -1) >= st.id())
+					&& st.contains(this))
 				ans.add(st);
 
 		return ans;
@@ -162,6 +179,13 @@ public class Enemy extends Character implements AbEnemy {
 		} //Finish FORK_VERSION 6 checks
 	}
 
+	@JsonDecoder.PostLoad
+	public void postLoad() {
+		PackData.UserPack pack = (PackData.UserPack) getCont();
+		if (pack.desc.FORK_VERSION < 11 && findApp(pack.mc).size() <= 3)
+			filter = 0;
+	}
+
 	@Override
 	public PackData getPack() {
 		return getCont();
@@ -173,18 +197,18 @@ public class Enemy extends Character implements AbEnemy {
 		if (CommonStatic.getFaves().enemies.contains(this))
 			base = "❤" + base;
 		String desp = MultiLangCont.get(this);
-		if (desp != null && desp.length() > 0)
+		if (desp != null && !desp.isEmpty())
 			return base + " - " + desp;
 
 		String nam = names.toString();
-		if (nam.length() == 0)
+		if (nam.isEmpty())
 			return base;
 		return base + " - " + nam;
 	}
 
 	public String getExplanation() {
 		String[] desp = MultiLangCont.getDesc(this);
-		if (desp != null && desp[1].length() > 0)
+		if (desp != null && !desp[1].isEmpty())
 			return desp[1].replace("<br>","\n");
 		return description.toString();
 	}

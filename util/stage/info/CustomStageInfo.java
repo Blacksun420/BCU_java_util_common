@@ -52,8 +52,8 @@ public class CustomStageInfo implements StageInfo {
     public CustomStageInfo(Stage st) {
         this.st = st;
         st.info = this;
-        if (st.getCont().getCont() instanceof PackMapColc)
-            ((PackMapColc)st.getCont().getCont()).si.add(this);
+        if (st.getMC() instanceof PackMapColc)
+            ((PackMapColc)st.getMC()).si.add(this);
     }
 
     @Override
@@ -145,11 +145,11 @@ public class CustomStageInfo implements StageInfo {
         chances.clear();
         rewards.clear();
         ubase = null;
-        ((PackMapColc)st.getCont().getCont()).si.remove(this);
+        ((PackMapColc)st.getMC()).si.remove(this);
         st.info = null;
 
-        if (!checkFirst && st.getCont().getCont().getSave(true).cSt.getOrDefault(st.getCont(), -1) > st.getCont().list.indexOf(st))
-            st.getCont().getCont().getSave(true).resetUnlockedUnits();
+        if (!checkFirst && st.getMC().getSave(true).cSt.getOrDefault(st.getCont(), -1) > st.getCont().list.indexOf(st))
+            st.getMC().getSave(true).resetUnlockedUnits();
     }
 
     @JsonDecoder.OnInjected

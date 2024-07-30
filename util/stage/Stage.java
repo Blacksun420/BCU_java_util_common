@@ -335,10 +335,10 @@ public class Stage extends Data
 		if(trail)
 			return;
 
-		if(getCont() == null || getCont().getCont() == null)
+		if(getCont() == null || getMC() == null)
 			return;
 
-		if(getCont().getCont().getSID().equals("000006") || getCont().getCont().getSID().equals("000011"))
+		if(getMC().getSID().equals("000006") || getMC().getSID().equals("000011"))
 			trail = data.isTrail();
 	}
 
@@ -347,6 +347,10 @@ public class Stage extends Data
 			if (st != this && st.names.toString().equals(str))
 				return false;
 		return true;
+	}
+
+	public MapColc getMC() {
+		return getCont().getCont();
 	}
 
 	@Override

@@ -24,7 +24,7 @@ public class ECastle extends AbEntity {
 
 	public ECastle(StageBasis b) {
 		super(b.st.trail ? Integer.MAX_VALUE
-				: b.st.getCont().getCont().getSID().equals("000003") ? b.st.health * (b.est.star + 1) // might be bodged but EoC is the only sm with stars
+				: b.st.getMC().getSID().equals("000003") ? b.st.health * (b.est.star + 1) // might be bodged but EoC is the only sm with stars
 				: b.st.health);
 		sb = b;
 	}

@@ -73,7 +73,7 @@ public abstract class CastleList extends FixIndexMap<CastleImg> implements Index
 	}
 
 	public static Collection<CastleList> from(Stage sta) {
-		MapColc mc = sta.getCont().getCont();
+		MapColc mc = sta.getMC();
 		if (!(mc instanceof PackMapColc))
 			return defset();
 		List<CastleList> list = new ArrayList<>(defset());

@@ -83,6 +83,7 @@ public abstract class PackData implements IndexContainer {
 			loadSoul();
 			progress.accept("loading stages");
 			DefMapColc.read();
+			Enemy.regType();
 			RandStage.read();
 			loadCharaGroup();
 			loadLimit();
@@ -518,6 +519,17 @@ public abstract class PackData implements IndexContainer {
 		}
 
 		@Override
+		public List<Enemy> getEnemies(boolean ignore) {
+			if (ignore || getSave() == null)
+				return super.getEnemies(true);
+			List<Enemy> l = new ArrayList<>();
+			for (Enemy e : super.getEnemies(true))
+				if (e.filter != 3 && save.encountered(e))
+					l.add(e);
+			return l;
+		}
+
+		@Override
 		public int compareTo(UserPack pk) {
 			return toString().compareTo(pk.toString());
 		}
@@ -564,6 +576,10 @@ public abstract class PackData implements IndexContainer {
 	public final FixIndexMap<Music> musics = new FixIndexMap<>(Music.class);
 	@Order(12)
 	public final FixIndexMap<Combo> combos = new FixIndexMap<>(Combo.class);
+
+	public List<Enemy> getEnemies(boolean ignore) {
+		return enemies.getList();
+	}
 
 	@Override
 	@SuppressWarnings({ "rawtypes" })

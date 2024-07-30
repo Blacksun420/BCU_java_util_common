@@ -22,6 +22,7 @@ import common.pack.Source.ResourceLocation;
 import common.pack.Source.Workspace;
 import common.pack.UserProfile;
 import common.util.Data;
+import common.util.unit.AbUnit;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -29,6 +30,7 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 @JsonClass
 @JsonClass.JCGeneric(ResourceLocation.class)
@@ -97,7 +99,7 @@ public class Replay extends Data {
 	@JsonField
 	public boolean buttonDelay = false;
 	@JsonField
-	public byte[] bans;
+	public byte save;
 	public int[] action;
 	@JsonField(generic = {Integer.class, double[].class})
 	public HashMap<Integer, double[]> sniperCoords;
@@ -109,19 +111,19 @@ public class Replay extends Data {
 
 	}
 
-	public Replay(BasisLU blu, Identifier<Stage> sta, int stars, int con, long se, boolean buttonDelay, byte[] bans) {
+	public Replay(BasisLU blu, Identifier<Stage> sta, int stars, int con, long se, boolean buttonDelay, byte saveMode) {
 		lu = blu;
 		st = sta;
 		star = stars;
 		cfg = con;
 		seed = se;
 		this.buttonDelay = buttonDelay;
-		this.bans = bans;
+		save = saveMode;
 	}
 
 	@Override
 	public Replay clone() {
-		return new Replay(lu.copy(), st, star, cfg, seed, buttonDelay, bans.clone());
+		return new Replay(lu.copy(), st, star, cfg, seed, buttonDelay, save);
 	}
 
 	public int getLen() {
@@ -220,7 +222,5 @@ public class Replay extends Data {
 			sniperCoords = new HashMap<>();
 		if (jobj.has("conf"))
 			cfg = jobj.getAsJsonArray("conf").get(0).getAsByte();
-		if (bans == null)
-			bans = new byte[10];
 	}
 }

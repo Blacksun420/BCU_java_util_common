@@ -89,13 +89,13 @@ public class StageBasis extends BattleObj {
 	private boolean bgEffectInitialized = false;
 	public int baseBarrier = 0;
 
-	public StageBasis(BattleField bf, EStage stage, BasisLU bas, int cnf, long seed, boolean buttonDelayOn, byte[] bans) {
+	public StageBasis(BattleField bf, EStage stage, BasisLU bas, int cnf, long seed, boolean buttonDelayOn, byte saveMode) {
 		b = bas;
 		r = new CopRand(seed);
 		nyc = bas.nyc;
 		est = stage;
 		st = est.s;
-		elu = new ELineUp(bas.lu, this, bans);
+		elu = new ELineUp(bas.lu, this, saveMode);
 		setBackground(st.bg);
 		boss_spawn = Identifier.getOr(st.castle, CastleImg.class).boss_spawn;
 
@@ -119,7 +119,7 @@ public class StageBasis extends BattleObj {
 		est.assign(this);
 		est.setBaseBarrier();
 		int sttime = 3;
-		if (st.getCont().getCont() == DefMapColc.getMap("CH")) {
+		if (st.getMC() == DefMapColc.getMap("CH")) {
 			if (st.getCont().id.id == 9)
 				sttime = (int) Math.round(Math.log(est.mul) / Math.log(2));
 			if (st.getCont().id.id < 3)

@@ -362,7 +362,7 @@ public abstract class Source {
 					CommonStatic.ctx.noticeErr(() -> ((Workspace) up.source).save(up, auto), ErrType.WARN,
 							"failed to save pack " + up.desc.names);
 				}
-				if (up.save != null && (!up.save.ulkUni.isEmpty() || !up.save.cSt.isEmpty()))
+				if (up.save != null && !up.save.cSt.isEmpty())
 					CommonStatic.ctx.noticeErr(() -> saveData(up), ErrType.WARN, "failed to save data for " + up.desc.names);
 			}
 			for (Replay r : Replay.getMap().values())

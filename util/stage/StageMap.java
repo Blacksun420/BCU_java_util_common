@@ -207,7 +207,6 @@ public class StageMap extends Data implements BasedCopable<StageMap, MapColc>,
 		if (jobj.has("name"))
 			names.put(jobj.get("name").getAsString());
 
-
 		for (int i = 0; i < lim.size(); i++)
 			if (lim.get(i).sid != -1) {
 				Limit l = lim.get(i);

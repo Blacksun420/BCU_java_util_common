@@ -17,26 +17,30 @@ public class ELineUp extends BattleObj {
 	public final int[][] scd = new int[2][5], scount = new int[2][5], sGlow = new int[2][5];
 	public final EUnit[][] smnd = new EUnit[2][5];
 
-
 	public final int[] inc;
 
-	protected ELineUp(LineUp lu, StageBasis sb, byte[] bans) {
+	protected ELineUp(LineUp lu, StageBasis sb, byte saveMode) {
 		inc = lu.inc.clone();
 		for (byte i = 0; i < inc.length; i++)
 			if (sb.isBanned(i))
 				inc[i] = 0;
 
 		SortedPackSet<Combo> coms = new SortedPackSet<>(lu.coms);
-        for (int i = 0; i < 2; i++)
-			for (int j = 0; j < 5; j++) {
-				if (bans[(i * 5) + j] != 0) { //bans[(i*5)+j] will be equal to 1 if fs[i][j] is null, making the fs check above save
-					price[i][j] = -bans[(i * 5) + j];
+        for (byte i = 0; i < 2; i++)
+			for (byte j = 0; j < 5; j++) {
+				if (lu.fs[i][j] == null)
+					price[i][j] = -1;
+				else if (saveMode == 2 && sb.st.getMC().getSave(true).getUnlockedsBeforeStage(sb.st, true).containsKey(lu.fs[i][j]) ||
+					saveMode == 1 && sb.st.getMC().getSave(true).locked(lu.fs[i][j]))
+					price[i][j] = -2;
+				else if (sb.st.lim != null && lu.efs[i][j] instanceof EForm && sb.st.lim.unusable(((EForm)lu.efs[i][j]).du, sb.st.getCont().price, i))
+					price[i][j] = -1;
+				if (price[i][j] != 0) {
 					if (price[i][j] == -2)
 						for (int k = 0; k < coms.size(); k++)
-							if (coms.get(k).containsForm((Form)lu.fs[i][j])) {
-								Combo c = coms.get(k);
+							if (inc[i] > 0 && coms.get(k).containsForm((Form)lu.fs[i][j])) {
+								Combo c = coms.get(k); //1st check is so it doesn't become negative due to banned combo
 								coms.remove(k--);
-								lu.inc[c.type] -= CommonStatic.getBCAssets().values[c.type][c.lv];
 								inc[c.type] -= CommonStatic.getBCAssets().values[c.type][c.lv];
 							}
 					continue;

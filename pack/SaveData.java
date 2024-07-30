@@ -6,10 +6,7 @@ import common.io.json.JsonField;
 import common.util.stage.Stage;
 import common.util.stage.StageMap;
 import common.util.stage.info.CustomStageInfo;
-import common.util.unit.AbForm;
-import common.util.unit.AbUnit;
-import common.util.unit.Form;
-import common.util.unit.UniRand;
+import common.util.unit.*;
 import common.util.unit.rand.UREnt;
 
 import java.util.*;
@@ -90,12 +87,12 @@ public class SaveData {
     public boolean locked(AbForm f) {
         if (pack.syncPar.contains(f.getID().pack)) {
             PackData.UserPack upack = UserProfile.getUserPack(f.getID().pack);
-            if ((upack.defULK.containsKey(f.unit()) && upack.defULK.get(f.unit()) >= f.getFid()) || (upack.save.ulkUni.containsKey(f.unit()) && ulkUni.get(f.unit()) >= f.getFid()))
+            if (!upack.save.locked(f))
                 return false;
         } else if (f.getID().pack.equals(Identifier.DEF)) {
             for (String par : pack.syncPar) {
                 PackData.UserPack upack = UserProfile.getUserPack(par);
-                if ((upack.defULK.containsKey(f.unit()) && upack.defULK.get(f.unit()) >= f.getFid()) || (upack.save.ulkUni.containsKey(f.unit()) && ulkUni.get(f.unit()) >= f.getFid()))
+                if (!upack.save.locked(f))
                     return false;
             }
         }
@@ -112,9 +109,11 @@ public class SaveData {
         LinkedList<StageMap> cl = new LinkedList<>();
         if (sm.unlockReq.isEmpty() || cSt.containsKey(sm))
             return cl; //Chapter is unlocked
-        for (StageMap lsm : sm.unlockReq)
-            if (!cSt.containsKey(lsm) || cSt.get(lsm) < lsm.list.size())
+        for (StageMap lsm : sm.unlockReq) {
+            HashMap<StageMap, Integer> alt = lsm.getID().pack.equals(pack.getSID()) ? cSt : UserProfile.getUserPack(lsm.getID().pack).save.cSt;
+            if (!alt.containsKey(lsm) || alt.get(lsm) < lsm.list.size())
                 cl.add(lsm); //A requirement chapter is uncleared, add
+        }
         return cl;
     }
 
@@ -126,9 +125,11 @@ public class SaveData {
     public boolean nearUnlock(StageMap sm) {
         if (sm.unlockReq.isEmpty() || cSt.containsKey(sm))
             return false; //Chapter is unlocked
-        for (StageMap lsm : sm.unlockReq)
-            if (!lsm.unlockReq.isEmpty() && !cSt.containsKey(lsm))
+        for (StageMap lsm : sm.unlockReq) {
+            HashMap<StageMap, Integer> alt = lsm.getID().pack.equals(pack.getSID()) ? cSt : UserProfile.getUserPack(lsm.getID().pack).save.cSt;
+            if (!lsm.unlockReq.isEmpty() && !alt.containsKey(lsm))
                 return false; //A requirement chapter is locked
+        }
         return true;
     }
 
@@ -154,8 +155,19 @@ public class SaveData {
     }
 
     public Stage unlockedAt(Form f) {
-        for (int i = 0; i < pack.mc.si.size(); i++) {
-            CustomStageInfo csi = (CustomStageInfo)pack.mc.si.get(i);
+        if (pack.defULK.getOrDefault(f.unit, -1) >= f.fid)
+            return null;
+        return unlockedAtR(f, pack);
+    }
+
+    private Stage unlockedAtR(Form f, PackData.UserPack p) {
+        for (String s : p.syncPar) {
+            Stage st = unlockedAtR(f, UserProfile.getUserPack(s));
+            if (st != null)
+                return st;
+        }
+        for (int i = 0; i < p.mc.si.size(); i++) {
+            CustomStageInfo csi = p.mc.si.get(i);
             for (Form ff : csi.rewards)
                 if (f.unit == ff.unit && ff.fid >= f.fid)
                     return csi.st;
@@ -163,48 +175,51 @@ public class SaveData {
         return null;
     }
 
+    public boolean encountered(Enemy e) {
+        for (StageMap sm : pack.mc.maps) {
+            if (!(sm.unlockReq.isEmpty() || cSt.containsKey(sm)))
+                continue;
+            int st = Math.min(cSt.getOrDefault(sm, 0), sm.list.size()-1);
+            for (int i = 0; i <= st; i++)
+                if (sm.list.get(i).contains(e))
+                    return true;
+        }
+        return false;
+    }
+
     public HashMap<AbForm, Stage> getUnlockedsBeforeStage(Stage st, boolean includeRandom) {
         HashMap<AbForm, Stage> ulK = new HashMap<>();
         for (int i = st.getCont().list.indexOf(st) - 1; i >= 0; i--)
             if (st.getCont().list.get(i).info instanceof CustomStageInfo) {
                 CustomStageInfo csi = (CustomStageInfo)st.getCont().list.get(i).info;
-                for (Form f : csi.rewards) {
-                    boolean ad = true;
-                    for (int j = f.fid + 1; j < f.unit.forms.length; j++)
-                        if (ulK.containsKey(f.unit.forms[j])) {
-                            ad = false;
-                            break;
-                        }
-                    if (ad)
-                        ulK.put(f, st);
-                }
+                for (Form f : csi.rewards)
+                    for (int j = f.fid; j >= 0; j--)
+                        ulK.put(f.unit.forms[j], st);
             }
         for (StageMap uchp : st.getCont().unlockReq)
             locRec(ulK, uchp);
 
-        if (includeRandom) {
-            for (Map.Entry<AbUnit, Integer> u : pack.defULK.entrySet())
-                for (int i = 0; i <= u.getValue(); i++)
-                    ulK.put(u.getKey().getForms()[i], null);
+        addPreUnlocks(ulK, pack);
+        if (includeRandom)
             getRandsRec(ulK, pack);
-        }
         return ulK;
+    }
+
+    private static void addPreUnlocks(HashMap<AbForm, Stage> ulK, PackData.UserPack pk) {
+        for (Map.Entry<AbUnit, Integer> u : pk.defULK.entrySet())
+            for (int i = 0; i <= u.getValue(); i++)
+                ulK.put(u.getKey().getForms()[i], null);
+        for (String s : pk.syncPar)
+            addPreUnlocks(ulK, UserProfile.getUserPack(s));
     }
 
     private static void locRec(HashMap<AbForm, Stage> ulK, StageMap chp) {
         for (int i = chp.list.size() - 1; i >= 0; i--)
             if (chp.list.get(i).info instanceof CustomStageInfo) {
                 CustomStageInfo csi = (CustomStageInfo)chp.list.get(i).info;
-                for (Form f : csi.rewards) {
-                    boolean ad = true;
-                    for (int j = f.fid + 1; j < f.unit.forms.length; j++)
-                        if (ulK.containsKey(f.unit.forms[j])) {
-                            ad = false;
-                            break;
-                        }
-                    if (ad)
-                        ulK.put(f, chp.list.get(i));
-                }
+                for (Form f : csi.rewards)
+                    for (int j = f.fid; j >= 0; j--)
+                        ulK.put(f.unit.forms[j], chp.list.get(i));
             }
         for (StageMap uchp : chp.unlockReq)
             locRec(ulK, uchp);
@@ -212,7 +227,7 @@ public class SaveData {
     private static void getRandsRec(HashMap<AbForm, Stage> ulK, PackData.UserPack pk) {
         for (UniRand rand : pk.randUnits)
             getRandRec(ulK, rand);
-        for (String par : pk.desc.dependency)
+        for (String par : pk.syncPar)
             getRandsRec(ulK, UserProfile.getUserPack(par));
     }
     private static void getRandRec(HashMap<AbForm, Stage> ulK, UniRand r) {
@@ -235,11 +250,13 @@ public class SaveData {
         for (StageMap sm : pack.mc.maps)
             if (!sm.unlockReq.isEmpty() && !cSt.containsKey(sm)) {
                 boolean addable = true;
-                for (StageMap smp : sm.unlockReq)
-                    if (smp.id.pack.equals(pack.getSID()) && (!cSt.containsKey(smp) || cSt.get(smp) < smp.list.size())) { //Verify if map is there AND cleared first before adding
+                for (StageMap smp : sm.unlockReq) {
+                    HashMap<StageMap, Integer> alt = smp.getID().pack.equals(pack.getSID()) ? cSt : UserProfile.getUserPack(smp.getID().pack).save.cSt;
+                    if (!alt.containsKey(smp) || alt.get(smp) < smp.list.size()) { //Verify if map is there AND cleared first before adding
                         addable = false;
                         break;
                     }
+                }
                 if (addable)
                     cSt.put(sm, 0);
             }
