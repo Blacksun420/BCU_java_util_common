@@ -52,20 +52,33 @@ public class Stage extends Data
 	@JsonClass.JCIdentifier
 	public final Identifier<Stage> id;
 
-	@JsonField(generic = MultiLangData.class, gen = JsonField.GenType.FILL)
+	@JsonField(generic = MultiLangData.class, gen = JsonField.GenType.FILL, defval = "empty")
 	public final MultiLangData names = new MultiLangData();
 
+	@JsonField(defval = "false")
 	public boolean non_con, trail, bossGuard;
-	public int len, health, max, mush, bgh;
-	@JsonField(backCompat = JsonField.CompatType.FORK)
+	@JsonField(defval = "3000")
+	public int len = 3000;
+	@JsonField(defval = "60000")
+	public int health = 60000;
+	@JsonField(defval = "8")
+	public int max = 8;
+	@JsonField(defval = "0")
+	public int mush, bgh;
+	@JsonField(backCompat = JsonField.CompatType.FORK, defval = "0")
 	public int timeLimit = 0;
-	public int minUSpawn = 1, maxUSpawn = 1;
-	public int minSpawn = 1, maxSpawn = 1;
+	@JsonField(defval = "1")
+	public int minUSpawn = 1, maxUSpawn = 1, minSpawn = 1, maxSpawn = 1;
+	@JsonField(defval = "null")
 	public Identifier<CastleImg> castle;
+	@JsonField(defval = "null")
 	public Identifier<Background> bg, bg1;
+	@JsonField(defval = "null")
 	public Identifier<Music> mus0, mus1;
-	public SCDef data;
-	public Limit lim;
+	@JsonField(defval = "empty")
+	public SCDef data = new SCDef(0);
+	@JsonField(defval = "none")
+	public Limit lim = new Limit();
 	@JsonField(generic = Replay.class, alias = ResourceLocation.class)
 	public ArrayList<Replay> recd = new ArrayList<>();
 
@@ -76,22 +89,12 @@ public class Stage extends Data
 
 	public Stage(Identifier<Stage> id) {
 		this.id = id;
-		len = 3000;
-		health = 60000;
-		max = 8;
 		names.put("stage " + getCont().list.size());
-		lim = new Limit();
-		data = new SCDef(0);
 	}
 
 	public Stage(StageMap sm) {
 		this.id = sm.getNextID();
-		len = 3000;
-		health = 60000;
-		max = 8;
 		names.put("stage " + sm.list.size());
-		lim = new Limit();
-		data = new SCDef(0);
 	}
 
 	protected Stage(Identifier<Stage> id, VFile f, int type) {
@@ -245,7 +248,7 @@ public class Stage extends Data
 		if (info != null) {
 			CustomStageInfo csi = new CustomStageInfo(ans);
 			csi.stages.addAll(Arrays.asList(ans.info.getExStages()));
-			if (csi.stages.size() > 0) {
+			if (!csi.stages.isEmpty()) {
 				float[] chances = ans.info.getExChances();
 				if (chances[0] == -1) {
 					for (int i = 0; i < csi.stages.size(); i++)
@@ -254,7 +257,7 @@ public class Stage extends Data
 				} else
 					for (float chance : chances) {
 						csi.chances.add(chance);
-						csi.totalChance += chance;
+						csi.totalChance += (short)chance;
 					}
 			}
 			if (info instanceof CustomStageInfo && ((CustomStageInfo)info).ubase != null) {

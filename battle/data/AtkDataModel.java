@@ -20,27 +20,32 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 
 	@JsonField(block = true)
 	public final CustomEntity ce;
-	@JsonField(backCompat = JsonField.CompatType.FORK)
+	@JsonField(backCompat = JsonField.CompatType.FORK, defval = "isEmpty")
 	public String str = "";
-	public int atk, ld0, ld1, targ = TCH_N, count = -1, dire = 1, move = 0;
-	@JsonField(backCompat = JsonField.CompatType.FORK)
+	@JsonField(defval = "0")
+	public int atk, ld0, ld1, move;
+	@JsonField(defval = "1")
+	public int targ = TCH_N, dire = 1;
+	@JsonField(defval = "-1")
+	public int count = -1;
+	@JsonField(backCompat = JsonField.CompatType.FORK, defval = "1")
 	public int pre = 1;
+	@JsonField(defval = "true")
 	public boolean range = true;
-	@JsonField(backCompat = JsonField.CompatType.FORK)
-	public int alt = 0;
-	@JsonField(generic = Trait.class, alias = Identifier.class, backCompat = JsonField.CompatType.FORK)
+	@JsonField(backCompat = JsonField.CompatType.FORK, defval = "0")
+	public int alt;
+	@JsonField(generic = Trait.class, alias = Identifier.class, backCompat = JsonField.CompatType.FORK, defval = "isEmpty")
 	public SortedPackSet<Trait> traits = new SortedPackSet<>(); //Gives attacks their own typings
 
-	@JsonField
+	@JsonField(defval = "null")
 	public Identifier<Music> audio, audio1;
 
-	@JsonField
-	public Proc proc;
+	@JsonField(defval = "isBlank")
+	public Proc proc = Proc.blank();
 
 	public AtkDataModel(CustomEntity ent) {
 		ce = ent;
 		checkAvail();
-		proc = Proc.blank();
 	}
 
 	protected AtkDataModel(CustomEntity ene, AtkDataModel adm) {

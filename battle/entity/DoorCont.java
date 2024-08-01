@@ -19,7 +19,7 @@ public class DoorCont extends EAnimCont {
         bas = b;
         ent = e;
 
-        ent.getAnim().ent[0].EWarp = true;
+        ent.getAnim().ent[0].b.EWarp = true;
         ent.getAnim().paraTo(getAnim(), 24);
     }
 

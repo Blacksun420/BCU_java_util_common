@@ -32,16 +32,16 @@ public class CustomStageInfo implements StageInfo {
 
     @JsonField(alias = Identifier.class)
     public final Stage st;
-    @JsonField(generic = Stage.class, alias = Identifier.class)
+    @JsonField(generic = Stage.class, alias = Identifier.class, defval = "isEmpty")
     public final ArrayList<Stage> stages = new ArrayList<>();
-    @JsonField(generic = Float.class)
+    @JsonField(generic = Float.class, defval = "isEmpty")
     public final ArrayList<Float> chances = new ArrayList<>();
     public short totalChance;
-    @JsonField(alias = Form.AbFormJson.class, backCompat = JsonField.CompatType.FORK)
+    @JsonField(alias = Form.AbFormJson.class, backCompat = JsonField.CompatType.FORK, defval = "null")
     public Form ubase;
-    @JsonField
+    @JsonField(defval = "null")
     public Level lv;
-    @JsonField(generic = Form.class, alias = Form.AbFormJson.class, backCompat = JsonField.CompatType.FORK)
+    @JsonField(generic = Form.class, alias = Form.AbFormJson.class, backCompat = JsonField.CompatType.FORK, defval = "isEmpty")
     public final SortedPackSet<Form> rewards = new SortedPackSet<>();
 
     @JsonClass.JCConstructor
@@ -62,7 +62,7 @@ public class CustomStageInfo implements StageInfo {
         ans.append("<html>");
         if (st.getCont().stageLimit != null)
             ans.append(st.getCont().stageLimit.getHTML());
-        if (stages.size() > 0) {
+        if (!stages.isEmpty()) {
             ans.append("<table><tr><th>List of Followup Stages:</th></tr>");
             for (int i = 0; i < stages.size(); i++)
                 ans.append("<tr><td>")
@@ -75,7 +75,7 @@ public class CustomStageInfo implements StageInfo {
         }
         if (ubase != null)
             ans.append("Unit Base: ").append(ubase).append(" (").append(CommonStatic.def.lvText(ubase, lv)[0]).append(")");
-        if (rewards.size() > 0) {
+        if (!rewards.isEmpty()) {
             ans.append("<table><tr><th>List of Unit Rewards:</th></tr>");
             for (int i = 0; i < rewards.size(); i++)
                 ans.append("<tr><td>").append(rewards.get(i).toString()).append("</td></tr>");
@@ -115,8 +115,8 @@ public class CustomStageInfo implements StageInfo {
 
     public void checkChances() {
         float maxChance = 0;
-        for (int i = 0; i < chances.size(); i++)
-            maxChance += chances.get(i);
+        for (Float chance : chances)
+            maxChance += chance;
         totalChance = (short)maxChance;
 
         if (maxChance > 100)
@@ -124,14 +124,12 @@ public class CustomStageInfo implements StageInfo {
     }
 
     public void setTotalChance(byte newChance) {
-        for (int i = 0; i < chances.size(); i++)
-            chances.set(i, (chances.get(i) / totalChance) * newChance);
+        chances.replaceAll(chance -> (chance / totalChance) * newChance);
         totalChance = newChance;
     }
 
     public void equalizeChances() {
-        for (int i = 0; i < chances.size(); i++)
-            chances.set(i, (float)totalChance / chances.size());
+        chances.replaceAll(ignored -> (float) totalChance / chances.size());
     }
 
     /**

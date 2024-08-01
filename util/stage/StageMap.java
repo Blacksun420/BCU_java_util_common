@@ -106,7 +106,7 @@ public class StageMap extends Data implements BasedCopable<StageMap, MapColc>,
 	@JsonField(generic = Stage.class)
 	public final FixIndexMap<Stage> list = new FixIndexMap<>(Stage.class);
 
-	@JsonField(generic = MultiLangData.class, gen = JsonField.GenType.FILL)
+	@JsonField(generic = MultiLangData.class, gen = JsonField.GenType.FILL, defval = "empty")
 	public final MultiLangData names = new MultiLangData();
 	@JsonField(generic = StageMap.class, alias = Identifier.class, decodeLast = true, backCompat = JsonField.CompatType.FORK)
 	public final HashSet<StageMap> unlockReq = new HashSet<>();
@@ -211,8 +211,8 @@ public class StageMap extends Data implements BasedCopable<StageMap, MapColc>,
 			if (lim.get(i).sid != -1) {
 				Limit l = lim.get(i);
 				Stage st = list.get(l.sid);
-				if (st.lim == null)
-					st.lim = l;
+				if (st.lim.none())
+					st.lim = l.clone();
 				else
 					st.lim.combine(l);
 				l.sid = -1;

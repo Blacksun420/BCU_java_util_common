@@ -48,7 +48,7 @@ public @interface JsonClass {
 
 	enum RType {
 		/**
-		 * generated from json, requires default constructor, no not allow generate tag
+		 * generated from json, requires default constructor, no not allow to generate tag
 		 */
 		DATA,
 		/**
@@ -73,7 +73,7 @@ public @interface JsonClass {
 	String generator() default "";
 
 	/**
-	 * determines how to reat fields with no JsonFiel annotation
+	 * determines how to treat fields with no JsonField annotation
 	 */
 	JsonClass.NoTag noTag() default NoTag.OMIT;
 

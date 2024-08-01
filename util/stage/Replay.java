@@ -22,15 +22,16 @@ import common.pack.Source.ResourceLocation;
 import common.pack.Source.Workspace;
 import common.pack.UserProfile;
 import common.util.Data;
-import common.util.unit.AbUnit;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 @JsonClass
 @JsonClass.JCGeneric(ResourceLocation.class)
@@ -88,17 +89,15 @@ public class Replay extends Data {
 	public ResourceLocation rl;
 	@JsonField
 	public long seed;
-	@JsonField
-	public int cfg;
-	@JsonField
-	public int star, len;
+	@JsonField(defval = "0")
+	public int cfg, star, len;
 	@JsonField
 	public Identifier<Stage> st;
 	@JsonField
 	public BasisLU lu;
-	@JsonField
+	@JsonField(defval = "false")
 	public boolean buttonDelay = false;
-	@JsonField
+	@JsonField(defval = "0")
 	public byte save;
 	public int[] action;
 	@JsonField(generic = {Integer.class, double[].class})

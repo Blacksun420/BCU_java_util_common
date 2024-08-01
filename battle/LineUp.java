@@ -117,6 +117,31 @@ public class LineUp extends Data {
 				}
 			return true;
 		});
+		reAddDefs();
+	}
+
+	public void reAddDefs() {
+		for (int i = 0; i < 2; i++)
+			for (int j = 0; j < 5; j++) {
+				if (fs[i][j] == null)
+					break;
+				if (!map.containsKey(fs[i][j].getID()))
+					map.put(fs[i][j].getID(), fs[i][j].unit().getPrefLvs());
+			}
+	}
+	public void removeDefs() {
+		load();
+		for (int i = 0; i < 2; i++)
+			for (int j = 0; j < 5; j++) {
+				if (fs[i][j] instanceof Form) {
+					Identifier<AbUnit> u = fs[i][j].getID();
+					Level lv = map.get(u);
+					if ((CommonStatic.getPrefLvs().uni.containsKey(u) && CommonStatic.getPrefLvs().uni.get(u).equals(lv))
+							|| CommonStatic.getPrefLvs().equalsDef(u.get().getForms()[u.get().getForms().length - 1], lv))
+						map.remove(u);
+				} else if (fs[i][j] == null)
+					break;
+			}
 	}
 
 	public void renew() {
@@ -217,18 +242,14 @@ public class LineUp extends Data {
 		updating = true;
 
 		Level l = map.get(u.getID());
-
-		if (l != null) {
+		if (l != null)
 			l.setLvs(lv);
-		} else {
+		else {
 			l = lv.clone();
-
 			map.put(u.getID(), l);
 		}
-
 		if (!sub)
 			renewEForm();
-
 		updating &= sub;
 	}
 
@@ -247,7 +268,6 @@ public class LineUp extends Data {
 			l.setOrbs(orbs);
 		} else {
 			l = lv.clone();
-
 			l.setOrbs(orbs);
 
 			map.put(u.id, l);

@@ -23,6 +23,7 @@ import common.util.unit.Unit;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -121,9 +122,22 @@ public class BasisSet extends Basis implements Copable<BasisSet> {
 
 	public static void read() {
 		def();
+		File lvs = CommonStatic.ctx.getUserFile("./levels.json");
+		if (lvs.exists())
+			try (Reader r = new InputStreamReader(Files.newInputStream(lvs.toPath()), StandardCharsets.UTF_8)) {
+				JsonElement je = JsonParser.parseReader(r);
+				r.close();
+				CommonStatic.Preflvs jlvs = CommonStatic.getPrefLvs();
+				JsonDecoder.inject(je, CommonStatic.Preflvs.class, jlvs);
+
+				jlvs.uni.keySet().removeIf(id -> id.safeGet() == null);
+			} catch (Exception e) {
+				CommonStatic.ctx.noticeErr(e, ErrType.WARN, "failed to read pref lvs");
+			}
+
 		File f = CommonStatic.ctx.getUserFile("./basis.json");
 		if (f.exists())
-			try (Reader r = new InputStreamReader(new FileInputStream(f), StandardCharsets.UTF_8)) {
+			try (Reader r = new InputStreamReader(Files.newInputStream(f.toPath()), StandardCharsets.UTF_8)) {
 				JsonElement je = JsonParser.parseReader(r);
 				r.close();
 				JsonElement jel = je.getAsJsonObject().get("list");
@@ -147,8 +161,11 @@ public class BasisSet extends Basis implements Copable<BasisSet> {
 			List<BasisSet> list = list();
 			int cur = list.indexOf(current());
 			BasisSet[] arr = new BasisSet[list.size() - 1];
-			for (int i = 0; i < arr.length; i++)
+			for (int i = 0; i < arr.length; i++) {
 				arr[i] = list.get(i + 1);
+				for (BasisLU b : arr[i].lb)
+					b.lu.removeDefs();
+			}
 			JsonObject ans = new JsonObject();
 			ans.add("list", JsonEncoder.encode(arr));
 			ans.addProperty("current", cur);
@@ -157,6 +174,10 @@ public class BasisSet extends Basis implements Copable<BasisSet> {
 			w.close();
 			Context.delete(target);
 			temp.renameTo(target);
+
+			for (BasisSet bas : arr)
+				for (BasisLU b : bas.lb)
+					b.lu.reAddDefs();
 		} catch (Exception e) {
 			CommonStatic.ctx.noticeErr(e, ErrType.ERROR, "failed to save basis data");
 		}

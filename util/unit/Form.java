@@ -208,7 +208,6 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 			target.setPlusLevel(Math.max(0, Math.min(src.getPlusLv(), unit.maxp)));
 
 			PCoin pc = du.getPCoin();
-
 			if (pc != null) {
 				int[] maxTalents = new int[pc.info.size()];
 
@@ -216,17 +215,12 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 					maxTalents[i] = Math.max(1, pc.info.get(i)[1]);
 
 				int[] t = new int[maxTalents.length];
-
-				for (int i = 0; i < Math.min(maxTalents.length, src.getTalents().length); i++) {
+				for (int i = 0; i < Math.min(maxTalents.length, src.getTalents().length); i++)
 					t[i] = Math.min(maxTalents[i], Math.max(0, src.getTalents()[i]));
-				}
 
-				if (src.getTalents().length < target.getTalents().length) {
-					for (int i = src.getTalents().length; i < Math.min(maxTalents.length, target.getTalents().length); i++) {
-						t[i] = Math.min(maxTalents[i], Math.min(0, target.getTalents()[i]));
-					}
-				}
-
+				if (src.getTalents().length < target.getTalents().length)
+					for (int i = src.getTalents().length; i < Math.min(maxTalents.length, target.getTalents().length); i++)
+						t[i] = Math.min(maxTalents[i], Math.max(0, target.getTalents()[i]));
 				target.setTalents(t);
 			}
 		} else {

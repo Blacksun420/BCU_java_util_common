@@ -17,15 +17,16 @@ public class CustomEnemy extends CustomEntity implements MaskEnemy {
 
 	public Enemy pack;
 
-	@JsonField
-	public int star, drop;
-	@JsonField
+	@JsonField(defval = "0")
+	public int star;
+	@JsonField(defval = "100")
+	public int drop = 100;
+	@JsonField(defval = "0")
 	public float limit;
 
 	public CustomEnemy() {
 		super();
 		hp = 10000;
-		drop = 100;
 		traits.add(UserProfile.getBCData().traits.get(TRAIT_RED));
 	}
 

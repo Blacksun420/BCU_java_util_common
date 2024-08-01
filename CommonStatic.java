@@ -1,5 +1,6 @@
 package common;
 
+import common.battle.data.PCoin;
 import common.io.assets.Admin.StaticPermitted;
 import common.io.json.JsonClass;
 import common.io.json.JsonClass.NoTag;
@@ -105,17 +106,24 @@ public class CommonStatic {
 	public static class Config {
 
 		// ImgCore
-		public int deadOpa = 10, fullOpa = 90;
+		@JsonField(defval = "10")
+		public int deadOpa = 10;
+		@JsonField(defval = "90")
+		public int fullOpa = 90;
 		public int[] ints = new int[] { 1, 1, 1, 2 };
-		public boolean ref = true, battle = false, icon = false;
-		public boolean twoRow = true;
+		@JsonField(defval = "true")
+		public boolean ref = true, twoRow = true;
+		@JsonField(defval = "false")
+		public boolean battle = false, icon = false;
 		/**
 		 * Use this variable to unlock plus level for aku outbreak
 		 */
+		@JsonField(defval = "false")
 		public boolean plus = false;
 		/**
 		 * Use this variable to adjust level limit for aku outbreak
 		 */
+		@JsonField(defval = "0")
 		public int levelLimit = 0;
 		// Lang
 		public Lang.Locale lang;
@@ -130,90 +138,142 @@ public class CommonStatic {
 		/**
 		 * Maximum number of backups, 0 means infinite
 		 */
+		@JsonField(defval = "5")
 		public int maxBackup = 5;
-
-		/**
-		 * Preferred level for units
-		 */
-		public int prefLevel = 50;
 
 		/**
 		 * Decide whehter draw bg effect or not
 		 */
+		@JsonField(defval = "true")
 		public boolean drawBGEffect = true;
 
 		/**
 		 * Enable 6f button delay on spawn
 		 */
+		@JsonField(defval = "true")
 		public boolean buttonDelay = true;
 
 		/**
 		 * Color of background in viewer
 		 */
+		@JsonField(defval = "-1")
 		public int viewerColor = -1;
 
 		/**
 		 * Make BCU show ex stage continuation pop-up if true
 		 */
+		@JsonField(defval = "false")
 		public boolean exContinuation = false;
 
 		/**
 		 * Make EX stage pop-up shown considering real chance
 		 */
+		@JsonField(defval = "false")
 		public boolean realEx = false;
 
 		/**
 		 * Make stage name image displayed in battle
 		 */
+		@JsonField(defval = "true")
 		public boolean stageName = true;
 
 		/**
 		 * Make battle shaken
 		 */
+		@JsonField(defval = "true")
 		public boolean shake = true;
 
 		/**
 		 * Replace old music when updated
 		 */
+		@JsonField(defval = "true")
 		public boolean updateOldMusic = true;
 
 		/**
 		 * Perform BC levelings
 		 */
+		@JsonField(defval = "false")
 		public boolean realLevel = false;
 
 		/**
 		 * Use raw damage taken for TotalDamageTable
 		 */
+		@JsonField(defval = "true")
 		public boolean rawDamage = true;
 
 		/**
 		 * Store whether to apply the combos from a given pack or not
 		 */
-		@JsonField(generic = { String.class, Boolean.class })
+		@JsonField(generic = { String.class, Boolean.class }, defval = "isEmpty")
 		public HashMap<String, Boolean> packCombos = new HashMap<>();
 
-		/**
+		/**setLvs
 		 * Use progression mode to store save data
 		 */
+		@JsonField(defval = "false")
 		public boolean prog = false;
 
 		/**
 		 * 60 fps mode
 		 */
+		@JsonField(defval = "false")
 		public boolean fps60 = false;
 
 		/**
 		 * Stat
 		 */
+		@JsonField(defval = "false")
 		public boolean stat = false;
 	}
 
 	@JsonClass
+	public static class Preflvs {
+		@JsonField(defval = "this.allDefs")
+		public Level[] rare = new Level[6];
+		@JsonField(generic = {Identifier.class, Level.class}, defval = "isEmpty")
+		public HashMap<Identifier<AbUnit>, Level> uni = new HashMap<>();
+
+		@JsonClass.JCConstructor
+		public Preflvs() {
+			for (byte i = 0; i < rare.length; i++)
+				rare[i] = new Level(50, i < 2 ? 100 : 0, new int[0]);
+		}
+
+		public boolean allDefs() {
+			for (byte i = 0; i < rare.length; i++)
+				if (rare[i].getLv() != 50 || rare[i].getPlusLv() != (i < 2 ? 100 : 0) || rare[i].getTalents().length > 0)
+					return false;
+			return true;
+		}
+
+		public boolean equalsDef(Form f, Level lv) {
+			Level rv = rare[f.unit.rarity];
+			if (Math.min(f.unit.max, lv.getLv()) + Math.min(f.unit.maxp, lv.getPlusLv()) != Math.min(f.unit.max, rv.getLv()) + Math.min(f.unit.maxp, rv.getPlusLv()))
+				return false;
+			int[] rnp = rv.getTalents(), lnp = lv.getTalents();
+			PCoin pc = f.du.getPCoin();
+			if (pc == null) {
+				for (Form ff : f.unit.forms)
+					if (ff.du.getPCoin() != null)
+						pc = ff.du.getPCoin();
+				if (pc == null)
+					return true;
+			}
+			for (int i = 0; i < Math.min(rnp.length, lnp.length); i++)
+				if (lnp[i] != Math.min(rnp[i], pc.max[i]))
+					return false;
+			for (int i = rnp.length; i < Math.min(lnp.length, pc.max.length); i++)
+				if (lnp[i] < pc.max[i])
+					return false;
+			return true;
+		}
+	}
+
+	@JsonClass
 	public static class Faves {
-		@JsonField(generic = AbForm.class, alias = AbForm.AbFormJson.class)
+		@JsonField(generic = AbForm.class, alias = AbForm.AbFormJson.class, defval = "isEmpty")
 		public HashSet<AbForm> units = new HashSet<>();
-		@JsonField(generic = AbEnemy.class, alias = Identifier.class)
+		@JsonField(generic = AbEnemy.class, alias = Identifier.class, defval = "isEmpty")
 		public SortedPackSet<AbEnemy> enemies = new SortedPackSet<>();
 	}
 
@@ -323,6 +383,10 @@ public class CommonStatic {
 	}
 	public static Faves getFaves() {
 		return UserProfile.getStatic("faves", Faves::new);
+	}
+
+	public static Preflvs getPrefLvs() {
+		return UserProfile.getStatic("prefLvs", Preflvs::new);
 	}
 
 	public static boolean isInteger(String str) {

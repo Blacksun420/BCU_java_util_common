@@ -577,7 +577,7 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 	public static class PackMapColc extends MapColc {
 
 		public final UserPack pack;
-		@JsonField(generic = CustomStageInfo.class)
+		@JsonField(generic = CustomStageInfo.class, defval = "isEmpty")
 		public ArrayList<CustomStageInfo> si = new ArrayList<>();
 
 		public PackMapColc(UserPack pack) {
@@ -596,6 +596,10 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 			if (str.isEmpty())
 				return pack.desc.id;
 			return str;
+		}
+
+		public boolean isEmpty() {
+			return maps.isEmpty();
 		}
 
 		@Override

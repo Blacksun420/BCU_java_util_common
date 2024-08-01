@@ -1,5 +1,6 @@
 package common.util.unit;
 
+import common.CommonStatic;
 import common.battle.data.PCoin;
 import common.io.json.JsonClass;
 import common.io.json.JsonClass.NoTag;
@@ -12,11 +13,19 @@ import java.util.Arrays;
 
 @JsonClass(noTag = NoTag.LOAD)
 public class Level implements BattleStatic, LevelInterface {
-	private int level, plusLevel;
+	@JsonField(defval = "50")
+	private int level = 50;
+	@JsonField(defval = "0")
+	private int plusLevel;
 	@Nonnull
-	private int[] talents;
-
+	@JsonField(defval = "this.noTalent")
+	private int[] talents = new int[0];
+	@JsonField(defval = "null")
 	private int[][] orbs = null;
+
+	public boolean noTalent() {
+		return talents.length == 0;
+	}
 
 	public static Level lvList(AbUnit u, int[] arr, int[][] orbs) {
 		int talentNumber = 0;
@@ -24,13 +33,11 @@ public class Level implements BattleStatic, LevelInterface {
 
 		for(Form f : u.getForms()) {
 			PCoin pc = f.du.getPCoin();
-
 			if(pc != null && talentNumber < pc.max.length) {
 				talentNumber = pc.max.length;
 				coin = pc;
 			}
 		}
-
 		Level lv = new Level(talentNumber);
 
 		if (arr.length > 0) {
@@ -38,7 +45,6 @@ public class Level implements BattleStatic, LevelInterface {
 			if (u.getMaxPLv() != 0 && arr.length > 1)
 				lv.plusLevel = Math.max(0, Math.min(arr[1], u.getMaxPLv()));
 		}
-
 		if(coin != null) {
 			int[] talents = new int[coin.max.length];
 			int min = u.getMaxPLv() != 0 ? 2 : 1;
@@ -47,9 +53,7 @@ public class Level implements BattleStatic, LevelInterface {
 
 			lv.setTalents(talents);
 		}
-
 		lv.orbs = orbs;
-
 		return lv;
 	}
 
@@ -66,50 +70,21 @@ public class Level implements BattleStatic, LevelInterface {
 
 	@JsonClass.JCConstructor
 	public Level() {
-		level = 1;
-		talents = new int[0];
 	}
 
 	public Level(int talentNumber) {
-		level = 1;
 		talents = new int[talentNumber];
 	}
 
 	public Level(int level, int plusLevel, @Nonnull int[] talents) {
 		this.level = level;
 		this.plusLevel = plusLevel;
-
 		this.talents = talents.clone();
 	}
 
 	public Level(int level, int plusLevel, @Nonnull int[] talents, int[][] orbs) {
 		this(level, plusLevel, talents);
-
-		if (orbs == null) {
-			return;
-		}
-
-		boolean valid = true;
-
-		for (int[] data : orbs) {
-			if (data == null) {
-				valid = false;
-				break;
-			}
-
-			if (data.length == 0) {
-				continue;
-			}
-
-			if (data.length != 3) {
-				valid = false;
-				break;
-			}
-		}
-
-		if (valid) {
-			this.orbs = orbs;
-		}
+		setOrbs(orbs);
 	}
 
 	@Override
@@ -119,7 +94,6 @@ public class Level implements BattleStatic, LevelInterface {
 		} catch (CloneNotSupportedException ignored) {
 			if (orbs != null)
 				return new Level(level, plusLevel, talents, orbs.clone());
-
 			return new Level(level, plusLevel, talents);
 		}
 	}
@@ -160,15 +134,13 @@ public class Level implements BattleStatic, LevelInterface {
 		level = Math.max(1, lv.level);
 		plusLevel = lv.plusLevel;
 
-		if(lv.talents.length < talents.length) {
+		if(lv.talents.length < talents.length)
 			System.arraycopy(lv.talents, 0, talents, 0, lv.talents.length);
-		} else {
+		else
 			talents = lv.talents.clone();
-		}
 
-		if (lv.orbs != null) {
+		if (lv.orbs != null)
 			orbs = lv.orbs.clone();
-		}
 	}
 
 	public void setOrbs(int[][] orb) {
@@ -176,28 +148,21 @@ public class Level implements BattleStatic, LevelInterface {
 			orbs = null;
 			return;
 		}
-
 		boolean valid = true;
-
 		for (int[] data : orb) {
 			if (data == null) {
 				valid = false;
 				break;
 			}
-
-			if (data.length == 0) {
+			if (data.length == 0)
 				continue;
-			}
-
 			if (data.length != 3) {
 				valid = false;
 				break;
 			}
 		}
-
-		if (valid) {
+		if (valid)
 			orbs = orb;
-		}
 	}
 
 	@JsonField(tag = "lvs", io = JsonField.IOType.R, generic = Integer.class)
@@ -207,9 +172,8 @@ public class Level implements BattleStatic, LevelInterface {
 			if (levels.size() > 1) {
 				talents = new int[levels.size() - 1];
 
-				for (int i = 0; i < talents.length; i++) {
+				for (int i = 0; i < talents.length; i++)
 					talents[i] = levels.get(i + 1);
-				}
 			}
 		}
 	}

@@ -22,12 +22,12 @@ public class EneRand extends Data implements AbEnemy {
 
 	public static final byte T_NL = 0, T_LL = 1;
 
-	@JsonField(generic = EREnt.class)
+	@JsonField(generic = EREnt.class, defval = "isEmpty")
 	public final ArrayList<EREnt> list = new ArrayList<>();
 
 	public final Map<StageBasis, ELock> map = new HashMap<>();
 
-	@JsonField
+	@JsonField(defval = "0")
 	public int type = 0;
 
 	public void updateCopy(StageBasis sb, Object o) {
@@ -67,7 +67,7 @@ public class EneRand extends Data implements AbEnemy {
 	@JsonField
 	public final Identifier<AbEnemy> id;
 
-	@JsonField
+	@JsonField(defval = "isEmpty")
 	public String name = "";
 	public VImg icon = null;
 

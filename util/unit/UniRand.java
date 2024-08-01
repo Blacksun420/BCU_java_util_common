@@ -22,15 +22,17 @@ public class UniRand extends Data implements AbUnit, AbForm {
     @JsonField
     public final Identifier<AbUnit> id;
 
-    @JsonField
+    @JsonField(defval = "isEmpty")
     public String name = "";
     public VImg icon = null, deployIcon = null;
-    @JsonField
-    public int price = 50, cooldown = 60;
+    @JsonField(defval = "50")
+    public int price = 50;
+    @JsonField(defval = "60")
+    public int cooldown = 60;
 
     public static final byte T_NL = 0, T_LL = 1;
 
-    @JsonField(generic = UREnt.class)
+    @JsonField(generic = UREnt.class, defval = "isEmpty")
     public final ArrayList<UREnt> list = new ArrayList<>();
 
     public final Map<StageBasis, ULock> map = new HashMap<>();

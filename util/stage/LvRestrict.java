@@ -30,7 +30,7 @@ public class LvRestrict extends Data implements Indexable<PackData, LvRestrict> 
 	@StaticPermitted
 	public static final Level MAX = new Level(50, 70, new int[0]);
 
-	@JsonField(generic = { CharaGroup.class, Level.class }, alias = Identifier.class, backCompat = JsonField.CompatType.FORK)
+	@JsonField(generic = { CharaGroup.class, Level.class }, alias = Identifier.class, backCompat = JsonField.CompatType.FORK, defval = "isEmpty")
 	public final TreeMap<CharaGroup, Level> cgl = new TreeMap<>();
 	@JsonField(backCompat = JsonField.CompatType.FORK)
 	public Level[] rs = new Level[RARITY_TOT];
@@ -39,6 +39,7 @@ public class LvRestrict extends Data implements Indexable<PackData, LvRestrict> 
 
 	@JCIdentifier
 	public Identifier<LvRestrict> id;
+	@JsonField(defval = "isEmpty")
 	public String name = "";
 
 	@JsonClass.JCConstructor

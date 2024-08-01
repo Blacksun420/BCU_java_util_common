@@ -47,7 +47,7 @@ public class Enemy extends Character implements AbEnemy {
 	public final Identifier<AbEnemy> id;
 	@JsonField
 	public final MaskEnemy de;
-	@JsonField
+	@JsonField(defval = "1")
 	public byte filter = 1; //Filter Type, used solely for filter pages: 0 is non-reocurring, 1 is reocurring, 2 is collab, 3 is hidden
 
 	@JsonClass.JCConstructor

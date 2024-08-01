@@ -22,19 +22,20 @@ import common.util.unit.Unit;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedList;
 
 @IndexCont(PackData.class)
 @JsonClass(noTag = NoTag.LOAD)
 @JCGeneric(Identifier.class)
 public class CharaGroup extends Data implements Indexable<PackData, CharaGroup>, Comparable<CharaGroup> {
-
+	@JsonField(defval = "isEmpty")
 	public String name = "";
-
 	@JCIdentifier
 	public final Identifier<CharaGroup> id;
+	@JsonField(defval = "0")
 	public int type = 0;
 
-	@JsonField(generic = Form.class, alias = AbForm.AbFormJson.class, backCompat = JsonField.CompatType.FORK)
+	@JsonField(generic = Form.class, alias = AbForm.AbFormJson.class, backCompat = JsonField.CompatType.FORK, defval = "isEmpty")
 		public final SortedPackSet<Form> fset = new SortedPackSet<>();
 
 	@JsonClass.JCConstructor
@@ -100,16 +101,21 @@ public class CharaGroup extends Data implements Indexable<PackData, CharaGroup>,
 		return id + " - " + name;
 	}
 
-	public boolean used() {
+	public LinkedList<Object> used() {
+		LinkedList<Object> objs = new LinkedList<>();
 		UserPack mc = (UserPack) getCont();
 		for (LvRestrict lr : mc.lvrs.getList())
 			if (lr.cgl.containsKey(this))
-				return true;
-		for (StageMap sm : mc.mc.maps)
+				objs.add(lr);
+		for (StageMap sm : mc.mc.maps) {
+			for (Limit lim : sm.lim)
+				if (lim.group == this)
+					objs.add(lim);
 			for (Stage st : sm.list)
 				if (st.lim != null && st.lim.group == this)
-					return true;
-		return false;
+					objs.add(st);
+		}
+		return objs;
 	}
 
 	@JsonDecoder.OnInjected

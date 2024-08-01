@@ -12,13 +12,27 @@ import common.util.unit.Trait;
 @JsonClass(noTag = NoTag.LOAD)
 public abstract class DataEntity extends Data implements MaskEntity {
 
-	public int hp, hb, speed, range, width, loop = -1, will;
-	@JsonField(backCompat = JsonField.CompatType.FORK)
+	@JsonField(defval = "0")
+	public int hp, range, will;
+	@JsonField(defval = "1")
+	public int hb = 1;
+	@JsonField(defval = "8")
+	public int speed = 8;
+	@JsonField(defval = "320")
+	public int width = 320;
+	@JsonField(defval = "-1")
+	public int loop = -1;
+	@JsonField(backCompat = JsonField.CompatType.FORK, defval = "0")
 	public int tba, abi;
 
-	public Identifier<Soul> death;
-	@JsonField(generic = Trait.class, alias = Identifier.class)
+	@JsonField(defval = "this.defSoul")
+	public Identifier<Soul> death = new Identifier<>(Identifier.DEF, Soul.class, 0);
+	@JsonField(generic = Trait.class, alias = Identifier.class, defval = "isEmpty")
 	public SortedPackSet<Trait> traits = new SortedPackSet<>();
+
+	public boolean defSoul() {
+		return death != null && death.id == 0 && death.pack.equals(Identifier.DEF);
+	}
 
 	@JsonField(tag = "tba", io = JsonField.IOType.W, backCompat = JsonField.CompatType.UPST)
 	public int getUTBA() {

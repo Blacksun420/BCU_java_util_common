@@ -113,6 +113,11 @@ public @interface JsonField {
 		}
 
 		@Override
+		public String defval() {
+			return "";
+		}
+
+		@Override
 		public GenType gen() {
 			return GenType.SET;
 		}
@@ -166,6 +171,12 @@ public @interface JsonField {
 	Class<?>[] alias() default {};
 
 	boolean block() default false;
+
+	/**
+	 * Do not encode field if this condition is true
+	 * Condition attained by function name cauze can't use lambda expressions
+	 */
+	String defval() default "";
 
 	/**
 	 * Generation Type for this Field. Default is SET, which means to set the value.

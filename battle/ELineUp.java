@@ -30,7 +30,7 @@ public class ELineUp extends BattleObj {
 			for (byte j = 0; j < 5; j++) {
 				if (lu.fs[i][j] == null)
 					price[i][j] = -1;
-				else if (saveMode == 2 && sb.st.getMC().getSave(true).getUnlockedsBeforeStage(sb.st, true).containsKey(lu.fs[i][j]) ||
+				else if (saveMode == 2 && !sb.st.getMC().getSave(true).getUnlockedsBeforeStage(sb.st, true).containsKey(lu.fs[i][j]) ||
 					saveMode == 1 && sb.st.getMC().getSave(true).locked(lu.fs[i][j]))
 					price[i][j] = -2;
 				else if (sb.st.lim != null && lu.efs[i][j] instanceof EForm && sb.st.lim.unusable(((EForm)lu.efs[i][j]).du, sb.st.getCont().price, i))

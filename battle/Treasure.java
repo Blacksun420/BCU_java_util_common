@@ -94,8 +94,10 @@ public class Treasure extends Data {
 			fruit = new int[7],
 			gods = new int[3];
 
-	@JsonField
-	public int alien, star;
+	@JsonField(defval = "600")
+	public int alien = 600;
+	@JsonField(defval = "1500")
+	public int star = 1500;
 
 	/**
 	 * new Treasure object
@@ -424,8 +426,6 @@ public class Treasure extends Data {
 			deco[i - 1] = decorationData.get(i).getMax();
 		}
 		gods[0] = gods[1] = gods[2] = 100;
-		alien = 600;
-		star = 1500;
 	}
 
 	public boolean equals(Object obj) {

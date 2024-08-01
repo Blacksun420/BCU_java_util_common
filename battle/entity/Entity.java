@@ -138,20 +138,15 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				return;
 			}
 
-			if(e.data instanceof CustomEntity) {
-				if(e.kb.kbType == INT_HB && ((CustomEntity) e.data).kbBounce)
-					anim.paraTo(back, e.status.hypno > 0);
-				else if(e.kb.kbType == INT_SW && ((CustomEntity) e.data).bossBounce)
-					anim.paraTo(back, e.status.hypno > 0);
-				else if(e.kb.kbType != INT_HB && e.kb.kbType != INT_SW)
-					anim.paraTo(back, e.status.hypno > 0);
-			} else {
-				anim.paraTo(back, e.status.hypno > 0);
-			}
-
+			boolean f = e.status.hypno > 0;
+			if(e.data instanceof CustomEntity || (e.kb.kbType != INT_HB && e.kb.kbType != INT_SW)) {
+				if((e.kb.kbType == INT_HB && ((CustomEntity) e.data).kbBounce) || (e.kb.kbType == INT_SW && ((CustomEntity) e.data).bossBounce))
+					anim.paraTo(back, e.data.getPack().rev != f);
+			} else
+				anim.paraTo(back, e.data.getPack().rev != f);
+			f |= (negSpeed && anim.type == AnimU.TYPEDEF[AnimU.WALK]);
 			if (e.kbTime == 0 || e.kb.kbType != INT_WARP)
-				anim.draw(gra, p, siz, e.status.hypno > 0 || (negSpeed && anim.type == AnimU.TYPEDEF[AnimU.WALK]));
-
+				anim.draw(gra, p, siz, e.data.getPack().rev != f);
 			anim.paraTo(null);
 			gra.setTransform(at);
 			if (CommonStatic.getConfig().ref)

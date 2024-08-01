@@ -19,16 +19,24 @@ import common.util.lang.MultiLangData;
 
 @JsonClass(noTag = JsonClass.NoTag.LOAD)
 public abstract class Character extends Animable<AnimU<?>, AnimU.UType> {
-    @JsonField(generic = MultiLangData.class, gen = JsonField.GenType.FILL)
+    @JsonField(generic = MultiLangData.class, gen = JsonField.GenType.FILL, defval = "empty")
     public final MultiLangData names = new MultiLangData();
-    @JsonField(generic = MultiLangData.class, gen = JsonField.GenType.FILL)
+    @JsonField(generic = MultiLangData.class, gen = JsonField.GenType.FILL, defval = "empty")
     public final MultiLangData description = new MultiLangData();
+    @JsonField(defval = "false")
+    public boolean rev = false;
+
+    public boolean crev() {
+        return !rev;
+    }
 
     @Override
     public EAnimU getEAnim(AnimU.UType t) {
         if (anim == null)
             return null;
-        return anim.getEAnim(t);
+        EAnimU a = anim.getEAnim(t);
+        a.setDir(rev);
+        return a;
     }
 
     public VImg getIcon() {

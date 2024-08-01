@@ -259,11 +259,14 @@ public class FixIndexList<T> extends Data {
 		if (t != null)
 			size++;
 		arr[ind] = t;
-
 	}
 
 	public int size() {
 		return size;
+	}
+
+	public boolean isEmpty() {
+		return size == 0;
 	}
 
 	@JsonField(tag = "data", io = IOType.R)

@@ -21,6 +21,8 @@ public class EAnimU extends EAnimD<AnimU.UType> {
 
 	@Override
 	public void changeAnim(AnimU.UType t, boolean skip) {
+		if (!skip && type == t)
+			return;
 		boolean flip = flipped;
 		flip(false);
 		f = -1;
@@ -37,13 +39,18 @@ public class EAnimU extends EAnimD<AnimU.UType> {
 		draw(g, ori, siz);
 	}
 
+	public void setDir(boolean dir) {
+		order[0].b.pvt = dir;
+		flip(dir);
+	}
+
 	private void flip(boolean flip) {
 		if (flip != flipped) {
-			for (EPart e : order)
-				e.revert();
+			order[0].b.revert();
 			flipped = flip;
 		}
 	}
+
 	@Override
 	public void draw(FakeGraphics g, P ori, float siz) {
 		if (f == -1) {

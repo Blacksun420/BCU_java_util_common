@@ -21,7 +21,7 @@ public class WaprCont extends EAnimCont {
 		ent = a;
 		chara = effas().A_W_C.getEAnim(pa);
 		this.dire = dire;
-		a.ent[0].EWarp = dire == 1;
+		a.ent[0].b.EWarp = dire == 1;
 		this.timeImmune = timeImmune;
 	}
 
@@ -50,7 +50,7 @@ public class WaprCont extends EAnimCont {
 	public boolean done() {
 		if (type == WarpEff.EXIT) {
 			if (chara.ind() == chara.len() - 2) {
-				ent.ent[0].EWarp = false;
+				ent.ent[0].b.EWarp = false;
 				return true;
 			}
 			return false;

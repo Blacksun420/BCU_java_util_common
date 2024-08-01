@@ -15,16 +15,21 @@ import common.util.pack.Soul;
 import common.util.unit.AbEnemy;
 import common.util.unit.Enemy;
 
-@JsonClass(noTag = JsonClass.NoTag.LOAD)
+@JsonClass
 public class Revival extends Data {
+    @JsonField(defval = "null")
     public Identifier<AbEnemy> enemy;
+    @JsonField(defval = "null")
     public Identifier<Music> bgm;
+    @JsonField(defval = "null")
     public Identifier<Soul> soul;
+    @JsonField(defval = "100")
     public int mhp = 100, matk = 100;
+    @JsonField(defval = "0")
     public byte boss;
+    @JsonField(defval = "null")
     public Revival rev;
 
-    @JsonField(block = true)
     public Revival par; //Connects revivals as nodes for easier traveling. Do not edit
 
     @JsonClass.JCConstructor

@@ -75,13 +75,13 @@ public class JsonEncoder {
 		if (par != null && par.curjfld != null) {
 			JsonField jfield = par.curjfld;
 			if (jfield.ser() == JsonField.SerType.FUNC) {
-				if (jfield.serializer().length() == 0)
+				if (jfield.serializer().isEmpty())
 					throw new JsonException(false, jfield, "no serializer function");
 				Method m = par.obj.getClass().getMethod(jfield.serializer(), cls);
 				return encode(m.invoke(par.obj, obj));
 			} else if (jfield.ser() == JsonField.SerType.CLASS) {
 				JsonClass cjc = cls.getAnnotation(JsonClass.class);
-				if (cjc == null || cjc.serializer().length() == 0)
+				if (cjc == null || cjc.serializer().isEmpty())
 					throw new JsonException(false, jfield, "no serializer function");
 				String func = cjc.serializer();
 				Method m = cls.getMethod(func);
@@ -93,7 +93,7 @@ public class JsonEncoder {
 			if (jc.write() == JsonClass.WType.DEF)
 				return new JsonEncoder(par, obj).ans;
 			else if (jc.write() == JsonClass.WType.CLASS) {
-				if (jc.serializer().length() == 0)
+				if (jc.serializer().isEmpty())
 					throw new JsonException(false, jc, "no serializer function");
 				String func = jc.serializer();
 				Method m = cls.getMethod(func);
@@ -201,10 +201,12 @@ public class JsonEncoder {
 					jf = JsonField.DEF;
 				if (jf.block() || jf.io() == JsonField.IOType.R || incompatible(jf.backCompat()))
 					continue;
-				String tag = jf.tag().length() == 0 ? f.getName() : jf.tag();
+				String tag = jf.tag().isEmpty() ? f.getName() : jf.tag();
 				f.setAccessible(true);
 				curjfld = jf;
 				Object val = f.get(obj);
+				if (!backCompat && !jf.defval().isEmpty() && defVal(val, jf.defval()))
+					continue;
 				JsonElement elem = encode(val, getInvoker());
 				if (elem.isJsonObject() && curjfld.alias().length == 0 && val != null && val.getClass() != f.getType())
 					elem.getAsJsonObject().addProperty("_class", val.getClass().getName());
@@ -219,7 +221,7 @@ public class JsonEncoder {
 				if (jf.io() == JsonField.IOType.RW)
 					throw new JsonException(false, obj, "RW IOType", m);
 				String tag = jf.tag();
-				if (tag.length() == 0)
+				if (tag.isEmpty())
 					throw new JsonException(false, obj, "No Tag", m);
 				curjfld = jf;
 				ans.add(tag, encode(m.invoke(obj), getInvoker()));
@@ -235,5 +237,37 @@ public class JsonEncoder {
 		if (ct == JsonField.CompatType.ALL)
 			return false;
 		return ct == (backCompat ? JsonField.CompatType.FORK : JsonField.CompatType.UPST);
+	}
+
+	private boolean defVal(Object val, String str) {
+		if (str.isEmpty())
+			return false;
+		if (str.equals("null"))
+			return val == null;
+		if (val instanceof Byte)
+			return (byte)val == Byte.parseByte(str);
+		if (val instanceof Integer)
+			return (int)val == Integer.parseInt(str);
+		if (val instanceof Long)
+			return (long)val == Long.parseLong(str);
+		if (val instanceof Float)
+			return (float)val == Float.parseFloat(str);
+		if (val instanceof Double)
+			return (double)val == Double.parseDouble(str);
+		if (val instanceof Boolean)
+			return (boolean)val == Boolean.parseBoolean(str);
+		if (val instanceof String && !str.equals("isEmpty"))
+			return val.equals(str);
+		if (val instanceof Object[] && str.equals("isEmpty"))
+			return ((Object[])val).length == 0;
+		try {
+			if (str.startsWith("this."))
+				return (boolean) obj.getClass().getMethod(str.substring(5)).invoke(obj);
+			return (boolean) val.getClass().getMethod(str).invoke(val);
+		} catch (Exception e) {//Hitler did nothing wrong
+			System.out.println("Failed checking def for " + val.getClass() + ": " + val + " on " + obj.getClass());
+			e.printStackTrace();//Return false without jsonException because this doesn't interfere with json encoding
+		}
+		return false;
 	}
 }

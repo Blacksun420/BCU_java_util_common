@@ -173,7 +173,7 @@ public class Dependency {
 					JsonField jf = f.getAnnotation(JsonField.class);
 					if (jf == null)
 						jf = JsonField.DEF;
-					if (jf.block() || jf.io() == JsonField.IOType.R)
+					if (jf.block() || jf.io() == JsonField.IOType.R || jf.backCompat() == JsonField.CompatType.UPST)
 						continue;
 					f.setAccessible(true);
 					curjfld = jf;
@@ -184,7 +184,7 @@ public class Dependency {
 			for (Method m : cls.getDeclaredMethods())
 				if (m.getAnnotation(JsonField.class) != null) {
 					JsonField jf = m.getAnnotation(JsonField.class);
-					if (jf.io() == JsonField.IOType.R)
+					if (jf.io() == JsonField.IOType.R || jf.backCompat() == JsonField.CompatType.UPST)
 						continue;
 					if (jf.io() == JsonField.IOType.RW)
 						throw new JsonException(false, obj, "RW IOType", m);

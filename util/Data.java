@@ -1262,6 +1262,13 @@ public class Data {
 			}
 		}
 
+		public boolean isBlank() {
+			for (int i = 0; i < PROC_TOT; i++)
+				if (getArr(i).exists())
+					return false;
+			return true;
+		}
+
 		public ProcItem get(String id) {
 			try {
 				return (ProcItem) Proc.class.getField(id).get(this);

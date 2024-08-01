@@ -1,6 +1,7 @@
 package common.pack;
 
 import common.io.json.JsonClass;
+import common.io.json.JsonField;
 import common.util.Data;
 import common.util.pack.Background;
 import common.util.stage.CastleImg;
@@ -112,13 +113,13 @@ public class Identifier<T extends IndexContainer.Indexable<?, T>> implements Com
 	}
 
 	public Class<? extends T> cls;
-	public String pack;
+	@JsonField(defval = DEF)
+	public String pack = DEF;
 	public int id;
 
 	@Deprecated
 	public Identifier() {
 		cls = null;
-		pack = null;
 		id = 0;
 	}
 

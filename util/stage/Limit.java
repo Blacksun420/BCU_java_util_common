@@ -45,20 +45,20 @@ public class Limit extends Data implements BattleStatic {
 	@JsonClass
 	public static class PackLimit extends Limit {
 
-		@JsonField
+		@JsonField(defval = "isEmpty")
 		public String name = "";
 
 		public PackLimit() {
 		}
 	}
 
-	@JsonField
+	@JsonField(defval = "0")
 	public int rare, num, line, min, max;
-	@JsonField(backCompat = JsonField.CompatType.FORK)
+	@JsonField(backCompat = JsonField.CompatType.FORK, defval = "0")
 	public int star = 0, fa; //last var could be named forceAmount, but that'd take too much json space
-	@JsonField(alias = Identifier.class)
+	@JsonField(alias = Identifier.class, defval = "null")
 	public CharaGroup group;
-	@JsonField(alias = Identifier.class)
+	@JsonField(alias = Identifier.class, defval = "null")
 	public LvRestrict lvr;
 
 	@JsonField(io = JsonField.IOType.R)
@@ -183,5 +183,9 @@ public class Limit extends Data implements BattleStatic {
 			if ((star & (1 << i)) != 0)
 				return i;
 		return -1;
+	}
+
+	public boolean none() {
+		return star + fa + rare + line + min + max + star + fa == 0 && group == null && lvr == null;
 	}
 }

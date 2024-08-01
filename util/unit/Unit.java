@@ -84,7 +84,7 @@ public class Unit extends Data implements AbUnit {
 	public final Identifier<AbUnit> id;
 	@JsonField
 	@FieldOrder.Order(1)
-	public int rarity, max, maxp;
+	public int rarity = 2, max = 50, maxp = 0;
 	@JsonField(gen = GenType.GEN)
 	@FieldOrder.Order(2)
 	public Form[] forms;
@@ -106,9 +106,6 @@ public class Unit extends Data implements AbUnit {
 	public Unit(Identifier<AbUnit> id, AnimU<?> ce, CustomUnit cu) {
 		this.id = id;
 		forms = new Form[] { new Form(this, 0, "new unit", ce, cu) };
-		max = 50;
-		maxp = 0;
-		rarity = 2;
 		lv = CommonStatic.getBCAssets().defLv;
 		lv.units.add(this);
 	}
@@ -204,21 +201,24 @@ public class Unit extends Data implements AbUnit {
 				pc = coin;
 			}
 		}
-
 		Level lv;
-
-		if (pc != null) {
+		if (pc != null)
 			lv = new Level(maxTalent);
-		} else {
+		else
 			lv = new Level(0);
-		}
 
 		lv.setLevel(getPreferredLevel());
 		lv.setPlusLevel(getPreferredPlusLevel());
 
 		if (pc != null) {
-			int[] talents = new int[pc.max.length];
-			System.arraycopy(pc.max, 0, talents, 0, talents.length);
+			int[] talents = new int[maxTalent];
+			int[] defPrefs = CommonStatic.getPrefLvs().uni.containsKey(id) ?
+					CommonStatic.getPrefLvs().uni.get(id).getTalents() : CommonStatic.getPrefLvs().rare[rarity].getTalents();
+
+			for (int i = 0; i < Math.min(maxTalent, defPrefs.length); i++)
+				talents[i] = Math.min(defPrefs[i], pc.max[i]);
+            if (maxTalent > defPrefs.length)
+                System.arraycopy(pc.max, defPrefs.length, talents, defPrefs.length, maxTalent - defPrefs.length);
 			lv.setTalents(talents);
 		}
 
@@ -226,11 +226,15 @@ public class Unit extends Data implements AbUnit {
 	}
 
 	public int getPreferredLevel() {
-		return Math.min(CommonStatic.getConfig().prefLevel, max);
+		if (CommonStatic.getPrefLvs().uni.containsKey(id))
+			return CommonStatic.getPrefLvs().uni.get(id).getLv();
+		return Math.min(CommonStatic.getPrefLvs().rare[rarity].getLv(), max);
 	}
 
 	public int getPreferredPlusLevel() {
-		return Math.min((rarity < 2 && maxp > 0 ? (int)((CommonStatic.getConfig().prefLevel - 1) / 49.0 * maxp) : 0),maxp);
+		if (CommonStatic.getPrefLvs().uni.containsKey(id))
+			return CommonStatic.getPrefLvs().uni.get(id).getPlusLv();
+		return Math.min(CommonStatic.getPrefLvs().rare[rarity].getPlusLv(), maxp);
 	}
 
 	@Override

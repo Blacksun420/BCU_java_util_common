@@ -108,4 +108,8 @@ public class MultiLangData extends Data {
         for (Lang.Locale lang : ans.dat.keySet())
             dat.put(lang, ans.dat.get(lang));
     }
+
+    public boolean empty() {
+        return dat.isEmpty();
+    }
 }

@@ -62,14 +62,14 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 	@JsonField
 	public Identifier<Combo> id;
 
-	@JsonField
+	@JsonField(defval = "0")
 	public int lv, type;
 
 	@JsonField(alias = AbForm.AbFormJson.class)
 	public Form[] forms;
 
-	@JsonField
-	public String name;
+	@JsonField(defval = "new combo")
+	public String name = "new combo";
 
 	@JsonClass.JCConstructor
 	public Combo() {
@@ -100,9 +100,8 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 		forms = new Form[c.forms.length];
 	}
 
-	public Combo(Identifier<Combo> ID, String n, Form f) {
+	public Combo(Identifier<Combo> ID, Form f) {
 		id = ID;
-		name = n;
 		lv = 0;
 		type = 0;
 		forms = new Form[]{f};

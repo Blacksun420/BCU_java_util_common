@@ -198,14 +198,14 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 	@JsonClass.JCIdentifier
 	@JsonField
 	public Identifier<Background> id;
-	@JsonField(backCompat = JsonField.CompatType.FORK)
+	@JsonField(backCompat = JsonField.CompatType.FORK, defval = "null")
 	public Identifier<Background> reference;
 	public VImg img;
 	@JsonField
 	public int[][] cs = new int[4][3];
-	@JsonField(backCompat = JsonField.CompatType.FORK)
+	@JsonField(backCompat = JsonField.CompatType.FORK, defval = "null")
 	public Identifier<BackgroundEffect> bgEffect = null;
-	@JsonField
+	@JsonField(defval = "0")
 	public int overlayAlpha;
 	@JsonField
 	public int[][] overlay;

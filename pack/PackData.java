@@ -264,19 +264,23 @@ public abstract class PackData implements IndexContainer {
 
 		@JsonField(io = JsonField.IOType.R)
 		public String name = "";
-		@JsonField(generic = MultiLangData.class, gen = GenType.FILL)
+		@JsonField(generic = MultiLangData.class, gen = GenType.FILL, defval = "empty")
 		public final MultiLangData names = new MultiLangData();
-		@JsonField(generic = MultiLangData.class, gen = GenType.FILL)
+		@JsonField(generic = MultiLangData.class, gen = GenType.FILL, defval = "empty")
 		public final MultiLangData info = new MultiLangData();
 
 		public String creationDate;
+		@JsonField(defval = "null")
 		public String exportDate;
+		@JsonField(defval = "1")
 		public double version = 1.0;
 
+		@JsonField(defval = "false")
 		public boolean allowAnim = false;
+		@JsonField(defval = "null")
 		public byte[] parentPassword;
-		@JsonField(generic = String.class)
-		public SortedPackSet<String> dependency;
+		@JsonField(generic = String.class, defval = "isEmpty")
+		public SortedPackSet<String> dependency = new SortedPackSet<>();
 
 		@JCConstructor
 		@Deprecated
@@ -287,7 +291,6 @@ public abstract class PackData implements IndexContainer {
 			BCU_VERSION = AssetLoader.CORE_VER;
 			FORK_VERSION = AssetLoader.FORK_VER; //0 by default to differ Fork packs and non-fork packs
 			this.id = id;
-			dependency = new SortedPackSet<>();
 			DateFormat df = new SimpleDateFormat("MM dd yyyy HH:mm:ss");
 			creationDate = df.format(new Date());
 		}
@@ -356,11 +359,11 @@ public abstract class PackData implements IndexContainer {
 		@Order(0)
 		public final PackDesc desc;
 
-		@JsonField(gen = GenType.FILL)
+		@JsonField(gen = GenType.FILL, defval = "isEmpty")
 		@Order(1)
 		public PackCasList castles;
 
-		@JsonField(gen = GenType.FILL)
+		@JsonField(gen = GenType.FILL, defval = "isEmpty")
 		@Order(2)
 		public PackMapColc mc;
 
@@ -370,13 +373,11 @@ public abstract class PackData implements IndexContainer {
 		public boolean loaded = false;
 
 		private JsonElement elem;
-		@JsonField(block = true)
 		public VImg icon, banner;
-		@JsonField(block = true)
 		public SaveData save;
-		@JsonField(generic = { Unit.class, Integer.class }, alias = Identifier.class, decodeLast = true, backCompat = JsonField.CompatType.FORK)
+		@JsonField(generic = { Unit.class, Integer.class }, alias = Identifier.class, decodeLast = true, backCompat = JsonField.CompatType.FORK, defval = "isEmpty")
 		public final TreeMap<AbUnit, Integer> defULK = new TreeMap<>();//Units unlocked from the get-go, for progression
-		@JsonField(generic = String.class, backCompat = JsonField.CompatType.FORK)
+		@JsonField(generic = String.class, backCompat = JsonField.CompatType.FORK, defval = "isEmpty")
 		public final SortedPackSet<String> syncPar = new SortedPackSet<>();
 
 		public UserPack(Source s, PackDesc desc, JsonElement elem) {
@@ -551,30 +552,43 @@ public abstract class PackData implements IndexContainer {
 	}
 
 	@Order(0)
+	@JsonField(defval = "isEmpty")
 	public final FixIndexMap<Trait> traits = new FixIndexMap<>(Trait.class);
 	@Order(1)
+	@JsonField(defval = "isEmpty")
 	public final FixIndexMap<Enemy> enemies = new FixIndexMap<>(Enemy.class);
 	@Order(2)
+	@JsonField(defval = "isEmpty")
 	public final FixIndexMap<EneRand> randEnemies = new FixIndexMap<>(EneRand.class);
 	@Order(3)
+	@JsonField(defval = "isEmpty")
 	public final FixIndexMap<UnitLevel> unitLevels = new FixIndexMap<>(UnitLevel.class);
 	@Order(4)
+	@JsonField(defval = "isEmpty")
 	public final FixIndexMap<Unit> units = new FixIndexMap<>(Unit.class);
 	@Order(5)
+	@JsonField(defval = "isEmpty")
 	public final FixIndexMap<UniRand> randUnits = new FixIndexMap<>(UniRand.class);
 	@Order(6)
+	@JsonField(defval = "isEmpty")
 	public final FixIndexMap<Soul> souls = new FixIndexMap<>(Soul.class);
 	@Order(7)
+	@JsonField(defval = "isEmpty")
 	public final FixIndexMap<Background> bgs = new FixIndexMap<>(Background.class);
 	@Order(8)
+	@JsonField(defval = "isEmpty")
 	public final FixIndexMap<BackgroundEffect> bgEffects = new FixIndexMap<>(BackgroundEffect.class);
 	@Order(9)
+	@JsonField(defval = "isEmpty")
 	public final FixIndexMap<CharaGroup> groups = new FixIndexMap<>(CharaGroup.class);
 	@Order(10)
+	@JsonField(defval = "isEmpty")
 	public final FixIndexMap<LvRestrict> lvrs = new FixIndexMap<>(LvRestrict.class);
 	@Order(11)
+	@JsonField(defval = "isEmpty")
 	public final FixIndexMap<Music> musics = new FixIndexMap<>(Music.class);
 	@Order(12)
+	@JsonField(defval = "isEmpty")
 	public final FixIndexMap<Combo> combos = new FixIndexMap<>(Combo.class);
 
 	public List<Enemy> getEnemies(boolean ignore) {

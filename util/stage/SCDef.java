@@ -21,17 +21,22 @@ import java.util.TreeSet;
 @JsonClass
 public class SCDef implements Copable<SCDef> {
 
-	@JsonClass(noTag = NoTag.LOAD)
+	@JsonClass
 	public static class Line implements Cloneable {
+		@JsonField(defval = "null")
 		public Identifier<AbEnemy> enemy;
-		public int number, boss, multiple, group;
-		public int spawn_0, spawn_1, respawn_0, respawn_1;
-		public int castle_0, castle_1, layer_0, layer_1;
-		public int mult_atk;
-		public int kill_count;
-		@JsonField(backCompat = JsonField.CompatType.FORK)
+		@JsonField(defval = "1")
+		public int number = 1;
+		@JsonField(defval = "0")
+		public int boss, group, spawn_0, spawn_1, respawn_0, respawn_1, castle_1, layer_0, kill_count;
+		@JsonField(defval = "100")
+		public int multiple = 100, mult_atk = 100, castle_0 = 100;
+		@JsonField(defval = "9")
+		public int layer_1 = 9;
+
+		@JsonField(backCompat = JsonField.CompatType.FORK, defval = "0")
 		public byte doorchance, doordis_0, doordis_1;
-		@JsonField(backCompat = JsonField.CompatType.FORK)
+		@JsonField(backCompat = JsonField.CompatType.FORK, defval = "null")
 		public Revival rev;
 
 		@JCConstructor
@@ -70,13 +75,13 @@ public class SCDef implements Copable<SCDef> {
 	public static final int SIZE = 15, E = 0, N = 1, S0 = 2, R0 = 3, R1 = 4, C0 = 5, L0 = 6, L1 = 7, B = 8, M = 9,
 			S1 = 10, C1 = 11, G = 12, M1 = 13, KC = 14;
 
-	@JsonField
+	@JsonField(defval = "isEmpty")
 	public Line[] datas;
-	@JsonField(gen = GenType.FILL)
+	@JsonField(gen = GenType.FILL, defval = "isEmpty")
 	public final FixIndexList<SCGroup> sub = new FixIndexList<>(SCGroup.class);
-	@JsonField(generic = { Identifier.class, Integer.class })
+	@JsonField(generic = { Identifier.class, Integer.class }, defval = "isEmpty")
 	public final TreeMap<Identifier<AbEnemy>, Integer> smap = new TreeMap<>();
-	@JsonField
+	@JsonField(defval = "0")
 	public int sdef = 0;
 
 	@JCConstructor
@@ -88,8 +93,7 @@ public class SCDef implements Copable<SCDef> {
 	}
 
 	public int allow(StageBasis sb, AbEnemy e) {
-		Integer o = smap.get(e.getID());
-		o = o == null ? sdef : o;
+		Integer o = smap.getOrDefault(e.getID(), sdef);
 		if (allow(sb, o, e))
 			return o;
 		return -1;
@@ -215,4 +219,7 @@ public class SCDef implements Copable<SCDef> {
 		return false;
 	}
 
+	public boolean empty() {
+		return datas.length + sdef == 0 && smap.isEmpty() && sub.size() == 0;
+	}
 }

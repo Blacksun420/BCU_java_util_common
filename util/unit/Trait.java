@@ -29,7 +29,7 @@ public class Trait extends Data implements Indexable<PackData, Trait>, Comparabl
         }
     }
 
-    @JsonField
+    @JsonField(defval = "new trait")
     public String name = "new trait";
 
     @JsonClass.JCIdentifier
@@ -37,11 +37,11 @@ public class Trait extends Data implements Indexable<PackData, Trait>, Comparabl
     public Identifier<Trait> id;
     public VImg icon = null;
 
-    @JsonField
+    @JsonField(defval = "false")
     public boolean targetType;
     // Target type will be used to toggle whether Anti-Traited, Anti-Non Metal, or Anti-All units will target this trait or not
 
-    @JsonField(generic = Form.class, alias = AbForm.AbFormJson.class)
+    @JsonField(generic = Form.class, alias = AbForm.AbFormJson.class, defval = "isEmpty")
     public final SortedPackSet<Form> others = new SortedPackSet<>();
     // This is used to make custom traits targeted by units whose stats can't be modified otherwise, such as BC units or units from Parented Packs
 

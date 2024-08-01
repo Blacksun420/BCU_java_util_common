@@ -19,9 +19,9 @@ import java.util.List;
 @JsonClass(noTag = NoTag.LOAD)
 public abstract class CustomEntity extends DataEntity {
 
-	@JsonField(gen = GenType.GEN)
+	@JsonField(gen = GenType.GEN, defval = "null")
 	public AtkDataModel rep, cntr;
-	@JsonField(gen = GenType.GEN, usePool = true, backCompat = CompatType.FORK)
+	@JsonField(gen = GenType.GEN, usePool = true, backCompat = CompatType.FORK, defval = "isEmpty")
 	public AtkDataModel[] revs = new AtkDataModel[0], ress = new AtkDataModel[0], burs = new AtkDataModel[0],
 			resus = new AtkDataModel[0], revis = new AtkDataModel[0], entrs = new AtkDataModel[0];
 
@@ -30,7 +30,11 @@ public abstract class CustomEntity extends DataEntity {
 	@JsonField(gen = GenType.GEN)
 	public int[] share;
 
-	public int base, touch = TCH_N;
+	@JsonField(defval = "0")
+	public int base;
+	@JsonField(defval = "1")
+	public int touch = TCH_N;
+	@JsonField(defval = "true")
 	public boolean common = true, kbBounce = true, bossBounce = true;
 
 	public CustomEntity() {
@@ -38,10 +42,6 @@ public abstract class CustomEntity extends DataEntity {
 		hits.add(new AtkDataModel[1]);
 		hits.get(0)[0] = new AtkDataModel(this);
 		share = new int[]{1};
-		width = 320;
-		speed = 8;
-		hb = 1;
-		death = new Identifier<>(Identifier.DEF, Soul.class, 0);
 	}
 
 	/**
