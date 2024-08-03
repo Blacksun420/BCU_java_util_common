@@ -254,7 +254,7 @@ public class CommonStatic {
 			PCoin pc = f.du.getPCoin();
 			if (pc == null) {
 				for (Form ff : f.unit.forms)
-					if (ff.du.getPCoin() != null)
+					if (ff.du.getPCoin() != null && (pc == null || ff.du.getPCoin().max.length >= pc.max.length))
 						pc = ff.du.getPCoin();
 				if (pc == null)
 					return true;

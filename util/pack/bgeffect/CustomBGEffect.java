@@ -93,10 +93,10 @@ public class CustomBGEffect extends BackgroundEffect {
     }
 
     @Override
-    public void update(int w, float h, float midH) {
+    public void update(int w, float h, float midH, float timeFlow) {
         check();
-        ebg[0].update(false);
-        ebg[1].update(false);
+        ebg[0].update(false, timeFlow);
+        ebg[1].update(false, timeFlow);
     }
 
     @Override

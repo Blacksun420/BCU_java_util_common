@@ -513,7 +513,7 @@ public class Data {
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class TIME extends PT {
 			@Order(2)
-			public int intensity;
+			public float intensity;
 
 			@Override
 			public int[] setTalent(int[] nps) {

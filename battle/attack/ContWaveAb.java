@@ -16,17 +16,16 @@ public abstract class ContWaveAb extends ContAb {
 	protected final EAnimD<?> anim;
 	protected Set<ContWaveAb> waves;
 	protected int soundEffect;
-	protected int t = 0;
+	protected float t = 0;
 	protected int maxt;
 	protected boolean tempAtk;
 
-	protected ContWaveAb(AttackWave a, float p, EAnimD<?> ead, int layer, boolean delay) {
+	protected ContWaveAb(AttackWave a, float p, EAnimD<?> ead, int layer, float delay) {
 		super(a.model.b, p, layer);
 		atk = a;
 		anim = ead;
 		maxt = anim.len();
-		if (delay)
-			t = -3;
+		t = delay;
 	}
 
 	@Override
@@ -75,6 +74,6 @@ public abstract class ContWaveAb extends ContAb {
 	/**
 	 * generate the next wave container
 	 */
-	protected abstract void nextWave();
+	protected abstract void nextWave(float delay);
 
 }

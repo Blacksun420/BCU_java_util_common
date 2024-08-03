@@ -6,16 +6,16 @@ public class EntCont extends BattleObj {
 
 	public Entity ent;
 
-	public int t;
+	public double t;
 
 	public EntCont(Entity e, int time) {
 		ent = e;
 		t = time;
 	}
 
-	public void update() {
+	public void update(float flow) {
 		if (t > 0)
-			t--;
+			t -= flow;
 	}
 
 }

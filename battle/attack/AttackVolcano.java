@@ -10,7 +10,7 @@ public class AttackVolcano extends AttackAb {
 	public ContVolcano handler;
 	protected boolean attacked = false;
 	public int raw;
-	private byte volcTime = VOLC_ITV;
+	private float volcTime = VOLC_ITV;
 
 	protected final List<Entity> vcapt = new ArrayList<>();
 	public boolean active = true;
@@ -39,11 +39,11 @@ public class AttackVolcano extends AttackAb {
 	public void excuse() {
 		process();
 
-		if (volcTime == 0) {
+		if (volcTime <= 0) {
 			volcTime = VOLC_ITV;
 			vcapt.clear();
 		} else
-			volcTime--;
+			volcTime -= attacker == null ? model.b.timeFlow : attacker.getTime();
 
 		if(attacker != null)
 			atk = ((AtkModelEntity)model).getEffMult(raw);
@@ -52,7 +52,7 @@ public class AttackVolcano extends AttackAb {
 			e.damaged(this);
 			vcapt.add((Entity) e);
 		}
-		attacked = capt.size() > 0;
+		attacked = !capt.isEmpty();
 		r.clear();
 	}
 }

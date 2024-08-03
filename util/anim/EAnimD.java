@@ -113,16 +113,12 @@ public class EAnimD<T extends AnimI.AnimType<?, T>> extends EAnimI {
 	}
 
 	@Override
-	public void update(boolean rotate) {
-		if (CommonStatic.getConfig().fps60) {
-			if (f == -1) {
-				f++;
-			} else {
-				f += 0.5f;
-			}
-		} else {
-			f++;
-		}
+	public void update(boolean rotate, float rate) {
+		if (f == -1)
+			rate = Math.max(rate, 1);
+		else if (CommonStatic.getConfig().fps60)
+			rate *= 0.5f;
+		f += rate;
 
 		ma.update(f, this, rotate);
 	}

@@ -308,13 +308,8 @@ public abstract class AtkModelEntity extends AtkModelAb {
 			e.altAbi(matk.getAltAbi());
 
 		if (getProc(matk).TIME.prob != 0 && (getProc(matk).TIME.prob == 100 || b.r.nextFloat() * 100 < getProc(matk).TIME.prob)) {
-			if (getProc(matk).TIME.intensity > 0) {
-				b.temp_s_stop = Math.max(b.temp_s_stop, getProc(matk).TIME.time);
-				b.temp_inten = getProc(matk).TIME.intensity;
-			} else {
-				b.sn_temp_stop = Math.max(b.sn_temp_stop, getProc(matk).TIME.time);
-				b.temp_n_inten = (float)Math.abs(getProc(matk).TIME.intensity) / b.sn_temp_stop;
-			}
+			b.tstop = Math.max(b.tstop, getProc(matk).TIME.time);
+			b.timeFlow = (100f - getProc(matk).TIME.intensity) / 100;
 		}
 		Proc.THEME t = getProc(matk).THEME;
 		if (t.prob != 0 && (t.prob == 100 || b.r.nextFloat() * 100 < t.prob))

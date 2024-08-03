@@ -70,16 +70,16 @@ public class BubbleBGEffect extends BackgroundEffect {
     }
 
     @Override
-    public void update(int w, float h, float midH) {
+    public void update(int w, float h, float midH, float timeFlow) {
         capture.clear();
 
         for(int i = 0; i < bubblePosition.size(); i++) {
             if(bubblePosition.get(i).y < -bh)
                 capture.add(i);
             else if (CommonStatic.getConfig().fps60)
-                bubblePosition.get(i).y -= (BGHeight * 3.0 + bh) / Data.BG_EFFECT_BUBBLE_TIME / 2.0;
+                bubblePosition.get(i).y -= (BGHeight * 3.0f + bh) / Data.BG_EFFECT_BUBBLE_TIME / 2.0f * timeFlow;
             else {
-                bubblePosition.get(i).y -= (BGHeight * 3.0 + bh) / Data.BG_EFFECT_BUBBLE_TIME;
+                bubblePosition.get(i).y -= (BGHeight * 3.0f + bh) / Data.BG_EFFECT_BUBBLE_TIME * timeFlow;
             }
         }
 

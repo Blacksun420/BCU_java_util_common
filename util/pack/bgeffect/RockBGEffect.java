@@ -130,7 +130,7 @@ public class RockBGEffect extends BackgroundEffect {
     }
 
     @Override
-    public void update(int w, float h, float midH) {
+    public void update(int w, float h, float midH, float timeFlow) {
         capture.clear();
 
         vibrate = !vibrate;
@@ -142,7 +142,7 @@ public class RockBGEffect extends BackgroundEffect {
             if(rockPosition.get(i).y < -rh * s) {
                 capture.add(i);
             } else {
-                rockPosition.get(i).y -= speed.get(i);
+                rockPosition.get(i).y -= speed.get(i) * timeFlow;
 
                 if(layer.get(i) != 1&& opacity.get(i) != 255) {
                     opacity.set(i, Math.min(255, opacity.get(i) + 5));
@@ -158,13 +158,13 @@ public class RockBGEffect extends BackgroundEffect {
 
                 int rw = (int) ((isR ? rock.getWidth() : segment.getWidth()) * siz);
 
-                rockPosition.get(capt).x = r.nextInt(w + battleOffset + 2 * rw) - rw;
+                rockPosition.get(capt).x = timeFlow * r.nextInt(w + battleOffset + 2 * rw) - rw;
                 rockPosition.get(capt).y = l == 0 ? 1020 + Data.BG_EFFECT_ROCK_BEHIND_SPAWN_OFFSET : BGHeight * 3;
                 isRock.set(capt, isR);
-                angle.set(capt,(float) (r.nextFloat() * Math.PI));
+                angle.set(capt,(float) (r.nextFloat() * Math.PI) * timeFlow);
                 layer.set(capt, l);
                 size.set(capt, siz);
-                speed.set(capt, CommonStatic.fltFpsDiv(Data.BG_EFFECT_ROCK_SPEED[l] - r.nextFloat() * 0.5f));
+                speed.set(capt, CommonStatic.fltFpsDiv(Data.BG_EFFECT_ROCK_SPEED[l] - r.nextFloat() * 0.5f * timeFlow));
                 opacity.set(capt, l == 0 ? 0 : 255);
             }
     }

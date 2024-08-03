@@ -62,15 +62,15 @@ public class MixedBGEffect extends BackgroundEffect {
     }
 
     @Override
-    public void update(int w, float h, float midH) {
+    public void update(int w, float h, float midH, float timeFlow) {
         for (BackgroundEffect effect : effects)
-            effect.update(w, h, midH);
+            effect.update(w, h, midH, timeFlow);
     }
 
     @Override
-    public void updateAnimation(int w, float h, float midH) {
+    public void updateAnimation(int w, float h, float midH, float timeFlow) {
         for (BackgroundEffect effect : effects)
-            effect.updateAnimation(w, h, midH);
+            effect.updateAnimation(w, h, midH, timeFlow);
     }
 
     @Override

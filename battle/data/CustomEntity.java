@@ -150,6 +150,8 @@ public abstract class CustomEntity extends DataEntity {
 	}
 
 	public AtkDataModel[] getAllAtkModels() { //Used only on OnInjected for non-shareable procs
+		if (common)//No point in doing this if common proc is active
+			return new AtkDataModel[]{rep};
 		AtkDataModel[] allAtks = new AtkDataModel[hits.get(0).length + 1];
 		allAtks[0] = rep;
 		System.arraycopy(hits.get(0), 0, allAtks, 1, hits.get(0).length);

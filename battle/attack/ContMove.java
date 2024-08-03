@@ -8,7 +8,7 @@ import common.system.fake.FakeGraphics;
 public class ContMove extends ContAb {
 
 	private final int itv, move, ran, rep;
-	private int t, rem, rept;
+	private float t, rem, rept;
 	private final AttackWave atk;
 	private boolean tempAtk;
 
@@ -50,17 +50,18 @@ public class ContMove extends ContAb {
 	@Override
 	public void update() {
 		tempAtk = false;
-		t--;
+		float time = atk.attacker == null ? atk.model.b.timeFlow : atk.attacker.getTime();
+		t -= time;
 		if (rept > 0)
-			rept--;
-		if (t == 0) {
-			rem--;
+			rept -= time;
+		if (t <= 0) {
+			rem -= time;
 			if (rem > 0)
 				t = itv;
 			else
 				activate = false;
 			pos += move * atk.model.getDire();
-			if (rept == 0) {
+			if (rept <= 0) {
 				atk.incl.clear();
 				rept = rep;
 			}

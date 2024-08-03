@@ -71,20 +71,20 @@ public class ShiningBGEffect extends BackgroundEffect {
     }
 
     @Override
-    public void update(int w, float h, float midH) {
+    public void update(int w, float h, float midH, float timeFlow) {
         capture.clear();
 
         for(int i = 0; i < shinePosition.size(); i++) {
             if(time.get(i) <= 0)
                 capture.add(i);
             else
-                time.set(i, (byte) (time.get(i) - 1));
+                time.set(i, (byte) (time.get(i) - timeFlow));
         }
 
         if(!capture.isEmpty())
             for (Integer capt : capture) {
-                shinePosition.get(capt).x = r.nextInt(w + battleOffset);
-                shinePosition.get(capt).y = r.nextInt(BGHeight * 3 - BGHeight);
+                shinePosition.get(capt).x = r.nextInt(w + battleOffset) * timeFlow;
+                shinePosition.get(capt).y = r.nextInt(BGHeight * 3 - BGHeight) * timeFlow;
                 time.set(capt, Data.BG_EFFECT_SHINING_TIME);
             }
     }

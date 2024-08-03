@@ -16,7 +16,7 @@ public class ContWaveCanon extends ContWaveAb {
 
 	// used only by normal and zombie cannon
 	public ContWaveCanon(AttackWave a, float p, int id) {
-		super(a, p, CommonStatic.getBCAssets().atks[id].getEAnim(NyType.ATK), 9, true);
+		super(a, p, CommonStatic.getBCAssets().atks[id].getEAnim(NyType.ATK), 9, -3);
 		canid = id;
 		soundEffect = SE_CANNON[canid][1];
 
@@ -32,7 +32,7 @@ public class ContWaveCanon extends ContWaveAb {
 	}
 
 	public ContWaveCanon(AttackWave a, float p, int id, int maxTime, Set<ContWaveAb> waves) {
-		super(a, p, CommonStatic.getBCAssets().atks[id].getEAnim(NyType.ATK), 9, false);
+		super(a, p, CommonStatic.getBCAssets().atks[id].getEAnim(NyType.ATK), 9, 0);
 		canid = id;
 		soundEffect = SE_CANNON[canid][1];
 
@@ -90,7 +90,7 @@ public class ContWaveCanon extends ContWaveAb {
 		if (!activate)
 			return;
 		if (t == W_TIME && atk.getProc().WAVE.lv > 0)
-			nextWave();
+			nextWave(t - W_TIME);
 		if (t >= attack) {
 			sb.getAttack(atk);
 			tempAtk = true;
@@ -98,19 +98,19 @@ public class ContWaveCanon extends ContWaveAb {
 		if (maxt == t)
 			deactivate(null);
 		updateAnimation();
-		t++;
+		t += atk.model.b.timeFlow;
 	}
 
 	@Override
 	public void updateAnimation() {
 		if (t >= 0 && !anim.done())
-			anim.update(false);
+			anim.update(false, atk.model.b.timeFlow);
 	}
 
 	@Override
-	protected void nextWave() {
+	protected void nextWave(float wTime) {
 		float np = pos - NYRAN[canid];
-		new ContWaveCanon(new AttackWave(atk.attacker, atk, np, NYRAN[canid]), np, canid, maxt - t, waves);
+		new ContWaveCanon(new AttackWave(atk.attacker, atk, np, NYRAN[canid]), np, canid, (int)(maxt - t + wTime), waves);
 	}
 
 	@Override

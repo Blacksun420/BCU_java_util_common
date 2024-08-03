@@ -76,7 +76,7 @@ public class BalloonBGEffect extends BackgroundEffect {
     }
 
     @Override
-    public void update(int w, float h, float midH) {
+    public void update(int w, float h, float midH, float timeFlow) {
         capture.clear();
 
         for(int i = 0; i < balloonPosition.size(); i++) {
@@ -85,7 +85,7 @@ public class BalloonBGEffect extends BackgroundEffect {
             if(balloonPosition.get(i).y < -bh)
                 capture.add(i);
             else
-                balloonPosition.get(i).y -= speed.get(i);
+                balloonPosition.get(i).y -= speed.get(i) * timeFlow;
         }
 
         if(!capture.isEmpty()) {
@@ -94,7 +94,7 @@ public class BalloonBGEffect extends BackgroundEffect {
 
                 int bw = isBig ? bigBalloon.getWidth() : balloon.getWidth();
 
-                balloonPosition.get(integer).x = r.nextInt(w + battleOffset + 2 * BackgroundEffect.revertP(bw)) - BackgroundEffect.revertP(bw);
+                balloonPosition.get(integer).x = (r.nextInt(w + battleOffset + 2 * BackgroundEffect.revertP(bw)) - BackgroundEffect.revertP(bw)) * timeFlow;
                 balloonPosition.get(integer).y = BGHeight * 3;
                 isBigBalloon.set(integer, isBig);
             }

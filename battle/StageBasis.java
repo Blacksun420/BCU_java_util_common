@@ -55,24 +55,23 @@ public class StageBasis extends BattleObj {
 	public boolean goingUp = true;
 	public byte changeFrame = -1;
 	public int changeDivision = -1;
-	public byte buttonDelay = 0;
+	public float buttonDelay = 0;
 	public int[] selectedUnit = {-1, -1};
 	public final float boss_spawn;
 	public final int[] shakeCoolDown = {0, 0};
 
 	public float siz;
-	public int work_lv, money, maxMoney, cannon, maxCannon, upgradeCost, max_num, pos;
+	public int work_lv, money, maxMoney, maxCannon, upgradeCost, max_num, pos;
 	public int frontLineup = 0;
 	public boolean lineupChanging = false;
 	public boolean shock = false;
-	public int time, s_stop, temp_s_stop, inten, temp_inten;
-	public int sn_stop, sn_temp_stop;
-	public float n_inten, temp_n_inten;
+	public int time, tstop;
+	public float timeFlow = 1f, ftime, cannon;
 	public byte[] shake;
 	public byte shakeDuration;
 	public float shakeOffset;
 
-	public int respawnTime, unitRespawnTime;
+	public double respawnTime, unitRespawnTime;
 	public Background bg;
 	public BackgroundEffect bgEffect;
 
@@ -82,7 +81,7 @@ public class StageBasis extends BattleObj {
 	public float midH = -1, battleHeight = -1;
 	private final List<AttackAb> la = new ArrayList<>();
 	private boolean lethal = false;
-	public int themeTime;
+	public float themeTime;
 	private Identifier<Background> theme = null;
 	public Identifier<Music> mus = null;
 	private THEME.TYPE themeType;
@@ -238,7 +237,7 @@ public class StageBasis extends BattleObj {
 		}
 	}
 	private boolean CDChange(int amount, int r, int c, int type) {
-		int curC = elu.cool[r][c];
+		double curC = elu.cool[r][c];
 		if (type == 0)
 			elu.cool[r][c] += amount;
 		else if (type == 1)
@@ -419,7 +418,7 @@ public class StageBasis extends BattleObj {
 			tlw.clear();
 			for (Entity e : le)
 				e.cont();
-			for(int[] c : elu.cool)
+			for(double[] c : elu.cool)
 				Arrays.fill(c, 0);
 			return true;
 		}
@@ -533,6 +532,12 @@ public class StageBasis extends BattleObj {
 	 * entities
 	 */
 	protected void update() {
+		if (tstop > 0) {
+			tstop--;
+			if (tstop == 0)
+				timeFlow = 1;
+		}
+		ftime += timeFlow;
 		boolean active = ebase.health > 0 && ubase.health > 0;
 
 		if (midH != -1 && bgEffect != null && !bgEffectInitialized) {
@@ -541,44 +546,35 @@ public class StageBasis extends BattleObj {
 		}
 
 		if(unitRespawnTime > 0 && active)
-			unitRespawnTime--;
+			unitRespawnTime -= timeFlow;
 		if(respawnTime > 0 && active)
-			respawnTime--;
-		elu.update(time);
+			respawnTime -= timeFlow;
+		elu.update(ftime, timeFlow);
 
-		if (buttonDelay > 0 && --buttonDelay == 0) {
+		if (buttonDelay > 0 && (buttonDelay -= timeFlow) <= 0) {
 			act_spawn(selectedUnit[0], selectedUnit[1], true);
 			selectedUnit[0] = -1;
 			selectedUnit[1] = -1;
 		}
 
 		tempe.removeIf(e -> {
-			if (e.t == 0)
+			if (e.t <= 0)
 				le.add(e.ent);
-			return e.t == 0;
+			return e.t <= 0;
 		});
 
-		if (temp_inten > 0) {
-			inten++;
-			if (inten % temp_inten == 0) {
-				temp_s_stop = s_stop - 1;
-				s_stop = 0;
-				inten = 0;
-			}
-		}
-
-		if (s_stop == 0 || (ebase.getAbi() & AB_TIMEI) != 0) {
+		if (timeFlow > 0 || (ebase.getAbi() & AB_TIMEI) != 0) {
 			ebase.preUpdate();
 			ebase.update();
 		}
-		if (s_stop == 0 || (ubase.getAbi() & AB_TIMEI) != 0) {
+		if (timeFlow > 0 || (ubase.getAbi() & AB_TIMEI) != 0) {
 			ubase.preUpdate();
 			ubase.update();
 		}
 
-		if (s_stop == 0) {
+		if (timeFlow > 0) {
 			if(bgEffect != null)
-				bgEffect.update(st.len, battleHeight, midH);
+				bgEffect.update(st.len, battleHeight, midH, timeFlow);
 
 			int allow = st.max - entityCount(1);
 			if (respawnTime <= 0 && active && allow > 0) {
@@ -608,13 +604,13 @@ public class StageBasis extends BattleObj {
 			if(cannon == maxCannon -1)
 				CommonStatic.setSE(SE_CANNON_CHARGE);
 			if (active) {
-				cannon++;
+				cannon += timeFlow;
 				int bank = maxBankLimit();
 				if (bank > 0)
 					maxMoney = bank * 100;
 				else {
 					maxMoney = b.t().getMaxMon(work_lv, elu.getInc(C_M_MAX));
-					money += b.t().getMonInc(work_lv) * (elu.getInc(C_M_INC) / 100 + 1);
+					money += (int)(b.t().getMonInc(work_lv) * (elu.getInc(C_M_INC) / 100 + 1) * timeFlow);
 				}
 			}
 
@@ -624,7 +620,7 @@ public class StageBasis extends BattleObj {
 			if (sniper != null && active)
 				sniper.update();
 
-			tempe.forEach(EntCont::update);
+			tempe.forEach(e -> e.update(timeFlow));
 
 			if(shakeDuration <= 0) {
 				shake = null;
@@ -640,34 +636,28 @@ public class StageBasis extends BattleObj {
 				if(shakeCoolDown[i] != 0)
 					shakeCoolDown[i] -= 1;
 		}
+		updateEntities(timeFlow > 0);
 
-		if (temp_n_inten > 0)
-			n_inten += temp_n_inten;
-		updateEntities(s_stop == 0);
-		while (n_inten >= 1) {
-			updateEntities(false);
-			n_inten--;
-		}
 		canon.update();
-		if (s_stop == 0) {
-			lea.forEach(EAnimCont::update);
-			doors.forEach(EAnimCont::update);
-			ebaseSmoke.forEach(EAnimCont::update);
-			ubaseSmoke.forEach(EAnimCont::update);
+		if (timeFlow > 0) {
+			lea.forEach(e -> e.update(timeFlow));
+			doors.forEach(e -> e.update(timeFlow));
+			ebaseSmoke.forEach(e -> e.update(timeFlow));
+			ubaseSmoke.forEach(e -> e.update(timeFlow));
 			lw.addAll(tlw);
 			tlw.clear();
 		} else
 			for (int i = 0; i < lea.size(); i++) {
 				EAnimCont content = lea.get(i);
 				if (content instanceof WaprCont && ((WaprCont) content).timeImmune)
-					content.update();
+					content.update(timeFlow);
 			}
 
 		la.forEach(AttackAb::capture);
 		la.forEach(AttackAb::excuse);
 		la.removeIf(a -> a.duration <= 0);
 
-		if(s_stop == 0 || (ebase.getAbi() & AB_TIMEI) != 0) {
+		if(timeFlow > 0 || (ebase.getAbi() & AB_TIMEI) != 0) {
 			ebase.postUpdate();
 
 			if (!lethal && ebase instanceof ECastle && ebase.health <= 0 && est.hasBoss()) {
@@ -676,10 +666,10 @@ public class StageBasis extends BattleObj {
 			}
 		}
 
-		if(s_stop == 0 || (ubase.getAbi() & AB_TIMEI) != 0)
+		if(timeFlow > 0 || (ubase.getAbi() & AB_TIMEI) != 0)
 			ubase.postUpdate();
 
-		if (s_stop == 0) {
+		if (timeFlow > 0) {
 			if (ebase.health <= 0) {
 				for (Entity entity : le)
 					if (entity.dire == 1)
@@ -706,7 +696,7 @@ public class StageBasis extends BattleObj {
 			}
 		}
 		for (int i = 0; i < le.size(); i++)
-			if (s_stop == 0 || (le.get(i).getAbi() & AB_TIMEI) != 0)
+			if (timeFlow > 0 || (le.get(i).getAbi() & AB_TIMEI) != 0)
 				le.get(i).postUpdate();
 
 		if (shock) {
@@ -720,7 +710,7 @@ public class StageBasis extends BattleObj {
 			shock = false;
 		}
 
-		if (s_stop == 0) {
+		if (timeFlow > 0) {
 			le.removeIf(e -> e.anim.dead == 0 && e.summoned.isEmpty());
 			lw.removeIf(w -> !w.activate);
 			lea.removeIf(EAnimCont::done);
@@ -730,21 +720,7 @@ public class StageBasis extends BattleObj {
 		} else
 			lea.removeIf(content -> content instanceof WaprCont && ((WaprCont) content).timeImmune && content.done());
 		updateTheme();
-		if (s_stop > 0)
-			s_stop--;
-		s_stop = Math.max(s_stop, temp_s_stop);
-		temp_s_stop = 0;
-		if (s_stop == 0)
-			inten = temp_inten = 0;
 
-		if (sn_stop > 0)
-			sn_stop--;
-		sn_stop = Math.max(sn_stop, sn_temp_stop);
-		sn_temp_stop = 0;
-		if (sn_stop == 0) {
-			n_inten = 0;
-			temp_n_inten = 0;
-		}
 		cannon = Math.min(maxCannon, Math.max(0, cannon));
 		money = Math.min(maxMoney, Math.max(0, money));
 
@@ -761,36 +737,29 @@ public class StageBasis extends BattleObj {
 
 	protected void updateAnimation() {
 		boolean active = ebase.health > 0 && ubase.health > 0;
-		if (s_stop == 0 || (ebase.getAbi() & AB_TIMEI) != 0)
+		if (timeFlow > 0 || (ebase.getAbi() & AB_TIMEI) != 0)
 			ebase.updateAnimation();
 
-		if (s_stop == 0) {
+		if (timeFlow > 0) {
 			if(bgEffect != null)
-				bgEffect.updateAnimation(st.len, battleHeight, midH);
+				bgEffect.updateAnimation(st.len, battleHeight, midH, timeFlow);
 			ubase.updateAnimation();
 			canon.updateAnimation();
 
 			if (sniper != null && active)
 				sniper.updateAnimation();
 		}
+		updateEntitiesAnimation(timeFlow > 0);
 
-		if (temp_n_inten > 0)
-			n_inten += temp_n_inten;
-		updateEntitiesAnimation(s_stop == 0);
-		while (n_inten >= 1) {
-			updateEntitiesAnimation(false);
-			n_inten--;
-		}
-
-		if (s_stop == 0) {
-			lea.forEach(EAnimCont::update);
-			ebaseSmoke.forEach(EAnimCont::update);
-			ubaseSmoke.forEach(EAnimCont::update);
+		if (timeFlow > 0) {
+			lea.forEach(e -> e.update(timeFlow));
+			ebaseSmoke.forEach(e -> e.update(timeFlow));
+			ubaseSmoke.forEach(e -> e.update(timeFlow));
 		} else
 			for (int i = 0; i < lea.size(); i++) {
 				EAnimCont content = lea.get(i);
 				if (content instanceof WaprCont && ((WaprCont) content).timeImmune)
-					content.update();
+					content.update(timeFlow);
 			}
 	}
 
@@ -844,9 +813,9 @@ public class StageBasis extends BattleObj {
 			}
 			theme = null;
 		}
-		if (s_stop == 0 && themeTime > 0) {
-			themeTime--;
-			if (themeTime == 0) {
+		if (timeFlow > 0 && themeTime > 0) {
+			themeTime -= timeFlow;
+			if (themeTime <= 0) {
 				if (getEBHP() < st.bgh)
 					theme = st.bg1;
 				else

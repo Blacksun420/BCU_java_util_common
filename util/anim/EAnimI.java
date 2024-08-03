@@ -66,7 +66,11 @@ public abstract class EAnimI extends BattleObj {
 
 	public abstract void setTime(float value);
 
-	public abstract void update(boolean b);
+	public void update(boolean b) {
+		update(b, 1);
+	};
+
+	public abstract void update(boolean rotate, float rate);
 
 	@Override
 	protected void performDeepCopy() {

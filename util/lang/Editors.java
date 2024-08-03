@@ -397,11 +397,12 @@ public class Editors {
 			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob > 0) {
 				t.time = Math.max(1, t.time);
-				t.intensity = Math.min(t.intensity, t.time);
+				t.intensity = Math.min(t.intensity, 100);
 				if (t.intensity == 0)
-					t.intensity = 1;
+					t.intensity = 100;
 			} else {
-				t.time = t.intensity = 0;
+				t.time = 0;
+				t.intensity = 0;
 			}
 		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 

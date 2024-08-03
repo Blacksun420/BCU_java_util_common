@@ -11,7 +11,6 @@ public class ESpirit extends EUnit {
 
     public ESpirit(StageBasis b, MaskUnit de, EAnimU ea, float lvd, int minlayer, int maxlayer, Level lv, int[] ind) {
         super(b, de, ea, lvd, minlayer, maxlayer, lv, null, ind, false);
-        auras.updateAuras();
         atkm.setUpAtk(false);
     }
 
@@ -37,17 +36,18 @@ public class ESpirit extends EUnit {
 
     @Override
     public void update() {
+        auras.updateAuras();
         // update attack status when in attack state
         if (atkm.atkTime > 1)
             atkm.updateAttack();
         else
-            atkm.atkTime--;
+            atkm.atkTime -= getTime();
         updateAnimation();
     }
 
     @Override
     public void postUpdate() {
-        if ((getAbi() & AB_GLASS) > 0 && atkm.atkTime == 0 && atkm.loop == 0)
+        if ((getAbi() & AB_GLASS) > 0 && atkm.atkTime <= 0 && atkm.loop == 0)
             kill(true);
 
         if(!dead || !summoned.isEmpty())

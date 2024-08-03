@@ -119,7 +119,7 @@ public class RainBGEffect extends BackgroundEffect {
     }
 
     @Override
-    public void update(int w, float h, float midH) {
+    public void update(int w, float h, float midH, float timeFlow) {
         for (P p : splashPosition)
             P.delete(p);
 
@@ -136,17 +136,17 @@ public class RainBGEffect extends BackgroundEffect {
         splashNumber += splashNumber / 6 - (r.nextInt(splashNumber) / 3);
 
         for(int i = 0; i < rainNumber; i++) {
-            rainPosition.add(P.newP(r.nextInt(w + battleOffset), r.nextInt(BGHeight) * 3));
+            rainPosition.add(P.newP(r.nextInt(w + battleOffset) * timeFlow, r.nextInt(BGHeight) * 3 * timeFlow));
         }
 
         for(int i = 0; i < splashNumber; i++) {
             //Y : BGHeight * 3 - 100 - random(0 ~ 80)
-            splashPosition.add(P.newP(r.nextInt(w + battleOffset), BGHeight * 3 - Data.BG_EFFECT_SPLASH_MIN_HEIGHT - r.nextInt(Data.BG_EFFECT_SPLASH_RANGE)));
+            splashPosition.add(P.newP(r.nextInt(w + battleOffset) * timeFlow, timeFlow * BGHeight * 3 - Data.BG_EFFECT_SPLASH_MIN_HEIGHT - r.nextInt(Data.BG_EFFECT_SPLASH_RANGE)));
         }
     }
 
     @Override
-    public void updateAnimation(int w, float h, float midH) {
+    public void updateAnimation(int w, float h, float midH, float timeFlow) {
         //Do nothing
     }
 

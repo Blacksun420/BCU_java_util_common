@@ -306,7 +306,7 @@ public class BGEffectHandler {
         }
     }
 
-    public void update(int w, float h, float midH) {
+    public void update(int w, float h, float midH, float timeFlow) {
         capture.clear();
 
         for(int i = 0; i < count; i++)
@@ -323,7 +323,7 @@ public class BGEffectHandler {
                         int time = segment.frame.getAnimFrame(anim);
 
                         anim.setTime(time - 1);
-                        anim.update(false);
+                        anim.update(false, timeFlow);
 
                         reInitialize(i, w, h, midH, time);
                     } else
@@ -332,7 +332,7 @@ public class BGEffectHandler {
             } else if (checkDestroy(i)) {
                 capture.add(i);
             } else {
-                updateChunk(i);
+                updateChunk(i, timeFlow);
 
                 if(lifeTime != null)
                     lifeTime[i]--;
@@ -361,7 +361,7 @@ public class BGEffectHandler {
                         int time = segment.frame.getAnimFrame(anim);
 
                         anim.setTime(time - 1);
-                        anim.update(false);
+                        anim.update(false, timeFlow);
 
                         reInitialize(ind, w, h, midH, time);
                     } else
@@ -370,14 +370,14 @@ public class BGEffectHandler {
             }
     }
 
-    public void updateAnimation() {
+    public void updateAnimation(float timeFlow) {
         for(int i = 0; i < count; i++)
             if (wait == null || wait[i] == 0)
-                updateChunk(i);
+                updateChunk(i, timeFlow);
     }
 
-    public void updateChunk(int i) {
-        animation.get(i).update(false);
+    public void updateChunk(int i, float timeFlow) {
+        animation.get(i).update(false, timeFlow);
 
         if (CommonStatic.getConfig().fps60) {
             if(v != null && moveAngle != null) {

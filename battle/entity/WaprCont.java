@@ -41,9 +41,9 @@ public class WaprCont extends EAnimCont {
 	}
 
 	@Override
-	public void update() {
-		super.update();
-		chara.update(false);
+	public void update(float flow) {
+		super.update(flow);
+		chara.update(false, flow);
 	}
 
 	@Override

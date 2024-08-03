@@ -81,15 +81,15 @@ public class BlizzardBGEffect extends BackgroundEffect {
     }
 
     @Override
-    public void update(int w, float h, float midH) {
+    public void update(int w, float h, float midH, float timeFlow) {
         capture.clear();
 
         for(int i = 0; i < blizzardPosition.size(); i++) {
             if(blizzardPosition.get(i).x >= w + battleOffset || blizzardPosition.get(i).y >= BGHeight * 3 + bh * Data.BG_EFFECT_BLIZZARD_SIZE[size.get(i)]) {
                 capture.add(i);
             } else {
-                blizzardPosition.get(i).y += speed.get(i);
-                blizzardPosition.get(i).x = BackgroundEffect.revertP(slope.get(i) * (blizzardPosition.get(i).y - initPos.get(i).y)) + initPos.get(i).x;
+                blizzardPosition.get(i).y += speed.get(i) * timeFlow;
+                blizzardPosition.get(i).x = BackgroundEffect.revertP(slope.get(i) * (blizzardPosition.get(i).y - initPos.get(i).y) * timeFlow) + initPos.get(i).x;
             }
         }
 
@@ -97,7 +97,7 @@ public class BlizzardBGEffect extends BackgroundEffect {
             for (Integer cap : capture) {
                 byte sizeIndex = (byte) Math.min(Data.BG_EFFECT_BLIZZARD_SIZE.length - 1, r.nextInt(Data.BG_EFFECT_BLIZZARD_SIZE.length));
 
-                float x = r.nextFloat() * (w + battleOffset + bw * Data.BG_EFFECT_BLIZZARD_SIZE[sizeIndex] + BackgroundEffect.revertP(BGHeight * 3)) - BackgroundEffect.revertP(BGHeight * 3);
+                float x = timeFlow * r.nextFloat() * (w + battleOffset + bw * Data.BG_EFFECT_BLIZZARD_SIZE[sizeIndex] + BackgroundEffect.revertP(BGHeight * 3)) - BackgroundEffect.revertP(BGHeight * 3);
                 float y = -bh * Data.BG_EFFECT_BLIZZARD_SIZE[sizeIndex];
 
                 blizzardPosition.get(cap).x = x;

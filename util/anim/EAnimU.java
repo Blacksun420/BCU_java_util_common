@@ -21,8 +21,6 @@ public class EAnimU extends EAnimD<AnimU.UType> {
 
 	@Override
 	public void changeAnim(AnimU.UType t, boolean skip) {
-		if (!skip && type == t)
-			return;
 		boolean flip = flipped;
 		flip(false);
 		f = -1;

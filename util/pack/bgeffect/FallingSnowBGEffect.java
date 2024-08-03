@@ -59,21 +59,21 @@ public class FallingSnowBGEffect extends BackgroundEffect {
     }
 
     @Override
-    public void update(int w, float h, float midH) {
+    public void update(int w, float h, float midH, float timeFlow) {
         capture.clear();
 
         for(int i = 0; i < snowPosition.size(); i++) {
             if(snowPosition.get(i).y >= BGHeight * 3 + sh * size.get(i))
                 capture.add(i);
             else
-                snowPosition.get(i).y += speed.get(i);
+                snowPosition.get(i).y += speed.get(i) * timeFlow;
         }
 
         if(!capture.isEmpty()) {
             for (Integer capt : capture) {
                 float siz = Data.BG_EFFECT_FALLING_SNOW_SIZE - r.nextFloat() * 1.5f;
 
-                snowPosition.get(capt).x = r.nextFloat() * (w + battleOffset + sw * siz) - sw * siz;
+                snowPosition.get(capt).x = timeFlow * r.nextFloat() * (w + battleOffset + sw * siz) - sw * siz;
                 snowPosition.get(capt).y = -sh * siz;
                 speed.set(capt, CommonStatic.fltFpsDiv(Data.BG_EFFECT_FALLING_SNOW_SPEED - r.nextFloat() * 1.5f));
                 size.set(capt, siz);

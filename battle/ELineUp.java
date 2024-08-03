@@ -11,10 +11,11 @@ import common.util.unit.Form;
 
 public class ELineUp extends BattleObj {
 
-	public final int[][] price = new int[2][5], cool = new int[2][5], maxC = new int[2][5];
+	public final int[][] price = new int[2][5], maxC = new int[2][5];
+	public final double[][] cool = new double[2][5], scd = new double[2][5];
 
 	private final Proc.SPIRIT[][] spData = new Proc.SPIRIT[2][5];
-	public final int[][] scd = new int[2][5], scount = new int[2][5], sGlow = new int[2][5];
+	public final int[][] scount = new int[2][5], sGlow = new int[2][5];
 	public final EUnit[][] smnd = new EUnit[2][5];
 
 	public final int[] inc;
@@ -39,7 +40,7 @@ public class ELineUp extends BattleObj {
 					if (price[i][j] == -2)
 						for (int k = 0; k < coms.size(); k++)
 							if (inc[i] > 0 && coms.get(k).containsForm((Form)lu.fs[i][j])) {
-								Combo c = coms.get(k); //1st check is so it doesn't become negative due to banned combo
+								Combo c = coms.get(k); //1st check to not have negative due to banned combo
 								coms.remove(k--);
 								inc[c.type] -= CommonStatic.getBCAssets().values[c.type][c.lv];
 							}
@@ -94,14 +95,14 @@ public class ELineUp extends BattleObj {
 	/**
 	 * count down the cooldown
 	 */
-	protected void update(int time) {
+	protected void update(float time, float flow) {
 		for (int i = 0; i < 2; i++) {
 			for (int j = 0; j < 5; j++) {
-				if (cool[i][j] > 0 && --cool[i][j] == 0)
+				if (cool[i][j] > 0 && (cool[i][j] -= flow) <= 0)
 					CommonStatic.setSE(SE_SPEND_REF);
 
-				if (validSpirit(i,j) && scount[i][j] > 0 && scd[i][j] > 0 && --scd[i][j] == 0)
-					sGlow[i][j] = time;
+				if (validSpirit(i,j) && scount[i][j] > 0 && scd[i][j] > 0 && (scd[i][j] -= flow) <= 0)
+					sGlow[i][j] = (int)time;
 			}
 		}
 	}

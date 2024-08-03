@@ -39,8 +39,8 @@ public class EAnimCont extends BattleObj implements Comparable<EAnimCont> {
 		anim.draw(gra, p, psiz);
 	}
 
-	public void update() {
-		anim.update(false);
+	public void update(float flow) {
+		anim.update(false, flow);
 	}
 
 	protected EAnimD<?> getAnim() {

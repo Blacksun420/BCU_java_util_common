@@ -145,13 +145,13 @@ public class ECastle extends AbEntity {
 				smokeLayer = -1;
 				smokeX = -1;
 			} else
-				smoke.update(false);
+				smoke.update(false, sb.timeFlow);
 		}
 		if (guard != null)
 			if (guard.done())
 				guard = null;
 			else
-				guard.update(false);
+				guard.update(false, sb.timeFlow);
 	}
 
 	@Override

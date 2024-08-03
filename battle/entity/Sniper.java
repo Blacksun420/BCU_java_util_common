@@ -18,7 +18,7 @@ public class Sniper extends AtkModelAb {
 
 	private final EAnimD<?> anim = effas().A_SNIPER.getEAnim(SniperEff.IDLE);
 	private final EAnimD<?> atka = effas().A_SNIPER.getEAnim(SniperEff.ATK);
-	private int coolTime = SNIPER_CD, preTime = 0, atkTime = 0;
+	private float coolTime = SNIPER_CD, preTime = 0, atkTime = 0;
 	private Entity target;
 	public boolean enabled = true;
 	public double pos, layer, height, bulletX, targetAngle = 0, cannonAngle = 0, bulletAngle = 0;
@@ -98,15 +98,15 @@ public class Sniper extends AtkModelAb {
 		if (!enabled || b.ubase.health <= 0)
 			return;
 		if (coolTime > 0 && preTime == 0 && atkTime == 0)
-			coolTime--;
+			coolTime -= b.timeFlow;
 
-		if (coolTime == 0 && pos > 0) {
+		if (coolTime <= 0 && pos > 0) {
 			if(Math.abs(targetAngle - cannonAngle) < 1) {
 				coolTime = SNIPER_CD + 1;
 				preTime = SNIPER_PRE;
 				atkTime = atka.len();
 				atka.setup();
-				atka.update(false);
+				atka.update(false, b.timeFlow);
 				anim.setup();
 			} else {
 				coolTime++;
@@ -127,8 +127,8 @@ public class Sniper extends AtkModelAb {
 			getAngle();
 
 		if (preTime > 0) {
-			preTime--;
-			if (preTime == 0) {
+			preTime -= b.timeFlow;
+			if (preTime <= 0) {
 				//fire bullet
 				bulletX = b.ubase.pos + SNIPER_POS + 375 * Math.cos(Math.toRadians((int) bulletAngle));
 
@@ -138,7 +138,7 @@ public class Sniper extends AtkModelAb {
 		}
 
 		if (bulletX != 0 && bulletX > pos) {
-			bulletX = (int) (bulletX * 4 - 1500 * Math.cos(Math.toRadians((int) bulletAngle))) / 4.0;
+			bulletX = (int) (bulletX * 4 * b.timeFlow - 1500 * Math.cos(Math.toRadians((int) bulletAngle))) / 4.0;
 
 			atka.ent[6].alter(4, (int) ((bulletX - b.ubase.pos - SNIPER_POS) / Math.cos(Math.toRadians((int) bulletAngle)) * CommonStatic.BattleConst.ratio * 0.75));
 			anim.ent[6].alter(4, (int) ((bulletX - b.ubase.pos - SNIPER_POS) / Math.cos(Math.toRadians((int) bulletAngle)) * CommonStatic.BattleConst.ratio * 0.75));
@@ -164,10 +164,10 @@ public class Sniper extends AtkModelAb {
 		}
 
 		if (atkTime > 0) {
-			atkTime--;
-			atka.update(false);
+			atkTime -= b.timeFlow;
+			atka.update(false, b.timeFlow);
 		} else
-			anim.update(true);
+			anim.update(true, b.timeFlow);
 
 		if(bulletX > 0) {
 			cannonAngle = targetAngle;
@@ -189,9 +189,9 @@ public class Sniper extends AtkModelAb {
 
 	public void updateAnimation() {
 		if (atkTime > 0)
-			atka.update(false);
+			atka.update(false, b.timeFlow);
 		else
-			anim.update(true);
+			anim.update(true, b.timeFlow);
 		updateAnim0();
 	}
 

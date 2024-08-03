@@ -10,11 +10,13 @@ import java.util.Set;
 
 public class ContWaveDef extends ContWaveAb {
 
-	protected ContWaveDef(AttackWave a, float p, int layer, boolean delay) {
+	private boolean hit = false, nw = false;
+
+	protected ContWaveDef(AttackWave a, float p, int layer, float delay) {
 		this(a, p, layer, delay, new HashSet<>());
 	}
 
-	protected ContWaveDef(AttackWave a, float p, int layer, boolean delay, Set<ContWaveAb> waves) {
+	protected ContWaveDef(AttackWave a, float p, int layer, float delay, Set<ContWaveAb> waves) {
 		super(a, p, (a.dire == 1 ? a.waveType == WT_MEGA ? effas().A_E_MEGAWAVE : a.waveType == WT_MINI ? effas().A_E_MINIWAVE : effas().A_E_WAVE
 				: a.waveType == WT_MEGA ? effas().A_MEGAWAVE : a.waveType == WT_MINI ? effas().A_MINIWAVE : effas().A_WAVE).getEAnim(DefEff.DEF), layer, delay);
 		soundEffect = SE_WAVE;
@@ -52,34 +54,36 @@ public class ContWaveDef extends ContWaveAb {
 		}
 		if (!activate)
 			return;
-		if (t == (isMega ? W_MEGA_TIME : isMini ? W_MINI_TIME : W_TIME)) {
+		int wtime = isMega ? W_MEGA_TIME : isMini ? W_MINI_TIME : W_TIME;
+		if (!nw && t >= wtime) {
 			if ((isMini || isMega) && atk.proc.MINIWAVE.lv > this.waves.size())
-				nextWave();
+				nextWave(wtime);
 			else if (!(isMini || isMega) && atk.proc.WAVE.lv > this.waves.size())
-				nextWave();
+				nextWave(wtime);
+			nw = true;
 		}
-		if (t == attack) {
+		if (!hit && t >= attack) {
 			sb.getAttack(atk);
-			tempAtk = true;
+			tempAtk = hit = true;
 		}
 		if (maxt == t)
 			activate = false;
 		updateAnimation();
-		t++;
+		t += atk.attacker == null ? atk.model.b.timeFlow : atk.attacker.getTime();
 	}
 
 	@Override
 	public void updateAnimation() {
 		if (t >= 0)
-			anim.update(false);
+			anim.update(false, atk.attacker == null ? atk.model.b.timeFlow : atk.attacker.getTime());
 	}
 
 	@Override
-	protected void nextWave() {
+	protected void nextWave(float wtime) {
 		int dire = atk.model.getDire();
 		float np = pos + W_PROG * dire;
 		int wid = dire == 1 ? W_E_WID : W_U_WID;
-		new ContWaveDef(new AttackWave(atk.attacker, atk, np, wid), np, layer, false, waves);
+		new ContWaveDef(new AttackWave(atk.attacker, atk, np, wid), np, layer, t - wtime, waves);
 	}
 
 	@Override

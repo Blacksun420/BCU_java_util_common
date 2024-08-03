@@ -80,12 +80,12 @@ public class StarBackgroundEffect extends BackgroundEffect {
     }
 
     @Override
-    public void update(int w, float h, float midH) {
+    public void update(int w, float h, float midH, float timeFlow) {
         capture.clear();
 
         for(int i = 0; i < times.size(); i++) {
-            times.set(i, times.get(i) - 1);
-            opacities.set(i, (int) (255 * Math.sin(Math.PI  * times.get(i) / 20)));
+            times.set(i, (int)(times.get(i) - timeFlow));
+            opacities.set(i, (int) (255 * Math.sin(Math.PI  * times.get(i) / 20) * timeFlow));
 
             if(times.get(i) <= 0)
                 capture.add(i);
@@ -99,7 +99,7 @@ public class StarBackgroundEffect extends BackgroundEffect {
 
                 P.delete(positions.get(capts));
 
-                positions.set(capts, P.newP(r.nextInt(w + battleOffset), r.nextInt(rangeH)));
+                positions.set(capts, P.newP(r.nextInt(w + battleOffset) * timeFlow, r.nextInt(rangeH) * timeFlow));
                 colors.set(capts, (byte) (r.nextInt(starColors.length - 1)));
                 times.set(capts, Data.BG_EFFECT_STAR_TIME);
             }

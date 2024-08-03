@@ -23,7 +23,8 @@ public class ContVolcano extends ContAb {
 
 	private final int aliveTime;
 
-	private int t = 0;
+	private float t = 0;
+	private int seTime = 0;
 	private final boolean[] performed = new boolean[4]; // [0,1] - check if curse/seal rng has passed, [2,3] - check if unit process needs to be updated
 
 	protected ContVolcano(AttackVolcano v, float p, int lay, int alive) {
@@ -69,7 +70,7 @@ public class ContVolcano extends ContAb {
 		} else if (t > VOLC_PRE + aliveTime && anim.type != VolcEff.END)
 			anim.changeAnim(VolcEff.END, false);
 
-		if (t >= VOLC_PRE && t < VOLC_PRE + aliveTime && (t - VOLC_PRE) % VOLC_SE == 0) {
+		if (t >= VOLC_PRE && t < VOLC_PRE + aliveTime && (seTime - VOLC_PRE) % VOLC_SE == 0) {
 			CommonStatic.setSE(SE_VOLC_LOOP);
 		}
 		v.capture();
@@ -96,16 +97,17 @@ public class ContVolcano extends ContAb {
 			activate = false;
 			v.active = false;
 		} else {
-			t++;
+			seTime++;
+			t += v.attacker.getTime();
 			if (t >= VOLC_PRE && t <= VOLC_PRE + aliveTime)
 				sb.getAttack(v);
-			anim.update(false);
+			anim.update(false, v.attacker.getTime());
 		}
 	}
 
 	@Override
 	public void updateAnimation() {
-		anim.update(false);
+		anim.update(false, v.attacker.getTime());
 	}
 
 	private void updateProc() {

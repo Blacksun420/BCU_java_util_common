@@ -35,13 +35,12 @@ public class DoorCont extends EAnimCont {
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void update(float flow) {
+        super.update(flow);
         if (getAnim().ind() > 9) {
             if (getAnim().ind() < 18) {
-                if (ent.getAnim().type == AnimU.TYPEDEF[AnimU.ENTRY]) {
-                    ent.getAnim().update(false);
-                }
+                if (ent.getAnim().type == AnimU.TYPEDEF[AnimU.ENTRY])
+                    ent.getAnim().update(false, flow);
             } else if (!entLeft) {
                 ent.getAnim().paraTo(null);
                 bas.le.add(ent);

@@ -16,10 +16,10 @@ public class EStage extends BattleObj {
 
 	public final Stage s;
 	public final Limit lim;
-	public final int[] num, rem;
+	public final int[] num, killCounter;
 	public final float mul;
 	public final int star;
-	public final int[] killCounter;
+	public final double[] rem;
 
 	private StageBasis b;
 
@@ -28,7 +28,7 @@ public class EStage extends BattleObj {
 		star = stars;
 		st.validate();
 		SCDef.Line[] datas = s.data.getSimple();
-		rem = new int[datas.length];
+		rem = new double[datas.length];
 		num = new int[datas.length];
 		for (int i = 0; i < rem.length; i++)
 			num[i] = datas[i].number;
@@ -113,9 +113,7 @@ public class EStage extends BattleObj {
 				rem[i] += (int) ((datas[i].spawn_1 - datas[i].spawn_0) * b.r.nextFloat());
 
 			if (s.isBCstage && datas[i].castle_0 < 100 && rem[i] > 0 && !s.trail)
-				rem[i] = b.ebase instanceof EEnemy ? -2 : 0;
-			else if (s.isBCstage && b.ebase instanceof EEnemy)
-				rem[i] += 2;
+				rem[i] = 0;
 		}
 	}
 
@@ -188,7 +186,7 @@ public class EStage extends BattleObj {
 			if (inHealth(data) && killCounter[i] == 0 && rem[i] < 0)
 				rem[i] *= -1;
 			if (rem[i] > 0)
-				rem[i]--;
+				rem[i] -= b.timeFlow;
 		}
 	}
 

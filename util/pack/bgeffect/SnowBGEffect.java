@@ -65,23 +65,23 @@ public class SnowBGEffect extends BackgroundEffect {
     }
 
     @Override
-    public void update(int w, float h, float midH) {
+    public void update(int w, float h, float midH, float timeFlow) {
         capture.clear();
 
         for(int i = 0; i < snowPosition.size(); i++) {
             if(snowPosition.get(i).y >= 1510 + sh || snowPosition.get(i).x < -sw || snowPosition.get(i).x >= w + battleOffset) {
                 capture.add(i);
             } else {
-                snowPosition.get(i).y += speed.get(i);
+                snowPosition.get(i).y += speed.get(i) * timeFlow;
                 //slope(y - initY) + initX = x
-                snowPosition.get(i).x = BackgroundEffect.revertP(slope.get(i) * (snowPosition.get(i).y - initPos.get(i).y)) + initPos.get(i).x;
+                snowPosition.get(i).x = BackgroundEffect.revertP(slope.get(i) * (snowPosition.get(i).y - initPos.get(i).y) * timeFlow) + initPos.get(i).x;
             }
         }
 
         if(!capture.isEmpty()) {
             for (Integer capt : capture) {
-                float x = r.nextInt(w + sw + battleOffset);
-                float y = -sh;
+                float x = r.nextInt(w + sw + battleOffset) * timeFlow;
+                float y = -sh * timeFlow;
 
                 snowPosition.get(capt).x = x;
                 snowPosition.get(capt).y = y;

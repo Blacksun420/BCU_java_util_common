@@ -43,7 +43,7 @@ public class EAnimS extends EAnimI {
 	}
 
 	@Override
-	public void update(boolean b) {
+	public void update(boolean rotate, float rate) {
 	}
 
 }

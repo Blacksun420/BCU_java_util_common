@@ -23,10 +23,9 @@ public class Cannon extends AtkModelAb {
 
     public final int id, base, deco;
     private EAnimD<?> anim, atka, exta;
-    private int preTime = 0;
+    private float preTime = 0, duration = 0;
     private EUnit wall = null;
     public float pos;
-    private int duration = 0;
 
 	public Cannon(StageBasis sb, int[] nyc) {
 		super(sb);
@@ -62,7 +61,7 @@ public class Cannon extends AtkModelAb {
         }
 
         // after this is the drawing of hit boxes
-        siz *= 1.25;
+        siz *= 1.25f;
         float rat = BattleConst.ratio;
         int h = (int) (640 * rat * siz);
         g.setColor(FakeGraphics.MAGENTA);
@@ -110,7 +109,7 @@ public class Cannon extends AtkModelAb {
 
     public void update() {
         if (duration > 0)
-            duration--;
+            duration -= b.timeFlow;
         if (anim != null && anim.done()) {
             anim = null;
             if (id > 2 && id < 5) {
@@ -130,7 +129,7 @@ public class Cannon extends AtkModelAb {
                 for (Entity e : b.le)
                     if (e.dire == -1 && e.pos < pos && (e.touchable() & (TCH_N | TCH_KB)) != 0)
                         pos = e.pos;
-                pos -= NYRAN[id] / 2.0;
+                pos -= NYRAN[id] / 2f;
             } else if (id == 2 || id == 6) {
                 pos = Math.max(800f, b.ebase.pos);
                 for (Entity e : b.le)
@@ -139,7 +138,7 @@ public class Cannon extends AtkModelAb {
             }
         }
 
-		if (preTime == -1 && id == 2) {
+		if (preTime <= -1 && id == 2) {
 			// wall canon
 			Form f = Identifier.parseInt(339, Unit.class).get().getForms()[0];
 			EAnimU enter = f.getEAnim(AnimU.TYPEDEF[AnimU.ENTRY]);
@@ -150,7 +149,7 @@ public class Cannon extends AtkModelAb {
 			preTime = (int) b.b.t().getCannonMagnification(id, Data.BASE_WALL_ALIVE_TIME) + enter.len();
 		}
 		if (preTime > 0) {
-            preTime--;
+            preTime = Math.max(0, preTime - b.timeFlow);
             if (preTime == 0) {
                 Proc proc = Proc.blank();
                 SortedPackSet<Trait> CTrait = new SortedPackSet<>(UserProfile.getBCData().traits.get(TRAIT_TOT));
@@ -183,13 +182,13 @@ public class Cannon extends AtkModelAb {
                     proc.STOP.time = (int) (b.b.t().getCannonMagnification(id, Data.BASE_TIME) * (100 + b.elu.getInc(C_STOP)) / 100.0);
                     int atk = (int) (b.b.t().getCanonAtk(b.elu.getInc(C_C_ATK)) * b.b.t().getCannonMagnification(id, Data.BASE_ATK_MAGNIFICATION) / 100.0);
                     int rad = (int) (NYRAN[3] / 2);
-                    b.getAttack(new AttackCanon(this, atk, CTrait, 0, proc, pos - rad, pos + rad, duration));
+                    b.getAttack(new AttackCanon(this, atk, CTrait, 0, proc, pos - rad, pos + rad, (int)duration));
                 } else if (id == 4) {
                     // water canon
                     duration = 1;
                     proc.CRIT.mult = -(int) (b.b.t().getCannonMagnification(id, Data.BASE_HEALTH_PERCENTAGE));
                     int rad = (int) (NYRAN[4] / 2);
-                    b.getAttack(new AttackCanon(this, 1, new SortedPackSet<>(), 0, proc, pos - rad, pos + rad, duration));
+                    b.getAttack(new AttackCanon(this, 1, new SortedPackSet<>(), 0, proc, pos - rad, pos + rad, (int)duration));
                 } else if (id == 5) {
                     // zombie canon
                     proc.WAVE.lv = b.b.t().tech[LV_CRG] + 2;
@@ -210,7 +209,7 @@ public class Cannon extends AtkModelAb {
                     int atk = (int) (b.b.t().getCanonAtk(b.elu.getInc(C_C_ATK)) * b.b.t().getCannonMagnification(id, Data.BASE_ATK_MAGNIFICATION) / 100.0);
                     float rad = b.b.t().getCannonMagnification(id, Data.BASE_RANGE);
                     float newPos = getBreakerSpawnPoint(pos, rad);
-                    b.getAttack(new AttackCanon(this, atk, CTrait, AB_CKILL, proc, newPos - rad, newPos - 1, duration));
+                    b.getAttack(new AttackCanon(this, atk, CTrait, AB_CKILL, proc, newPos - rad, newPos - 1, (int)duration));
 
                     atka = CommonStatic.getBCAssets().atks[id].getEAnim(NyType.ATK);
                     exta = CommonStatic.getBCAssets().atks[id].getEAnim(NyType.EXT);
@@ -231,16 +230,16 @@ public class Cannon extends AtkModelAb {
         if (anim != null) {
             if (id == 7) {
                 if (anim.ind() < 32)
-                    anim.update(false);
+                    anim.update(false, b.timeFlow);
                 else
                     anim = null;
             } else
-                anim.update(false);
+                anim.update(false, b.timeFlow);
         }
         if (atka != null)
-            atka.update(false);
+            atka.update(false, b.timeFlow);
         if (exta != null)
-            exta.update(false);
+            exta.update(false, b.timeFlow);
     }
 
     private static float getBreakerSpawnPoint(float pos, float range) {
