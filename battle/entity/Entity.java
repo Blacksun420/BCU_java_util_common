@@ -492,6 +492,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				e.basis.lea.add(new EAnimCont(e.pos, e.layer, eae));
 				CommonStatic.setSE(SE_ZKILL);
 			}
+			e.status.burs[1] = 0;
 		}
 
 		protected boolean deathSurge = false;
@@ -1543,7 +1544,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 * @param hpMagnif Health Buff
 	 */
 	protected Entity(StageBasis b, MaskEntity de, EAnimU ea, float atkMagnif, float hpMagnif) {
-		super((int) (de.getHp() * hpMagnif));
+		super(Math.round(de.getHp() * hpMagnif));
 		basis = b;
 		data = de;
 		aam = AtkModelEntity.getEnemyAtk(this, atkMagnif);

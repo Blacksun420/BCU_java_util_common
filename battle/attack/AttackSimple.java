@@ -46,7 +46,6 @@ public class AttackSimple extends AttackAb {
 
 	@Override
 	public void capture() {
-		float pos = model.getPos();
 		List<AbEntity> le = model.b.inRange(touch, attacker != null && attacker.status.rage > 0 ? 2 : dire, sta, end, excludeLastEdge);
 		if (attacker != null && (attacker.status.rage > 0 || attacker.status.hypno > 0))
 			le.remove(attacker);
