@@ -1,6 +1,7 @@
 package common.util.unit;
 
 import common.battle.data.Orb;
+import common.battle.entity.Entity;
 import common.io.json.JsonClass;
 import common.io.json.JsonDecoder;
 import common.io.json.JsonField;
@@ -125,7 +126,7 @@ public class Trait extends Data implements Indexable<PackData, Trait>, Comparabl
     @JsonDecoder.OnInjected
     public void onInjected() {
         icon = UserProfile.getUserPack(id.pack).source.readImage(Source.BasePath.TRAIT.toString(), id.id);
-        others.removeIf(Objects::isNull);
+        others.removeIf(f -> f == null || f.uid.pack.equals(id.pack) || f.maxu().getTraits().isEmpty() || (targetType && Entity.targetTraited(f.maxu().getTraits())));
     }
 
     @JsonClass.JCGetter
