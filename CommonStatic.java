@@ -321,7 +321,7 @@ public class CommonStatic {
 			ZH("zh", "\u4E2D\u6587"),
 			KR("kr", "\uD55C\uAD6D\uC5B4"),
 			JP("jp", "\u65E5\u672C\u8A9E"),
-			RU("ru", "Russian"),
+			RU("ru", "Русский"),
 			DE("de", "Deutsche"),
 			FR("fr", "Français"),
 			ES("es", "Español"),
