@@ -501,11 +501,16 @@ public class Editors {
 				int min = t.minRange;
 				t.minRange = Math.min(min, t.maxRange);
 				t.maxRange = Math.max(min, t.maxRange);
+				if (t.type.useOwnDamage)
+					t.maxDamage = MathUtil.clip(t.maxDamage,-1,0);
 			} else {
-				t.damage = t.minRange = t.maxRange = t.type.procType = t.type.counterWave = 0;
+				t.damage = t.minRange = t.maxRange = t.type.procType = t.type.counterWave = t.maxDamage = 0;
 				t.type.useOwnDamage = t.type.outRange = t.type.areaAttack = false;
 			}
-		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
+		}, eg -> t -> {
+			setComponentVisibility(eg, t.exists(), 1);
+			setComponentVisibility(eg, t.type.areaAttack || !t.type.outRange, 2, 4);
+		}));
 
 		map().put("IMUATK", new EditControl<>(Proc.IMUATK.class, (t) -> {
 			t.prob = Math.max(0, Math.min(t.prob, 100));

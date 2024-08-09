@@ -13,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @IndexContainer.IndexCont(PackData.class)
 @JsonClass.JCGeneric(Identifier.class)
@@ -23,9 +22,9 @@ public class Trait extends Data implements Indexable<PackData, Trait>, Comparabl
         //Reads traits from BC and implements it into the main pack
         PackData.DefPack data = UserProfile.getBCData();
         String[] traitNames = {"Red", "Floating", "Black", "Metal", "Angel", "Alien", "Zombie", "Aku", "Relic", "White", "EVA", "Witch", "Baron", "Beast", "Sage", "base", "cannon"};
-        for (int i = 0; i < traitNames.length ; i++) {
+        for (String name : traitNames) {
             Trait t = new Trait(data.getNextID(Trait.class));
-            t.name = traitNames[i];
+            t.name = name;
             data.traits.add(t);
         }
     }

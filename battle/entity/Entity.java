@@ -1856,7 +1856,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				boolean isWave = ((WT_WAVE | WT_MINI | WT_MEGA | WT_MOVE | WT_VOLC | WT_MIVC) & atk.waveType) > 0;
 				if (!isWave || counter.type.counterWave != 0) {
 					float[] ds = counter.minRange != 0 || counter.maxRange != 0 ? new float[]{pos + counter.minRange, pos + counter.maxRange} : aam.touchRange();
-					int reflectAtk = FDmg;
+					int reflectAtk = FDmg * counter.damage / 100;;
 
 					Proc reflectProc = Proc.blank();
 					if (counter.type.procType == 1 || counter.type.procType == 3)
@@ -1870,8 +1870,6 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					if (data.getCounter() != null) {
 						if (counter.type.useOwnDamage)
 							reflectAtk = data.getCounter().atk;
-						else
-							reflectAtk = reflectAtk * counter.damage / 100;
 
 						if (counter.type.procType >= 2) {
 							Proc p = data.getCounter().getProc();
@@ -1882,8 +1880,6 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					} else {
 						if (counter.type.useOwnDamage)
 							reflectAtk = getAtk();
-						else
-							reflectAtk = reflectAtk * counter.damage / 100;
 
 						if (counter.type.procType >= 2) {
 							Proc p = data.getAllProc();
@@ -1895,7 +1891,9 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 							}
 						}
 					}
-					if (status.weak[0] > 0)
+					if (counter.maxDamage != 0)
+						reflectAtk = Math.min(reflectAtk, counter.maxDamage < 0 ? Math.min(-counter.maxDamage, (int)health) : counter.maxDamage);
+                    if (status.weak[0] > 0)
 						reflectAtk = (int) (reflectAtk * status.weak[1] / 100);
 					if (status.strengthen != 0)
 						reflectAtk += reflectAtk * status.strengthen / 100;

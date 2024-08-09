@@ -1,6 +1,5 @@
 package common.util.unit;
 
-import common.CommonStatic;
 import common.battle.data.PCoin;
 import common.io.json.JsonClass;
 import common.io.json.JsonClass.NoTag;

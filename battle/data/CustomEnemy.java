@@ -102,4 +102,9 @@ public class CustomEnemy extends CustomEntity implements MaskEnemy {
 	public float getLimit() {
 		return limit;
 	}
+
+	@Override
+	public boolean defTrait() {
+		return traits.size() == 1 && traits.get(0).equals(UserProfile.getBCData().traits.get(TRAIT_RED));
+	}
 }

@@ -27,11 +27,14 @@ public abstract class DataEntity extends Data implements MaskEntity {
 
 	@JsonField(defval = "this.defSoul")
 	public Identifier<Soul> death = new Identifier<>(Identifier.DEF, Soul.class, 0);
-	@JsonField(generic = Trait.class, alias = Identifier.class, defval = "isEmpty")
+	@JsonField(generic = Trait.class, alias = Identifier.class, defval = "this.defTrait")
 	public SortedPackSet<Trait> traits = new SortedPackSet<>();
 
 	public boolean defSoul() {
 		return death != null && death.id == 0 && death.pack.equals(Identifier.DEF);
+	}
+	public boolean defTrait() {
+		return traits.isEmpty();
 	}
 
 	@JsonField(tag = "tba", io = JsonField.IOType.W, backCompat = JsonField.CompatType.UPST)

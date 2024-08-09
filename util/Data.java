@@ -4,12 +4,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import common.CommonStatic;
 import common.io.assets.Admin.StaticPermitted;
-import common.io.json.FieldOrder;
+import common.io.json.*;
 import common.io.json.FieldOrder.Order;
-import common.io.json.JsonClass;
 import common.io.json.JsonClass.NoTag;
-import common.io.json.JsonDecoder;
-import common.io.json.JsonEncoder;
 import common.pack.Context.ErrType;
 import common.pack.Context.RunExc;
 import common.pack.Context.SupExc;
@@ -60,6 +57,7 @@ public class Data {
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class MULT extends ProcItem {
 			@Order(0)
+			@JsonField(defval = "0")
 			public double mult;
 
 			@Override
@@ -145,6 +143,7 @@ public class Data {
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class IMU extends MULT {
 			@Order(1)
+			@JsonField(defval = "0")
 			public float block;
 
 			@Override
@@ -160,6 +159,7 @@ public class Data {
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class IMUAD extends IMU {
 			@Order(2)
+			@JsonField(defval = "0")
 			public int smartImu;
 
 			@Override
@@ -185,6 +185,7 @@ public class Data {
 			@Order(1)
 			public int lv;
 			@Order(2)
+			@JsonField(defval = "hitless false")
 			public TYPE type = new TYPE();
 
 			@Override
@@ -199,6 +200,7 @@ public class Data {
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class MINIWAVE extends WAVE {
 			@Order(3)
+			@JsonField(defval = "20")
 			public int multi;
 		}
 
@@ -222,6 +224,7 @@ public class Data {
 			@Order(3)
 			public int time;
 			@Order(4)
+			@JsonField(defval = "hitless false")
 			public TYPE type = new TYPE();
 
 			@Override
@@ -241,6 +244,7 @@ public class Data {
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class MINIVOLC extends VOLC {
 			@Order(5)
+			@JsonField(defval = "20")
 			public int mult;
 		}
 
@@ -263,6 +267,7 @@ public class Data {
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class IMUATK extends PT {
 			@Order(2)
+			@JsonField(defval = "0")
 			public int cd;
 		}
 
@@ -289,13 +294,21 @@ public class Data {
 			public static class TYPE extends IntType {
 				@BitCount(2)
 				@Order(0)
+				@JsonField(defval = "0")
 				public int range_type;
 				@Order(1)
+				@JsonField(defval = "false")
 				public boolean imu_zkill;
 				@Order(2)
+				@JsonField(defval = "false")
 				public boolean revive_non_zombie;
 				@Order(3)
+				@JsonField(defval = "false")
 				public boolean revive_others;
+
+				public boolean unencodable() {
+					return !(imu_zkill || revive_others);
+				}
 			}
 
 			@Order(0)
@@ -305,10 +318,13 @@ public class Data {
 			@Order(2)
 			public int health;
 			@Order(3)
+			@JsonField(defval = "0")
 			public int dis_0;
 			@Order(4)
+			@JsonField(defval = "0")
 			public int dis_1;
 			@Order(5)
+			@JsonField(defval = "unencodable")
 			public TYPE type = new TYPE();
 
 			@Override
@@ -336,10 +352,13 @@ public class Data {
 			@Order(0)
 			public int health;
 			@Order(1)
+			@JsonField(defval = "0")
 			public int regentime;
 			@Order(2)
+			@JsonField(defval = "0")
 			public int timeout;
 			@Order(3)
+			@JsonField(defval = "magnif false")
 			public TYPE type = new TYPE();
 
 			@Override
@@ -377,8 +396,10 @@ public class Data {
 			@Order(0)
 			public TYPE type = new TYPE();
 			@Order(1)
+			@JsonField(defval = "0")
 			public float prob;
 			@Order(2)
+			@JsonField(defval = "0")
 			public int time;
 
 			@Override
@@ -410,18 +431,23 @@ public class Data {
 				public boolean trait; //classic ignore/consider trait
 			}
 			@Order(0)
+			@JsonField(defval = "0")
 			public int amult; //Modifies Damage
 			@Order(1)
+			@JsonField(defval = "0")
 			public int dmult; //Modifies Defense
 			@Order(2)
+			@JsonField(defval = "0")
 			public int smult; //Modifies Speed
 			@Order(3)
+			@JsonField(defval = "0")
 			public int tmult; //Modifies TBA
 			@Order(4)
 			public int min_dis;
 			@Order(5)
 			public int max_dis;
 			@Order(6)
+			@JsonField(defval = "trait false")
 			public TYPE type = new TYPE();
 
 			@Override
@@ -452,6 +478,7 @@ public class Data {
 				public boolean percentage;
 			}
 			@Order(3)
+			@JsonField(defval = "percentage false")
 			public TYPE type = new TYPE();
 		}
 
@@ -476,19 +503,28 @@ public class Data {
 			public static class TYPE extends IntType {
 				@BitCount(2)
 				@Order(0)
+				@JsonField(defval = "0")
 				public int damage_type;
 				@Order(1)
+				@JsonField(defval = "false")
 				public boolean unstackable;
 				@Order(2)
+				@JsonField(defval = "false")
 				public boolean ignoreMetal;
 				@Order(3)
+				@JsonField(defval = "false")
 				public boolean modifAffected;
+
+				public boolean unencodable() {
+					return !(damage_type > 0 || unstackable || ignoreMetal || modifAffected);
+				}
 			}
 			@Order(2)
 			public int damage;
 			@Order(3)
 			public int itv;
 			@Order(4)
+			@JsonField(defval = "unencodable")
 			public TYPE type = new TYPE();
 		}
 
@@ -513,6 +549,7 @@ public class Data {
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class TIME extends PT {
 			@Order(2)
+			@JsonField(defval = "100")
 			public float intensity;
 
 			@Override
@@ -529,6 +566,7 @@ public class Data {
 			@Order(2)
 			public int speed;
 			@Order(3)
+			@JsonField(defval = "0")
 			public int type;
 		}
 
@@ -539,43 +577,60 @@ public class Data {
 			public static class TYPE extends IntType {
 				@BitCount(2)
 				@Order(0)
+				@JsonField(defval = "0")
 				public int anim_type;
 				@Order(1)
+				@JsonField(defval = "false")
 				public boolean ignore_limit;
 				@Order(2)
+				@JsonField(defval = "false")
 				public boolean fix_buff;
 				@Order(3)
+				@JsonField(defval = "false")
 				public boolean same_health;
 				@Order(4)
+				@JsonField(defval = "false")
 				public boolean bond_hp;
 				@Order(5)
+				@JsonField(defval = "false")
 				public boolean on_hit;
 				@Order(6)
+				@JsonField(defval = "false")
 				public boolean on_kill;
 				@BitCount(2)
 				@Order(7)
+				@JsonField(defval = "0")
 				public int pass_proc;
 			}
 
 			@Order(1)
+			@JsonField(defval = "null")
 			public Identifier<?> id;
 			@Order(2)
+			@JsonField(defval = "0")
 			public int dis;
 			@Order(3)
+			@JsonField(defval = "0")
 			public int max_dis;
 			@Order(4)
+			@JsonField(defval = "1")
 			public int mult;
 			@Order(5)
+			@JsonField(defval = "0")
 			public int min_layer;
 			@Order(6)
+			@JsonField(defval = "9")
 			public int max_layer;
 			@Order(7)
 			public TYPE type = new TYPE();
 			@Order(8)
+			@JsonField(defval = "0")
 			public int time;
 			@Order(9)
+			@JsonField(defval = "1")
 			public int amount;
 			@Order(10)
+			@JsonField(defval = "1")
 			public int form;
 		}
 
@@ -588,10 +643,13 @@ public class Data {
 				public boolean kill;
 			}
 			@Order(2)
+			@JsonField(defval = "null")
 			public Identifier<Background> id;
 			@Order(3)
+			@JsonField(defval = "null")
 			public Identifier<Music> mus;
 			@Order(4)
+			@JsonField(defval = "kill false")
 			public TYPE type = new TYPE();
 		}
 
@@ -601,16 +659,25 @@ public class Data {
 			public static class TYPE extends IntType {
 				@BitCount(2)
 				@Order(0)
+				@JsonField(defval = "0")
 				public int counterWave;
 				@BitCount(2)
 				@Order(1)
+				@JsonField(defval = "0")
 				public int procType;
 				@Order(1)
+				@JsonField(defval = "false")
 				public boolean useOwnDamage;
 				@Order(2)
+				@JsonField(defval = "false")
 				public boolean outRange;
 				@Order(3)
+				@JsonField(defval = "false")
 				public boolean areaAttack;
+
+				public boolean unencodable() {
+					return !(counterWave > 0 || procType > 0 || useOwnDamage || outRange || areaAttack);
+				}
 			}
 
 			@Order(1)
@@ -620,7 +687,11 @@ public class Data {
 			@Order(3)
 			public int maxRange;
 			@Order(4)
+			@JsonField(defval = "unencodable")
 			public TYPE type = new TYPE();
+			@Order(5)
+			@JsonField(defval = "0")
+			public int maxDamage;
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -628,17 +699,25 @@ public class Data {
 			@JsonClass(noTag = NoTag.LOAD)
 			public static class TYPE extends IntType {
 				@Order(0)
+				@JsonField(defval = "false")
 				public boolean traitIgnore;
 				@Order(1)
+				@JsonField(defval = "false")
 				public boolean procs;
 				@Order(2)
+				@JsonField(defval = "false")
 				public boolean magnif;
+
+				public boolean unencodable() {
+					return !(traitIgnore || procs || magnif);
+				}
 			}
 			@Order(1)
 			public int dmg;
 			@Order(2)
 			public int reduction;
 			@Order(3)
+			@JsonField(defval = "unencodable")
 			public TYPE type = new TYPE();
 
 			@Override
@@ -655,13 +734,21 @@ public class Data {
 			@JsonClass(noTag = NoTag.LOAD)
 			public static class TYPE extends IntType {
 				@Order(0)
+				@JsonField(defval = "false")
 				public boolean traitIgnore;
 				@Order(1)
+				@JsonField(defval = "false")
 				public boolean nullify;
 				@Order(2)
+				@JsonField(defval = "false")
 				public boolean procs;
 				@Order(3)
+				@JsonField(defval = "false")
 				public boolean magnif;
+
+				public boolean unencodable() {
+					return !(traitIgnore || nullify || procs || magnif);
+				}
 			}
 			@Order(1)
 			public int dmg;
@@ -674,19 +761,28 @@ public class Data {
 			@JsonClass(noTag = NoTag.LOAD)
 			public static class TYPE extends IntType {
 				@Order(0)
+				@JsonField(defval = "false")
 				public boolean traitCon;
 				@Order(1)
+				@JsonField(defval = "false")
 				public boolean procs;
 				@Order(2)
+				@JsonField(defval = "false")
 				public boolean waves;
+
+				public boolean unencodable() {
+					return !(traitCon || procs || waves);
+				}
 			}
 			@Order(1)
 			public int minrange;
 			@Order(2)
 			public int maxrange;
 			@Order(3)
+			@JsonField(defval = "0")
 			public int reduction;
 			@Order(4)
+			@JsonField(defval = "0")
 			public int block;
 			@Order(5)
 			public TYPE type = new TYPE();
@@ -712,15 +808,26 @@ public class Data {
 			@JsonClass(noTag = NoTag.LOAD)
 			public static class TYPE extends IntType {
 				@Order(0)
+				@JsonField(defval = "false")
 				public boolean calcstrongest;
 				@Order(1)
+				@JsonField(defval = "false")
 				public boolean calcblindspot;
+				//@Order(2)
+				//@JsonField(defval = "false")
+				//public boolean manualcontrol; //The player controls the unit manually; Arrow keys to move, spacebar to attack
+				public boolean unencodable() {
+					return !(calcstrongest || calcblindspot);
+				}
 			}
 			@Order(0)
+			@JsonField(defval = "0")
 			public int retreatDist;
 			@Order(1)
+			@JsonField(defval = "0")
 			public int retreatSpeed;
 			@Order(2)
+			@JsonField(defval = "unencodable")
 			public TYPE type = new TYPE();
 		}
 
@@ -732,7 +839,69 @@ public class Data {
 				public boolean range;
 			}
 			@Order(2)
+			@JsonField(defval = "range false")
 			public TYPE type = new TYPE();
+		}
+
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class SPIRIT extends ProcItem {
+			@JsonClass(noTag = NoTag.LOAD)
+			public static class TYPE extends IntType {
+				@Order(0)
+				public boolean inv;
+			}
+			@Order(0)
+			public Identifier<?> id;
+			@Order(1)
+			@JsonField(defval = "15")
+			public int cd0;
+			@Order(2)
+			@JsonField(defval = "15")
+			public int cd1;
+			@Order(3)
+			@JsonField(defval = "1")
+			public int amount;
+			@Order(4)
+			@JsonField(defval = "0")
+			public int summonerCd;
+			@Order(5)
+			@JsonField(defval = "0")
+			public int moneyCost;
+			@Order(6)
+			@JsonField(defval = "0")
+			public int animType;
+			@Order(7)
+			@JsonField(defval = "1")
+			public int form;
+			@Order(8)
+			@JsonField(defval = "inv false")
+			public TYPE type = new TYPE();
+
+			public int[] setTalent(int[] nps) {
+				if (id == null && nps[2] == 0)
+					nps[2] = nps[3] = 1;
+				nps[4] = Math.max(nps[4], 15-cd0);
+				nps[5] = Math.max(nps[5], 15-cd0);
+				nps[6] = Math.max(nps[6], 15-cd1);
+				nps[7] = Math.max(nps[7], 15-cd1);
+
+				nps[8] = Math.max(nps[8], amount == 0 ? 1 : 0);
+				nps[9] = Math.max(nps[9], amount == 0 ? 1 : 0);
+
+				nps[14] = nps[15] = Math.max(0,Math.min(nps[14], 5));
+				nps[16] = Math.max(nps[16], 1-form);
+				nps[17] = Math.max(nps[17], 1-form);
+				if (nps[2] > 0) {//Dunno how to custom unit
+					int fs = ((Unit)Identifier.rawParseInt(nps[2]-1, Unit.class).get()).forms.length - form;
+					nps[16] = Math.min(nps[16], fs);
+					nps[17] = Math.min(nps[17], fs);
+				} else if (id != null) {
+					int fs = ((Unit)id.get()).forms.length - form;
+					nps[16] = Math.min(nps[16], fs);
+					nps[17] = Math.min(nps[17], fs);
+				}
+				return super.setTalent(nps);
+			}
 		}
 
 		public static abstract class IntType implements Cloneable, BattleStatic {
@@ -1028,59 +1197,6 @@ public class Data {
 				return JsonEncoder.encode(this).toString();
 			}
 
-		}
-
-		@JsonClass(noTag = NoTag.LOAD)
-		public static class SPIRIT extends ProcItem {
-			@JsonClass(noTag = NoTag.LOAD)
-			public static class TYPE extends IntType {
-				@Order(0)
-				public boolean inv;
-			}
-			@Order(0)
-			public Identifier<?> id;
-			@Order(1)
-			public int cd0;
-			@Order(2)
-			public int cd1;
-			@Order(3)
-			public int amount;
-			@Order(4)
-			public int summonerCd;
-			@Order(5)
-			public int moneyCost;
-			@Order(6)
-			public int animType;
-			@Order(7)
-			public int form;
-			@Order(8)
-			public TYPE type = new TYPE();
-
-			public int[] setTalent(int[] nps) {
-				if (id == null && nps[2] == 0)
-					nps[2] = nps[3] = 1;
-				nps[4] = Math.max(nps[4], 15-cd0);
-				nps[5] = Math.max(nps[5], 15-cd0);
-				nps[6] = Math.max(nps[6], 15-cd1);
-				nps[7] = Math.max(nps[7], 15-cd1);
-
-				nps[8] = Math.max(nps[8], amount == 0 ? 1 : 0);
-				nps[9] = Math.max(nps[9], amount == 0 ? 1 : 0);
-
-				nps[14] = nps[15] = Math.max(0,Math.min(nps[14], 5));
-				nps[16] = Math.max(nps[16], 1-form);
-				nps[17] = Math.max(nps[17], 1-form);
-				if (nps[2] > 0) {//Dunno how to custom unit
-					int fs = ((Unit)Identifier.rawParseInt(nps[2]-1, Unit.class).get()).forms.length - form;
-					nps[16] = Math.min(nps[16], fs);
-					nps[17] = Math.min(nps[17], fs);
-				} else if (id != null) {
-					int fs = ((Unit)id.get()).forms.length - form;
-					nps[16] = Math.min(nps[16], fs);
-					nps[17] = Math.min(nps[17], fs);
-				}
-				return super.setTalent(nps);
-			}
 		}
 
 		public static Proc blank() {

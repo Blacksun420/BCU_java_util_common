@@ -4,13 +4,11 @@ import common.io.json.JsonClass;
 import common.io.json.JsonClass.NoTag;
 import common.io.json.JsonDecoder;
 import common.io.json.JsonField;
-import common.io.json.JsonField.GenType;
 import common.io.json.JsonField.CompatType;
-import common.pack.Identifier;
+import common.io.json.JsonField.GenType;
 import common.pack.PackData.UserPack;
 import common.pack.SortedPackSet;
 import common.util.Data;
-import common.util.pack.Soul;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,8 +17,10 @@ import java.util.List;
 @JsonClass(noTag = NoTag.LOAD)
 public abstract class CustomEntity extends DataEntity {
 
+	@JsonField(gen = GenType.GEN, defval = "proc isBlank")
+	public AtkDataModel rep;//TODO - Replace this with a Proc variable, given that is the only thing that gets used about it
 	@JsonField(gen = GenType.GEN, defval = "null")
-	public AtkDataModel rep, cntr;
+	public AtkDataModel cntr;
 	@JsonField(gen = GenType.GEN, usePool = true, backCompat = CompatType.FORK, defval = "isEmpty")
 	public AtkDataModel[] revs = new AtkDataModel[0], ress = new AtkDataModel[0], burs = new AtkDataModel[0],
 			resus = new AtkDataModel[0], revis = new AtkDataModel[0], entrs = new AtkDataModel[0];

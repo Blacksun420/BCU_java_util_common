@@ -140,11 +140,6 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 							if (jobj.has("explanation"))
 								description.put(jobj.get("explanation").getAsString().replace("<br>", "\n"));
 						} //Finish 0.6.4.0 check
-						if (form.getProc().SUMMON.prob > 0 && form.getProc().SUMMON.form <= 0) { //boo hoo common proc
-							form.getProc().SUMMON.form = 1;
-							form.getProc().SUMMON.mult = 1;
-							form.getProc().SUMMON.type.fix_buff = true;
-						}
 						for (AtkDataModel atk : atks)
 							if (atk.getProc().SUMMON.prob > 0) {
 								if (atk.getProc().SUMMON.form <= 0) {
@@ -153,16 +148,12 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 									atk.getProc().SUMMON.type.fix_buff = true;
 								} else if (atk.getProc().SUMMON.id != null && !Unit.class.isAssignableFrom(atk.getProc().SUMMON.id.cls))
 									atk.getProc().SUMMON.type.fix_buff = true;
-								atk.getProc().SUMMON.amount = 1;
 							}
 						if (form.getPCoin() != null)
 							for (int[] dat : form.pcoin.info)
 								if (dat.length == 14 && dat[13] == 1)
 									dat[13] = 60;
 						if (form.getProc().SPIRIT.id != null) {
-							form.getProc().SPIRIT.amount = 1;
-							form.getProc().SPIRIT.cd0 = SPIRIT_SUMMON_DELAY;
-							form.getProc().SPIRIT.form = 1;
 							form.getProc().SPIRIT.animType = 5;
 							form.getProc().SPIRIT.type.inv = true;
 						}

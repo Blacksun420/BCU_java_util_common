@@ -46,7 +46,7 @@ public class PCoin extends Data {
 	private final MaskUnit du;
 	public MaskUnit full = null;
 
-	@JsonField(generic = Trait.class, alias = Identifier.class)
+	@JsonField(generic = Trait.class, alias = Identifier.class, defval = "isEmpty")
 	public SortedPackSet<Trait> trait = new SortedPackSet<>();
 	@JsonField(block = true)
 	public int[] max;

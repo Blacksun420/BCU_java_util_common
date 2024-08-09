@@ -50,11 +50,11 @@ public class SaveData {
 
         if (clm == st.getCont().list.size()) {//StageMap fully cleared
             for (StageMap sm : pack.mc.maps)
-                if (sm.unlockReq.size() > 0 && !cSt.containsKey(sm)) {
+                if (!unlocked(sm)) {
                     boolean addable = true;
                     for (StageMap smp : sm.unlockReq)
-                        if (smp.id.pack.equals(pack.getSID()) && (!cSt.containsKey(smp) || cSt.get(smp) < smp.list.size())) { //Verify if map is there AND cleared first before adding
-                            addable = false;
+                        if (!clear(smp)) {
+                            addable = false; //Verify if map is there AND cleared first before adding
                             break;
                         }
                     if (addable) {
@@ -62,21 +62,23 @@ public class SaveData {
                         newMaps.add(sm);
                     }
                 }
-            for (PackData.UserPack pac : UserProfile.getUserPacks())
-                if (pac.save != null && pac.desc.dependency.contains(pack.getSID()))
-                    for (StageMap sm : pac.mc.maps)
-                        if (sm.unlockReq.size() > 0 && !pac.save.cSt.containsKey(sm)) {
-                            boolean addable = true;
-                            for (StageMap smp : sm.unlockReq)
-                                if (smp.id.pack.equals(pac.getSID()) && !pac.save.cSt.containsKey(smp)) {
-                                    addable = false;
-                                    break;
-                                }
-                            if (addable) {
-                                pac.save.cSt.put(sm, 0);
-                                newMaps.add(sm);
+            for (PackData.UserPack pac : UserProfile.getUserPacks()) {
+                if (!pac.syncPar.contains(pack.getSID()))
+                    continue;
+                for (StageMap sm : pac.mc.maps)
+                    if (!pac.save.unlocked(sm)) {
+                        boolean addable = true;
+                        for (StageMap smp : sm.unlockReq)
+                            if (!clear(smp)) {
+                                addable = false;
+                                break;
                             }
+                        if (addable) {
+                            pac.save.cSt.put(sm, 0);
+                            newMaps.add(sm);
                         }
+                    }
+            }
         }
         flags[0] = newForms;
         flags[1] = bForms;
@@ -107,13 +109,11 @@ public class SaveData {
      */
     public LinkedList<StageMap> requirements(StageMap sm) {
         LinkedList<StageMap> cl = new LinkedList<>();
-        if (sm.unlockReq.isEmpty() || cSt.containsKey(sm))
+        if (unlocked(sm))
             return cl; //Chapter is unlocked
-        for (StageMap lsm : sm.unlockReq) {
-            HashMap<StageMap, Integer> alt = lsm.getID().pack.equals(pack.getSID()) ? cSt : UserProfile.getUserPack(lsm.getID().pack).save.cSt;
-            if (!alt.containsKey(lsm) || alt.get(lsm) < lsm.list.size())
+        for (StageMap lsm : sm.unlockReq)
+            if (!clear(lsm))
                 cl.add(lsm); //A requirement chapter is uncleared, add
-        }
         return cl;
     }
 
@@ -123,13 +123,11 @@ public class SaveData {
      * @return True if all chapter requirements are unlocked, but this chapter isn't
      */
     public boolean nearUnlock(StageMap sm) {
-        if (sm.unlockReq.isEmpty() || cSt.containsKey(sm))
+        if (unlocked(sm))
             return false; //Chapter is unlocked
-        for (StageMap lsm : sm.unlockReq) {
-            HashMap<StageMap, Integer> alt = lsm.getID().pack.equals(pack.getSID()) ? cSt : UserProfile.getUserPack(lsm.getID().pack).save.cSt;
-            if (!lsm.unlockReq.isEmpty() && !alt.containsKey(lsm))
+        for (StageMap lsm : sm.unlockReq)
+            if (!unlocked(lsm))
                 return false; //A requirement chapter is locked
-        }
         return true;
     }
 
@@ -143,15 +141,14 @@ public class SaveData {
      */
     public void resetUnlockedUnits() {
         ulkUni.clear();
-        for (StageMap sm : pack.mc.maps)
-            if (cSt.containsKey(sm))
-                for (int i = 0; i < cSt.get(sm); i++)
-                    if (sm.list.get(i).info instanceof CustomStageInfo)
-                        for (Form reward : ((CustomStageInfo)sm.list.get(i).info).rewards) {
-                            Integer ind = ulkUni.get(reward.unit);
-                            if (ind == null || ind < reward.fid)
-                                ulkUni.put(reward.unit, reward.fid);
-                        }
+        for (StageMap sm : cSt.keySet())
+            for (int i = 0; i < Math.min(cSt.get(sm), sm.list.size()); i++)
+                if (sm.list.get(i).info instanceof CustomStageInfo)
+                    for (Form reward : ((CustomStageInfo)sm.list.get(i).info).rewards) {
+                        Integer ind = ulkUni.get(reward.unit);
+                        if (ind == null || ind < reward.fid)
+                            ulkUni.put(reward.unit, reward.fid);
+                    }
     }
 
     public Stage unlockedAt(Form f) {
@@ -177,7 +174,7 @@ public class SaveData {
 
     public boolean encountered(Enemy e) {
         for (StageMap sm : pack.mc.maps) {
-            if (!(sm.unlockReq.isEmpty() || cSt.containsKey(sm)))
+            if (!unlocked(sm))
                 continue;
             int st = Math.min(cSt.getOrDefault(sm, 0), sm.list.size()-1);
             for (int i = 0; i <= st; i++)
@@ -244,19 +241,37 @@ public class SaveData {
             ulK.put(r, null);
     }
 
+    public boolean unlocked(StageMap sm) {
+        if (sm.unlockReq.isEmpty())
+            return true;
+        if (sm.getID().pack.equals(pack.getSID()))
+            return cSt.containsKey(sm);
+        return sm.getCont().getSave(true).cSt.containsKey(sm);
+    }
+    public boolean unlocked(Stage st) {
+        if (!unlocked(st.getCont()))
+            return false;
+        if (st.getID().pack.equals(pack.getSID()))
+            return cSt.containsKey(st.getCont());
+        return st.getMC().getSave(true).cSt.getOrDefault(st.getCont(), 0) >= st.id();
+    }
+    public boolean clear(StageMap sm) {
+        if (sm.getID().pack.equals(pack.getSID()))
+            return cSt.getOrDefault(sm, -1) >= sm.list.size();
+        return sm.getCont().getSave(true).cSt.getOrDefault(sm, -1) >= sm.list.size();
+    }
+
     @OnInjected //Just like every game ever, update save data if something new is added designed for a point below the one you're at
     public void injected() {
         resetUnlockedUnits();
         for (StageMap sm : pack.mc.maps)
             if (!sm.unlockReq.isEmpty() && !cSt.containsKey(sm)) {
                 boolean addable = true;
-                for (StageMap smp : sm.unlockReq) {
-                    HashMap<StageMap, Integer> alt = smp.getID().pack.equals(pack.getSID()) ? cSt : UserProfile.getUserPack(smp.getID().pack).save.cSt;
-                    if (!alt.containsKey(smp) || alt.get(smp) < smp.list.size()) { //Verify if map is there AND cleared first before adding
+                for (StageMap smp : sm.unlockReq)
+                    if (!clear(smp)) { //Verify if map is there AND cleared first before adding
                         addable = false;
                         break;
                     }
-                }
                 if (addable)
                     cSt.put(sm, 0);
             }

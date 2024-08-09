@@ -74,11 +74,11 @@ public class Enemy extends Character implements AbEnemy {
 
 	public List<Stage> findApp() {
 		List<Stage> ans = new ArrayList<>();
-		for (Stage st : MapColc.getAllStage())
-			if (st != null && (st.getMC().getSave(false) == null || st.getMC().getSave(false).cSt.getOrDefault(st.getCont(), st.getCont().unlockReq.isEmpty() ? 0 : -1) >= st.id())
+		for (Stage st : MapColc.getAllStage()) {
+			if (st != null && (st.getMC().getSave(false) == null || st.getMC().getSave(true).unlocked(st))
 					&& st.contains(this))
 				ans.add(st);
-
+			}
 		return ans;
 	}
 
@@ -170,11 +170,9 @@ public class Enemy extends Character implements AbEnemy {
 					if (ma.getProc().SUMMON.prob > 0) {
 						if (ma.getProc().SUMMON.id != null && !AbEnemy.class.isAssignableFrom(ma.getProc().SUMMON.id.cls))
 							ma.getProc().SUMMON.type.fix_buff = true;
-						ma.getProc().SUMMON.amount = 1;
+						if (ma.getProc().SUMMON.id == null || !AbEnemy.class.isAssignableFrom(ma.getProc().SUMMON.id.cls))
+							ma.getProc().SUMMON.form = 1; //There for imports
 					}
-				for (AtkDataModel ma : atks)
-					if (ma.getProc().SUMMON.prob > 0 && (ma.getProc().SUMMON.id == null || !AbEnemy.class.isAssignableFrom(ma.getProc().SUMMON.id.cls)))
-						ma.getProc().SUMMON.form = 1; //There for imports
 			} //Finish FORK_VERSION 1 checks
 		} //Finish FORK_VERSION 6 checks
 	}

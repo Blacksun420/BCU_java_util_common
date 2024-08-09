@@ -262,9 +262,13 @@ public class JsonEncoder {
 			return ((Object[])val).length == 0;
 		try {
 			if (str.startsWith("this."))
-				return (boolean) obj.getClass().getMethod(str.substring(5)).invoke(obj);
+				return defVal(obj, str.substring(5));
+			if (str.contains(" ")) {
+				Object nvar = val.getClass().getField(str.substring(0, str.indexOf(" "))).get(val);
+				return defVal(nvar, str.substring(str.indexOf(" ") + 1));
+			}
 			return (boolean) val.getClass().getMethod(str).invoke(val);
-		} catch (Exception e) {//Hitler did nothing wrong
+		} catch (Exception e) {
 			System.out.println("Failed checking def for " + val.getClass() + ": " + val + " on " + obj.getClass());
 			e.printStackTrace();//Return false without jsonException because this doesn't interfere with json encoding
 		}

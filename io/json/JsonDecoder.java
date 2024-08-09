@@ -108,7 +108,7 @@ public class JsonDecoder {
 		if (par != null && par.curjfld.gen() == GenType.GEN) {
 			Class<?> ccls = par.obj.getClass();
 			// default generator
-			if (par.curjfld.generator().length() == 0) {
+			if (par.curjfld.generator().isEmpty()) {
 				Constructor<?> cst = null;
 				for (Constructor<?> ci : cls.getDeclaredConstructors())
 					if (ci.getParameterTypes().length == 1 && ci.getParameterTypes()[0].isAssignableFrom(ccls))
@@ -308,7 +308,7 @@ public class JsonDecoder {
 			return inject(par, jobj, cls, null);
 		else if (jc.read() == JsonClass.RType.MANUAL) {
 			String func = jc.generator();
-			if (func.length() == 0)
+			if (func.isEmpty())
 				throw new JsonException(true, cls, "no generate function");
 			Method m = cls.getMethod(func, JsonElement.class);
 			return m.invoke(null, jobj);
@@ -416,7 +416,7 @@ public class JsonDecoder {
 			if (m.getParameterTypes().length != 1)
 				throw new JsonException(true, obj, m.getParameterTypes().length + " parameters, should be 1", m);
 			String tag = curjfld.tag();
-			if (tag.length() == 0)
+			if (tag.isEmpty())
 				throw new JsonException(true, obj, "Has no tag", m);
 			if (!jobj.has(tag))
 				continue;
@@ -452,10 +452,13 @@ public class JsonDecoder {
 				continue;
 			}
 			String tag = curjfld.tag();
-			if (tag.length() == 0)
+			if (tag.isEmpty())
 				tag = f.getName();
-			if (!jobj.has(tag))
+			if (!jobj.has(tag)) {
+				if (!curjfld.defval().isEmpty())
+					defVal(obj, f, curjfld.defval());
 				continue;
+			}
 			JsonElement elem = jobj.get(tag);
 			f.setAccessible(true);
 			curfld = f;
@@ -481,5 +484,34 @@ public class JsonDecoder {
 
 	private JsonDecoder getInvoker() {
 		return tarjcls.bypass() ? par : this;
+	}
+
+	private void defVal(Object val, Field f, String str) {
+		if (Modifier.isFinal(f.getModifiers()) || str.startsWith("this.") || str.equals("null") || str.equals("isEmpty"))
+			return;
+		try {
+			f.setAccessible(true);
+			if (f.getType() == byte.class)
+				f.setByte(val, Byte.parseByte(str));
+			else if (f.getType() == int.class)
+				f.setInt(val, Integer.parseInt(str));
+			else if (f.getType() == long.class)
+				f.setLong(val, Long.parseLong(str));
+			else if (f.getType() == float.class)
+				f.setFloat(val, Float.parseFloat(str));
+			else if (f.getType() == double.class)
+				f.setDouble(val, Double.parseDouble(str));
+			else if (f.getType() == boolean.class)
+				f.setBoolean(val, Boolean.parseBoolean(str));
+			else if (f.getType() == String.class)
+				f.set(val, str);
+			else if (str.contains(" ")) {
+				Object nvar = f.get(val);
+				Field nf = nvar.getClass().getField(str.substring(0, str.indexOf(" ")));
+				defVal(nvar, nf, str.substring(str.indexOf(" ") + 1));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();//Nothing else
+		}
 	}
 }
