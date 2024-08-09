@@ -127,7 +127,10 @@ public abstract class Source {
 			if (!(anim instanceof AnimCE))
 				return;
 			UserPack p = (UserPack) UserPack.getPack(zip instanceof Workspace ? ((Workspace) zip).id : pack);
-			if (p.editable && UserProfile.isOlderPack(p, "0.7.8.0")) {
+
+			if (UserProfile.isOlderPack(p, "0.6.9.1"))
+				this.base = BasePath.ANIM;
+			if (UserProfile.isOlderPack(p, "0.7.8.0")) {
 				anim.anims = anim.loader.getMA();
 				for (MaAnim maanim : anim.anims)
 					for (Part line : maanim.parts)

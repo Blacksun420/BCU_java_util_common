@@ -609,7 +609,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		/**
 		 * attack times remain
 		 */
-		protected int loop;
+		protected int attacksLeft;
 
 		/**
 		 * atk id primarily for display
@@ -641,7 +641,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		private AtkManager(Entity ent) {
 			e = ent;
 			setAtk();
-			loop = e.data.getAtkLoop();
+			attacksLeft = e.data.getAtkLoop();
 		}
 
 		private void setAtk() {
@@ -680,10 +680,10 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				if (old != e.aam.atkType)
 					setAtk();
 			}
-			setUpAtk(true);
+			startAtk(true);
 		}
 
-		public void setUpAtk(boolean anim) {
+		public void startAtk(boolean anim) {
 			atkTime = e.data.getAnimLen(e.aam.atkType);
 			preID = 0;
 			preTime = pres[0];
@@ -704,7 +704,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			tempAtk = -1; //set tempAtk to -1, as axis display isn't needed anymore
 			float t = e.getTime();
 			atkTime = Math.max(0, atkTime - t);
-			if (preTime >= 0) {
+			if (preTime > 0) {
 				preTime = Math.max(0, preTime - t);
 				if (preTime == 0) {
 					int atk0 = preID;
@@ -717,8 +717,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					if (preID < multi)
 						preTime = pres[preID];
 					else {
-						loop--;
-						preTime = -1;
+						attacksLeft--;
 						e.waitTime = Math.max(e.data.getTBA(), 0);
 					}
 				}
@@ -823,7 +822,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					return;
 				}
 
-				if ((e.getAbi() & AB_GLASS) > 0 && e.atkm.atkTime - 1 == 0 && e.atkm.loop == 0) {
+				if ((e.getAbi() & AB_GLASS) > 0 && e.atkm.atkTime - 1 == 0 && e.atkm.attacksLeft == 0) {
 					e.kill(true);
 					return;
 				}
@@ -1026,7 +1025,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		private void doRevive(int c) {
 			int deadAnim = minRevTime();
 			EffAnim<ZombieEff> ea = effas().A_ZOMBIE;
-			deadAnim += ea.getEAnim(ZombieEff.REVIVE).len() - 1;
+			deadAnim += ea.getEAnim(ZombieEff.REVIVE).len();
 			e.status.revs[1] = deadAnim;
 			int maxR = maxRevHealth();
 			if (maxR > 100)
@@ -1110,7 +1109,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					return em.kbTime == -1;
 				return true;
 			});
-			List<AbEntity> lm = e.basis.inRange(TCH_ZOMBX, -e.getDire(), 0, e.basis.st.len, false);
+			List<AbEntity> lm = e.basis.inRange(TCH_ZOMBX, e.getDire(), 0, e.basis.st.len, false); //TODO - why was this negative
 			for (AbEntity abEntity : lm) {
 				if (abEntity == e)
 					continue;
@@ -1131,7 +1130,6 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			}
 
 			if (rev[1] > 0) {
-				e.acted = true;
 				EffAnim<ZombieEff> ea = e.getDire() == -1 ? effas().A_U_ZOMBIE : effas().A_ZOMBIE;
 				if (anim.corpse == null) {
 					anim.corpse = ea.getEAnim(ZombieEff.DOWN);
@@ -1455,11 +1453,11 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	protected boolean isBase;
 
 	/**
-	 * KB FSM time, values: <br>
-	 * 0: not KB <br>
-	 * -1: dead <br>
+	 * KB/burrow state: <br>
+	 * -1: dead (spirit) <br>
 	 * positive: KB time count-down <br>
-	 * negative: burrow FSM type
+	 * negative: burrow type <br>
+	 * 0: none of the above
 	 */
 	protected float kbTime;
 
@@ -1467,11 +1465,6 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 * wait FSM time
 	 */
 	private double waitTime;
-
-	/**
-	 * acted: temp field, for update sync
-	 */
-	protected boolean acted;
 
 	/**
 	 * remaining burrow distance
@@ -2317,7 +2310,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 		kb.doInterrupt();
 
-		if ((getAbi() & AB_GLASS) > 0 && atkm.atkTime - 1 <= 0 && kbTime == 0 && atkm.loop == 0)
+		if ((getAbi() & AB_GLASS) > 0 && atkm.atkTime - 1 <= 0 && kbTime == 0 && atkm.attacksLeft == 0)
 			kill(true);
 
 		// update ZKill
@@ -2334,11 +2327,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 		summoned.removeIf(s -> !s.activate);
 
-		acted = false;
-
 		if(health <= 0 && zx.canRevive() == 0 && !killCounted)
 			onLastBreathe();
-
 		if (health > 0)
 			status.money = 0;
 	}
@@ -2509,7 +2499,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		// do move check if available, move if possible
 		boolean nstop = status.stop == 0;
 		boolean canAct = kbTime == 0 && anim.anim.type != AnimU.TYPEDEF[AnimU.ENTRY];
-		if (canAct && !acted && atkm.atkTime == 0 && status.revs[1] == 0) {
+		if (canAct && atkm.atkTime == 0 && status.revs[1] == 0) {
 			checkTouch();
 
 			if (!touch && nstop && health > 0) {
@@ -2532,8 +2522,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 	/**
 	 * update the entity. order of update:
-	 *  1st iteration (movement) :   KB -> proc -> check touch to move -> [revive, update burrow]
-	 *  2ns iteration (reactions):   check touch to validate walking -> [start burrow, start/update attack]
+	 *  1st iteration (movement) :   TBA, procs time tick -> move (KB, burrow, standard) -> revive
+	 *  2ns iteration (reactions):   validate walking OR go idle, start burrow, start attack -> update attack
 	 */
 	@Override
 	public void update() {
@@ -2542,6 +2532,9 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 		auras.updateAuras();
 
+		// being frozen doesn't invalidate neither reactions nor walking readiness:
+		// entities still change animation while frozen based on collisions
+		// entities move in the same frame freeze proc ends
 		boolean nstop = status.stop == 0;
 		boolean canAct = kbTime == 0 && anim.anim.type != AnimU.TYPEDEF[AnimU.ENTRY];
 		// do move check if available, move if possible
@@ -2564,7 +2557,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		// update wait and attack state
 		if (canAttack) {
 			// if it can attack, setup attack state
-			if (!acted && touchEnemy && atkm.loop != 0 && nstop && tba + atkm.atkTime == 0 && !(isBase && health <= 0))
+			if (touchEnemy && atkm.attacksLeft != 0 && nstop && tba + atkm.atkTime == 0 && !(isBase && health <= 0))
 				atkm.setUp();
 			else if ((tba >= 0 || !touchEnemy) && touch && atkm.atkTime == 0 && !(isBase && health <= 0)) { // update waiting state
 				double mov = getProc().AI.retreatDist > 0 ? getMov(0) : 0;
@@ -2579,8 +2572,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			}
 		}
 
-		// update attack status while attacking
-		if (kbTime == 0 && atkm.atkTime > 0 && nstop)
+		if (atkm.atkTime > 0 && nstop)
 			atkm.updateAttack();
 		else
 			checkTouch();
@@ -2919,11 +2911,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		return this.dire != dire;
 	}
 
-	/**
-	 * update burrow state
-	 */
 	private void updateBurrow() {
-		if (!acted && kbTime == 0 && touch && status.burs[0] != 0) {
+		if (kbTime == 0 && touch && status.burs[0] != 0) {
 			float bpos = basis.getBase(getDire()).pos;
 			boolean ntbs = (bpos - pos) * getDire() > data.touchBase();
 			if (ntbs) {
@@ -2933,8 +2922,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				kbTime = -2;
 			}
 		}
-		if (!acted && kbTime == -2) {
-			acted = true;
+		if (kbTime == -2) {
 			// burrow down
 			status.burs[1] -= getTime();
 			for (int i = spInd; i < data.getGouge().length; i++)
@@ -2948,7 +2936,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				bdist = data.getProc().BURROW.dis;
 			}
 		}
-		if (!acted && kbTime == -3) {
+		if (kbTime == -3) {
 			// move underground
 			float oripos = pos;
 			updateMove(0);
@@ -2959,9 +2947,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				status.burs[1] = anim.setAnim(AnimU.TYPEDEF[AnimU.BURROW_UP], true) - 2;
 			}
 		}
-		if (!acted && kbTime == -4) {
+		if (kbTime == -4) {
 			// burrow up
-			acted = true;
 			status.burs[1] -= getTime();
 			for (int i = spInd; i < data.getResurface().length; i++)
 				if (anim.anim.len() - status.burs[1] - 2 >= data.getResurface()[i].pre) {
@@ -2988,7 +2975,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	/**
 	 * detect nearby entities
 	 */
-	public void checkTouch() {
+	public boolean checkTouch() {
 		touch = true;
 		float[] ds = aam.touchRange();
 		List<AbEntity> le = basis.inRange(getTouch(), getDire(), ds[0], ds[1], false);
@@ -3017,6 +3004,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					break;
 				}
 		}
+		return touch;
 	}
 
 	/**

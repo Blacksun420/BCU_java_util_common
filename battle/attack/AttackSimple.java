@@ -46,7 +46,7 @@ public class AttackSimple extends AttackAb {
 
 	@Override
 	public void capture() {
-		List<AbEntity> le = model.b.inRange(touch, attacker != null && attacker.status.rage > 0 ? 2 : dire, sta, end, excludeLastEdge);
+		List<AbEntity> le = model.b.inRange(touch, attacker != null && attacker.status.rage > 0 ? 2 : dire, sta, end, excludeRightEdge);
 		if (attacker != null && (attacker.status.rage > 0 || attacker.status.hypno > 0))
 			le.remove(attacker);
 
@@ -147,6 +147,10 @@ public class AttackSimple extends AttackAb {
 			int wid = dire == 1 ? W_E_WID : W_U_WID;
 			float addp = (dire == 1 ? W_E_INI : W_U_INI) + wid / 2f;
 			float p0 = model.getPos() + dire * addp;
+
+			if (proc.WAVE.inverted)
+				p0 = model.getPos() + (dire * addp) + ((200 * (proc.WAVE.lv - 1)) * dire);
+
 			// generate a wave when hits somebody
 			ContWaveDef wave = new ContWaveDef(new AttackWave(attacker, this, p0, wid, WT_WAVE), p0, layer, -3);
 			if(attacker != null)
@@ -157,6 +161,9 @@ public class AttackSimple extends AttackAb {
 			int wid = dire == 1 ? W_E_WID : W_U_WID;
 			float addp = (dire == 1 ? W_E_INI : W_U_INI) + wid / 2f;
 			float p0 = model.getPos() + dire * addp;
+
+			if (proc.MINIWAVE.inverted)
+				p0 = model.getPos() + (dire * addp) + ((200 * (proc.MINIWAVE.lv - 1)) * dire);
 
 			ContWaveDef wave = new ContWaveDef(new AttackWave(attacker, this, p0, wid, proc.MINIWAVE.multi > 100 ? WT_MEGA : WT_MINI), p0, layer, proc.MINIWAVE.multi > 100 ? -6 : 0);
 			wave.atk.raw *= proc.MINIWAVE.multi / 100.0;

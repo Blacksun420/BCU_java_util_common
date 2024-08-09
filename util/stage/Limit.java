@@ -60,6 +60,8 @@ public class Limit extends Data implements BattleStatic {
 	public CharaGroup group;
 	@JsonField(alias = Identifier.class, defval = "null")
 	public LvRestrict lvr;
+	@JsonField(defval = "null")
+	public StageLimit stageLimit;
 
 	@JsonField(io = JsonField.IOType.R)
 	public int sid = -1; //Exclusively to parse sid from old packs
@@ -83,6 +85,7 @@ public class Limit extends Data implements BattleStatic {
 		l.max = max;
 		l.group = group;
 		l.lvr = lvr;
+		l.stageLimit = stageLimit != null ? stageLimit.clone() : null;
 		return l;
 	}
 
@@ -98,16 +101,20 @@ public class Limit extends Data implements BattleStatic {
 		line |= l.line;
 		min = Math.max(min, l.min);
 		max = max > 0 && l.max > 0 ? Math.min(max, l.max) : (max + l.max);
-		if (l.group != null)
+		if (l.group != null) {
 			if (group != null)
 				group = group.combine(l.group);
 			else
 				group = l.group;
-		if (l.lvr != null)
+		}
+		if (l.lvr != null) {
 			if (lvr != null)
 				lvr.combine(l.lvr);
 			else
 				lvr = l.lvr;
+		}
+		if (l.stageLimit != null)
+			stageLimit = stageLimit != null ? stageLimit.combine(l.stageLimit) : l.stageLimit;
 	}
 
 	public boolean unusable(MaskUnit du, int price, byte row) {
@@ -186,6 +193,6 @@ public class Limit extends Data implements BattleStatic {
 	}
 
 	public boolean none() {
-		return star + fa + rare + line + min + max + star + fa == 0 && group == null && lvr == null;
+		return star + fa + rare + line + min + max + star + fa == 0 && group == null && lvr == null && stageLimit == null;
 	}
 }

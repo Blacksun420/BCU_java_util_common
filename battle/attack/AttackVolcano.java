@@ -27,7 +27,7 @@ public class AttackVolcano extends AttackAb {
 
 	@Override
 	public void capture() {
-		List<AbEntity> le = model.b.inRange(touch, attacker.status.rage > 0 ? 2 : dire, sta, end, excludeLastEdge);
+		List<AbEntity> le = model.b.inRange(touch, attacker.status.rage > 0 ? 2 : dire, sta, end, excludeRightEdge);
 		capt.clear();
 
 		for (AbEntity e : le)

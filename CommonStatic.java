@@ -696,9 +696,7 @@ public class CommonStatic {
 	 * Gets the minimum position value for a custom cat unit.
 	 */
 	public static int customFormMinPos(MaModel model) {
-		if (model.confs.length <= 1) //Return old pos if confs isn't big enough
-			return (int)Math.max(0, 5 * Math.round((9.0 / 5.0) * model.parts[0][6] - 1));
-		int x = ((model.confs[1][2] - model.parts[0][6]) * model.parts[0][8]) / model.ints[0];
+		int x = (-model.parts[0][6] * model.parts[0][8]) / model.ints[0];
 		return 5 * x;
 	}
 

@@ -187,6 +187,9 @@ public class Data {
 			@Order(2)
 			@JsonField(defval = "hitless false")
 			public TYPE type = new TYPE();
+			@Order(3)
+			@JsonField(defval = "false")
+			public boolean inverted;
 
 			@Override
 			public int[] setTalent(int[] nps) {
@@ -2253,6 +2256,15 @@ public class Data {
 		try {
 			return sup.get();
 		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	public static <T> T silent(SupExc<T> sup) {
+		try {
+			return sup.get();
+		} catch (Exception e) {
+			e.printStackTrace();
 			return null;
 		}
 	}

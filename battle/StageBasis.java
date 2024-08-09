@@ -130,14 +130,9 @@ public class StageBasis extends BattleObj {
 		le.initCapacity(max_num + st.max);
 
 		int bank = maxBankLimit();
-		int cd = globalCdLimit();
-		if (bank > 0 || cd > 0)
-			for (int i = 0; i < 2; i++)
-				for (int j = 0; j < 5; j++)
-					elu.resetCD(i, j);
 		if (bank > 0) {
 			work_lv = 8;
-			money = bank * 100;
+			money = maxBankLimit() * 100;
 		} else {
 			work_lv = 1 + elu.getInc(C_M_LV);
 			money = elu.getInc(C_M_INI) * 100;
@@ -145,6 +140,10 @@ public class StageBasis extends BattleObj {
 		cannon = maxCannon * elu.getInc(C_C_INI) / 100;
 		canon = new Cannon(this, nyc);
 		conf = cnf;
+		if (est.lim != null && est.lim.stageLimit != null && est.lim.stageLimit.coolStart)
+			for (int i = 0; i < 2; i++)
+				for (int j = 0; j < 5; j++)
+					elu.resetCD(i, j);
 
 		if(st.minSpawn <= 0 || st.maxSpawn <= 0)
 			respawnTime = 1;
@@ -296,12 +295,11 @@ public class StageBasis extends BattleObj {
 	}
 
 	/**
-	 * list of entities in the range of d0~d1 that can be touched by entity with
-	 * this direction and touch mode
-	 * <p>
-	 * excludeLastEdge : If range is d0 ~ d1, normally it's true if d0 <= x <= d1 where x is entity's position<br>If this is true, then it will become d0 <= x < d1
+	 * list of entities in the range d0 ~ d1 that can be touched by entity with given direction and touch mode
+	 * entity is picked if d0 <= pos <= d1 when excludeRightEdge is false
+	 *                  if d0 <= pos <  d1 when excludeRightEdge is true (currently only used by bblast, TODO: waves should use it)
 	 */
-	public List<AbEntity> inRange(int touch, int dire, float d0, float d1, boolean excludeLastEdge) {
+	public List<AbEntity> inRange(int touch, int dire, float d0, float d1, boolean excludeRightEdge) {
 		float start = Math.min(d0, d1);
 		float end = Math.max(d0, d1);
 		List<AbEntity> ans = new ArrayList<>();
@@ -309,7 +307,7 @@ public class StageBasis extends BattleObj {
 			return ans;
 		for (int i = 0; i < le.size(); i++)
 			if ((dire == 2 || le.get(i).dire * dire == -1) && (le.get(i).touchable() & touch) > 0 &&
-				le.get(i).pos >= start && (excludeLastEdge ? le.get(i).pos < end : le.get(i).pos <= end))
+				le.get(i).pos >= start && (excludeRightEdge ? le.get(i).pos < end : le.get(i).pos <= end))
 				ans.add(le.get(i));
 		AbEntity b = dire == 1 ? ubase : ebase;
 		if ((b.touchable() & touch) > 0 && (b.pos - d0) * (b.pos - d1) <= 0)
@@ -847,23 +845,23 @@ public class StageBasis extends BattleObj {
 	}
 
 	public boolean isBanned(byte comboId) {
-		if (st.getCont().stageLimit == null)
+		if (est.lim.stageLimit == null)
 			return false;
 		else
-			return st.getCont().stageLimit.bannedCatCombo.contains((int) comboId);
+			return est.lim.stageLimit.bannedCatCombo.contains((int) comboId);
 	}
 
 	public int maxBankLimit() {
-		if (st.getCont().stageLimit == null)
+		if (est.lim.stageLimit == null)
 			return 0;
 		else
-			return st.getCont().stageLimit.maxMoney;
+			return est.lim.stageLimit.maxMoney;
 	}
 
 	public int globalCdLimit() {
-		if (st.getCont().stageLimit == null)
+		if (est.lim.stageLimit == null)
 			return 0;
 		else
-			return st.getCont().stageLimit.globalCooldown;
+			return est.lim.stageLimit.globalCooldown;
 	}
 }

@@ -11,7 +11,7 @@ public class ESpirit extends EUnit {
 
     public ESpirit(StageBasis b, MaskUnit de, EAnimU ea, float lvd, int minlayer, int maxlayer, Level lv, int[] ind) {
         super(b, de, ea, lvd, minlayer, maxlayer, lv, null, ind, false);
-        atkm.setUpAtk(false);
+        atkm.startAtk(false);
     }
 
     @Override
@@ -47,13 +47,12 @@ public class ESpirit extends EUnit {
 
     @Override
     public void postUpdate() {
-        if ((getAbi() & AB_GLASS) > 0 && atkm.atkTime <= 0 && atkm.loop == 0)
+        if ((getAbi() & AB_GLASS) > 0 && atkm.atkTime <= 0 && atkm.attacksLeft == 0)
             kill(true);
 
         if(!dead || !summoned.isEmpty())
             livingTime++;
         summoned.removeIf(s -> !s.activate);
-        acted = false;
     }
 
     @Override

@@ -52,7 +52,7 @@ public class UpdateCheck {
 					success = true;
 					break;
 				} catch (Exception e) {
-					CommonStatic.ctx.printErr(ErrType.INFO, "failed to download " + u);
+					CommonStatic.ctx.noticeErr(e, ErrType.INFO, "failed to download " + u);
 				}
 			}
 			if (!success)

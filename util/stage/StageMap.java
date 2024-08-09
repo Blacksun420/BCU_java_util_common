@@ -97,21 +97,21 @@ public class StageMap extends Data implements BasedCopable<StageMap, MapColc>,
 	@JsonField
 	@JsonClass.JCIdentifier
 	public final Identifier<StageMap> id;
-	@JsonField(generic = Limit.class)
+	@JsonField(generic = Limit.class, defval = "isEmpty")
 	public final ArrayList<Limit> lim = new ArrayList<>();
 	public StageMapInfo info;
-	@JsonField
+	@JsonField(io = JsonField.IOType.R)
 	public StageLimit stageLimit;
 
-	@JsonField(generic = Stage.class)
+	@JsonField(generic = Stage.class, defval = "isEmpty")
 	public final FixIndexMap<Stage> list = new FixIndexMap<>(Stage.class);
 
 	@JsonField(generic = MultiLangData.class, gen = JsonField.GenType.FILL, defval = "empty")
 	public final MultiLangData names = new MultiLangData();
-	@JsonField(generic = StageMap.class, alias = Identifier.class, decodeLast = true, backCompat = JsonField.CompatType.FORK)
+	@JsonField(generic = StageMap.class, alias = Identifier.class, decodeLast = true, backCompat = JsonField.CompatType.FORK, defval = "isEmpty")
 	public final HashSet<StageMap> unlockReq = new HashSet<>();
 
-	@JsonField
+	@JsonField(defval = "1")
 	public int price = 1;
 	@JsonField
 	public int[] stars = new int[] { 100 };
@@ -167,7 +167,6 @@ public class StageMap extends Data implements BasedCopable<StageMap, MapColc>,
 		sm.price = price;
 		sm.stars = stars.clone();
 		sm.price = price;
-		sm.stageLimit = stageLimit != null ? stageLimit.clone() : null;
 
 		for (Stage st : list)
 			sm.add(st.copy(sm));
@@ -218,6 +217,10 @@ public class StageMap extends Data implements BasedCopable<StageMap, MapColc>,
 				l.sid = -1;
 				lim.remove(i--);
 			}
+
+		/*if (jobj.has("stageLimit")) {
+			StageLimit lim = new localDecoder(jobj.get("stageLimit"), StageLimit.class, this).decode();
+		}*/
 	}
 
 	@JsonDecoder.PostLoad

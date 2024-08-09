@@ -7,6 +7,7 @@ import common.pack.SortedPackSet;
 import common.util.BattleObj;
 import common.util.unit.Combo;
 import common.util.unit.EForm;
+import common.util.stage.Limit;
 import common.util.unit.Form;
 
 public class ELineUp extends BattleObj {
@@ -25,7 +26,7 @@ public class ELineUp extends BattleObj {
 		for (byte i = 0; i < inc.length; i++)
 			if (sb.isBanned(i))
 				inc[i] = 0;
-
+		Limit lim = sb.est.lim;
 		SortedPackSet<Combo> coms = new SortedPackSet<>(lu.coms);
         for (byte i = 0; i < 2; i++)
 			for (byte j = 0; j < 5; j++) {
@@ -34,7 +35,7 @@ public class ELineUp extends BattleObj {
 				else if (saveMode == 2 && !sb.st.getMC().getSave(true).getUnlockedsBeforeStage(sb.st, true).containsKey(lu.fs[i][j]) ||
 					saveMode == 1 && sb.st.getMC().getSave(true).locked(lu.fs[i][j]))
 					price[i][j] = -2;
-				else if (sb.st.lim != null && lu.efs[i][j] instanceof EForm && sb.st.lim.unusable(((EForm)lu.efs[i][j]).du, sb.st.getCont().price, i))
+				else if (lim != null && lu.efs[i][j] instanceof EForm && lim.unusable(((EForm)lu.efs[i][j]).du, sb.st.getCont().price, i))
 					price[i][j] = -1;
 				if (price[i][j] != 0) {
 					if (price[i][j] == -2)
@@ -48,6 +49,11 @@ public class ELineUp extends BattleObj {
 				}
 				price[i][j] = (int) (lu.efs[i][j].getPrice(sb.st.getCont().price) * 100);
 				maxC[i][j] = sb.globalCdLimit() > 0 ? sb.b.t().getFinResGlobal(sb.globalCdLimit(), getInc(C_RESP)) : sb.b.t().getFinRes(lu.efs[i][j].getRespawn(), getInc(C_RESP));
+				if (lim != null && lim.stageLimit != null && lu.fs[i][j] instanceof Form) {
+					int r = ((Form)lu.fs[i][j]).unit.rarity;
+					price[i][j] = price[i][j] * lim.stageLimit.costMultiplier[r] / 100;
+					maxC[i][j] = maxC[i][j] * lim.stageLimit.cooldownMultiplier[r] / 100;
+				}
 
 				spData[i][j] = lu.efs[i][j] instanceof EForm && ((EForm) lu.efs[i][j]).du.getProc().SPIRIT.exists() ? ((EForm)lu.efs[i][j]).du.getProc().SPIRIT : null;
 				scount[i][j] = spData[i][j] == null ? -1 : 0;
