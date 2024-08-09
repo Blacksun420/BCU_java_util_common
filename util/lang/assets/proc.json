@@ -1209,8 +1209,8 @@
         "abbr_name": "Counter",
         "full_name": "Counter Attack",
         "tooltip": "Deal damage back when attacked.",
-        "format": ["(prob)% chance to counterattack, dealing (damage)% [(!type.useOwnDamage){of the damage received from an attack [(maxdamage!=0){(_left)Up to (_abs(maxdamage))(_right)}]}",
-            "(type.useOwnDamage){of this unit's damage}] back. [(maxdamage<0){Counter damage will not exceed this unit's remaining HP. }]",
+        "format": ["(prob)% chance to counterattack, dealing (damage)% [(!type.useOwnDamage){of the damage received from an attack [(maxDamage!=0){(_left)Up to (_abs(maxDamage))(_right)}]}",
+            "(type.useOwnDamage){of this unit's damage}] back. [(maxDamage<0){Counter damage will not exceed this unit's remaining HP. }]",
             "[(type.counterWave!=0){This unit will also [(type.counterWave==1){counter}(type.counterWave==2){reflect}] wave/surge attacks. }][(type.procType!=0){This counterattack will ",
             "[(type.procType==1|type.procType==3){have}(type.procType==2){replace}] the original attack's procs[(type.procType==2){ with this unit's procs}(type.procType==3){ and this entity's procs}]. }]",
             "The counter will hit [(type.areaAttack){ all enemies}(!type.areaAttack){ only the attacker}][(type.areaAttack|!type.outRange){[(!type.areaAttack){ if they're}] standing ",
@@ -1252,7 +1252,7 @@
                 "name": "Area Attack",
                 "tooltip": "Toggle this on and the counter will target all units in the counter's range. If left off, only the attacker will receive damage."
             },
-            "maxdamage": {
+            "maxDamage": {
                 "name": "Damage Limit",
                 "tooltip": "Counter won't deal more than the specified amount of damage. Set to 0 for no limit. Set to negative number to also cap it to unit's remaining HP"
             }
