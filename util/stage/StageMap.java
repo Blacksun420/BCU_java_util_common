@@ -6,6 +6,7 @@ import common.io.json.JsonClass;
 import common.io.json.JsonClass.JCConstructor;
 import common.io.json.JsonDecoder;
 import common.io.json.JsonField;
+import common.io.json.localDecoder;
 import common.pack.FixIndexList.FixIndexMap;
 import common.pack.Identifier;
 import common.pack.IndexContainer;
@@ -100,8 +101,6 @@ public class StageMap extends Data implements BasedCopable<StageMap, MapColc>,
 	@JsonField(generic = Limit.class, defval = "isEmpty")
 	public final ArrayList<Limit> lim = new ArrayList<>();
 	public StageMapInfo info;
-	@JsonField(io = JsonField.IOType.R)
-	public StageLimit stageLimit;
 
 	@JsonField(generic = Stage.class, defval = "isEmpty")
 	public final FixIndexMap<Stage> list = new FixIndexMap<>(Stage.class);
@@ -218,9 +217,14 @@ public class StageMap extends Data implements BasedCopable<StageMap, MapColc>,
 				lim.remove(i--);
 			}
 
-		/*if (jobj.has("stageLimit")) {
+		if (jobj.has("stageLimit")) {
 			StageLimit lim = new localDecoder(jobj.get("stageLimit"), StageLimit.class, this).decode();
-		}*/
+			if (lim == null || lim.isBlank())
+				return;
+			Limit nlim = new Limit();
+			nlim.stageLimit = lim;
+			this.lim.add(nlim);
+		}
 	}
 
 	@JsonDecoder.PostLoad

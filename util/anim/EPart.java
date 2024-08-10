@@ -8,6 +8,10 @@ import common.system.fake.FakeImage;
 import common.system.fake.FakeTransform;
 import common.util.ImgCore;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
+
 public class EPart extends ImgCore implements Comparable<EPart> {
 
 	public static class EBase {
@@ -33,6 +37,14 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 				e.angle *= -1;
 			}
 		}
+	}
+
+	private static final DecimalFormat df;
+	static {
+		NumberFormat nf = NumberFormat.getInstance(Locale.US);
+
+		df = (DecimalFormat) nf;
+		df.applyPattern("#.###");
 	}
 
 	private final String name;
@@ -134,48 +146,48 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 		return Float.compare(z, o.z);
 	}
 
-	public float getVal(int m) {
+	public String getVal(int m) {
 		if (m == 0)
-			return getPar();
+			return String.valueOf(getPar());
 		else if (m == 1)
-			return id;
+			return String.valueOf(id);
 		else if (m == 2)
-			return img;
+			return String.valueOf(img);
 		else if (m == 3)
-			return (float)(z - ind) / b.ent.length;
+			return df.format((float)(z - ind) / b.ent.length);
 		else if (m == 4)
-			return (int) pos.x;
+			return df.format(pos.x);
 		else if (m == 5)
-			return (int) pos.y;
+			return df.format(pos.y);
 		else if (m == 6)
-			return (int) piv.x;
+			return df.format(piv.x);
 		else if (m == 7)
-			return (int) piv.y;
+			return df.format(piv.y);
 		else if (m == 8)
-			return gsca;
+			return df.format(sca.x) + " | " + df.format(sca.y);
 		else if (m == 9)
-			return (int) sca.x;
+			return df.format(sca.x);
 		else if (m == 10)
-			return (int) sca.y;
+			return df.format(sca.y);
 		else if (m == 11)
-			return angle;
+			return df.format(angle);
 		else if (m == 12)
-			return opacity;
+			return df.format(opacity);
 		else if (m == 13)
-			return hf;
+			return String.valueOf(hf);
 		else if (m == 14)
-			return vf;
+			return String.valueOf(vf);
 		else if (m == 50)
-			return extendX;
+			return df.format(extendX);
 		else if (m == 51)
-			return extendX;
+			return df.format(extendX);
 		else if (m == 52)
-			return extendY;
+			return df.format(extendY);
 		else if (m == 53)
-			return gsca;
+			return df.format(gsca);
 		else
 			System.out.println("EPart modification can be: " + m);
-		return -1;
+		return "?";
 	}
 
 	@Override

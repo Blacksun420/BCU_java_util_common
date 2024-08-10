@@ -1051,6 +1051,8 @@ public class Data {
 						return ff.getType() == int.class ? ff.getInt(f.get(this)) : ff.getBoolean(f.get(this)) ? 1 : 0;
 					} else if (f.getType() == Identifier.class)
 						return ((Identifier<?>)f.get(this)).id;
+					else if (f.getType() == boolean.class)
+						return f.getBoolean(this) ? 1 : 0;
 					return f.getType() == int.class ? f.getInt(this) : (int)f.getDouble(this);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -1130,6 +1132,8 @@ public class Data {
 					Field f = fs[i - loc];
 					if (IntType.class.isAssignableFrom(f.getType()))
 						((IntType)f.get(this)).set(loc, v);
+					else if (f.getType() == boolean.class)
+						f.set(this, v != 0);
 					else
 						f.set(this, v);
 				} catch (Exception e) {

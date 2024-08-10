@@ -119,6 +119,19 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 		return du;
 	}
 
+	public boolean unused() {
+		PackData.UserPack pack = (PackData.UserPack) unit.getCont();
+		for (Combo c : pack.combos)
+			for (Form f : c.forms) {
+				if (f == null)
+					break;
+				if (f == this)
+					return false;
+			}
+		//TODO - check for Summon and RandomUnits
+		return true;
+	}
+
 	@OnInjected
 	public void onInjected(JsonObject jobj) {
 		CustomUnit form = (CustomUnit) du;

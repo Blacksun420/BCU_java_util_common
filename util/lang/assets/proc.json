@@ -1066,11 +1066,11 @@
             }
         }
     },
-    "MINIWAVE" : {
+    "MINIWAVE": {
         "abbr_name" : "mini-wave",
         "full_name" : "Mini-Wave",
         "tooltip" : "Creates small wave which moves twice faster than normal wave with dynamic damage multiplication parameter",
-        "format" : "(prob)% chance to create a lv.(lv) [(multi>100){mega}(multi<=100){mini}]-wave[(type.hitless){, even if this attack misses}] [(multi!=20){(_left)Gives target (multi)% of activator's damage(_right)}]",
+        "format" : "(prob)% chance to create a lv.(lv) [(inverted){inverted}] [(multi>100){mega}(multi<=100){mini}]-wave[(type.hitless){, even if this attack misses}] [(multi!=20){(_left)Gives target (multi)% of activator's damage(_right)}]",
         "class" : {
             "prob" : {
                 "name" : "chance",
@@ -1087,6 +1087,10 @@
             "type.hitless": {
                 "name": "Miss Trigger",
                 "tooltip": "Wave will spawn even if this attack misses"
+            },
+            "inverted": {
+                "name": "Inverted",
+                "tooltip": "Start point, end point, and traversal direction are all inverted"
             }
         }
     },

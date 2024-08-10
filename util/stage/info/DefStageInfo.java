@@ -2,8 +2,6 @@ package common.util.stage.info;
 
 import common.CommonStatic;
 import common.pack.Identifier;
-import common.util.Data;
-import common.util.lang.MultiLangCont;
 import common.util.stage.MapColc;
 import common.util.stage.Music;
 import common.util.stage.Stage;
@@ -12,7 +10,6 @@ import common.util.stage.StageMap;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -95,135 +92,6 @@ public class DefStageInfo implements StageInfo {
     }
 
     @Override
-    public String getHTML() {
-        StringBuilder ans = new StringBuilder("<html>Energy Cost: " + energy + "<br> XP: " + xp);
-
-        if (st.getCont().info.hiddenUponClear)
-            ans.append("<br>").append(CommonStatic.def.getUILang(0,"clrhide"));
-
-        if (st.getCont().info.resetMode != -1)
-            switch (st.getCont().info.resetMode) {
-                case 1:
-                    ans.append("<br> ").append(CommonStatic.def.getUILang(0, "maprwdres"));
-                    break;
-                case 2:
-                    ans.append("<br> ").append(CommonStatic.def.getUILang(0, "mapclrres"));
-                    break;
-                case 3:
-                    ans.append("<br> ").append(CommonStatic.def.getUILang(0, "maplayres"));
-                    break;
-                default:
-                    ans.append("<br> Reset mode flag ").append(st.getCont().info.resetMode);
-            }
-
-        if (st.getCont().info.waitTime != -1) {
-            ans.append("<br> You have to wait for ")
-                    .append(st.getCont().info.waitTime)
-                    .append(" minute(s) to play this stage");
-        }
-
-        if (st.getCont().info.clearLimit != -1) {
-            ans.append("<br> Times you can play this stage: ")
-                    .append(st.getCont().info.clearLimit);
-        }
-
-        if (st.getCont().info.unskippable)
-            ans.append("<br> You can't use gold CPU in this stage");
-        if (st.getCont().stageLimit != null)
-            ans.append(st.getCont().stageLimit.getHTML());
-
-        if (exConnection) {
-            ans.append("<br><br> EX Map Name: ")
-                    .append(MultiLangCont.get(MapColc.get("000004").maps.get(exMapID)))
-                    .append("<br> EX stage appearance chance: ")
-                    .append(exChance)
-                    .append("%<br> EX Stage ID range: ")
-                    .append(Data.duo(exStageIDMin)).append(" ~ ").append(Data.duo(exStageIDMax))
-                    .append("<br>");
-        }
-
-        if (exStages != null && exChances != null) {
-            ans.append("<table><tr><th>EX Stage Name</th><th>Chance</th></tr>");
-
-            for (int i = 0; i < exStages.length; i++) {
-                if (exStages[i] == null)
-                    continue;
-
-                String name = MultiLangCont.get(exStages[i]);
-                String smName = MultiLangCont.get(exStages[i].getCont());
-
-                if (name == null || name.isEmpty())
-                    name = exStages[i].id.toString();
-                else if (smName == null || smName.isEmpty())
-                    smName = exStages[i].getCont().id.toString();
-                name = smName + " - " + name;
-
-                ans.append("<tr><td>")
-                        .append(name)
-                        .append("</td><td>")
-                        .append(df.format(exChances[i]))
-                        .append("%</td></tr>");
-            }
-
-            ans.append("</table>");
-        }
-
-        if (!exConnection && (exStages == null || exChances == null))
-            ans.append("<br>");
-
-        ans.append("<br> Drop rewards");
-
-        if(drop == null || drop.length == 0)
-            ans.append(" : none");
-        else {
-            ans.append("<br>");
-            appendDropData(ans);
-        }
-
-        if (time.length > 0) {
-            ans.append("<b><h3><center>Time scores</center></h3></b>");
-            ans.append("<table><tr><th>score</th><th>item name</th><th>number</th></tr>");
-            for (int[] tm : time)
-                ans.append("<tr><td>").append(tm[0]).append("</td><td>").append(MultiLangCont.getStageDrop(tm[1])).append("</td><td>").append(tm[2]).append("</td><tr>");
-            ans.append("</table>");
-        }
-
-        if (maxMaterial == -1) {
-            ans.append("</html>");
-            return ans.toString();
-        }
-        ans.append("<b><h2><center>Material Drop Data</center></h2></b>");
-        ans.append(CommonStatic.def.getUILang(0, "maxmat")).append("<br>");
-        for (int i = 0; i < map.multiplier.length; i++) {
-            ans.append(i + 1).append(" ").append(CommonStatic.def.getUILang(1, "star")).append(": ")
-                    .append((int) (map.multiplier[i] * maxMaterial))
-                    .append("<br>");
-        }
-
-        ans.append("<br><table><tr><th>")
-                .append(CommonStatic.def.getUILang(1, "mat"))
-                .append("</th><th>")
-                .append(CommonStatic.def.getUILang(1, "chance"))
-                .append("</th></tr>");
-
-        int missChance = map.materialDrop[0];
-        int totalChances = Arrays.stream(map.materialDrop).reduce(0, Integer::sum) - missChance;
-        for (int i = 1 ; i < map.materialDrop.length; i++) {
-            int chance = map.materialDrop[i];
-            if (map.materialDrop[i] == 0)
-                continue;
-
-            ans.append("<tr><td>")
-                    .append(CommonStatic.def.getUILang(2, "m" + (i - 1)))
-                    .append("</td><td>")
-                    .append((double) (((100 - missChance) * chance * 100) / totalChances) / 100.0).append("%")
-                    .append("</td></tr>");
-        }
-        ans.append("</table></html>");
-        return ans.toString();
-    }
-
-    @Override
     public boolean exConnection() {
         return exConnection;
     }
@@ -251,60 +119,7 @@ public class DefStageInfo implements StageInfo {
         return exChances;
     }
 
-    private void appendDropData(StringBuilder ans) {
-        if (drop == null || drop.length == 0) {
-            ans.append("none");
-            return;
-        }
-
-        List<String> chances = analyzeRewardChance();
-
-        if(chances == null) {
-            ans.append("none");
-            return;
-        }
-
-        if(chances.isEmpty()) {
-            ans.append("<table><tr><th>No.</th><th>item name</th><th>amount</th></tr>");
-        } else {
-            ans.append("<table><tr><th>chance</th><th>item name</th><th>amount</th></tr>");
-        }
-
-        for(int i = 0; i < drop.length; i++) {
-            if(!chances.isEmpty() && i < chances.size() && Double.parseDouble(chances.get(i)) == 0.0)
-                continue;
-
-            String chance;
-
-            if(chances.isEmpty())
-                chance = String.valueOf(i + 1);
-            else
-                chance = chances.get(i) + "%";
-
-            String reward = MultiLangCont.getServerDrop(drop[i][1]);
-
-            if(reward == null || reward.isEmpty())
-                reward = "Reward " + drop[i][1];
-
-            if(i == 0 && (rand == 1 || (drop[i][1] >= 1000 && drop[i][1] < 30000)))
-                reward += " (Once)";
-
-            if(i == 0 && drop[i][0] != 100 && rand != -4)
-                reward += " [" + MultiLangCont.getServerDrop(1) + "]";
-
-            ans.append("<tr><td>")
-                    .append(chance)
-                    .append("</td><td>")
-                    .append(reward)
-                    .append("</td><td>")
-                    .append(drop[i][2])
-                    .append("</td></tr>");
-        }
-
-        ans.append("</table>");
-    }
-
-    private List<String> analyzeRewardChance() {
+    public List<String> analyzeRewardChance() {
         ArrayList<String> res = new ArrayList<>();
 
         int sum = 0;
@@ -366,7 +181,6 @@ public class DefStageInfo implements StageInfo {
                 res.add(String.valueOf(d[0]));
             }
         }
-
         return res;
     }
 }

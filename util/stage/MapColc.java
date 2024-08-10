@@ -351,29 +351,19 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 										System.out.printf("W/MapColc::read - Unknown parameter data found for rule type %d : %s%n", ruleID, parameter);
 
 									int maxMoney = parameter.get(0).getAsInt();
-
 									List<Integer> bannedCombo = bannedComboData.compute(ruleID, (k, v) -> {
 										if (v == null) {
 											System.out.printf("W/MapColc::read - Unknown banned cat combo data found for rule type %d%n", ruleID);
-
 											return new ArrayList<>();
-										} else {
+										} else
 											return v;
-										}
 									});
-
-									for (Stage stage : map.list) {
-										if (stage.lim == null)
-											stage.lim = new Limit();
-
-										if (stage.lim.stageLimit == null) {
-											stage.lim.stageLimit = new StageLimit();
-										}
-
-										stage.lim.stageLimit.maxMoney = maxMoney;
-										stage.lim.stageLimit.bannedCatCombo.addAll(bannedCombo);
-										stage.lim.stageLimit.coolStart = true;
-									}
+									if (map.lim.isEmpty() || map.lim.get(map.lim.size() - 1).stageLimit == null)
+										map.lim.add(new Limit(new StageLimit()));
+									StageLimit slim = map.lim.get(map.lim.size() - 1).stageLimit;
+									slim.maxMoney = maxMoney;
+									slim.bannedCatCombo.addAll(bannedCombo);
+									slim.coolStart = true;
 								}
 
 								break;
@@ -384,7 +374,6 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 										System.out.printf("W/MapColc::read - Unknown parameter data found for rule type %d : %s%n", ruleID, parameter);
 
 									int globalCooldown = parameter.get(0).getAsInt();
-
 									List<Integer> bannedCombo = bannedComboData.compute(ruleID, (k, v) -> {
 										if (v == null) {
 											System.out.printf("W/MapColc::read - Unknown banned cat combo data found for rule type %d%n", ruleID);
@@ -393,16 +382,11 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 										} else
 											return v;
 									});
-
-									for (Stage stage : map.list) {
-										if (stage.lim == null)
-											stage.lim = new Limit();
-										if (stage.lim.stageLimit == null)
-											stage.lim.stageLimit = new StageLimit();
-
-										stage.lim.stageLimit.globalCooldown = globalCooldown;
-										stage.lim.stageLimit.bannedCatCombo.addAll(bannedCombo);
-									}
+									if (map.lim.isEmpty() || map.lim.get(map.lim.size() - 1).stageLimit == null)
+										map.lim.add(new Limit(new StageLimit()));
+									StageLimit slim = map.lim.get(map.lim.size() - 1).stageLimit;
+									slim.globalCooldown = globalCooldown;
+									slim.bannedCatCombo.addAll(bannedCombo);
 								}
 
 								break;
@@ -412,26 +396,18 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 									int[] multiplier = new int[parameter.size()];
 									for (int i = 0; i < parameter.size(); i++)
 										multiplier[i] = parameter.get(i).getAsInt();
+									if (map.lim.isEmpty() || map.lim.get(map.lim.size() - 1).stageLimit == null)
+										map.lim.add(new Limit(new StageLimit()));
+									StageLimit slim = map.lim.get(map.lim.size() - 1).stageLimit;
 
-									// To make program warn only once
-									boolean warned = false;
-									for (Stage stage : map.list) {
-										if (stage.lim == null)
-											stage.lim = new Limit();
-										if (stage.lim.stageLimit == null)
-											stage.lim.stageLimit = new StageLimit();
-
-										if (!warned && stage.lim.stageLimit.costMultiplier.length != multiplier.length) {
-											System.out.printf(
-                                                    "W/MapColc::read - Desynced cost multiplier data -> Original = %d, Obtained = %d, Data = [ %s ]%n",
-													stage.lim.stageLimit.costMultiplier.length,
-                                                    multiplier.length,
-                                                    Arrays.toString(multiplier)
-                                            );
-											warned = true;
-										}
-                                        System.arraycopy(multiplier, 0, stage.lim.stageLimit.costMultiplier, 0, Math.min(stage.lim.stageLimit.costMultiplier.length, multiplier.length));
-									}
+									if (slim.costMultiplier.length != multiplier.length)
+										System.out.printf(
+												"W/MapColc::read - Desynced cost multiplier data -> Original = %d, Obtained = %d, Data = [ %s ]%n",
+												slim.costMultiplier.length,
+												multiplier.length,
+												Arrays.toString(multiplier)
+										);
+									System.arraycopy(multiplier, 0, slim.costMultiplier, 0, Math.min(slim.costMultiplier.length, multiplier.length));
 								}
 								break;
 							// Cooldown Multiplier
@@ -440,26 +416,18 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 									int[] multiplier = new int[parameter.size()];
 									for (int i = 0; i < parameter.size(); i++)
 										multiplier[i] = parameter.get(i).getAsInt();
+									if (map.lim.isEmpty() || map.lim.get(map.lim.size() - 1).stageLimit == null)
+										map.lim.add(new Limit(new StageLimit()));
+									StageLimit slim = map.lim.get(map.lim.size() - 1).stageLimit;
 
-									// To make program warn only once
-									boolean warned = false;
-									for (Stage stage : map.list) {
-										if (stage.lim == null)
-											stage.lim = new Limit();
-										if (stage.lim.stageLimit == null)
-											stage.lim.stageLimit = new StageLimit();
-
-										if (!warned && stage.lim.stageLimit.cooldownMultiplier.length != multiplier.length) {
-											System.out.printf(
-													"W/MapColc::read - Desynced cooldown multiplier data -> Original = %d, Obtained = %d, Data = [ %s ]%n",
-													stage.lim.stageLimit.cooldownMultiplier.length,
-													multiplier.length,
-													Arrays.toString(multiplier)
-											);
-											warned = true;
-										}
-										System.arraycopy(multiplier, 0, stage.lim.stageLimit.cooldownMultiplier, 0, Math.min(stage.lim.stageLimit.cooldownMultiplier.length, multiplier.length));
-									}
+									if (slim.cooldownMultiplier.length != multiplier.length)
+										System.out.printf(
+												"W/MapColc::read - Desynced cost multiplier data -> Original = %d, Obtained = %d, Data = [ %s ]%n",
+												slim.cooldownMultiplier.length,
+												multiplier.length,
+												Arrays.toString(multiplier)
+										);
+									System.arraycopy(multiplier, 0, slim.cooldownMultiplier, 0, Math.min(slim.cooldownMultiplier.length, multiplier.length));
 								}
 								break;
 						}

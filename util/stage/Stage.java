@@ -90,6 +90,7 @@ public class Stage extends Data
 	public Stage(Identifier<Stage> id) {
 		this.id = id;
 		names.put("stage " + getCont().list.size());
+		lim.stageLimit = new StageLimit();
 	}
 
 	public Stage(StageMap sm) {

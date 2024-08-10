@@ -240,8 +240,8 @@ public class JsonEncoder {
 	}
 
 	private boolean defVal(Object val, String str) {
-		if (str.isEmpty())
-			return false;
+		if (str.contains("||"))
+			return defVal(val, str.substring(0, str.indexOf("||"))) || defVal(val, str.substring(str.indexOf("||")+2));
 		if (str.equals("null"))
 			return val == null;
 		if (val instanceof Byte)

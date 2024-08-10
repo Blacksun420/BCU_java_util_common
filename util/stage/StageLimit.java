@@ -1,6 +1,5 @@
 package common.util.stage;
 
-import common.CommonStatic;
 import common.io.json.JsonClass;
 import common.io.json.JsonField;
 import common.util.BattleStatic;
@@ -48,29 +47,20 @@ public class StageLimit extends Data implements BattleStatic {
         return sl;
     }
 
-    public String getHTML() {
-        StringBuilder ans = new StringBuilder();
-        if (!bannedCatCombo.isEmpty()) {
-            String[] comboData = new String[bannedCatCombo.size()];
-            ans.append("<br> Banned combos: ");
-            int i = 0;
-            for (int id : bannedCatCombo)
-                comboData[i++] = CommonStatic.def.getUILang(2, "nb" + id);
-            ans.append(String.join(", ", comboData));
-        }
-        if (maxMoney > 0)
-            ans.append("<br> Total Bank: ").append(maxMoney);
-        if (globalCooldown > 0)
-            ans.append("<br> Universal CD: ").append(globalCooldown);
-        return ans.toString();
-    }
-
     public StageLimit combine(StageLimit second) {
         StageLimit combined = new StageLimit();
-        combined.maxMoney = second.maxMoney == 0 ? maxMoney : second.maxMoney;
-        combined.globalCooldown = second.globalCooldown == 0 ? globalCooldown : second.globalCooldown;
+        combined.maxMoney = second.maxMoney == 0 ? maxMoney : Math.min(maxMoney, second.maxMoney);
+        combined.globalCooldown = second.globalCooldown == 0 ? globalCooldown : Math.max(globalCooldown, second.globalCooldown);
+        for (int i = 0; i < costMultiplier.length; i++)
+            combined.costMultiplier[i] = Math.max(costMultiplier[i], second.costMultiplier[i]);
+        for (int i = 0; i < cooldownMultiplier.length; i++)
+            combined.cooldownMultiplier[i] = Math.max(cooldownMultiplier[i], second.cooldownMultiplier[i]);
         combined.bannedCatCombo.addAll(bannedCatCombo);
         combined.bannedCatCombo.addAll(second.bannedCatCombo);
         return combined;
+    }
+
+    public boolean isBlank() {
+        return maxMoney == 0 && globalCooldown == 0 && defCD() && defMoney() && !coolStart && bannedCatCombo.isEmpty();
     }
 }

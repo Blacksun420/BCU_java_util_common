@@ -237,6 +237,13 @@ public class Unit extends Data implements AbUnit {
 		return Math.min(CommonStatic.getPrefLvs().rare[rarity].getPlusLv(), maxp);
 	}
 
+	public boolean unused() {
+		for (Form f : forms)
+			if (!f.unused())
+				return false;
+		return true;
+	}
+
 	@Override
 	public String toString() {
 		String desp = MultiLangCont.get(forms == null ? null : forms[0]);

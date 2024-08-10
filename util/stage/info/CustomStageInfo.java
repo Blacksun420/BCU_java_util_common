@@ -1,7 +1,6 @@
 package common.util.stage.info;
 
 import com.google.gson.JsonObject;
-import common.CommonStatic;
 import common.io.json.JsonClass;
 import common.io.json.JsonDecoder;
 import common.io.json.JsonField;
@@ -54,33 +53,6 @@ public class CustomStageInfo implements StageInfo {
         st.info = this;
         if (st.getMC() instanceof PackMapColc)
             ((PackMapColc)st.getMC()).si.add(this);
-    }
-
-    @Override
-    public String getHTML() {
-        StringBuilder ans = new StringBuilder();
-        ans.append("<html>");
-        if (st.getCont().stageLimit != null)
-            ans.append(st.getCont().stageLimit.getHTML());
-        if (!stages.isEmpty()) {
-            ans.append("<table><tr><th>List of Followup Stages:</th></tr>");
-            for (int i = 0; i < stages.size(); i++)
-                ans.append("<tr><td>")
-                        .append(stages.get(i).getCont().toString())
-                        .append(" - ")
-                        .append(stages.get(i).toString())
-                        .append("</td><td>")
-                        .append(df.format(chances.get(i)))
-                        .append("%</td></tr>");
-        }
-        if (ubase != null)
-            ans.append("Unit Base: ").append(ubase).append(" (").append(CommonStatic.def.lvText(ubase, lv)[0]).append(")");
-        if (!rewards.isEmpty()) {
-            ans.append("<table><tr><th>List of Unit Rewards:</th></tr>");
-            for (int i = 0; i < rewards.size(); i++)
-                ans.append("<tr><td>").append(rewards.get(i).toString()).append("</td></tr>");
-        }
-        return ans.toString();
     }
 
     @Override
