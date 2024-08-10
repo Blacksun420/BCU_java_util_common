@@ -132,7 +132,7 @@ public class StageBasis extends BattleObj {
 		int bank = maxBankLimit();
 		if (bank > 0) {
 			work_lv = 8;
-			money = maxBankLimit() * 100;
+			money = bank * 100;
 		} else {
 			work_lv = 1 + elu.getInc(C_M_LV);
 			money = elu.getInc(C_M_INI) * 100;

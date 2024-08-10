@@ -269,7 +269,10 @@ public class JsonEncoder {
 			}
 			return (boolean) val.getClass().getMethod(str).invoke(val);
 		} catch (Exception e) {
-			System.out.println("Failed checking def for " + val.getClass() + ": " + val + " on " + obj.getClass());
+			if (val != null)
+				System.out.println("Failed checking def for " + val.getClass() + ": " + val + " on " + obj.getClass());
+			else
+				System.out.println("Failed checking def for " + str + " on " + obj.getClass());
 			e.printStackTrace();//Return false without jsonException because this doesn't interfere with json encoding
 		}
 		return false;

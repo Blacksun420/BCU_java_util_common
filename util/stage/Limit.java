@@ -60,7 +60,7 @@ public class Limit extends Data implements BattleStatic {
 	public CharaGroup group;
 	@JsonField(alias = Identifier.class, defval = "null")
 	public LvRestrict lvr;
-	@JsonField(defval = "isBlank")
+	@JsonField(defval = "null||isBlank")
 	public StageLimit stageLimit;
 
 	@JsonField(io = JsonField.IOType.R)

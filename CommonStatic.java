@@ -126,7 +126,7 @@ public class CommonStatic {
 		@JsonField(defval = "0")
 		public int levelLimit = 0;
 		// Lang
-		public Lang.Locale lang;
+		public Lang.Locale lang = Lang.Locale.EN;
 		/**
 		 * Restoration target backup file, null means none
 		 */
