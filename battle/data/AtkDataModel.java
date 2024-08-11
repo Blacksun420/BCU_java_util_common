@@ -183,7 +183,7 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 	}
 
 	public void checkAvail(String str) {
-		if (ce.hits == null || ce.hits.size() == 0)
+		if (ce.hits == null || ce.hits.isEmpty())
 			return;
 		int[] atkInd = indexOf();
 		if (atkInd.length == 0)

@@ -52,6 +52,17 @@ public class PCoin extends Data {
 	public int[] max;
 	@JsonField(generic = int[].class, backCompat = JsonField.CompatType.FORK)
 	public final ArrayList<int[]> info = new ArrayList<>();
+	@JsonField(generic = int[][].class, backCompat = JsonField.CompatType.FORK, defval = "isEmpty||this.unusedAtk")
+	public final ArrayList<int[][]> atks = new ArrayList<>();
+
+	public boolean unusedAtk() {
+		if (du.isCommon())
+			return true;
+		for (int[][] aa : atks)
+			if (aa.length > 0)
+				return false;
+		return true;
+	}
 
 	public PCoin(CustomEntity ce) {
 		du = (CustomUnit)ce;
@@ -81,17 +92,17 @@ public class PCoin extends Data {
 					}
 				}
 
-				int[] corres = Data.get_CORRES(data[0]);
+				int[] corres = get_CORRES(data[0]);
 				if (corres[0] == -1) {
 					CommonStatic.ctx.printErr(ErrType.WARN, "new PCoin ability for " + du.getPack() + " not yet handled by BCU: " + data[0] + "\nData is " + Arrays.toString(data));
 					continue;
 				}
 				int[] trueArr;
 				switch (corres[0]) {
-					case Data.PC_P:
+					case PC_P:
 						trueArr = Arrays.copyOf(data, 3 + (du.getProc().getArr(corres[1]).getAllFields().length - (corres.length >= 3 ? corres[2] : 0)) * 2); //The Math.min is for testing
 						break;
-					case Data.PC_BASE:
+					case PC_BASE:
 						trueArr = Arrays.copyOf(data, 5);
 						break;
 					default:
@@ -107,6 +118,28 @@ public class PCoin extends Data {
 
 	public void update() {
 		full = improve(max);
+	}
+
+	public int getAtkInd(int in) {
+		int rep = 0;
+		for (int i = 0; i < in; i++) {
+			int[] type = get_CORRES(info.get(i)[0]);
+			if (type[0] == PC_P && !procSharable[type[1]])
+				rep++;
+		}
+		if (rep >= atks.size())
+			return -1;
+		return rep;
+	}
+
+	public AtkDataModel[] getAtks(MaskUnit ans, int tal) {
+		if (tal >= atks.size())
+			return new AtkDataModel[0];
+		int[][] inds = atks.get(getAtkInd(tal));
+		AtkDataModel[] as = new AtkDataModel[inds.length];
+		for (int i = 0; i < as.length; i++)
+			as[i] = (AtkDataModel)ans.getAtkModel(inds[i][0], inds[i][1]);
+		return as;
 	}
 
 	public void verify() { // TODO: lmao
@@ -215,14 +248,14 @@ public class PCoin extends Data {
 			temp = talents.clone();
 
 		talents = temp;
+		int atki = 0;
 		for (int i = 0; i < info.size(); i++) {
-			int[] type = get_CORRES(info.get(i)[0]);
-
-			if (talents[i] == 0)
+			if (talents[i] <= 0)
 				continue;
 
+			int[] type = get_CORRES(info.get(i)[0]);
 			//Targettings that come with a talent, such as Hyper Mr's
-			if (!this.trait.isEmpty() && talents[i] > 0)
+			if (!this.trait.isEmpty())
 				ans.getTraits().addAll(this.trait);
 
 			int offset = type.length >= 3 && type[0] == PC_P ? type[2] : 0;
@@ -254,7 +287,6 @@ public class PCoin extends Data {
 						tar.set(1, modifs[2] / 4);
 						tar.set(2, (modifs[2] + modifs[3]) / 4);
 						tar.set(3, modifs[1] * 20);
-
 						if (type[1] == P_MINIVOLC && tar.get(5) == 0)
 							tar.set(5, 20);
 					} else {
@@ -264,7 +296,7 @@ public class PCoin extends Data {
 						for (int j = 3; j < fieldTOT; j++)
 							tar.set(j, tar.get(j) + modifs[j]);
 					}
-				} else
+				} else if (du instanceof DataUnit || ((CustomEntity)du).common || procSharable[type[1]])
 					for (int j = 0; j < fieldTOT; j++)
 						if (tar.getAllFields()[j].getType() == Identifier.class) {
 							if (modifs[j] == 0)
@@ -285,37 +317,15 @@ public class PCoin extends Data {
 					else if (type[1] == P_ATKBASE)
 						tar.set(0, 300);
 				} else if (!((CustomEntity)du).common && !procSharable[type[1]]) {
-					for (AtkDataModel[] atkss : ((CustomEntity)ans).hits) {
-						for (AtkDataModel atk : atkss) {
-							ProcItem atks = atk.proc.getArr(type[1]);
-
-							if (type[1] == P_VOLC || type[1] == P_MINIVOLC) {
-								atks.set(0, modifs[0]);
-								atks.set(1, Math.min(modifs[1], modifs[2]));
-								atks.set(2, Math.max(modifs[1], modifs[2]));
-								for (int j = 3; j < fieldTOT; j++)
-									atks.set(j, atks.get(j) + modifs[j]);
-							} else
-								for (int j = 0; j < fieldTOT; j++)
-									if (modifs[j] > 0)
-										atks.set(j+offset, atks.get(j+offset) + modifs[j]);
-						}
+					AtkDataModel[] d = getAtks(ans, atki++);
+					if (d.length != 0)
+						improveAtks(d, type[1], modifs, fieldTOT, offset);
+					else {
+						for (AtkDataModel[] atkss : ((CustomEntity) ans).hits)
+							improveAtks(atkss, type[1], modifs, fieldTOT, offset);
+						for (AtkDataModel[] atks : ans.getSpAtks(true))
+							improveAtks(atks, type[1], modifs, fieldTOT, offset);
 					}
-					for (AtkDataModel[] atks : ans.getSpAtks(true))
-						for (AtkDataModel atk : atks) {
-							ProcItem atkp = atk.proc.getArr(type[1]);
-
-							if (type[1] == P_VOLC || type[1] == P_MINIVOLC) {
-								atkp.set(0, modifs[0]);
-								atkp.set(1, Math.min(modifs[1], modifs[2]));
-								atkp.set(2, Math.max(modifs[1], modifs[2]));
-								for (int j = 3; j < fieldTOT; j++)
-									atkp.set(j, atkp.get(j) + modifs[j]);
-							} else
-								for (int j = 0; j < fieldTOT; j++)
-									if (modifs[j] > 0)
-										atkp.set(j, atkp.get(j+offset) + modifs[j]);
-						}
 				}
 			} else if (type[0] == PC_AB || type[0] == PC_BASE)
 				ans.improve(type, type[0] == PC_BASE ? modifs[0] : 0);
@@ -333,12 +343,29 @@ public class PCoin extends Data {
 				}
 			}
 		}
-
 		return ans;
+	}
+	@SuppressWarnings("deprecation")
+	private void improveAtks(AtkDataModel[] atkss, int ptype, int[] modifs, int fieldTOT, int offset) { //ptype is type[1]
+		for (AtkDataModel atk : atkss) {
+			ProcItem atks = atk.proc.getArr(ptype);
+			if (ptype == P_VOLC || ptype == P_MINIVOLC) {
+				atks.set(0, modifs[0]);
+				atks.set(1, Math.min(modifs[1], modifs[2]));
+				atks.set(2, Math.max(modifs[1], modifs[2]));
+				for (int j = 3; j < fieldTOT; j++)
+					atks.set(j, atks.get(j) + modifs[j]);
+			} else
+				for (int j = 0; j < fieldTOT; j++)
+					if (modifs[j] > 0)
+						atks.set(j+offset, atks.get(j+offset) + modifs[j]);
+		}
 	}
 
 	public double getStatMultiplication(int mult, int[] talents) {
 		for(int i = 0; i < info.size(); i++) {
+			if (i >= talents.length)
+				break;
 			if(talents[i] == 0 || info.get(i)[0] >= PC_CORRES.length || info.get(i)[0] < 0)
 				continue;
 
@@ -365,10 +392,13 @@ public class PCoin extends Data {
 	@OnInjected
 	public void onInjected() {
 		max = info.stream().mapToInt(i -> Math.max(1, i[1])).toArray();
+		boolean old = atks.isEmpty();
 		for (int i = 0; i < info.size(); i++) {
 			int[] type = get_CORRES(info.get(i)[0]);
 			if (type[0] != PC_P)
 				continue;
+			if (old && !procSharable[type[1]])
+				atks.add(new int[0][]);
 
 			int fieldTOT = (type.length >= 3 ? -type[2] : 0) + du.getProc().getArr(type[1]).getAllFields().length * 2;
 			if (info.get(i).length - 3 == fieldTOT)
@@ -390,7 +420,7 @@ public class PCoin extends Data {
 			if (ii.length < 14)
 				ni[ii.length - 1] = 0;
 
-			int[] COR = Data.get_CORRES(ii[0]);
+			int[] COR = get_CORRES(ii[0]);
 			if (COR[0] == 5) {
 				if (COR[1] == P_IMUWAVE && COR[5] >= 100)
 					ni[0] = 23;//Port old waveblock talent
