@@ -49,8 +49,9 @@ public class StageLimit extends Data implements BattleStatic {
 
     public StageLimit combine(StageLimit second) {
         StageLimit combined = new StageLimit();
-        combined.maxMoney = second.maxMoney == 0 ? maxMoney : Math.min(maxMoney, second.maxMoney);
-        combined.globalCooldown = second.globalCooldown == 0 ? globalCooldown : Math.max(globalCooldown, second.globalCooldown);
+        combined.maxMoney = maxMoney == 0 ? second.maxMoney : second.maxMoney == 0 ? maxMoney : Math.min(maxMoney, second.maxMoney);
+        combined.globalCooldown = globalCooldown == 0 ? second.globalCooldown : second.globalCooldown == 0 ? globalCooldown : Math.max(globalCooldown, second.globalCooldown);
+        combined.coolStart = coolStart || second.coolStart;
         for (int i = 0; i < costMultiplier.length; i++)
             combined.costMultiplier[i] = Math.max(costMultiplier[i], second.costMultiplier[i]);
         for (int i = 0; i < cooldownMultiplier.length; i++)

@@ -1885,7 +1885,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 						}
 					}
 					if (counter.maxDamage != 0) {
-						int lim = (int)(counter.maxDamage * (float)(FDmg / atk.atk));
+						int lim = (int)(counter.maxDamage * ((float)(FDmg) / atk.atk));
 						reflectAtk = Math.min(reflectAtk, counter.maxDamage < 0 ? Math.min(-lim, (int) health) : lim);
 					}
                     if (status.weak[0] > 0)

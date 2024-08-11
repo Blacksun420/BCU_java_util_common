@@ -54,7 +54,6 @@ public class ELineUp extends BattleObj {
 					price[i][j] = price[i][j] * lim.stageLimit.costMultiplier[r] / 100;
 					maxC[i][j] = maxC[i][j] * lim.stageLimit.cooldownMultiplier[r] / 100;
 				}
-
 				spData[i][j] = lu.efs[i][j] instanceof EForm && ((EForm) lu.efs[i][j]).du.getProc().SPIRIT.exists() ? ((EForm)lu.efs[i][j]).du.getProc().SPIRIT : null;
 				scount[i][j] = spData[i][j] == null ? -1 : 0;
 			}
