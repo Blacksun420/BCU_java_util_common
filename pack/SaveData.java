@@ -88,16 +88,12 @@ public class SaveData {
 
     public boolean locked(AbForm f) {
         if (pack.syncPar.contains(f.getID().pack)) {
-            PackData.UserPack upack = UserProfile.getUserPack(f.getID().pack);
-            if (!upack.save.locked(f))
+            if (!UserProfile.getUserPack(f.getID().pack).save.locked(f))
                 return false;
-        } else if (f.getID().pack.equals(Identifier.DEF)) {
-            for (String par : pack.syncPar) {
-                PackData.UserPack upack = UserProfile.getUserPack(par);
-                if (!upack.save.locked(f))
+        } else if (f.getID().pack.equals(Identifier.DEF))
+            for (String par : pack.syncPar)
+                if (!UserProfile.getUserPack(par).save.locked(f))
                     return false;
-            }
-        }
         return (!pack.defULK.containsKey(f.unit()) || pack.defULK.get(f.unit()) < f.getFid()) &&
                 (!ulkUni.containsKey(f.unit()) || ulkUni.get(f.unit()) < f.getFid());
     }

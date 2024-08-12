@@ -407,9 +407,7 @@ public abstract class PackData implements IndexContainer {
 
 		public void delete() {
 			unregister();
-
 			UserProfile.profile().packmap.remove(getSID());
-
 			source.delete();
 		}
 

@@ -1029,9 +1029,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			e.status.revs[1] = deadAnim;
 			int maxR = maxRevHealth();
 			if (maxR > 100)
-				e.health = e.maxH = Math.min(Integer.MAX_VALUE, e.maxH * maxR / 100);
-			else
-				e.health = e.maxH * maxR / 100;
+				e.maxH = Math.min(Integer.MAX_VALUE, e.maxH * maxR / 100);
+			e.health = e.maxH * maxR / 100;
 
 			if (c == 1)
 				e.status.revs[0] -= e.getTime();
@@ -2533,7 +2532,6 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			hit--;
 
 		auras.updateAuras();
-
 		// being frozen doesn't invalidate neither reactions nor walking readiness:
 		// entities still change animation while frozen based on collisions
 		// entities move in the same frame freeze proc ends
@@ -2544,11 +2542,11 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 		// update revive status, save acted
 		zx.updateRevive();
+		canAct &= status.revs[1] == 0;
 		// check touch after KB or move
 		checkTouch();
-
 		// update burrow state if not stopped
-		if (nstop && !skipSpawnBurrow) {
+		if (nstop && !skipSpawnBurrow && status.revs[1] == 0) {
 			updateBurrow();
 			canAct &= kbTime == 0;
 		}
