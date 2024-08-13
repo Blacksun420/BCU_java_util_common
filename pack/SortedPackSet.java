@@ -9,7 +9,7 @@ import java.util.function.Predicate;
 public class SortedPackSet<T extends Comparable<? super T>> implements Set<T>, Cloneable, java.io.Serializable {
     static final long serialVersionUID = 1L;
 
-    private class Itr implements Iterator<T> {
+    public class Itr implements Iterator<T> {
         private int ind = 0;
         @Override
         public boolean hasNext() {

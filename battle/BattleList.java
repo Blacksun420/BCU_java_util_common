@@ -10,7 +10,7 @@ import java.util.Iterator;
 public class BattleList<T extends Comparable<? super T>> implements Collection<T>, java.io.Serializable {
     static final long serialVersionUID = 1L;
 
-    private class Itr implements Iterator<T> {
+    public class Itr implements Iterator<T> {
         private int ind = 0;
         @Override
         public boolean hasNext() {
