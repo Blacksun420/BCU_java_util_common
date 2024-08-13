@@ -66,8 +66,8 @@ public class CommonStatic {
 
 		// Available data for orb, will be used for GUI
 		// Map<Type, Map<Trait, Grades>>
-		public final Map<Integer, Map<Integer, List<Integer>>> ORB = new TreeMap<>();
-		public final Map<Integer, Integer> DATA = new HashMap<>();
+		public final Map<Byte, Map<Integer, List<Byte>>> ORB = new TreeMap<>();
+		public final Map<Byte, Integer> DATA = new HashMap<>();
 		public final SortedPackSet<DemonSoul> demonSouls = new SortedPackSet<>();
 
 		public FakeImage[] TYPES;
@@ -250,7 +250,6 @@ public class CommonStatic {
 			Level rv = rare[f.unit.rarity];
 			if (Math.min(f.unit.max, lv.getLv()) + Math.min(f.unit.maxp, lv.getPlusLv()) != Math.min(f.unit.max, rv.getLv()) + Math.min(f.unit.maxp, rv.getPlusLv()))
 				return false;
-			int[] rnp = rv.getTalents(), lnp = lv.getTalents();
 			PCoin pc = f.du.getPCoin();
 			if (pc == null) {
 				for (Form ff : f.unit.forms)
@@ -259,13 +258,14 @@ public class CommonStatic {
 				if (pc == null)
 					return true;
 			}
+			int[] rnp = rv.getTalents(), lnp = lv.getTalents();
 			for (int i = 0; i < Math.min(rnp.length, lnp.length); i++)
 				if (lnp[i] != Math.min(rnp[i], pc.max[i]))
 					return false;
 			for (int i = rnp.length; i < Math.min(lnp.length, pc.max.length); i++)
 				if (lnp[i] < pc.max[i])
 					return false;
-			return true;
+			return Arrays.deepEquals(lv.getOrbs(), rv.getOrbs());
 		}
 	}
 

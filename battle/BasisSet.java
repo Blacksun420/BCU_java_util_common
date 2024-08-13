@@ -90,27 +90,23 @@ public class BasisSet extends Basis implements Copable<BasisSet> {
 
 							for(int[] o : orb) {
 								if(conditionalOrb(o[ORB_TYPE])) {
-									if(o[ORB_TYPE] == ORB_STRONG && str) {
+									if(o[ORB_TYPE] == ORB_STRONG && str)
 										filteredOrb.add(o);
-									} else if(o[ORB_TYPE] == ORB_MASSIVE && mas) {
+									else if(o[ORB_TYPE] == ORB_MASSIVE && mas)
 										filteredOrb.add(o);
-									} else if(o[ORB_TYPE] == ORB_RESISTANT && res) {
+									else if(o[ORB_TYPE] == ORB_RESISTANT && res)
 										filteredOrb.add(o);
-									}
-								} else {
+								} else
 									filteredOrb.add(o);
-								}
 							}
 
-							if(filteredOrb.size() == 0) {
+							if(filteredOrb.isEmpty()) {
 								l.setOrbs(null);
 							} else {
 								int[][] newOrb = new int[filteredOrb.size()][];
 
-								for(int i = 0; i < newOrb.length; i++) {
+								for(int i = 0; i < newOrb.length; i++)
 									newOrb[i] = filteredOrb.get(i);
-								}
-
 								l.setOrbs(newOrb);
 							}
 						}

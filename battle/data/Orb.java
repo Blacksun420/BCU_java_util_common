@@ -18,7 +18,7 @@ import java.util.*;
 
 public class Orb extends Data {
 
-	public static final int[] orbTrait = {
+	public static final byte[] orbTrait = {
 			Data.TRAIT_RED, Data.TRAIT_FLOAT, Data.TRAIT_BLACK, Data.TRAIT_METAL, Data.TRAIT_ANGEL, Data.TRAIT_ALIEN,
 			Data.TRAIT_ZOMBIE, Data.TRAIT_RELIC, Data.TRAIT_WHITE, Data.TRAIT_EVA, Data.TRAIT_WITCH, Data.TRAIT_DEMON
 	};
@@ -28,7 +28,7 @@ public class Orb extends Data {
 		try {
 			Queue<String> traitData = VFile.readLine("./org/data/equipment_attribute.csv");
 
-			int key = 0;
+			byte key = 0;
 
 			for (String line : traitData) {
 				if (line == null || line.startsWith("//") || line.isEmpty())
@@ -43,10 +43,8 @@ public class Orb extends Data {
 						continue;
 
 					int t = CommonStatic.parseIntN(strs[i]);
-
-					if (t == 1) {
+					if (t == 1)
 						value |= 1 << orbTrait[i];
-					}
 				}
 
 				aux.DATA.put(key, value);
@@ -60,34 +58,30 @@ public class Orb extends Data {
 			JSONArray lists = jdata.getJSONArray("ID");
 
 			for (int i = 0; i < lists.length(); i++) {
-				if (!(lists.get(i) instanceof JSONObject)) {
+				if (!(lists.get(i) instanceof JSONObject))
 					continue;
-				}
 
 				JSONObject obj = (JSONObject) lists.get(i);
+				byte trait = (byte)obj.getInt("attribute");
+				byte type = (byte)obj.getInt("content");
+				byte grade = (byte)obj.getInt("gradeID");
 
-				int trait = obj.getInt("attribute");
-				int type = obj.getInt("content");
-				int grade = obj.getInt("gradeID");
-
-				Map<Integer, List<Integer>> orb;
+				Map<Integer, List<Byte>> orb;
 
 				if(aux.ORB.containsKey(type))
 					orb = aux.ORB.get(type);
 				else
 					orb = new TreeMap<>();
 
-				List<Integer> grades;
+				List<Byte> grades;
 
-				if(orb.containsKey(aux.DATA.get(trait))) {
+				if(orb.containsKey(aux.DATA.get(trait)))
 					grades = orb.get(aux.DATA.get(trait));
-				} else {
+				else
 					grades = new ArrayList<>();
-				}
 
-				if(!grades.contains(grade)) {
+				if(!grades.contains(grade))
 					grades.add(grade);
-				}
 
 				orb.put(aux.DATA.get(trait), grades);
 
@@ -124,9 +118,8 @@ public class Orb extends Data {
 
 				if(strs.length == 2) {
 					f.orbs = new Orb(slots);
-				} else {
+				} else
 					f.orbs = new Orb(slots, new int[] { CommonStatic.parseIntN(strs[2]), CommonStatic.parseIntN(strs[3]) });
-				}
 			}
 
 			String pre = "./org/page/orb/equipment_";
@@ -147,8 +140,8 @@ public class Orb extends Data {
 	}
 
 	public static int reverse(int value) {
-		Map<Integer, Integer> DATA = CommonStatic.getBCAssets().DATA;
-		for (int n : DATA.keySet()) {
+		Map<Byte, Integer> DATA = CommonStatic.getBCAssets().DATA;
+		for (byte n : DATA.keySet()) {
 			int v = DATA.get(n);
 			if (DATA.get(n) != null && v == value)
 				return n;
@@ -161,7 +154,6 @@ public class Orb extends Data {
 			if(orbTrait[i] == trait)
 				return 1 << i;
 		}
-
 		return -1;
 	}
 

@@ -2147,12 +2147,12 @@ public class Data {
 	public static final float SNIPER_POS = 442.5f;
 	public static final byte REVIVE_SHOW_TIME = 14;
 
-	public static final int ORB_ATK = 0;
-	public static final int ORB_RES = 1;
-	public static final int ORB_STRONG = 2;
-	public static final int ORB_MASSIVE = 3;
-	public static final int ORB_RESISTANT = 4;
-	public static final int ORB_TYPE = 0, ORB_TRAIT = 1, ORB_GRADE = 2, ORB_TOT = 3;
+	public static final byte ORB_ATK = 0;
+	public static final byte ORB_RES = 1;
+	public static final byte ORB_STRONG = 2;
+	public static final byte ORB_MASSIVE = 3;
+	public static final byte ORB_RESISTANT = 4;
+	public static final byte ORB_TYPE = 0, ORB_TRAIT = 1, ORB_GRADE = 2, ORB_TOT = 3;
 
 	public static final short[] ORB_ATK_MULTI = { 100, 200, 300, 400, 500 }; // Atk orb multiplication
 	public static final byte[] ORB_RES_MULTI = { 4, 8, 12, 16, 20 }; // Resist orb multiplication
