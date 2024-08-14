@@ -88,6 +88,19 @@ public class UpdateCheck {
 		public AssetJson[] assets;
 		public String[] pc_libs;
 		public int music;
+
+		private UpdateJson merge(UpdateJson other) {
+			int ol = assets.length;
+			assets = Arrays.copyOf(assets, ol + other.assets.length);
+			System.arraycopy(other.assets, 0, assets, ol, other.assets.length);
+			if (other.pc_libs != null) {
+				ol = pc_libs.length;
+				pc_libs = Arrays.copyOf(pc_libs, ol + other.pc_libs.length);
+				System.arraycopy(other.pc_libs, 0, pc_libs, ol, other.pc_libs.length);
+			}
+			music = Math.max(music, other.music);
+			return this;
+		}
 	}
 
 	private static final String REG_REQLIB = "required_asset";
@@ -102,13 +115,14 @@ public class UpdateCheck {
 				"110400", "110403", "110500", "110503", "110504", "110505", "110506", "110600", "110603", "110604",
 				"110700", "110703", "110800", "110900", "110903", "111000", "111003", "111005", "120000", "120100",
 				"120200", "120203", "120300", "120400", "120500", "120503", "120600", "120700", "130000", "130100",
-				"130200", "130300"
+				"130200", "130300", "fork_essentials"
 		);
 	}
 
 	public static final String REPO = "Blacksun420/sun-";
 	public static final String UPSTREAM = "battlecatsultimate/";
 	public static final String URL_UPDATE = "https://raw.githubusercontent.com/battlecatsultimate/bcu-page/master/api/updateInfo.json";
+	public static final String URL_UPDATE_R = "https://raw.githubusercontent.com/" + REPO + "bcu-assets/master/assets/updateInfo.json";
 	public static final String URL_LIB = "https://github.com/battlecatsultimate/bcu-assets/raw/master/BCU_lib/";
 	public static final String URL_MUSIC = "https://github.com/battlecatsultimate/bcu-assets/raw/master/music/";
 	public static final String URL_NEW = "https://github.com/battlecatsultimate/bcu-assets/raw/master/assets/";
@@ -138,6 +152,8 @@ public class UpdateCheck {
 			if (local != null && local.contains("asset_" + aj.id))
 				continue;
 			String url = URL_NEW + aj.id + ".asset.bcuzip";
+			if (aj.id.contains("fork_essentials"))
+				url = url.replace(UPSTREAM, REPO);
 			File temp = CommonStatic.ctx.getAssetFile("./assets/.asset.bcuzip.temp");
 			File target = CommonStatic.ctx.getAssetFile("./assets/" + aj.id + ".asset.bcuzip");
 			set.add(new Downloader(target, temp, aj.desc, false, url));
@@ -304,10 +320,14 @@ public class UpdateCheck {
 
 	public static UpdateJson checkUpdate() throws Exception {
 		JsonElement update = WebFileIO.read(URL_UPDATE);
-
 		if (update == null)
 			return null;
-		return JsonDecoder.decode(update, UpdateJson.class);
+
+		UpdateJson uj = JsonDecoder.decode(update, UpdateJson.class);
+		update = WebFileIO.read(URL_UPDATE_R);
+		if (update == null)
+			return uj;
+		return uj.merge(JsonDecoder.decode(update, UpdateJson.class));
 	}
 
 }

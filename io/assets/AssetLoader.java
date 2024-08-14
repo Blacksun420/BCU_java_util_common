@@ -125,7 +125,8 @@ public class AssetLoader {
 
 				String fileName = f.getName().substring(0, f.getName().indexOf('.'));
 				if(!CommonStatic.isInteger(fileName)) {
-					Map<String, File> sub = map.computeIfAbsent("custom", k -> new TreeMap<>());
+					Map<String, File> sub = map.computeIfAbsent(fileName.contains("fork_essentials") ? "fork_essentials"
+							: "custom", k -> new TreeMap<>());
 					sub.put(fileName, f);
 				} else {
 					String pre = fileName.substring(0, 2);
@@ -138,7 +139,7 @@ public class AssetLoader {
 			for (Entry<String, Map<String, File>> emain : map.entrySet()) {
 				String targetName;
 
-				if(emain.getKey().equals("custom"))
+				if(!CommonStatic.isInteger(emain.getKey()))
 					targetName = "./assets/" + emain.getKey() + ".assets.bcuzips";
 				else
 					targetName = "./assets/" + emain.getKey() + "xxxx.assets.bcuzips";
@@ -168,8 +169,7 @@ public class AssetLoader {
 					fis = new FileInputStream(efile);
 					stream(fos, fis);
 					fis.close();
-					if(!efile.getName().endsWith("custom.asset.bcuzip"))
-						Context.delete(efile);
+					Context.delete(efile);
 				}
 				fos.flush();
 				fos.close();

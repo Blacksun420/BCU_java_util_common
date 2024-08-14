@@ -256,7 +256,7 @@ public class CommonStatic {
 					if (ff.du.getPCoin() != null && (pc == null || ff.du.getPCoin().max.length >= pc.max.length))
 						pc = ff.du.getPCoin();
 				if (pc == null)
-					return true;
+					return Arrays.deepEquals(lv.getOrbs(), rv.getOrbs());
 			}
 			int[] rnp = rv.getTalents(), lnp = lv.getTalents();
 			for (int i = 0; i < Math.min(rnp.length, lnp.length); i++)

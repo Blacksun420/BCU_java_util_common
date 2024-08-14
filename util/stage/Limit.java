@@ -197,6 +197,6 @@ public class Limit extends Data implements BattleStatic {
 	}
 
 	public boolean none() {
-		return star + fa + rare + line + min + max + star + fa == 0 && group == null && lvr == null && (stageLimit == null || stageLimit.isBlank());
+		return fa + rare + line + num + min + max + fa == 0 && group == null && lvr == null && (stageLimit == null || stageLimit.isBlank());
 	}
 }
