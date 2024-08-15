@@ -17,10 +17,10 @@ import common.pack.Source.ZipSource;
 import common.util.Data;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -270,7 +270,7 @@ public class UserProfile {
 
 	public static UserPack readJsonPack(File f) throws Exception {
 		File folder = f.getName().length() == 9 ? f.getParentFile() : new File(f.getParentFile().getPath() + "/" + f.getName().substring(5, f.getName().indexOf("."))); //pack.json : pack_ID.json
-		Reader r = new InputStreamReader(Files.newInputStream(f.toPath()), StandardCharsets.UTF_8);
+		Reader r = new InputStreamReader(new FileInputStream(f), StandardCharsets.UTF_8);
 		JsonElement elem = JsonParser.parseReader(r);
 		r.close();
 		PackDesc desc = JsonDecoder.decode(elem.getAsJsonObject().get("desc"), PackDesc.class);
@@ -330,7 +330,7 @@ public class UserProfile {
 	}
 
 	public static void loadData(File f) throws Exception {
-		InputStreamReader isr = new InputStreamReader(Files.newInputStream(f.toPath()), StandardCharsets.UTF_8);
+		InputStreamReader isr = new InputStreamReader(new FileInputStream(f), StandardCharsets.UTF_8);
 		JsonElement elem = JsonParser.parseReader(isr);
 		String id = elem.getAsJsonObject().get("pack").getAsString();
 		UserPack pk = UserProfile.getUserPack(id);

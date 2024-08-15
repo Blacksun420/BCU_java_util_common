@@ -362,7 +362,7 @@ public class PCoin extends Data {
 		}
 	}
 
-	public double getStatMultiplication(int mult, int[] talents) {
+	public double getStatMultiplication(byte mult, int[] talents) {
 		for(int i = 0; i < info.size(); i++) {
 			if (i >= talents.length)
 				break;
