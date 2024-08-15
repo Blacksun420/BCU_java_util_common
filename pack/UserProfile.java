@@ -216,7 +216,7 @@ public class UserProfile {
 
 		profile.pending = null;
 		profile.packlist.addAll(profile.failed);
-		CommonStatic.getConfig().packCombos.keySet().removeIf(k -> !profile.packmap.containsKey(k));
+		CommonStatic.getConfig().excludeCombo.removeIf(k -> !profile.packmap.containsKey(k) || profile.packmap.get(k).combos.isEmpty());
 
 		for (PackData.UserPack pk : queue)
 			checkMissingParents(pk);
@@ -254,7 +254,7 @@ public class UserProfile {
 	public static void checkMissingParents(UserPack pk) {
 		SortedPackSet<String> deps = pk.preGetDependencies();
 		deps.removeIf(profile.packmap::containsKey);
-		if (deps.size() > 0)
+		if (!deps.isEmpty())
 			CommonStatic.ctx.printErr(ErrType.WARN, pk.desc.names + " (" + pk.desc.id + ")"
 					+ " requires parent packs you don't have, which are: " + deps);
 	}
@@ -404,11 +404,9 @@ public class UserProfile {
 		if (!canAdd(deps))
 			return false;
 
-		CommonStatic.ctx.loadProg(1.0 * packmap.size() / pending.size(), "Reading " + (pack.desc.names.toString().equals("") ? pack.desc.name.equals("") ? pack.desc.id : pack.desc.name : pack.desc.names.toString()) + " data...");
+		CommonStatic.ctx.loadProg(1.0 * packmap.size() / pending.size(), "Reading " + (pack.desc.names.toString().isEmpty() ? pack.desc.id : pack.desc.names.toString()) + " data...");
 		if (CommonStatic.ctx.noticeErr(pack::load, ErrType.WARN, "failed to load pack " + pack.desc, () -> setStatic(CURRENT_PACK, null))) {
 			packmap.put(pack.desc.id, pack);
-			if (pack.combos.size() > 0 && !CommonStatic.getConfig().packCombos.containsKey(pack.desc.id))
-				CommonStatic.getConfig().packCombos.put(pack.desc.id, true);
 		} else
 			failed.add(pack);
 

@@ -2,6 +2,7 @@ package common.pack;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import common.CommonStatic;
 import common.battle.Treasure;
 import common.battle.data.CustomEntity;
@@ -262,8 +263,6 @@ public abstract class PackData implements IndexContainer {
 		public String id;
 		public String author;
 
-		@JsonField(io = JsonField.IOType.R)
-		public String name = "";
 		@JsonField(generic = MultiLangData.class, gen = GenType.FILL, defval = "empty")
 		public final MultiLangData names = new MultiLangData();
 		@JsonField(generic = MultiLangData.class, gen = GenType.FILL, defval = "empty")
@@ -345,10 +344,9 @@ public abstract class PackData implements IndexContainer {
 		}
 
 		@JsonDecoder.OnInjected
-		public void onInjected() {
-			//Temporary value, may need to make a separate isOlderPack function later on
-			if (Data.getVer(BCU_VERSION) < Data.getVer("0.6.4.0"))
-				names.put(name);
+		public void onInjected(JsonObject jobj) {
+			if (jobj.has("name") && !jobj.get("name").isJsonNull())
+				names.put(jobj.get("name").getAsString());
 		}
 	}
 

@@ -327,7 +327,7 @@ public class LineUp extends Data {
 		loc = new int[5];
 		CommonStatic.Config cfg = CommonStatic.getConfig();
 		for (PackData p : UserProfile.getAllPacks()) {
-			if (p instanceof PackData.UserPack && !(cfg.packCombos.containsKey(p.getSID()) && cfg.packCombos.get(p.getSID())))
+			if (cfg.excludeCombo.contains(p.getSID()))
 				continue;
 
 			for (Combo c : p.combos)

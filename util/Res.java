@@ -292,7 +292,7 @@ public class Res extends ImgCore {
 	public static void langIcons() {
 		BCAuxAssets aux = CommonStatic.getBCAssets();
 		ImgCut ic015 = ImgCut.newIns("./org/page/img015.imgcut");
-		VImg img015 = new VImg("./org/page/img015" + (CommonStatic.getConfig().lang == Locale.EN ? "_en" : "") + ".png");
+		VImg img015 = new VImg("./org/page/img015" + (CommonStatic.getConfig().langs[0] == Locale.EN ? "_en" : "") + ".png");
 		FakeImage[] parts = ic015.cut(img015.getImg());
 		aux.icon[2][ATK_SINGLE] = new VImg(parts[217]);
 		aux.icon[2][ATK_AREA] = new VImg(parts[211]);
@@ -426,11 +426,11 @@ public class Res extends ImgCore {
 	}
 
 	public static Locale decideLocale() {
-		switch (CommonStatic.getConfig().lang) {
+		switch (CommonStatic.getConfig().langs[0]) {
 			case EN:
 			case KR:
 			case JP:
-				return CommonStatic.getConfig().lang;
+				return CommonStatic.getConfig().langs[0];
 			default:
 				return Locale.EN;
 		}

@@ -19,7 +19,7 @@ public class MultiLangData extends Data {
     }
 
     public boolean put(String data) {
-        return put(lang(), data);
+        return put(langs()[0], data);
     }
 
     /**
@@ -29,7 +29,7 @@ public class MultiLangData extends Data {
      * @return True if the value in the given lang changed
      */
     public boolean put(Lang.Locale lang, String data) {
-        if (data != null && !data.isEmpty() && (lang == lang() || !toString().equals(data))) {
+        if (data != null && !data.isEmpty() && (lang == langs()[0] || !toString().equals(data))) {
             String old = dat.put(lang, data);
             return old == null || !old.equals(data);
         }
@@ -54,54 +54,33 @@ public class MultiLangData extends Data {
     @NotNull
     @Override
     public String toString() {
-        Lang.Locale lang = lang();
-        Lang.Locale[] locales = Lang.Locale.values();
+        Lang.Locale[] langs = langs();
 
-        String temp = dat.get(lang);
-        if(temp != null)
-            return temp;
-
-        for (int i = 1; i < Lang.pref.length; i++) {
-            if (i < Lang.pref[lang.ordinal()].length) {
-                if (dat.containsKey(Lang.pref[lang.ordinal()][i])) {
-                    temp = dat.get(Lang.pref[lang.ordinal()][i]);
-                    if (temp != null)
-                        return temp;
-                }
-            } else if (dat.containsKey(locales[i])) {
-                temp = dat.get(locales[i]);
-                if(temp != null)
+        String temp;
+        for (Lang.Locale lang : langs)
+            if (dat.containsKey(lang)) {
+                temp = dat.get(lang);
+                if (temp != null)
                     return temp;
             }
-        }
         return "";
     }
 
     public Lang.Locale getGrabbedLocale() {
-        Lang.Locale lang = lang();
-        Lang.Locale[] locales = Lang.Locale.values();
+        Lang.Locale[] langs = langs();
 
-        for (int i = 1; i < Lang.pref.length; i++) {
-            if (i < Lang.pref[lang.ordinal()].length) {
-                if (dat.containsKey(Lang.pref[lang.ordinal()][i])) {
-                    String temp = dat.get(Lang.pref[lang.ordinal()][i]);
-
-                    if (temp != null)
-                        return Lang.pref[lang.ordinal()][i];
-                }
-            } else if (dat.containsKey(locales[i])) {
-                String temp = dat.get(locales[i]);
-
-                if(temp != null)
-                    return locales[i];
+        String temp;
+        for (Lang.Locale lang : langs)
+            if (dat.containsKey(lang)) {
+                temp = dat.get(lang);
+                if (temp != null)
+                    return lang;
             }
-        }
-
         return Lang.Locale.EN;
     }
 
-    private static Lang.Locale lang() {
-        return CommonStatic.getConfig().lang;
+    private static Lang.Locale[] langs() {
+        return CommonStatic.getConfig().langs;
     }
 
     public void overwrite(MultiLangData ans) { //Replaces all values with the given MLD's values

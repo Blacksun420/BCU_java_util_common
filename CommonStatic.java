@@ -125,8 +125,16 @@ public class CommonStatic {
 		 */
 		@JsonField(defval = "0")
 		public int levelLimit = 0;
-		// Lang
-		public Lang.Locale lang = Lang.Locale.EN;
+		@JsonField(defval = "this.defaultLangOrder")
+		public Lang.Locale[] langs = Lang.Locale.values();
+		public boolean defaultLangOrder() {
+			Lang.Locale[] def = Lang.Locale.values();
+			for (int i = 0; i < def.length; i++)
+				if (def[i] != langs[i])
+					return false;
+			return true;
+		}
+
 		/**
 		 * Restoration target backup file, null means none
 		 */
@@ -204,8 +212,8 @@ public class CommonStatic {
 		/**
 		 * Store whether to apply the combos from a given pack or not
 		 */
-		@JsonField(generic = { String.class, Boolean.class }, defval = "isEmpty")
-		public HashMap<String, Boolean> packCombos = new HashMap<>();
+		@JsonField(generic = { String.class }, defval = "isEmpty")
+		public HashSet<String> excludeCombo = new HashSet<>();
 
 		/**setLvs
 		 * Use progression mode to store save data
@@ -318,9 +326,9 @@ public class CommonStatic {
 		@StaticPermitted
 		public enum Locale {
 			EN("en", "English"),
-			ZH("zh", "\u4E2D\u6587"),
-			KR("kr", "\uD55C\uAD6D\uC5B4"),
-			JP("jp", "\u65E5\u672C\u8A9E"),
+			ZH("zh", "中文"),
+			KR("kr", "한국어"),
+			JP("jp", "日本語"),
 			RU("ru", "Русский"),
 			DE("de", "Deutsche"),
 			FR("fr", "Français"),
@@ -337,23 +345,9 @@ public class CommonStatic {
 
 			@Override
 			public String toString() {
-				return name;
+				return code;
 			}
 		}
-
-		@StaticPermitted
-		public static final Locale[][] pref = {
-				{ Locale.EN, Locale.FR, Locale.IT, Locale.ES, Locale.DE, Locale.RU, Locale.JP, Locale.ZH, Locale.KR },
-				{ Locale.ZH, Locale.JP, Locale.EN, Locale.KR },
-				{ Locale.KR, Locale.JP, Locale.EN, Locale.ZH},
-				{ Locale.JP, Locale.EN, Locale.ZH, Locale.KR },
-				{ Locale.RU, Locale.EN, Locale.JP, Locale.ZH, Locale.KR },
-				{ Locale.DE, Locale.EN, Locale.JP, Locale.ZH, Locale.KR },
-				{ Locale.FR, Locale.EN, Locale.JP, Locale.ZH, Locale.KR },
-				{ Locale.ES, Locale.EN, Locale.JP, Locale.ZH, Locale.KR },
-				{ Locale.IT, Locale.EN, Locale.JP, Locale.ZH, Locale.KR },
-				{ Locale.TH, Locale.EN, Locale.JP, Locale.ZH, Locale.KR }
-		};
 	}
 
 	@StaticPermitted(StaticPermitted.Type.ENV)

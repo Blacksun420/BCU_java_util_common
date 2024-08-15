@@ -13,7 +13,8 @@ public class JsonException extends Exception {
 
 	public JsonException(Object sus, Exception cause, Object f, Object elem) {
 		super(getMain(true, sus) + " in Field " + f, cause.getCause());
-		setStackTrace(cause.getCause().getStackTrace()); //Funny MethodInvocationException
+		if (cause.getCause() != null)
+			setStackTrace(cause.getCause().getStackTrace()); //Funny MethodInvocationException
 		System.out.println("Element causing error below: " + elem); //Keeps walls of text off the UI
 	}
 

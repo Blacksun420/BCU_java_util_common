@@ -20,10 +20,7 @@ import common.util.anim.AnimCE;
 import common.util.anim.AnimU;
 import common.util.lang.MultiLangCont;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 @JCGeneric(Identifier.class)
 @JsonClass
@@ -165,10 +162,10 @@ public class Unit extends Data implements AbUnit {
 	}
 
 	public List<Combo> allCombo() {
-		List<Combo> ans = new ArrayList<>();
+		List<Combo> ans = new LinkedList<>();
 		List<Combo> comboList = UserProfile.getBCData().combos.getList();
 		UserProfile.getUserPacks().forEach(p -> {
-			if (CommonStatic.getConfig().packCombos.containsKey(p.desc.id) && CommonStatic.getConfig().packCombos.get(p.desc.id))
+			if (!CommonStatic.getConfig().excludeCombo.contains(p.desc.id))
 				comboList.addAll(p.combos.getList());
 		});
 		for (Combo c : comboList)

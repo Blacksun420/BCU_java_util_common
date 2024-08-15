@@ -41,7 +41,7 @@ public class MultiLangCont<I, T> extends Lang {
 		}
 
 		public String getAnimName(AnimI.AnimType<?, ?> type) {
-			int lang = CommonStatic.getConfig().lang.ordinal();
+			int lang = CommonStatic.getConfig().langs[0].ordinal();
 
 			if (!loaded_anim[lang]) {
 				loaded_anim[lang] = true;
@@ -53,25 +53,25 @@ public class MultiLangCont<I, T> extends Lang {
 	}
 
 	public static String get(Object o) {
-		return get(o, CommonStatic.getConfig().lang);
+		return get(o, CommonStatic.getConfig().langs);
 	}
 
-	public static String get(Object o, Locale lang) {
+	public static String get(Object o, Locale[] langs) {
 		if(o == null)
 			return null;
 
 		if (o instanceof MapColc)
-			return getStatic().MCNAME.getCont((MapColc) o, lang);
+			return getStatic().MCNAME.getCont((MapColc) o, langs);
 		if (o instanceof StageMap)
-			return getStatic().SMNAME.getCont((StageMap) o, lang);
+			return getStatic().SMNAME.getCont((StageMap) o, langs);
 		if (o instanceof Stage)
-			return getStatic().STNAME.getCont((Stage) o, lang);
+			return getStatic().STNAME.getCont((Stage) o, langs);
 		if (o instanceof Form)
-			return getStatic().FNAME.getCont((Form) o, lang);
+			return getStatic().FNAME.getCont((Form) o, langs);
 		if (o instanceof Enemy)
-			return getStatic().ENAME.getCont((Enemy) o, lang);
+			return getStatic().ENAME.getCont((Enemy) o, langs);
 		if (o instanceof Combo)
-			return getStatic().COMNAME.getCont((Combo) o, lang);
+			return getStatic().COMNAME.getCont((Combo) o, langs);
 		
 		return null;
 	}
@@ -112,27 +112,27 @@ public class MultiLangCont<I, T> extends Lang {
 	}
 
 	public static String getStageDrop(int id) {
-		return getStageDrop(id, CommonStatic.getConfig().lang);
+		return getStageDrop(id, CommonStatic.getConfig().langs);
 	}
 
-	public static String getStageDrop(int id, Locale lang) {
-		String trial = getStatic().RWSTNAME.getCont(id, lang);
+	public static String getStageDrop(int id, Locale[] langs) {
+		String trial = getStatic().RWSTNAME.getCont(id, langs);
 
 		if(trial == null || trial.isEmpty())
-			trial = getStatic().RWNAME.getCont(id, lang);
+			trial = getStatic().RWNAME.getCont(id, langs);
 
 		return trial;
 	}
 
 	public static String getServerDrop(int id) {
-		return getServerDrop(id, CommonStatic.getConfig().lang);
+		return getServerDrop(id, CommonStatic.getConfig().langs);
 	}
 
-	public static String getServerDrop(int id, Locale lang) {
-		String trial = getStatic().RWSVNAME.getCont(id, lang);
+	public static String getServerDrop(int id, Locale[] langs) {
+		String trial = getStatic().RWSVNAME.getCont(id, langs);
 
 		if(trial == null || trial.isEmpty())
-			trial = getStatic().RWNAME.getCont(id, lang);
+			trial = getStatic().RWNAME.getCont(id, langs);
 
 		return trial;
 	}
@@ -144,31 +144,24 @@ public class MultiLangCont<I, T> extends Lang {
 	}
 
 	public T getCont(I x) {
-		return getCont(x, CommonStatic.getConfig().lang);
+		return getCont(x, CommonStatic.getConfig().langs);
 	}
 
-	public T getCont(I x, Locale lang) {
-		int l = lang.ordinal();
-
-		for (int i = 0; i < pref[l].length; i++) {
-			T ans = getSub(pref[l][i]).get(x);
-
-			if (ans != null)
-				return ans;
-		}
+	public T getCont(I x, Locale[] lang) {
+        for (Locale locale : lang) {
+            T ans = getSub(locale).get(x);
+            if (ans != null)
+                return ans;
+        }
 		return null;
 	}
 
 	public Locale getSelectedLocale(I x) {
-		int lang = Math.max(0, Math.min(pref.length, CommonStatic.getConfig().lang.ordinal() - 1));
-
-		for(int i = 0; i < pref[lang].length; i++) {
-			T ans =  getSub(pref[lang][i]).get(x);
-
+		for(int i = 0; i < CommonStatic.getConfig().langs.length; i++) {
+			T ans = getSub(CommonStatic.getConfig().langs[i]).get(x);
 			if(ans != null)
-				return pref[lang][i];
+				return CommonStatic.getConfig().langs[i];
 		}
-
 		return Locale.EN;
 	}
 

@@ -52,7 +52,7 @@ public class AnimTypeLocale {
 	}
 
 	public static void read() {
-		Locale loc = CommonStatic.getConfig().lang;
+		Locale loc = CommonStatic.getConfig().langs[0];
 		InputStream f = CommonStatic.ctx.getLangFile("animation_type.json");
 
 		JsonElement je = JsonParser.parseReader(new InputStreamReader(f, StandardCharsets.UTF_8));
