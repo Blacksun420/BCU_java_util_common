@@ -24,7 +24,6 @@ import common.util.anim.EAnimD;
 import common.util.anim.ImgCut;
 import common.util.pack.bgeffect.BackgroundEffect;
 
-import java.awt.image.BufferedImage;
 import java.util.Queue;
 import java.util.function.Consumer;
 
@@ -315,8 +314,8 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 	public void draw(FakeGraphics g, int w, int h) {
 		check();
 
-		int groundHeight = ((BufferedImage) parts[Background.BG].bimg()).getHeight();
-		int skyHeight = top ? ((BufferedImage) parts[Background.TOP].bimg()).getHeight() : 1020 - groundHeight;
+		int groundHeight = parts[Background.BG].getHeight();
+		int skyHeight = top ? parts[Background.TOP].getHeight() : 1020 - groundHeight;
 
 		if(skyHeight < 0)
 			skyHeight = 0;
