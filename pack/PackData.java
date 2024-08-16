@@ -473,9 +473,11 @@ public abstract class PackData implements IndexContainer {
 		public SortedPackSet<String> preGetDependencies() {
 			if (!desc.dependency.isEmpty())
 				return desc.dependency;
-
+			JsonElement dobj = elem.getAsJsonObject().getAsJsonObject("desc").get("dependency");
 			SortedPackSet<String> deps = new SortedPackSet<>();
-			JsonArray jarr = elem.getAsJsonObject().getAsJsonObject("desc").get("dependency").getAsJsonArray();
+			if (dobj == null)
+				return deps;
+			JsonArray jarr = dobj.getAsJsonArray();
 			for (int i = 0; i < jarr.size(); i++)
 				deps.add(jarr.get(i).getAsString());
 			desc.dependency = deps;
