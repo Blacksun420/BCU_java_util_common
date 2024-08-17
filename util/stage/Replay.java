@@ -23,12 +23,8 @@ import common.pack.Source.Workspace;
 import common.pack.UserProfile;
 import common.util.Data;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,7 +43,7 @@ public class Replay extends Data {
 			for (File fi : f.listFiles())
 				if (fi.getName().endsWith(".replay"))
 					try {
-						InputStream fis = Files.newInputStream(fi.toPath());
+						InputStream fis = new FileInputStream(fi);
 						Replay rep = read(fis);
 						fis.close();
 						if (rep == null)

@@ -630,13 +630,13 @@ public abstract class Source {
 		}
 
 		public InputStream streamFile(String path) throws IOException {
-			return Files.newInputStream(getFile(path).toPath());
+			return new FileInputStream(getFile(path));
 		}
 
 		public OutputStream writeFile(String path) throws IOException {
 			File f = getFile(path);
 			Context.check(f);
-			return Files.newOutputStream(f.toPath());
+			return new FileOutputStream(f);
 		}
 
 		protected void save(UserPack up, boolean auto) throws IOException {

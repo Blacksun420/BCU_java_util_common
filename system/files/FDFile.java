@@ -3,8 +3,8 @@ package common.system.files;
 import common.CommonStatic;
 import common.pack.Context.ErrType;
 import common.system.fake.FakeImage;
+
 import java.io.*;
-import java.nio.file.Files;
 
 public class FDFile implements FileData {
 
@@ -18,7 +18,7 @@ public class FDFile implements FileData {
 	public byte[] getBytes() {
 		try {
 			byte[] bs = new byte[(int) file.length()];
-			BufferedInputStream buf = new BufferedInputStream(Files.newInputStream(file.toPath()));
+			BufferedInputStream buf = new BufferedInputStream(new FileInputStream(file));
 			buf.read(bs, 0, bs.length);
 			buf.close();
 			return bs;

@@ -46,7 +46,7 @@ public class AnimGroup {
 
             JsonObject obj = workspaceGroup.parseAnimGroup();
 
-            OutputStreamWriter fw = new OutputStreamWriter(Files.newOutputStream(json.toPath()), StandardCharsets.UTF_8);
+            OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(json), StandardCharsets.UTF_8);
             fw.write(obj.toString());
             fw.flush();
             fw.close();

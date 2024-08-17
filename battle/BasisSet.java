@@ -23,7 +23,6 @@ import common.util.unit.Unit;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -120,7 +119,7 @@ public class BasisSet extends Basis implements Copable<BasisSet> {
 		def();
 		File lvs = CommonStatic.ctx.getUserFile("./levels.json");
 		if (lvs.exists())
-			try (Reader r = new InputStreamReader(Files.newInputStream(lvs.toPath()), StandardCharsets.UTF_8)) {
+			try (Reader r = new InputStreamReader(new FileInputStream(lvs), StandardCharsets.UTF_8)) {
 				JsonElement je = JsonParser.parseReader(r);
 				r.close();
 				CommonStatic.Preflvs jlvs = CommonStatic.getPrefLvs();
@@ -133,7 +132,7 @@ public class BasisSet extends Basis implements Copable<BasisSet> {
 
 		File f = CommonStatic.ctx.getUserFile("./basis.json");
 		if (f.exists())
-			try (Reader r = new InputStreamReader(Files.newInputStream(f.toPath()), StandardCharsets.UTF_8)) {
+			try (Reader r = new InputStreamReader(new FileInputStream(f), StandardCharsets.UTF_8)) {
 				JsonElement je = JsonParser.parseReader(r);
 				r.close();
 				JsonElement jel = je.getAsJsonObject().get("list");
