@@ -1221,7 +1221,7 @@ public class Data {
 		@Order(0)
 		public final PTD KB = new PTD();
 		@Order(1)
-		public final PT STOP = new PT();
+		public final PTM STOP = new PTM();
 		@Order(2)
 		public final PT SLOW = new PT();
 		@Order(3)

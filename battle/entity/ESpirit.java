@@ -41,7 +41,7 @@ public class ESpirit extends EUnit {
         if (atkm.atkTime > 1)
             atkm.updateAttack();
         else
-            atkm.atkTime -= getTime();
+            atkm.atkTime -= getTimeFreeze();
         updateAnimation();
     }
 

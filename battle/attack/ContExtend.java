@@ -51,7 +51,7 @@ public class ContExtend extends ContAb {
     @Override
     public void update() {
         tempAtk = false;
-        float time = atk.attacker == null ? atk.model.b.timeFlow : atk.attacker.getTime();
+        float time = atk.attacker == null ? atk.model.b.timeFlow : atk.attacker.getTimeFreeze();
         t -= time;
         if (rept > 0)
             rept -= time;

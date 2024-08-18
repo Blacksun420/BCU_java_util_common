@@ -289,7 +289,16 @@ public class Editors {
 			}
 		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
-		map().put("STOP", pt);
+		map().put("STOP", new EditControl<>(Proc.PTM.class, (t) -> {
+			t.prob = Math.max(0, Math.min(t.prob, 100));
+			if (t.prob == 0)
+				t.mult = t.time = 0;
+			else {
+				if (t.mult >= 100)
+					t.mult = 0;
+				t.time = Math.max(t.time, 1);
+			}
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("SLOW", pt);
 

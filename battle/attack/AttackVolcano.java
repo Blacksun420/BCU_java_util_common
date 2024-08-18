@@ -43,7 +43,7 @@ public class AttackVolcano extends AttackAb {
 			volcTime = VOLC_ITV;
 			vcapt.clear();
 		} else
-			volcTime -= attacker == null ? model.b.timeFlow : attacker.getTime();
+			volcTime -= attacker == null ? model.b.timeFlow : attacker.getTimeFreeze();
 
 		if(attacker != null)
 			atk = ((AtkModelEntity)model).getEffMult(raw);

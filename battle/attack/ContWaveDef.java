@@ -69,13 +69,13 @@ public class ContWaveDef extends ContWaveAb {
 		if (maxt == t)
 			activate = false;
 		updateAnimation();
-		t += atk.attacker == null ? atk.model.b.timeFlow : atk.attacker.getTime();
+		t += atk.attacker == null ? atk.model.b.timeFlow : atk.attacker.getTimeFreeze();
 	}
 
 	@Override
 	public void updateAnimation() {
 		if (t >= 0)
-			anim.update(false, atk.attacker == null ? atk.model.b.timeFlow : atk.attacker.getTime());
+			anim.update(false, atk.attacker == null ? atk.model.b.timeFlow : atk.attacker.getTimeFreeze());
 	}
 
 	@Override

@@ -98,16 +98,16 @@ public class ContVolcano extends ContAb {
 			v.active = false;
 		} else {
 			seTime++;
-			t += v.attacker.getTime();
+			t += v.attacker.getTimeFreeze();
 			if (t >= VOLC_PRE && t <= VOLC_PRE + aliveTime)
 				sb.getAttack(v);
-			anim.update(false, v.attacker.getTime());
+			anim.update(false, v.attacker.getTimeFreeze());
 		}
 	}
 
 	@Override
 	public void updateAnimation() {
-		anim.update(false, v.attacker.getTime());
+		anim.update(false, v.attacker.getTimeFreeze());
 	}
 
 	private void updateProc() {

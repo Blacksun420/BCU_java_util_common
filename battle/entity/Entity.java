@@ -174,7 +174,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				if(i == A_B || i == A_DEMON_SHIELD || i == A_COUNTER || i == A_DMGCUT || i == A_DMGCAP || i == A_REMSHIELD)
 					continue;
 
-				if ((i == A_SLOW && e.status.stop != 0) || (i == A_UP && e.status.weak[0] != 0) || (i == A_CURSE && e.status.seal != 0))
+				if ((i == A_SLOW && e.status.stop[0] != 0) || (i == A_UP && e.status.weak[0] != 0) || (i == A_CURSE && e.status.seal != 0))
 					continue;
 
 				EAnimD<?> eae = effs[i];
@@ -399,7 +399,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		private void checkEff() {
 			if (efft == 0)
 				effs[eftp] = null;
-			if (e.status.stop == 0)
+			if (e.status.stop[0] == 0)
 				effs[A_STOP] = null;
 			if (e.status.slow == 0)
 				effs[A_SLOW] = null;
@@ -447,7 +447,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				effs[A_RAGE] = null;
 			if (e.status.hypno == 0)
 				effs[A_HYPNO] = null;
-			efft -= e.getTime();
+			efft -= e.getTimeFreeze();
 		}
 
 		/**
@@ -548,7 +548,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			checkEff();
 			updateAnimation();
 			if (dead > 0)
-				dead = Math.max(0 ,dead - e.getTime());
+				dead = Math.max(0 ,dead - e.getTimeFreeze());
 
 			if (anim.done() && anim.type == AnimU.TYPEDEF[AnimU.ENTRY])
 				setAnim(AnimU.TYPEDEF[AnimU.IDLE], true);
@@ -570,13 +570,13 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		}
 
 		private void updateAnimation() {
-			float t = e.getTime();
+			float t = e.getTimeFreeze();
 			for (EAnimD<?> eff : effs)
 				if (eff != null)
 					eff.update(false, t);
 
 			boolean checkKB = e.kb.kbType != INT_SW && e.kb.kbType != INT_WARP;
-			if (e.status.stop == 0 && (e.kbTime == 0 || checkKB)) {
+			if ((e.status.stop[0] == 0 || e.status.stop[1] != 0) && (e.kbTime == 0 || checkKB)) {
 				float rate = t;
 				if (e.status.slow == 0 && anim.type == AnimU.TYPEDEF[AnimU.WALK] || anim.type == AnimU.TYPEDEF[AnimU.RETREAT])
 					rate *= e.getSpeed(e.data.getSpeed(), 0) / (e.data.getSpeed() * 0.5f);
@@ -702,7 +702,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		 */
 		protected void updateAttack() {
 			tempAtk = -1; //set tempAtk to -1, as axis display isn't needed anymore
-			float t = e.getTime();
+			float t = e.getTimeFreeze();
 			atkTime = Math.max(0, atkTime - t);
 			if (preTime > 0) {
 				preTime = Math.max(0, preTime - t);
@@ -1033,7 +1033,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			e.health = e.maxH * maxR / 100;
 
 			if (c == 1)
-				e.status.revs[0] -= e.getTime();
+				e.status.revs[0] -= e.getTimeFreeze();
 			else if (c == 2)
 				extraRev++;
 		}
@@ -1139,7 +1139,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					anim.corpse.setTime(0);
 				}
 				if(e.kbTime == 0) {
-					rev[1] -= e.getTime();
+					rev[1] -= e.getTimeFreeze();
 					if(anim.corpse != null && anim.corpse.type == ZombieEff.REVIVE)
 						for (int i = e.spInd; i < e.data.getRevive().length; i++)
 							if (anim.corpse.len() - rev[1] >= e.data.getRevive()[i].pre) {
@@ -1246,9 +1246,9 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 		public boolean lethal;
 		public int kb, strengthen, money, dcut, dcap, poison;
-		public double slow, stop, curse, seal, wild, rage, hypno;
+		public double slow, curse, seal, wild, rage, hypno;
 		public final int[] shield = new int[2];
-		public final double[] weak = new double[2], armor = new double[2], inv = new double[2];
+		public final double[] stop = new double[2], weak = new double[2], armor = new double[2], inv = new double[2];
 		public final float[] warp = new float[3], burs = new float[2], revs = new float[2], lethargy = new float[3], speed = new float[3];
 
 		private final Entity e;
@@ -1260,8 +1260,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		/**Update proc timers*/
 		public void update() {
 			float time = e.getTime();
-			if (stop > 0)
-				stop -= time;
+			if (stop[0] > 0)
+				stop[0] -= time;
 			if (slow > 0)
 				slow -= time;
 			if (weak[0] > 0)
@@ -1293,9 +1293,11 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		 * @param pm The "another" proc
 		 */
 		public void pass(ProcManager pm) {
-			stop = Math.max(stop, pm.stop);
-			if (stop != 0)
+			if (pm.stop[0] != 0) {
+				stop[0] = Math.max(stop[0], pm.stop[0]);
+				stop[1] = Math.min(stop[1], pm.stop[1]);
 				e.anim.getEff(P_STOP);
+			}
 			slow = Math.max(slow, pm.slow);
 			if (slow != 0)
 				e.anim.getEff(P_SLOW);
@@ -1352,9 +1354,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		 */
 		public void removeActive(boolean one) {
 			e.pois.list.clear();
-			stop = slow = curse = seal = poison = one ? 1 : 0;
+			stop[0] = armor[0] = weak[0] = slow = curse = seal = poison = one ? 1 : 0;
 			speed[0] = lethargy[0] = one ? 1 : 0;
-			armor[0] = weak[0] = one ? 1 : 0;
 		}
 	}
 
@@ -1980,25 +1981,27 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		float time = atk.origin instanceof AttackCanon ? 1 : 1 + f * 0.2f / 3;
 		float dist = 1 + f * 0.1f;
 		if (atk.getProc().STOP.time != 0 || atk.getProc().STOP.prob > 0) {
-			int val = (int) (atk.getProc().STOP.time * time);
-			float rst = getResistValue(atk, true, getProc().IMUSTOP.mult);
 
+			float rst = getResistValue(atk, true, getProc().IMUSTOP.mult);
 			if (rst > 0f) {
-				val = (int) (val * rst);
-				if (val < 0)
-					status.stop = Math.max(status.stop, Math.abs(val));
-				else
-					status.stop = val;
+				int val = (int)((int)(atk.getProc().STOP.time * time) * rst);
+				double tim = atk.getProc().STOP.mult != 0 ? atk.getProc().STOP.mult : 100;
+				if (val < 0) {
+					status.stop[0] = Math.max(status.stop[0], Math.abs(val));
+					status.stop[1] = Math.max(status.stop[1], (100 - tim) / 100);
+				} else {
+					status.stop[0] = val;
+					status.stop[1] = (100 - tim) / 100;
+				}
 				anim.getEff(P_STOP);
 			} else
 				anim.getEff(INV);
 		}
-
 		if (atk.getProc().SLOW.time != 0 || atk.getProc().SLOW.prob > 0) {
-			int val = (int) (atk.getProc().SLOW.time * time);
 			float rst = getResistValue(atk, true, getProc().IMUSLOW.mult);
+
 			if (rst > 0f) {
-				val = (int) (val * rst);
+				int val = (int)((int)(atk.getProc().SLOW.time * time) * rst);
 				if (val < 0)
 					status.slow = Math.max(status.slow, Math.abs(val));
 				else
@@ -2008,11 +2011,10 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				anim.getEff(INV);
 		}
 		if (atk.getProc().WEAK.time > 0) {
-			int val = (int) (atk.getProc().WEAK.time * time);
 			float rst = getResistValue(atk, true, checkAIImmunity(atk.getProc().WEAK.mult - 100, getProc().IMUWEAK.smartImu, getProc().IMUWEAK.mult > 0) ? getProc().IMUWEAK.mult : 0);
 
 			if (rst > 0f) {
-				val = (int)(val * rst);
+				int val = (int)((int)(atk.getProc().WEAK.time * time) * rst);
 				if (val < 0)
 					status.weak[0] = Math.max(status.weak[0], Math.abs(val));
 				else
@@ -2498,7 +2500,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		barrier.update();
 
 		// do move check if available, move if possible
-		boolean nstop = status.stop == 0;
+		boolean nstop = status.stop[0] == 0 || status.stop[1] != 0;
 		boolean canAct = kbTime == 0 && anim.anim.type != AnimU.TYPEDEF[AnimU.ENTRY];
 		if (canAct && atkm.atkTime == 0 && status.revs[1] == 0) {
 			checkTouch();
@@ -2535,7 +2537,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		// being frozen doesn't invalidate neither reactions nor walking readiness:
 		// entities still change animation while frozen based on collisions
 		// entities move in the same frame freeze proc ends
-		boolean nstop = status.stop == 0;
+		boolean nstop = status.stop[0] == 0 || status.stop[1] != 0;
 		boolean canAct = kbTime == 0 && anim.anim.type != AnimU.TYPEDEF[AnimU.ENTRY];
 		// do move check if available, move if possible
 		double tba = getEffectiveTBA();
@@ -2768,7 +2770,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			mov = AIMove(mov);
 
 		anim.negSpeed = mov < 0;
-		return mov * getTime();
+		return mov * getTimeFreeze();
 	}
 
 	/**
@@ -2924,7 +2926,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		}
 		if (kbTime == -2) {
 			// burrow down
-			status.burs[1] -= getTime();
+			status.burs[1] -= getTimeFreeze();
 			for (int i = spInd; i < data.getGouge().length; i++)
 				if (anim.anim.len() - status.burs[1] >= data.getGouge()[i].pre) {
 					spInd++;
@@ -2949,7 +2951,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		}
 		if (kbTime == -4) {
 			// burrow up
-			status.burs[1] -= getTime();
+			status.burs[1] -= getTimeFreeze();
 			for (int i = spInd; i < data.getResurface().length; i++)
 				if (anim.anim.len() - status.burs[1] - 2 >= data.getResurface()[i].pre) {
 					spInd++;
@@ -3024,10 +3026,14 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		return atkm.atkTime == 0;
 	}
 
-	public float getTime() {
+	private float getTime() {
 		if ((getAbi() & AB_TIMEI) == 0)
 			return basis.timeFlow >= 1 ? 1 : basis.timeFlow;
 		return basis.timeFlow <= 1 ? 1 : basis.timeFlow;
+	}
+	public float getTimeFreeze() {
+		float base = status.stop[0] != 0 && status.stop[1] != 0 ? (float)status.stop[1] : 1;
+		return getTime() * base;
 	}
 
 	@Override
