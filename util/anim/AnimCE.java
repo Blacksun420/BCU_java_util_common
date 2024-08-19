@@ -417,6 +417,10 @@ public class AnimCE extends AnimCI {
 		new SourceAnimSaver(id, this).saveIconDeploy();
 	}
 
+	public void savePreview() {
+		new SourceAnimSaver(id, this).saveIconPreview();
+	}
+
 	public void setEdi(VImg uni) {
 		loader.setEdi(uni);
 	}
@@ -429,6 +433,10 @@ public class AnimCE extends AnimCI {
 
 	public void setUni(VImg uni) {
 		loader.setUni(uni);
+	}
+
+	public void setPreview(VImg uni) {
+		loader.setPreview(uni);
 	}
 
 	public void unSave(String str) {

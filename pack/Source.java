@@ -29,7 +29,6 @@ import common.util.unit.Unit;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -146,13 +145,11 @@ public abstract class Source {
 	@StaticPermitted
 	public static class SourceAnimLoader {
 
-		public static final String IC = "imgcut.txt";
-		public static final String MM = "mamodel.txt";
+		public static final String IC = "imgcut.txt", MM = "mamodel.txt";
 		public static final String[] MA_SOUL = { "maanim_soul.txt" };
 		public static final String[] MA_BACKGROUND = { "maanim_background.txt", "maanim_foreground.txt" };
 		public static final String SP = "sprite.png";
-		public static final String EDI = "icon_display.png";
-		public static final String UNI = "icon_deploy.png";
+		public static final String EDI = "icon_display.png", UNI = "icon_deploy.png", ICN = "icon_preview.png";
 
 		private final ResourceLocation id;
 		private final Source.SourceLoader loader;
@@ -171,11 +168,11 @@ public abstract class Source {
 				return AnimU.BGEFFECT;
 		}
 
-		public VImg getEdi() {
-			FileData edi = loader.loadFile(id.base, id, EDI);
-			if (edi == null)
+		public VImg getIcon(String path) {
+			FileData icn = loader.loadFile(id.base, id, path);
+			if (icn == null)
 				return null;
-			return new VImg(FakeImage.read(edi));
+			return new VImg(FakeImage.read(icn));
 		}
 
 		public ImgCut getIC() {
@@ -219,13 +216,6 @@ public abstract class Source {
 
 		public int getStatus() {
 			return id.pack.equals("_local") ? 0 : 1;
-		}
-
-		public VImg getUni() {
-			FileData uni = loader.loadFile(id.base, id, UNI);
-			if (uni == null)
-				return null;
-			return new VImg(FakeImage.read(uni));
 		}
 	}
 
@@ -284,20 +274,25 @@ public abstract class Source {
 
 		public void saveIconDeploy() {
 			if (anim.getUni() != null && anim.getUni() != CommonStatic.getBCAssets().slot[0] && id.base.equals(BasePath.ANIM))
-				CommonStatic.ctx.noticeErr(() -> write("icon_deploy.png", anim.getUni().getImg()), ErrType.ERROR,
+				CommonStatic.ctx.noticeErr(() -> write(SourceAnimLoader.UNI, anim.getUni().getImg()), ErrType.ERROR,
 						"Error during saving deploy icon: " + id);
 		}
-
 		public void saveIconDisplay() {
 				if (anim.getEdi() != null)
-					CommonStatic.ctx.noticeErr(() -> write("icon_display.png", anim.getEdi().getImg()), ErrType.ERROR,
+					CommonStatic.ctx.noticeErr(() -> write(SourceAnimLoader.EDI, anim.getEdi().getImg()), ErrType.ERROR,
 						"Error during saving display icon: " + id);
+		}
+		public void saveIconPreview() {
+			if (anim.loader.getPreviewIcon() != null && id.base.equals(BasePath.ANIM))
+				CommonStatic.ctx.noticeErr(() -> write(SourceAnimLoader.ICN, anim.loader.getPreviewIcon().getImg()), ErrType.ERROR,
+						"Error during saving preview icon: " + id);
 		}
 
 		public void saveImgs() {
 			saveSprite();
 			saveIconDisplay();
 			saveIconDeploy();
+			saveIconPreview();
 		}
 
 		public void saveSprite() {
@@ -427,13 +422,12 @@ public abstract class Source {
 			if (!f.exists())
 				return null;
 
-			try {//what
+			try {
 				File realFile = new File(f.getCanonicalPath()).getParentFile();
 				if (realFile != null && !realFile.getName().equals(id.id))
 					return null;
 			} catch (Exception ignored) {
 			}
-
 			return new FDFile(f);
 		}
 

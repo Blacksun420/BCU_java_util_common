@@ -17,23 +17,43 @@ public class AnimCI extends AnimU<AnimCI.AnimCIKeeper> {
 
 		public final Source.SourceAnimLoader loader;
 		private FakeImage num;
-		private boolean ediLoaded = false;
+		private boolean ediLoaded = false, prevLoaded = false;
 		private VImg edi;
 		private VImg uni;
+		private VImg preview;
 
 		private AnimCIKeeper(Source.SourceAnimLoader al) {
 			loader = al;
 		}
 
 		@Override
+		public VImg getPreviewIcon() {
+			if (prevLoaded)
+				return preview;
+			prevLoaded = true;
+			preview = loader.getIcon(Source.SourceAnimLoader.ICN);
+			return preview;
+		}
+		@Override
 		public VImg getEdi() {
 			if (ediLoaded)
 				return edi;
 			ediLoaded = true;
-			edi = loader.getEdi();
+			edi = loader.getIcon(Source.SourceAnimLoader.EDI);
 			if (edi != null)
 				edi.mark(Marker.EDI);
 			return edi;
+		}
+		@Override
+		public VImg getUni() {
+			if (uni != null)
+				return uni;
+			uni = loader.getIcon(Source.SourceAnimLoader.UNI);
+			if (uni != null)
+				uni.mark(Marker.UNI);
+			else
+				uni = CommonStatic.getBCAssets().slot[0];
+			return uni;
 		}
 
 		@Override
@@ -72,21 +92,12 @@ public class AnimCI extends AnimU<AnimCI.AnimCIKeeper> {
 				return num;
 			return num = loader.getNum();
 		}
+		public void setNum(FakeImage fimg) {
+			num = fimg;
+		}
 
 		public int getStatus() {
 			return loader.getStatus();
-		}
-
-		@Override
-		public VImg getUni() {
-			if (uni != null)
-				return uni;
-			uni = loader.getUni();
-			if (uni != null)
-				uni.mark(Marker.UNI);
-			else
-				uni = CommonStatic.getBCAssets().slot[0];
-			return uni;
 		}
 
 		public void setEdi(VImg vedi) {
@@ -95,17 +106,16 @@ public class AnimCI extends AnimU<AnimCI.AnimCIKeeper> {
 				vedi.mark(Marker.EDI);
 			ediLoaded = true;
 		}
-
-		public void setNum(FakeImage fimg) {
-			num = fimg;
-		}
-
 		public void setUni(VImg vuni) {
 			if (vuni != null) {
 				uni = vuni;
 				uni.mark(Marker.UNI);
 			} else
 				uni = CommonStatic.getBCAssets().slot[0];
+		}
+		public void setPreview(VImg vedi) {
+			preview = vedi;
+			prevLoaded = true;
 		}
 
 		@Override

@@ -19,6 +19,10 @@ public abstract class AnimU<T extends AnimU.ImageKeeper> extends AnimD<AnimU<?>,
 			UNIT
 		}
 
+		default VImg getPreviewIcon() {
+			return null;
+		}
+
 		VImg getEdi();
 
 		ImgCut getIC();
@@ -115,6 +119,10 @@ public abstract class AnimU<T extends AnimU.ImageKeeper> extends AnimD<AnimU<?>,
 
 	public final VImg getUni() {
 		return loader.getUni();
+	}
+
+	public final VImg getPreviewIcon() {
+		return loader.getPreviewIcon();
 	}
 
 	@Override

@@ -38,8 +38,12 @@ public abstract class Character extends Animable<AnimU<?>, AnimU.UType> {
     public VImg getIcon() {
         if(anim == null)
             return null;
-
         return anim.getEdi();
+    }
+    public VImg getPreview() {
+        if(anim == null)
+            return null;
+        return anim.getPreviewIcon();
     }
 
     public abstract MaskEntity getMask();
