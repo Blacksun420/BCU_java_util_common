@@ -22,6 +22,10 @@ public interface AbEnemy extends Comparable<AbEnemy>, Indexable<PackData, AbEnem
 
 	VImg getIcon();
 
+	default VImg getPreview() {
+		return null;
+	}
+
 	@Override
 	Identifier<AbEnemy> getID();
 

@@ -27,7 +27,7 @@
         "abbr_name": "stop",
         "full_name": "Freeze",
         "tooltip": null,
-        "format": "(prob)% chance to [(mult==0){freeze}(mult!=0){[(mult<0){hasten}(mult>0){slow} time down for hit enemies by (_abs(mult))%]}] for (_dispTimeF(time))",
+        "format": "(prob)% chance to [(mult==0){freeze}(mult!=0){[(mult<0){hasten}(mult>0){slow}] time down for hit enemies by (_abs(mult))%]}] for (_dispTimeF(time))",
         "class": {
             "prob": {
                 "name": "chance",
