@@ -16,20 +16,8 @@ public class ContWaveCanon extends ContWaveAb {
 
 	// used only by normal and zombie cannon
 	public ContWaveCanon(AttackWave a, float p, int id) {
-		super(a, p, CommonStatic.getBCAssets().atks[id].getEAnim(NyType.ATK), 9, -3);
-		canid = id;
-		soundEffect = SE_CANNON[canid][1];
-
-		waves = new HashSet<>();
-		waves.add(this);
-		// hitframe offset + (waves attack period) * (number of waves - 1) + ending linger
-		maxt = 3 + (W_TIME + 1) * (a.proc.WAVE.lv + 1 - 1) + 4;
-
-		if (id != 0) {
-			anim.setTime(1);
-			maxt -= 1;
-		}
-	}
+		this(a, p, id, 3 + (W_TIME + 1) * a.proc.WAVE.lv + 4, new HashSet<>());
+	} // maxTime = hitframe offset + (waves attack period) * (number of waves - 1) + ending linger
 
 	public ContWaveCanon(AttackWave a, float p, int id, int maxTime, Set<ContWaveAb> waves) {
 		super(a, p, CommonStatic.getBCAssets().atks[id].getEAnim(NyType.ATK), 9, 0);
@@ -44,6 +32,8 @@ public class ContWaveCanon extends ContWaveAb {
 			anim.setTime(1);
 			maxt -= 1;
 		}
+		if (t > 0)
+			update(false);
 	}
 
 	@Override
@@ -64,7 +54,7 @@ public class ContWaveCanon extends ContWaveAb {
 	}
 
 	@Override
-	public void update() {
+	public void update(boolean nini) {
 		tempAtk = false;
 		// guessed attack point compared from BC
 		int attack = 2;
@@ -98,7 +88,8 @@ public class ContWaveCanon extends ContWaveAb {
 		if (maxt == t)
 			deactivate(null);
 		updateAnimation();
-		t += atk.model.b.timeFlow;
+		if (nini)
+			t += atk.model.b.timeFlow;
 	}
 
 	@Override

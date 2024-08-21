@@ -16,7 +16,7 @@ public abstract class ContWaveAb extends ContAb {
 	protected final EAnimD<?> anim;
 	protected Set<ContWaveAb> waves;
 	protected int soundEffect;
-	protected float t = 0;
+	protected float t;
 	protected int maxt;
 	protected boolean tempAtk;
 
@@ -27,6 +27,13 @@ public abstract class ContWaveAb extends ContAb {
 		maxt = anim.len();
 		t = delay;
 	}
+
+	@Override
+	public void update() {
+		update(true);
+	}
+
+	public abstract void update(boolean nonini);
 
 	@Override
 	public void draw(FakeGraphics gra, P p, float siz) {
@@ -49,6 +56,7 @@ public abstract class ContWaveAb extends ContAb {
 			e.getProc().IMUWAVE.mult -= 100;
 		}
 		waves.forEach(w -> w.activate = false);
+		activate = false;
 	}
 
 	protected void drawAxis(FakeGraphics gra, P p, float siz) {

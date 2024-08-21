@@ -865,12 +865,14 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 							}
 					}
 				} else if (kbType == INT_KB) {
+					if (e.isBase && e.health <= 0)
+						return;
+
 					if (time == 1)
 						kbDuration = e.kbTime;
 
 					float mov = easeOut(time, initPos, kbDis, kbDuration, -e.dire) - e.pos;
 					mov *= -e.dire;
-
 					kbmove(mov);
 
 					time += e.getTime();

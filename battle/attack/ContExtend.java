@@ -61,7 +61,7 @@ public class ContExtend extends ContAb {
                 t = itv;
             else
                 activate = false;
-            start -= move * atk.model.getDire();
+            start -= move * atk.model.getDire() * time;
             if (rept <= 0) {
                 atk.incl.clear();
                 rept = rep;

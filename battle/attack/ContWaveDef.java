@@ -10,7 +10,7 @@ import java.util.Set;
 
 public class ContWaveDef extends ContWaveAb {
 
-	private boolean hit = false, nw = false;
+	private boolean hit = false, nw = false, secall = true;
 
 	protected ContWaveDef(AttackWave a, float p, int layer, float delay) {
 		this(a, p, layer, delay, new HashSet<>());
@@ -25,17 +25,21 @@ public class ContWaveDef extends ContWaveAb {
 		anim.setTime(1);
 		this.waves = waves;
 		this.waves.add(this);
+
+		if (t > 0)
+			update(false);
 	}
 
-	@Override
-	public void update() {
+	public void update(boolean nini) {
 		tempAtk = false;
 		boolean isMini = atk.waveType == WT_MINI, isMega = atk.waveType == WT_MEGA;
 		// guessed attack point compared from BC
 		int attack = (isMini || isMega ? 4 : 6);
 		// guessed wave block time compared from BC
-		if (t == 0)
+		if (t >= 0 && secall) {
+			secall = false;
 			CommonStatic.setSE(soundEffect);
+		}
 		if (t <= attack) {
 			atk.capture();
 			for (AbEntity e : atk.capt)
@@ -66,10 +70,11 @@ public class ContWaveDef extends ContWaveAb {
 			sb.getAttack(atk);
 			tempAtk = hit = true;
 		}
-		if (maxt == t)
+		if (maxt <= t)
 			activate = false;
 		updateAnimation();
-		t += atk.attacker == null ? atk.model.b.timeFlow : atk.attacker.getTimeFreeze();
+		if (nini)
+			t += atk.attacker == null ? atk.model.b.timeFlow : atk.attacker.getTimeFreeze();
 	}
 
 	@Override

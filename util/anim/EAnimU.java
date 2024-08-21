@@ -90,6 +90,13 @@ public class EAnimU extends EAnimD<AnimU.UType> {
 		super.paraTo(base);
 	}
 
+	@Override
+	protected void performDeepCopy() {
+		super.performDeepCopy();
+		((EAnimU)copy).flip(false);
+		((EAnimU)copy).setDir(order[0].b.pvt || flipped);
+	}
+
 	/**
 	 * Similar to default paraTo, but allows to select the model part to connect to
 	 * Used solely for Everywhere Door. Not null-safe, use regular one for that

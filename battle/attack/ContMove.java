@@ -60,7 +60,7 @@ public class ContMove extends ContAb {
 				t = itv;
 			else
 				activate = false;
-			pos += move * atk.model.getDire();
+			pos += move * atk.model.getDire() * time;
 			if (rept <= 0) {
 				atk.incl.clear();
 				rept = rep;

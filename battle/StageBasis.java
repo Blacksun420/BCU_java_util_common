@@ -398,6 +398,8 @@ public class StageBasis extends BattleObj {
 
 	protected boolean act_continue() {
 		if (!st.non_con && ubase.health <= 0) {
+			if (ubase instanceof EUnit)
+				((EUnit)ubase).cont();
 			ubase.health = ubase.maxH;
 			if (getEBHP() <= st.mush)
 				CommonStatic.setBGM(st.mus1);

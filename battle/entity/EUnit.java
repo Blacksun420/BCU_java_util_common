@@ -139,6 +139,11 @@ public class EUnit extends Entity {
 	}
 
 	@Override
+	public void cont() {
+		kbTime = 0;
+	}
+
+	@Override
 	protected void sumDamage(int atk, boolean raw) {
 		if (index != null && CommonStatic.getConfig().rawDamage == raw)
 			basis.totalDamageTaken[index[0]][index[1]] += atk;
