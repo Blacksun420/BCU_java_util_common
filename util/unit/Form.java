@@ -261,19 +261,19 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 		if (CommonStatic.getFaves().units.contains(this))
 			base = "❤" + base;
 		String desp = MultiLangCont.get(this);
-		if (desp != null && desp.length() > 0)
+		if (desp != null && !desp.isEmpty())
 			return base + desp;
 
 		String nam = names.toString();
-		if (nam.length() > 0)
+		if (!nam.isEmpty())
 			return base + nam;
 		return base;
 	}
 
 	public String getExplanation() {
 		String[] desp = MultiLangCont.getDesc(this);
-		if (desp != null && desp[fid + 1].length() > 0)
-			return desp[fid + 1].replace("<br>","\n");
+		if (desp != null && !desp[0].isEmpty())
+			return String.join("\n", desp);
 		return description.toString();
 	}
 

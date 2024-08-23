@@ -209,8 +209,8 @@ public class Enemy extends Character implements AbEnemy {
 
 	public String getExplanation() {
 		String[] desp = MultiLangCont.getDesc(this);
-		if (desp != null && !desp[1].isEmpty())
-			return desp[1].replace("<br>","\n");
+		if (desp != null && !desp[0].isEmpty())
+			return String.join("\n", desp);
 		return description.toString();
 	}
 }

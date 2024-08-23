@@ -409,10 +409,8 @@ public abstract class Source {
 
 			while (result.length() < tott) {
 				char ch = format.charAt(random.nextInt(format.length()));
-
 				result.append(ch);
 			}
-
 			return result.toString();
 		}
 

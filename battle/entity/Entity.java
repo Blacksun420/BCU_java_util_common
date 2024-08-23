@@ -1851,7 +1851,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				boolean isWave = ((WT_WAVE | WT_MINI | WT_MEGA | WT_MOVE | WT_VOLC | WT_MIVC) & atk.waveType) > 0;
 				if (!isWave || counter.type.counterWave != 0) {
 					float[] ds = counter.minRange != 0 || counter.maxRange != 0 ? new float[]{pos + counter.minRange, pos + counter.maxRange} : aam.touchRange();
-					int reflectAtk = FDmg * counter.damage / 100;;
+					int reflectAtk = FDmg * counter.damage / 100;
 
 					Proc reflectProc = Proc.blank();
 					if (counter.type.procType == 1 || counter.type.procType == 3)
@@ -2609,7 +2609,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 * @param isMetal If metal ability effects apply to entity
 	 * @param ans Effective Damage modified by other procs/abilities
 	 * @param atk Non-Damage attack data
-	 * @return
+	 * @return Damage with crit and SBlow and metal procession
 	 */
 	protected int critCalc(boolean isMetal, int ans, AttackAb atk) {
 		double satk = atk.getProc().SATK.mult;
