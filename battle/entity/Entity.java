@@ -574,9 +574,9 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			for (EAnimD<?> eff : effs)
 				if (eff != null)
 					eff.update(false, t);
-
-			boolean checkKB = e.kb.kbType != INT_SW && e.kb.kbType != INT_WARP;
-			if ((e.status.stop[0] == 0 || e.status.stop[1] != 0) && (e.kbTime == 0 || checkKB)) {
+			if (back != null || dead > 0)
+				t = e.getTime();
+			if ((e.status.stop[0] == 0 || e.status.stop[1] != 0) && (e.kbTime == 0 || (e.kb.kbType != INT_SW && e.kb.kbType != INT_WARP))) {
 				float rate = t;
 				if (e.status.slow == 0 && anim.type == AnimU.TYPEDEF[AnimU.WALK] || anim.type == AnimU.TYPEDEF[AnimU.RETREAT])
 					rate *= e.getSpeed(e.data.getSpeed(), 0) / (e.data.getSpeed() * 0.5f);

@@ -76,7 +76,7 @@ public class SBCtrl extends BattleField {
 			rec |= 1 << 25;
 			keys.remove(-3, 0);
 		}
-		if (keys.pressed(-1, 3) || action.contains(-6) && act_continue()) {
+		if ((keys.pressed(-1, 3) || action.contains(-6)) && act_continue()) {
 			rec |= 1 << 26;
 			keys.remove(-1, 3);
 		}

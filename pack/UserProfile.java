@@ -78,14 +78,9 @@ public class UserProfile {
 	 * get a PackData from a String
 	 */
 	public static PackData getPack(String str) {
-		UserProfile profile = profile();
 		if (str.equals(Identifier.DEF))
-			return profile.def;
-		if (profile.pending != null && profile.pending.containsKey(str))
-			return profile.pending.get(str);
-		if (profile.packmap.containsKey(str))
-			return profile.packmap.get(str);
-		return null;
+			return getBCData();
+		return getUserPack(str);
 	}
 
 	public static boolean isOlderPack(UserPack pack, String ver) {
