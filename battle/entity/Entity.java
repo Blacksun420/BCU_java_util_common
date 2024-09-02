@@ -2528,7 +2528,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	/**
 	 * update the entity. order of update:
 	 *  1st iteration (movement) :   TBA, procs time tick -> move (KB, burrow, standard) -> revive
-	 *  2ns iteration (reactions):   validate walking OR go idle, start burrow, start attack -> update attack
+	 *  2nd iteration (reactions):   validate walking OR go idle, start burrow, start attack -> update attack
 	 */
 	@Override
 	public void update() {
@@ -2835,14 +2835,9 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 * @return True if the unit is in a position it can no longer move any further
 	 */
 	private boolean cantGoMore() {
-		if (status.speed[0] == 0)
-			return false;
-
-		if (getDire() == 1) {
+		if (getDire() == 1)
 			return pos <= 0;
-		} else {
-			return pos >= basis.st.len;
-		}
+		return pos >= basis.st.len;
 	}
 
 	/**
