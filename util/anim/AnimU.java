@@ -138,7 +138,7 @@ public abstract class AnimU<T extends AnimU.ImageKeeper> extends AnimD<AnimU<?>,
 			partial();
 		} catch (Exception e) {
 			e.printStackTrace();
-			loaded = false;
+			loaded = imgcut != null;//Used to be false, but this way stops stackOverflowError on corrupted animations. It turns those into NPEs, but those are far better than an SOE
 		}
 	}
 

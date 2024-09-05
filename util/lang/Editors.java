@@ -727,19 +727,26 @@ public class Editors {
 				t.min_dis = Math.min(min, t.max_dis);
 				t.max_dis = Math.max(min, t.max_dis);
 			}
-		}, eg -> t -> setComponentVisibility(eg, t.exists(), 4)));
+		}, eg -> t -> {
+			setComponentVisibility(eg, t.exists(), 4, 7);
+			setComponentVisibility(eg, false, 7);
+		}));
 
 		map().put("STRONGAURA", new EditControl<>(Proc.AURA.class, (t) -> {
-			if (t.amult + t.dmult + t.smult + t.tmult == 0) {
+			if (t.amult == 0 && t.dmult == 0 && t.smult == 0 && t.tmult == 0) {
 				t.min_dis = t.max_dis = 0;
-				t.type.trait = false;
+				t.type.trait = t.skip_self = false;
 			} else {
 				t.tmult = Math.max(t.tmult, 0);
 				int min = t.min_dis;
 				t.min_dis = Math.min(min, t.max_dis);
 				t.max_dis = Math.max(min, t.max_dis);
+				t.skip_self &= t.min_dis * t.max_dis <= 0;
 			}
-		}, eg -> t -> setComponentVisibility(eg, t.exists(), 4)));
+		}, eg -> t -> {
+			setComponentVisibility(eg, t.exists(), 4);
+			setComponentVisibility(eg, t.exists() && t.min_dis * t.max_dis <= 0, 7);
+		}));
 
 		map().put("REMOTESHIELD", new EditControl<>(Proc.REMOTESHIELD.class, (t) -> {
 			if (t.prob == 0) {

@@ -452,6 +452,9 @@ public class Data {
 			@Order(6)
 			@JsonField(defval = "trait false")
 			public TYPE type = new TYPE();
+			@Order(7)
+			@JsonField(defval = "false")
+			public boolean skip_self;
 
 			@Override
 			public int[] setTalent(int[] nps) {
@@ -1024,6 +1027,9 @@ public class Data {
 								return true;
 						} else if (f.getType() == Identifier.class) {
 							if (f.get(this) != null)
+								return true;
+						} else if (f.getType() == boolean.class) {
+							if (f.getBoolean(this))
 								return true;
 						} else {
 							if (((IntType) f.get(this)).toInt() > 0)

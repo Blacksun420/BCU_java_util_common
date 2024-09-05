@@ -90,22 +90,10 @@ public class ImgCut extends Data implements Cloneable {
 		FakeImage[] parts = new FakeImage[n];
 		for (int i = 0; i < n; i++) {
 			int[] cut = cuts[i].clone();
-			if (cut[0] < 0)
-				cut[0] = 0;
-			if (cut[1] < 0)
-				cut[1] = 0;
-			if (cut[0] > w - 1)
-				cut[0] = w - 1;
-			if (cut[1] > h - 1)
-				cut[1] = h - 1;
-			if (cut[2] <= 0)
-				cut[2] = 1;
-			if (cut[3] <= 0)
-				cut[3] = 1;
-			if (cut[2] + cut[0] > w)
-				cut[2] = w - cut[0];
-			if (cut[3] + cut[1] > h)
-				cut[3] = h - cut[1];
+			cut[0] = Math.max(0, Math.min(cut[0], w - 1));
+			cut[1] = Math.max(0, Math.min(cut[1], h - 1));
+			cut[2] = Math.max(1, Math.min(cut[2], w - cut[0]));
+			cut[3] = Math.max(1, Math.min(cut[3], h - cut[1]));
 			parts[i] = bimg.getSubimage(cut[0], cut[1], cut[2], cut[3]);
 		}
 		return parts;

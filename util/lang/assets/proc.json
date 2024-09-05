@@ -27,7 +27,7 @@
         "abbr_name": "stop",
         "full_name": "Freeze",
         "tooltip": null,
-        "format": "(prob)% chance to [(mult==0){freeze}(mult!=0){[(mult<0){hasten}(mult>0){slow}] time down for hit enemies by (_abs(mult))%}] for (_dispTimeF(time))",
+        "format": "(prob)% chance to [(mult==0){freeze}(mult!=0){[(mult<0){hasten}(mult>0){slow}] time for hit enemies by (_abs(mult))%}] for (_dispTimeF(time))",
         "class": {
             "prob": {
                 "name": "chance",
@@ -528,7 +528,7 @@
         "abbr_name": "time",
         "full_name": "Stop Time",
         "tooltip": "Unlike Stop, this ability freezes everything including waves, money gain, cat and enemy cool down, etc",
-        "format": "(prob)% chance to [(intensity>0){stop}(intensity<0){speed up}] time for (_dispTime(time)), with a intensity of (_abs(intensity))",
+        "format": "(prob)% chance to [(intensity==100){stop}(intensity>0&intensity<100){slow}(intensity<0){hasten}] time[(intensity!=100){ by (_abs(intensity))%}] for (_dispTime(time))",
         "class": {
             "prob": {
                 "name": "chance",
@@ -1448,7 +1448,7 @@
         "abbr_name": "Strong Aura",
         "full_name": "Empowering Aura",
         "tooltip": "Increases morale for all units in the given range",
-        "format": ["[(type.trait){All }]Units within (min_dis) ~ (max_dis) from this entity will",
+        "format": ["[(type.trait){All }]Units [(skip_self){(_left)except self(_right) }]within (min_dis) ~ (max_dis) from this entity will",
             "[(amult!=0){ deal (_abs(amult))% [(amult>0){more}(amult<0){less}] damage}]",
             "[(dmult!=0){[(amult!=0){,[(smult==0&tmult==0){ and}]}] receive (dmult)% damage}]",
             "[(smult!=0){[(amult!=0|dmult!=0){,[(tmult==0){ and}]}] move (_abs(smult))% [(smult>0){faster}(smult<0){slower}]}]",
@@ -1481,6 +1481,10 @@
             "type.trait": {
                 "name": "Ignore Traits",
                 "tooltip": "Strenghtens all allies regardless of typing if true"
+            },
+            "skip_self": {
+                "name": "Self-Unaffected",
+                "tooltip": "If true, unit will not be affected by its own aura"
             }
         }
     },
