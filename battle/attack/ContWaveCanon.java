@@ -19,7 +19,7 @@ public class ContWaveCanon extends ContWaveAb {
 		this(a, p, id, 3 + (W_TIME + 1) * a.proc.WAVE.lv + 4, new HashSet<>());
 	} // maxTime = hitframe offset + (waves attack period) * (number of waves - 1) + ending linger
 
-	public ContWaveCanon(AttackWave a, float p, int id, int maxTime, Set<ContWaveAb> waves) {
+	private ContWaveCanon(AttackWave a, float p, int id, int maxTime, Set<ContWaveAb> waves) {
 		super(a, p, CommonStatic.getBCAssets().atks[id].getEAnim(NyType.ATK), 9, 0);
 		canid = id;
 		soundEffect = SE_CANNON[canid][1];

@@ -141,6 +141,7 @@ public class EUnit extends Entity {
 	@Override
 	public void cont() {
 		kbTime = 0;
+		summoned.clear();
 	}
 
 	@Override

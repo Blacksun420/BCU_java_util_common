@@ -93,8 +93,8 @@ public class EAnimU extends EAnimD<AnimU.UType> {
 	@Override
 	protected void performDeepCopy() {
 		super.performDeepCopy();
-		((EAnimU)copy).flip(false);
-		((EAnimU)copy).setDir(order[0].b.pvt || flipped);
+		((EAnimU)copy).flipped = false;
+		((EAnimU)copy).setDir(order[0].b.pvt);
 	}
 
 	/**

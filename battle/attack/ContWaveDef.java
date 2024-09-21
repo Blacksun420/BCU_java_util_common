@@ -16,7 +16,7 @@ public class ContWaveDef extends ContWaveAb {
 		this(a, p, layer, delay, new HashSet<>());
 	}
 
-	protected ContWaveDef(AttackWave a, float p, int layer, float delay, Set<ContWaveAb> waves) {
+	private ContWaveDef(AttackWave a, float p, int layer, float delay, Set<ContWaveAb> waves) {
 		super(a, p, (a.dire == 1 ? a.waveType == WT_MEGA ? effas().A_E_MEGAWAVE : a.waveType == WT_MINI ? effas().A_E_MINIWAVE : effas().A_E_WAVE
 				: a.waveType == WT_MEGA ? effas().A_MEGAWAVE : a.waveType == WT_MINI ? effas().A_MINIWAVE : effas().A_WAVE).getEAnim(DefEff.DEF), layer, delay);
 		soundEffect = SE_WAVE;

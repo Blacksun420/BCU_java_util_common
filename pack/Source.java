@@ -274,18 +274,15 @@ public abstract class Source {
 
 		public void saveIconDeploy() {
 			if (anim.getUni() != null && anim.getUni() != CommonStatic.getBCAssets().slot[0] && id.base.equals(BasePath.ANIM))
-				CommonStatic.ctx.noticeErr(() -> write(SourceAnimLoader.UNI, anim.getUni().getImg()), ErrType.ERROR,
-						"Error during saving deploy icon: " + id);
+				CommonStatic.ctx.noticeErr(() -> write(SourceAnimLoader.UNI, anim.getUni().getImg()),ErrType.ERROR,"Error during saving deploy icon: " + id);
 		}
 		public void saveIconDisplay() {
-				if (anim.getEdi() != null)
-					CommonStatic.ctx.noticeErr(() -> write(SourceAnimLoader.EDI, anim.getEdi().getImg()), ErrType.ERROR,
-						"Error during saving display icon: " + id);
+			if (anim.getEdi() != null)
+				CommonStatic.ctx.noticeErr(() -> write(SourceAnimLoader.EDI, anim.getEdi().getImg()),ErrType.ERROR,"Error during saving display icon: " + id);
 		}
 		public void saveIconPreview() {
 			if (anim.loader.getPreviewIcon() != null && id.base.equals(BasePath.ANIM))
-				CommonStatic.ctx.noticeErr(() -> write(SourceAnimLoader.ICN, anim.loader.getPreviewIcon().getImg()), ErrType.ERROR,
-						"Error during saving preview icon: " + id);
+				CommonStatic.ctx.noticeErr(() -> write(SourceAnimLoader.ICN, anim.loader.getPreviewIcon().getImg()), ErrType.ERROR,"Error during saving preview icon: " + id);
 		}
 
 		public void saveImgs() {

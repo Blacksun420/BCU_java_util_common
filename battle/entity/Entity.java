@@ -2264,6 +2264,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	public void cont() {
 		if (dire != 1)
 			return;
+		summoned.clear();
 		pos = basis.ebase.pos;
 		atkm.stopAtk();
 		anim.cont();
@@ -2329,7 +2330,6 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 		if(!dead || !summoned.isEmpty())
 			livingTime++;
-
 		summoned.removeIf(s -> !s.activate);
 
 		if(health <= 0 && zx.canRevive() == 0 && !killCounted)

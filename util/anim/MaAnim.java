@@ -135,8 +135,7 @@ public class MaAnim extends Data implements BattleStatic {
 					parts[i].ensureLast(eAnim.ent);
 					continue;
 				}
-				if (frame <= fir)
-					;
+				if (frame <= fir);
 				else if (frame < fir + loop * lmax)
 					frame = fir + (frame - fir) % lmax;
 				else
