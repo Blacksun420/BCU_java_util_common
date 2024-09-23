@@ -831,6 +831,9 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				if(e.status.revs[1] > 0)
 					e.anim.corpse = (e.getDire() == -1 ? effas().A_U_ZOMBIE : effas().A_ZOMBIE).getEAnim(ZombieEff.DOWN);
 
+				if(kbType == INT_HB)
+					for (int i = e.spInd; i < e.data.getRevenge().length; i++)
+						e.basis.getAttack(e.aam.getSpAttack(REV, i));
 				e.anim.setAnim(AnimU.TYPEDEF[AnimU.WALK], true);
 
 				kbDuration = 0;
@@ -841,13 +844,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					e.status.shield[0] = (int) (e.getProc().DEMONSHIELD.hp * e.getProc().DEMONSHIELD.regen * e.shieldMagnification / 100.0);
 					if (e.status.shield[0] > e.status.shield[1])
 						e.status.shield[1] = e.status.shield[0];
-
 					e.anim.getEff(SHIELD_REGEN);
-				}
-
-				if(kbType == INT_HB) {
-					for (int i = e.spInd; i < e.data.getRevenge().length; i++)
-						e.basis.getAttack(e.aam.getSpAttack(REV, i));
 				}
 
 				if (e.health <= 0)
