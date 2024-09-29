@@ -579,7 +579,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			if ((e.status.stop[0] == 0 || e.status.stop[1] != 0) && (e.kbTime == 0 || (e.kb.kbType != INT_SW && e.kb.kbType != INT_WARP))) {
 				float rate = t;
 				if (e.status.slow == 0 && anim.type == AnimU.TYPEDEF[AnimU.WALK] || anim.type == AnimU.TYPEDEF[AnimU.RETREAT])
-					rate *= e.getSpeed(e.data.getSpeed(), 0) / (e.data.getSpeed() * 0.5f);
+					rate *= Math.abs(e.getSpeed(e.data.getSpeed(), 0) / (e.data.getSpeed() * 0.5f));
 				anim.update(false, rate);
 			} if (back != null)
 				back.update(false, t);
@@ -2763,10 +2763,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 * @return Unit speed altered by battle factors
 	 */
 	protected float getMov(float extmov) {
-		if (cantGoMore())
-			return 0;
 		float mov = getSpeed(data.getSpeed(), extmov);
-
 		if (mov > 0 && getProc().AI.retreatDist > 0)
 			mov = AIMove(mov);
 
@@ -2827,16 +2824,6 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			break;
 		}
 		return mv;
-	}
-
-	/**
-	 * Check if the unit can still move
-	 * @return True if the unit is in a position it can no longer move any further
-	 */
-	private boolean cantGoMore() {
-		if (getDire() == 1)
-			return pos <= 0;
-		return pos >= basis.st.len;
 	}
 
 	/**
