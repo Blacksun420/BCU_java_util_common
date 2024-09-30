@@ -416,6 +416,58 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 								}
 
 								break;
+							// Rarity deploy limit
+							case 3:
+								if (!parameter.isEmpty()) {
+									int[] deployLimit = new int[parameter.size()];
+
+									for (int i = 0; i < parameter.size(); i++) {
+										deployLimit[i] = parameter.get(i).getAsInt();
+
+										if (deployLimit[i] <= 0) {
+											System.out.printf(
+													"W/MapColc::read - Unexpected deploy limit value for map %d : Index = %d, Value = %d",
+													mapID,
+													i,
+													deployLimit[i]
+											);
+										}
+									}
+
+									for (Stage stage : map.list) {
+										if (stage.lim == null)
+											stage.lim = new Limit();
+
+										if (stage.lim.stageLimit == null) {
+											stage.lim.stageLimit = new StageLimit();
+										}
+
+										System.arraycopy(deployLimit, 0, stage.lim.stageLimit.costMultiplier, 0, Math.min(stage.lim.stageLimit.costMultiplier.length, deployLimit.length));
+									}
+								}
+
+								break;
+							// Global Cost
+							case 4:
+								if (!parameter.isEmpty()) {
+									if (parameter.size() != 1)
+										System.out.printf("W/MapColc::read - Unknown parameter data found for rule type %d : %s%n", ruleID, parameter);
+
+									int globalCost = parameter.get(0).getAsInt();
+
+									for (Stage stage : map.list) {
+										if (stage.lim == null)
+											stage.lim = new Limit();
+
+										if (stage.lim.stageLimit == null) {
+											stage.lim.stageLimit = new StageLimit();
+										}
+
+										stage.lim.stageLimit.globalCost = globalCost;
+									}
+								}
+
+								break;
 							// Cost Multiplier
 							case 5:
 								if (!parameter.isEmpty()) {
