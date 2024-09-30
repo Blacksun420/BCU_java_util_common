@@ -81,5 +81,10 @@
   "GuardEff": {
     "NONE": "기본",
     "BREAK": "부서짐"
+  },
+  "BlastEff": {
+    "START": "시작",
+    "EXPLODE": "폭발",
+    "DUMMY": "더미"
   }
 }

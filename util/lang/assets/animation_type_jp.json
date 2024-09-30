@@ -81,5 +81,10 @@
   "GuardEff": {
     "NONE": "デフォルト",
     "BREAK": "壊す"
+  },
+  "BlastEff": {
+    "START": "Start",
+    "EXPLODE": "Explode",
+    "DUMMY": "Dummy"
   }
 }
