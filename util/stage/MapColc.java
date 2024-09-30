@@ -442,7 +442,7 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 											stage.lim.stageLimit = new StageLimit();
 										}
 
-										System.arraycopy(deployLimit, 0, stage.lim.stageLimit.costMultiplier, 0, Math.min(stage.lim.stageLimit.costMultiplier.length, deployLimit.length));
+										System.arraycopy(deployLimit, 0, stage.lim.stageLimit.rarityDeployLimit, 0, Math.min(stage.lim.stageLimit.rarityDeployLimit.length, deployLimit.length));
 									}
 								}
 
