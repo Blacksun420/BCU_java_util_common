@@ -104,7 +104,23 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 		public String path() {
 			return path;
 		}
+	}
 
+	public enum BlastEff implements EffType<BlastEff> {
+		START("00"),
+		EXPLODE("01"),
+		DUMMY("02");
+
+		private final String path;
+
+		BlastEff(String path) {
+			this.path = path;
+		}
+
+		@Override
+		public String path() {
+			return path;
+		}
 	}
 
 	public static class EffAnimStore {
@@ -265,6 +281,10 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 		public EffAnim<DefEff> A_METAL_KILLER;
 		@Order(79)
 		public EffAnim<DefEff> A_E_METAL_KILLER;
+		@Order(80)
+		public EffAnim<BlastEff> A_BLAST;
+		@Order(81)
+		public EffAnim<BlastEff> A_E_BLAST;
 
 		public EffAnim<?>[] values() {
 			Field[] fld = FieldOrder.getDeclaredFields(EffAnimStore.class);
@@ -495,6 +515,13 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 		effas.A_METAL_KILLER = new EffAnim<>("./org/battle/s20/skill_metal_strong", vmk, icmk, DefEff.values());
 		effas.A_E_METAL_KILLER = new EffAnim<>("./org/battle/s20/skill_metal_strong", vmk, icmk, DefEff.values());
 		effas.A_E_METAL_KILLER.rev = true;
+		VImg vbs = new VImg("./org/battle/s21/skill021.png");
+		ImgCut icbs = ImgCut.newIns("./org/battle/s21/skill021.imgcut");
+		effas.A_BLAST = new EffAnim<>("./org/battle/s21/skill_explosion", vbs, icbs, BlastEff.values());
+		vbs = new VImg("./org/battle/s22/skill022.png");
+		icbs = ImgCut.newIns("./org/battle/s22/skill022.imgcut");
+		MaModel mmbs = MaModel.newIns("./org/battle/s22/skill_explosion_e.mamodel");
+		effas.A_E_BLAST = new EffAnim<>("./org/battle/s22/skill_explosion", vbs, icbs, mmbs, BlastEff.values());
 	}
 
 	private static void excColor(FakeImage fimg, Function<int[], Integer> f) {
@@ -638,7 +665,14 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 		vimg = vi;
 		imgcut = ic;
 		types = anims;
+	}
 
+	public EffAnim(String st, VImg vi, ImgCut ic, MaModel model, T[] anims) {
+		super(st);
+		vimg = vi;
+		imgcut = ic;
+		mamodel = model;
+		types = anims;
 	}
 
 	@Override
@@ -650,7 +684,9 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 	public void load() {
 		loaded = true;
 		parts = imgcut.cut(vimg.getImg());
-		mamodel = MaModel.newIns(str + ".mamodel");
+		if (mamodel == null) {
+			mamodel = MaModel.newIns(str + ".mamodel");
+		}
 		anims = new MaAnim[types.length];
 		for (int i = 0; i < types.length; i++)
 			anims[i] = MaAnim.newIns(str + types[i].path() + ".maanim");

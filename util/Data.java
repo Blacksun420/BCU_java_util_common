@@ -677,6 +677,15 @@ public class Data {
 			public int mult;
 		}
 
+		public static class BLAST extends ProcItem {
+			@Order(0)
+			public int prob;
+			@Order(1)
+			public int dis_0;
+			@Order(2)
+			public int dis_1;
+		}
+
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class SPIRIT extends ProcItem {
 			@Order(0)
@@ -830,6 +839,10 @@ public class Data {
 		public final SPIRIT SPIRIT = new SPIRIT();
 		@Order(57)
 		public final MULT METALKILL = new MULT();
+		@Order(58)
+		public final BLAST BLAST = new BLAST();
+		@Order(59)
+		public final IMU IMUBLAST = new IMU();
 
 		@Override
 		public Proc clone() {
@@ -1200,7 +1213,9 @@ public class Data {
 	public static final int P_MINIVOLC = 55;
 	public static final int P_SPIRIT = 56;
 	public static final int P_METALKILL = 57;
-	public static final byte PROC_TOT = 58;
+	public static final int P_BLAST = 58;
+	public static final int P_IMUBLAST = 59;
+	public static final byte PROC_TOT = 60;
 	public static final byte PROC_WIDTH = 6;
 
 	public static final boolean[] procSharable = {
@@ -1258,10 +1273,12 @@ public class Data {
 			true,  //death surge
 			false, //2x money
 			false, //base destroyer
-			true, //beast hunter
+			true,  //beast hunter
 			false, //mini surge
-			true, //spirit summon
-			false //metal killer
+			true,  //spirit summon
+			false, //metal killer
+			false, //blast
+			true   //imu.blast
 	};
 
 	/**
