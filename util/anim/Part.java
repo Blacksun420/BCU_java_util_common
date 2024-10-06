@@ -132,10 +132,6 @@ public class Part extends Data implements Cloneable, Comparable<Part> {
 					int v1 = moves[i + 1][1];
 					float realFrame = frame;
 
-					if (f1 - f0 == 1) {
-						realFrame = (int) frame;
-					}
-
 					double ti = 1.0 * (realFrame - f0) / (f1 - f0);
 					if (moves[i][2] == 1 || ints[1] == 13 || ints[1] == 14)
 						ti = 0;
