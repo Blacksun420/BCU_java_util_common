@@ -193,29 +193,23 @@ public class DataUnit extends DefaultData implements MaskUnit, Cloneable {
 				proc.BSTHUNT.prob = ints[106];
 				proc.BSTHUNT.time = ints[107];
 			}
-
 			if (ints[109] == 1) {
 				a |= AB_CSUR;
 			}
-
 			if (ints[110] != -1) {
 				proc.SPIRIT.id = Identifier.parseInt(ints[110], Unit.class);
 			}
-
 			if (ints[111] == 1) {
 				a |= AB_SKILL;
 			}
-
 			if (ints[112] != 0) {
 				proc.METALKILL.mult = ints[112];
 			}
-
 			if (ints[113] != 0) {
 				proc.BLAST.prob = ints[113];
 				proc.BLAST.dis_0 = ints[114] / 4;
 				proc.BLAST.dis_1 = ints[115] / 4 + proc.BLAST.dis_0;
 			}
-
 			if (ints[116] != 0) {
 				proc.IMUBLAST.mult = 100;
 			}
