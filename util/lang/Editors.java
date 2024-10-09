@@ -839,6 +839,24 @@ public class Editors {
 			if (t.mult == 100)
 				t.mult = 0;
 		}));
+
+		map().put("BLAST", new EditControl<>(Proc.BLAST.class, (t) -> {
+			if (t.prob > 0) {
+				int d0 = t.dis_0;
+				t.dis_0 = Math.min(d0, t.dis_1);
+				t.dis_1 = Math.max(d0, t.dis_1);
+				if (t.lv == 0)
+					t.lv = 3;
+				else
+					t.lv = Math.max(1, t.lv);
+				t.reduction = Math.min(t.reduction, 100 / t.lv);
+			} else {
+				t.dis_0 = t.dis_1 = t.lv = 0;
+				t.reduction = 0;
+			}
+		}));
+
+		map().put("IMUBLAST", imu);
 	}
 
 	private static void setComponentVisibility(EditorGroup egg, boolean boo, int... fields) {

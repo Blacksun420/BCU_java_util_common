@@ -257,6 +257,12 @@ public class Data {
 			public int dis_0;
 			@Order(2)
 			public int dis_1;
+			@Order(3)
+			@JsonField(defval = "3")
+			public int lv;
+			@Order(4)
+			@JsonField(defval = "4")
+			public int reduction;
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -2163,6 +2169,7 @@ public class Data {
 	public static final byte VOLC_POST = 10; // volcano post-atk
 	public static final byte VOLC_SE = 30; // volcano se loop duration
 
+	public static final byte EXPLOSION_DELAY = 10;
 	public static final byte EXPLOSION_PRE = 11;
 	public static final short EXPLOSION_SE = 167;
 

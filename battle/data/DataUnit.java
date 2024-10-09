@@ -218,6 +218,8 @@ public class DataUnit extends DefaultData implements MaskUnit, Cloneable {
 				proc.BLAST.prob = ints[113];
 				proc.BLAST.dis_0 = ints[114] / 4;
 				proc.BLAST.dis_1 = ints[115] / 4 + proc.BLAST.dis_0;
+				proc.BLAST.lv = 3;
+				proc.BLAST.reduction = 30;
 			}
 			if (ints[116] != 0)
 				proc.IMUBLAST.mult = 100;

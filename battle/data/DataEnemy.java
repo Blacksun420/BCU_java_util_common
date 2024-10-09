@@ -202,6 +202,8 @@ public class DataEnemy extends DefaultData implements MaskEnemy {
 				proc.BLAST.prob = ints[106];
 				proc.BLAST.dis_0 = ints[107] / 4;
 				proc.BLAST.dis_1 = ints[108] / 4 + proc.BLAST.dis_0;
+				proc.BLAST.lv = 3;
+				proc.BLAST.reduction = 30;
 			}
 			if (ints[109] != 0)
 				proc.IMUBLAST.mult = 100;

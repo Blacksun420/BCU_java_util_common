@@ -199,7 +199,7 @@ public class AttackSimple extends AttackAb {
 			Proc.BLAST blast = proc.BLAST;
 			int addp = blast.dis_0 == blast.dis_1 ? blast.dis_0 : blast.dis_0 + (int) (model.b.r.nextFloat() * (blast.dis_1 - blast.dis_0));
 			float pos = model.getPos() + dire * addp;
-			ContBlast cblast = new ContBlast(new AttackBlast(attacker, this, WT_BLST), pos, layer);
+			ContBlast cblast = new ContBlast(new AttackBlast(attacker, this, pos, WT_BLST), pos, layer);
 			if (attacker != null)
 				attacker.summoned.add(cblast);
 		}
