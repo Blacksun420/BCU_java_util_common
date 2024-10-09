@@ -394,32 +394,16 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 							case 3:
 								if (!parameter.isEmpty()) {
 									int[] deployLimit = new int[parameter.size()];
-
 									for (int i = 0; i < parameter.size(); i++) {
 										deployLimit[i] = parameter.get(i).getAsInt();
-
-										if (deployLimit[i] <= 0) {
-											System.out.printf(
-													"W/MapColc::read - Unexpected deploy limit value for map %d : Index = %d, Value = %d",
-													mapID,
-													i,
-													deployLimit[i]
-											);
-										}
+										if (deployLimit[i] <= 0)
+											System.out.printf("W/MapColc::read - Unexpected deploy limit value for map %d : Index = %d, Value = %d", mapID, i, deployLimit[i]);
 									}
-
-									for (Stage stage : map.list) {
-										if (stage.lim == null)
-											stage.lim = new Limit();
-
-										if (stage.lim.stageLimit == null) {
-											stage.lim.stageLimit = new StageLimit();
-										}
-
-										System.arraycopy(deployLimit, 0, stage.lim.stageLimit.rarityDeployLimit, 0, Math.min(stage.lim.stageLimit.rarityDeployLimit.length, deployLimit.length));
-									}
+									if (map.lim.isEmpty() || map.lim.get(map.lim.size() - 1).stageLimit == null)
+										map.lim.add(new Limit(new StageLimit()));
+									StageLimit slim = map.lim.get(map.lim.size() - 1).stageLimit;
+									System.arraycopy(deployLimit, 0, slim.rarityDeployLimit, 0, Math.min(slim.rarityDeployLimit.length, deployLimit.length));
 								}
-
 								break;
 							// Global Cost
 							case 4:
@@ -428,19 +412,10 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 										System.out.printf("W/MapColc::read - Unknown parameter data found for rule type %d : %s%n", ruleID, parameter);
 
 									int globalCost = parameter.get(0).getAsInt();
-
-									for (Stage stage : map.list) {
-										if (stage.lim == null)
-											stage.lim = new Limit();
-
-										if (stage.lim.stageLimit == null) {
-											stage.lim.stageLimit = new StageLimit();
-										}
-
-										stage.lim.stageLimit.globalCost = globalCost;
-									}
+									if (map.lim.isEmpty() || map.lim.get(map.lim.size() - 1).stageLimit == null)
+										map.lim.add(new Limit(new StageLimit()));
+									map.lim.get(map.lim.size() - 1).stageLimit.globalCost = globalCost;
 								}
-
 								break;
 							// Cost Multiplier
 							case 5:
