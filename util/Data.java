@@ -252,6 +252,14 @@ public class Data {
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
+		public static class BLAST extends PROB {
+			@Order(1)
+			public int dis_0;
+			@Order(2)
+			public int dis_1;
+		}
+
+		@JsonClass(noTag = NoTag.LOAD)
 		public static class STRONG extends ProcItem {
 			@Order(0)
 			public float health;
@@ -1372,6 +1380,10 @@ public class Data {
 		public final SPIRIT SPIRIT = new SPIRIT();
 		@Order(73)
 		public final MULT METALKILL = new MULT();
+		@Order(74)
+		public final BLAST BLAST = new BLAST();
+		@Order(75)
+		public final IMU IMUBLAST = new IMU();
 
 		@Override
 		public Proc clone() {
@@ -1743,7 +1755,9 @@ public class Data {
 	public static final byte P_RANGESHIELD = 71;
 	public static final byte P_SPIRIT = 72;
 	public static final byte P_METALKILL = 73;
-	public static final byte PROC_TOT = 74;
+	public static final int P_BLAST = 74;
+	public static final int P_IMUBLAST = 75;
+	public static final byte PROC_TOT = 76;
 
 	public static final boolean[] procSharable = {
 			false, //kb
@@ -1819,7 +1833,9 @@ public class Data {
 			true,  //Resistant but good
 			true,  //Range Shield
 			true,  //spirit summon
-			false  //TOTAL METALHEAD DEATH
+			false,  //TOTAL METALHEAD DEATH
+			false, //BAJA BLAST
+			true   //imu.blast
 	};
 
 	/**
@@ -1833,7 +1849,8 @@ public class Data {
 	public static final byte WT_VOLC = 4;
 	public static final byte WT_MINI = 8;
 	public static final byte WT_MIVC = 16;
-	public static final byte WT_MEGA = 32;
+	public static final byte WT_MEGA = 64;
+	public static final byte WT_BLST = 32;
 	public static final byte PC_P = 0, PC_AB = 1, PC_BASE = 2, PC_IMU = 3, PC_TRAIT = 4;
 	public static final byte PC2_HP = 0;
 	public static final byte PC2_ATK = 1;
@@ -2145,6 +2162,9 @@ public class Data {
 	public static final byte VOLC_PRE = 15; // volcano pre-atk
 	public static final byte VOLC_POST = 10; // volcano post-atk
 	public static final byte VOLC_SE = 30; // volcano se loop duration
+
+	public static final byte EXPLOSION_PRE = 11;
+	public static final short EXPLOSION_SE = 167;
 
 	public static final byte[] NYPRE = new byte[] { 18, 1, -1, 27, 37, 18, 10, 1 };
 	public static final float[] NYRAN = new float[] { 400, 82.5f, -1, 500, 500, 400, 100, 82.5f };

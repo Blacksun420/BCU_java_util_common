@@ -101,7 +101,7 @@ public class ContVolcano extends ContAb {
 			t += v.attacker.getTimeFreeze();
 			if (t >= VOLC_PRE && t <= VOLC_PRE + aliveTime)
 				sb.getAttack(v);
-			anim.update(false, v.attacker.getTimeFreeze());
+			updateAnimation();
 		}
 	}
 
@@ -153,7 +153,7 @@ public class ContVolcano extends ContAb {
 			return;
 
 		// after this is the drawing of hit boxes
-		siz *= 1.25;
+		siz *= 1.25f;
 		float rat = BattleConst.ratio;
 		int h = (int) (640 * rat * siz);
 		gra.setColor(FakeGraphics.MAGENTA);

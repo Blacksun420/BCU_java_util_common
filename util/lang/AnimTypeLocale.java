@@ -49,6 +49,7 @@ public class AnimTypeLocale {
 		Collections.addAll(TYPES, EffAnim.AuraEff.values());
 		Collections.addAll(TYPES, EffAnim.RangeShieldEff.values());
 		Collections.addAll(TYPES, EffAnim.GuardEff.values());
+		Collections.addAll(TYPES, EffAnim.BlastEff.values());
 	}
 
 	public static void read() {

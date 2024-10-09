@@ -166,7 +166,6 @@ public class DataEnemy extends DefaultData implements MaskEnemy {
 
 		if(ints[93] == 1)
 			traits.add(BCTraits.get(TRAIT_DEMON));
-
 		if(ints[94] == 1)
 			traits.add(BCTraits.get(TRAIT_BARON));
 
@@ -197,9 +196,15 @@ public class DataEnemy extends DefaultData implements MaskEnemy {
 			}
 			if (ints[104] == 1)
 				traits.add(BCTraits.get(TRAIT_SAGE));
-
 			if (ints[105] == 1)
 				proc.IMUCURSE.mult = 100;
+			if (ints[106] != 0) {
+				proc.BLAST.prob = ints[106];
+				proc.BLAST.dis_0 = ints[107] / 4;
+				proc.BLAST.dis_1 = ints[108] / 4 + proc.BLAST.dis_0;
+			}
+			if (ints[109] != 0)
+				proc.IMUBLAST.mult = 100;
 		} catch (IndexOutOfBoundsException ignored) {
 
 		}
