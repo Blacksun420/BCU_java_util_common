@@ -22,7 +22,7 @@ public class ContBlast extends ContAb {
         anim.setTime(1);
         blast = atkBlast;
         //if (atkBlast.getProc().BLAST.lv != 3)
-        //    blasts = new HashSet<>();
+        //    blasts = new HashSet<>(); TODO - levels other than 3
     }
     /*private ContBlast(ContBlast blast, float p, int lay) {
         super(blast.sb, p, lay);
@@ -38,7 +38,7 @@ public class ContBlast extends ContAb {
         FakeTransform at = gra.getTransform();
         anim.draw(gra, p, psiz);
         gra.setTransform(at);
-        if (CommonStatic.getConfig().ref)
+        if (CommonStatic.getConfig().ref && blast.lv + 1 < blast.getProc().BLAST.lv)
             drawAxis(gra, p, psiz * 1.25f);
     }
 
@@ -53,7 +53,7 @@ public class ContBlast extends ContAb {
         int y = (int) p.y;
         int w = (int) (ra * rat * siz);
 
-        int ch = (int)(150 * Math.max(0, blast.lv) * rat * siz);
+        int ch = (int)(150 * blast.lv * rat * siz);
         if (t > EXPLOSION_PRE && (t - EXPLOSION_PRE) % 10 == 2) {
             gra.fillRect(x + ch, y, w, h);
             gra.fillRect(x - ch, y, w, h);
@@ -66,13 +66,18 @@ public class ContBlast extends ContAb {
     @Override
     public void update() { // FIXME: update on same frame as attack
         t++;
-
-        if (t == EXPLOSION_PRE)
-            anim.changeAnim(EffAnim.BlastEff.EXPLODE, true);
-        if (t > EXPLOSION_PRE && (t - 1) % 10 == 0)
-            CommonStatic.setSE(EXPLOSION_SE + ((t - EXPLOSION_PRE) / 10));
-        if (t > EXPLOSION_PRE && (t - 1) % 10 == 2)
-            blast.capture();
+        int rt = t - EXPLOSION_PRE;
+        if (rt >= 0 && blast.lv + 1 < blast.getProc().BLAST.lv) {
+            if (rt == 0)
+                anim.changeAnim(EffAnim.BlastEff.EXPLODE, true);
+            int qrt = (t - 1) % EXPLOSION_DELAY;
+            if (qrt == 0)
+                CommonStatic.setSE(EXPLOSION_SE + (rt / 10));
+            else if (qrt == 2)
+                blast.capture();
+            if (qrt == 9)
+                blast.lv++;
+        }
         if (anim.done())
             activate = false;
         updateAnimation();

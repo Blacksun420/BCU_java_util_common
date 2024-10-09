@@ -10,7 +10,7 @@ import java.util.Set;
 public class AttackBlast extends AttackAb {
 
     private final int reduction;
-    public int lv = -1;
+    public int lv = 0;
     public int raw;
 
     protected AttackBlast(Entity attacker, AttackSimple src, float pos, int bt) {
@@ -22,7 +22,6 @@ public class AttackBlast extends AttackAb {
 
     @Override
     public void capture() {
-        lv++;
         capt.clear();
         float rng = (150 * lv);
 

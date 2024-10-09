@@ -845,9 +845,10 @@ public class Editors {
 				int d0 = t.dis_0;
 				t.dis_0 = Math.min(d0, t.dis_1);
 				t.dis_1 = Math.max(d0, t.dis_1);
-				if (t.lv == 0)
+				if (t.lv == 0) {
 					t.lv = 3;
-				else
+					t.reduction = 30;
+				} else
 					t.lv = Math.max(1, t.lv);
 				t.reduction = Math.min(t.reduction, 100 / t.lv);
 			} else {
