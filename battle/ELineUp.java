@@ -47,7 +47,7 @@ public class ELineUp extends BattleObj {
 							}
 					continue;
 				}
-				price[i][j] = (int) (lu.efs[i][j].getPrice(sb.st.getCont().price) * 100);
+				price[i][j] = sb.globalPrice() > 0 ? sb.globalPrice() : (int) (lu.efs[i][j].getPrice(sb.st.getCont().price) * 100);
 				maxC[i][j] = sb.globalCdLimit() > 0 ? sb.b.t().getFinResGlobal(sb.globalCdLimit(), getInc(C_RESP)) : sb.b.t().getFinRes(lu.efs[i][j].getRespawn(), getInc(C_RESP));
 				if (lim != null && lim.stageLimit != null && lu.fs[i][j] instanceof Form) {
 					int r = ((Form)lu.fs[i][j]).unit.rarity;

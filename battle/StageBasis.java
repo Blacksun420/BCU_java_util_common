@@ -849,21 +849,24 @@ public class StageBasis extends BattleObj {
 	public boolean isBanned(byte comboId) {
 		if (est.lim.stageLimit == null)
 			return false;
-		else
-			return est.lim.stageLimit.bannedCatCombo.contains((int) comboId);
+		return est.lim.stageLimit.bannedCatCombo.contains((int) comboId);
 	}
 
 	public int maxBankLimit() {
 		if (est.lim.stageLimit == null)
 			return 0;
-		else
-			return est.lim.stageLimit.maxMoney;
+		return est.lim.stageLimit.maxMoney;
 	}
 
 	public int globalCdLimit() {
 		if (est.lim.stageLimit == null)
 			return 0;
-		else
-			return est.lim.stageLimit.globalCooldown;
+		return est.lim.stageLimit.globalCooldown;
+	}
+
+	public int globalPrice() {
+		if (est.lim.stageLimit == null)
+			return 0;
+		return est.lim.stageLimit.globalCost;
 	}
 }
