@@ -152,6 +152,11 @@ public class Unit extends Data implements AbUnit {
 	}
 
 	@Override
+	public int getRarity() {
+		return rarity;
+	}
+
+	@Override
 	public int getMaxLv() {
 		return max;
 	}

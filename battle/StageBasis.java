@@ -3,6 +3,7 @@ package common.battle;
 import common.CommonStatic;
 import common.battle.attack.AttackAb;
 import common.battle.attack.ContAb;
+import common.battle.data.MaskUnit;
 import common.battle.entity.*;
 import common.pack.Identifier;
 import common.util.BattleObj;
@@ -265,6 +266,17 @@ public class StageBasis extends BattleObj {
 		}
 		return ans;
 	}
+	public boolean cantDeploy(int rare, int wp) {
+		if (rare != -1 && est.lim.stageLimit != null && est.lim.stageLimit.rarityDeployLimit[rare] != -1) {
+			int ans = wp;
+			for (Entity ent : le)
+				if (ent.dire == -1 && !ent.dead && ((MaskUnit) ent.data).getPack().unit.rarity == rare)
+					ans += ent.data.getWill() + 1;
+			if (ans >= est.lim.stageLimit.rarityDeployLimit[rare])
+				return true;
+		}
+		return entityCount(-1) + wp >= max_num;
+	}
 
 	public int entityCount(int d, int g) {
 		int ans = 0;
@@ -353,7 +365,7 @@ public class StageBasis extends BattleObj {
 			return false;
 
 		if (cannon == maxCannon) {
-			if(canon.id == BASE_WALL && entityCount(-1) >= max_num) {
+			if(canon.id == BASE_WALL && cantDeploy(1, 0)) {
 				CommonStatic.setSE(SE_SPEND_FAIL);
 				return false;
 			}
@@ -489,7 +501,7 @@ public class StageBasis extends BattleObj {
 		}
 
 		if (locks[i][j] || manual) {
-			if (entityCount(-1) >= max_num - b.lu.efs[i][j].getWill()) {
+			if (cantDeploy(b.lu.fs[i][j].unit().getRarity(), b.lu.efs[i][j].getWill())) {
 				if(manual)
 					CommonStatic.setSE(SE_SPEND_FAIL);
 				return false;
@@ -867,6 +879,6 @@ public class StageBasis extends BattleObj {
 	public int globalPrice() {
 		if (est.lim.stageLimit == null)
 			return 0;
-		return est.lim.stageLimit.globalCost;
+		return est.lim.stageLimit.globalCost * 100;
 	}
 }

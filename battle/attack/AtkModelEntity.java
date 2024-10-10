@@ -401,7 +401,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 
 			if ((proc.id == null && e instanceof EUnit) || (proc.id != null && AbUnit.class.isAssignableFrom(proc.id.cls))) {
 				AbUnit u = Identifier.getOr(proc.id, AbUnit.class);
-				if (b.entityCount(-1) < b.max_num - u.getForms()[proc.form - 1].du.getWill() || conf.ignore_limit) {
+				if (conf.ignore_limit || !b.cantDeploy(u.getRarity(), u.getForms()[proc.form - 1].du.getWill())) {
 					int lvl = proc.mult;
 					if (!conf.fix_buff)
 						lvl = (int) e.buff(lvl);

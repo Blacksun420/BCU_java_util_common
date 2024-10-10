@@ -64,7 +64,7 @@ public class ERUnit extends Data implements IForm {
                 tot += t;
             } else {
                 Form f = (Form) unit.list.get(i).ent;
-                if (f.du.getWill() > sb.entityCount(-1))
+                if (sb.cantDeploy(f.unit.rarity, f.du.getWill()))
                     continue;
                 Level eLv = modifyLv(unit.list.get(i).lv.clone());
                 EForm ef = new EForm(f, f.regulateLv(null, eLv));

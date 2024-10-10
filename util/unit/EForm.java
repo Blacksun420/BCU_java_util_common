@@ -50,7 +50,7 @@ public class EForm extends Data implements IForm {
 		if (!b.elu.readySpirit(index[0],index[1]) || b.money < b.elu.spiritCost(index[0], index[1], b.st.getCont().price))
 			return null;
 		Form spirit = Identifier.getOr(du.getProc().SPIRIT.id, Unit.class).forms[du.getProc().SPIRIT.form - 1];
-		if (b.entityCount(-1) >= b.max_num - spirit.du.getWill())
+		if (b.cantDeploy(spirit.unit.rarity, spirit.du.getWill()))
 			return null;
 
 		float d = spirit.unit.lv.getMult(level.getTotalLv());
