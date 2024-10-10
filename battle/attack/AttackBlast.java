@@ -3,15 +3,16 @@ package common.battle.attack;
 import common.battle.entity.AbEntity;
 import common.battle.entity.Entity;
 
-import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 public class AttackBlast extends AttackAb {
 
-    private final int reduction;
+    public final float reduction;
     public int lv = 0;
     public int raw;
+    public boolean attacked = false;
+    private final LinkedList<AbEntity> ents = new LinkedList<>();
 
     protected AttackBlast(Entity attacker, AttackSimple src, float pos, int bt) {
         super(attacker, src, pos + 75, pos - 75, false);
@@ -31,21 +32,24 @@ public class AttackBlast extends AttackAb {
             nle.removeIf(le::contains);
             le.addAll(nle);
         }
+        le.remove(dire == 1 ? model.b.ubase : model.b.ebase);
+        capt.removeIf(ents::contains);
         if ((abi & AB_ONLY) == 0)
             capt.addAll(le);
         else
             for (AbEntity e : le)
                 if (e.ctargetable(trait, attacker))
                     capt.add(e);
-        excuse();
+        ents.addAll(capt);
     }
 
     @Override
     public void excuse() {
         atk = ((AtkModelEntity)model).getEffMult(raw);
-        atk -= (lv * reduction / 100) * atk;
+        atk -= (int)(lv * reduction / 100 * atk);
 
         for (AbEntity e : capt)
             e.damaged(this);
+        attacked = true;
     }
 }

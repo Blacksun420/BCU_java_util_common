@@ -18,7 +18,6 @@ public strictfp class P extends BattleObj {
 	public static synchronized P newP(float x, float y) {
 		if (!stack.isEmpty()) {
 			P p = stack.pollFirst();
-
 			if (p == null)
 				return new P(x, y);
 

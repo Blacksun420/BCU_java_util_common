@@ -1667,7 +1667,14 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			else
 				dmg = (int) (dmg * (100 - getProc().IMUMOVING.mult) / 100);
 		}
-
+		if ((atk.waveType & WT_BLST) > 0) {
+			if (getProc().IMUBLAST.mult > 0)
+				anim.getEff(P_WAVE);
+			if (getProc().IMUBLAST.mult == 100)
+				return;
+			else
+				dmg = (int) (dmg * (100 - getProc().IMUBLAST.mult) / 100);
+		}
 		if ((atk.waveType & (WT_VOLC | WT_MIVC)) > 0) {
 			if (getProc().IMUVOLC.mult > 0)
 				anim.getEff(P_WAVE);

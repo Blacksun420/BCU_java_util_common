@@ -261,8 +261,8 @@ public class Data {
 			@JsonField(defval = "3")
 			public int lv;
 			@Order(4)
-			@JsonField(defval = "4")
-			public int reduction;
+			@JsonField(defval = "30")
+			public float reduction;
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)

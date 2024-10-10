@@ -57,7 +57,8 @@ public class ContVolcano extends ContAb {
 		FakeTransform at = gra.getTransform();
 		anim.draw(gra, p, psiz);
 		gra.setTransform(at);
-		drawAxis(gra, p, psiz);
+		if (CommonStatic.getConfig().ref)
+			drawAxis(gra, p, psiz * 1.25f);
 	}
 
 	@Override
@@ -149,12 +150,7 @@ public class ContVolcano extends ContAb {
 	}
 
 	protected void drawAxis(FakeGraphics gra, P p, float siz) {
-		if (!CommonStatic.getConfig().ref)
-			return;
-
-		// after this is the drawing of hit boxes
-		siz *= 1.25f;
-		float rat = BattleConst.ratio;
+		float rat = BattleConst.ratio;//Hitbox drawing
 		int h = (int) (640 * rat * siz);
 		gra.setColor(FakeGraphics.MAGENTA);
 		float d0 = Math.min(v.sta, v.end);

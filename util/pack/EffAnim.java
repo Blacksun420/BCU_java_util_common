@@ -231,7 +231,8 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 	public enum BlastEff implements EffType<BlastEff> {
 		START("00"),
 		EXPLODE("01"),
-		DUMMY("02");
+		DUMMY("02"),
+		SINGLE("03");
 
 		private final String path;
 

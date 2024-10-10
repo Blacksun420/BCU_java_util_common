@@ -1,44 +1,44 @@
 package common.battle.attack;
 
 import common.CommonStatic;
+import common.battle.entity.AbEntity;
+import common.battle.entity.Entity;
 import common.system.P;
 import common.system.fake.FakeGraphics;
 import common.system.fake.FakeTransform;
 import common.util.anim.EAnimD;
-import common.util.pack.EffAnim;
+import common.util.pack.EffAnim.BlastEff;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
 
 public class ContBlast extends ContAb {
-    protected final EAnimD<EffAnim.BlastEff> anim;
-    //protected Set<ContBlast> blasts;
     private final AttackBlast blast;
+    private final int maxl;
+    protected final ArrayList<EAnimD<BlastEff>> anims;
     private int t = 0;
 
     protected ContBlast(AttackBlast atkBlast, float p, int lay) {
         super(atkBlast.model.b, p, lay);
-        anim = (atkBlast.dire == 1 ? effas().A_E_BLAST : effas().A_BLAST).getEAnim(EffAnim.BlastEff.START);
-        anim.setTime(1);
         blast = atkBlast;
-        //if (atkBlast.getProc().BLAST.lv != 3)
-        //    blasts = new HashSet<>(); TODO - levels other than 3
-    }
-    /*private ContBlast(ContBlast blast, float p, int lay) {
-        super(blast.sb, p, lay);
-        anim = (blast. == 1 ? effas().A_E_BLAST : effas().A_BLAST).getEAnim(EffAnim.BlastEff.SINGLE);
+        maxl = blast.getProc().BLAST.lv;
+        EAnimD<BlastEff> anim = (blast.dire == 1 ? effas().A_E_BLAST : effas().A_BLAST).getEAnim(BlastEff.START);
         anim.setTime(1);
-        if (atkBlast.getProc().BLAST.lv != 3) {
-            blasts = new HashSet<>();
-        }
-    }*/
+        anims = new ArrayList<>(maxl * 2 - 1);
+        anims.add(anim);
+    }
 
     @Override
     public void draw(FakeGraphics gra, P p, float psiz) {
         FakeTransform at = gra.getTransform();
-        anim.draw(gra, p, psiz);
-        gra.setTransform(at);
-        if (CommonStatic.getConfig().ref && blast.lv + 1 < blast.getProc().BLAST.lv)
+        for (int i = anims.size() - 1; i >= Math.max(0, anims.size() - 4); i--) {
+            if (i > 0) {
+                anims.get(i).ent[3].alter(53, 400 + (100 - (blast.lv * blast.reduction)) * 6);
+                anims.get(i).ent[3].alter(4, 60 * ((i+1) / 2));
+            }
+            anims.get(i).draw(gra, p, psiz);
+            gra.setTransform(at);
+        }
+        if (CommonStatic.getConfig().ref && blast.lv < maxl)
             drawAxis(gra, p, psiz * 1.25f);
     }
 
@@ -54,7 +54,7 @@ public class ContBlast extends ContAb {
         int w = (int) (ra * rat * siz);
 
         int ch = (int)(150 * blast.lv * rat * siz);
-        if (t > EXPLOSION_PRE && (t - EXPLOSION_PRE) % 10 == 2) {
+        if (blast.attacked) {
             gra.fillRect(x + ch, y, w, h);
             gra.fillRect(x - ch, y, w, h);
         } else {
@@ -66,26 +66,63 @@ public class ContBlast extends ContAb {
     @Override
     public void update() { // FIXME: update on same frame as attack
         t++;
+        blast.attacked = false;
         int rt = t - EXPLOSION_PRE;
-        if (rt >= 0 && blast.lv + 1 < blast.getProc().BLAST.lv) {
+        if (rt >= 0 && blast.lv < maxl) {
             if (rt == 0)
-                anim.changeAnim(EffAnim.BlastEff.EXPLODE, true);
+                anims.get(0).changeAnim(maxl == 3 ? BlastEff.EXPLODE : BlastEff.SINGLE, true);
             int qrt = (t - 1) % EXPLOSION_DELAY;
-            if (qrt == 0)
-                CommonStatic.setSE(EXPLOSION_SE + (rt / 10));
-            else if (qrt == 2)
+            if (qrt == 0) {
+                if (rt > 0)
+                    blast.lv++;
+                if (blast.lv < maxl) {
+                    CommonStatic.setSE(EXPLOSION_SE + Math.max(0, 3 - (maxl - blast.lv)));
+                    if (blast.lv > 0 && maxl != 3) {
+                        EAnimD<BlastEff> a = (blast.dire == 1 ? effas().A_E_BLAST : effas().A_BLAST).getEAnim(BlastEff.SINGLE);
+                        a.ent[3].b.revert();
+                        anims.add((blast.dire == 1 ? effas().A_E_BLAST : effas().A_BLAST).getEAnim(BlastEff.SINGLE));
+                        anims.add(a);
+                    }
+                }
+            } else if (qrt == 3) {
                 blast.capture();
-            if (qrt == 9)
-                blast.lv++;
+                for (AbEntity e : blast.capt)
+                    if (e instanceof Entity) {
+                        float blo = e.getProc().IMUBLAST.block;
+                        if (blo != 0) {
+                            if (blo > 0)
+                                ((Entity)e).anim.getEff(STPWAVE);
+                            if (blo == 100) {
+                                deactivate(e);
+                                return;
+                            } else
+                                blast.raw = (int) (blast.raw * (100 - blo) / 100);
+                        }
+                    }
+                blast.excuse();
+            }
         }
-        if (anim.done())
+        if (anims.get(anims.size() - 1).done())
             activate = false;
         updateAnimation();
     }
 
+    /**
+     * kill every related blast
+     */
+    protected void deactivate(AbEntity e) {
+        if (e.getProc().IMUBLAST.mult < 0) {
+            e.getProc().IMUBLAST.mult += 100;
+            e.damaged(blast);
+            e.getProc().IMUBLAST.mult -= 100;
+        }
+        activate = false;
+    }
+
     @Override
     public void updateAnimation() {
-        anim.update(false);
+        for (int i = anims.size() - 1; i >= Math.max(0, anims.size() - 4); i--)
+            anims.get(i).update(false);
     }
 
     @Override
