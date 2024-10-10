@@ -856,7 +856,10 @@ public class Editors {
 				t.dis_0 = t.dis_1 = t.lv = 0;
 				t.reduction = 0;
 			}
-		}, eg -> t -> setComponentVisibility(eg, t.lv > 1, 4)));
+		}, eg -> t -> {
+			setComponentVisibility(eg, t.prob > 0, 1);
+			setComponentVisibility(eg, t.lv > 1, 4);
+		}));
 
 		map().put("IMUBLAST", imu);
 	}
