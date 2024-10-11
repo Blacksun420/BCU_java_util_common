@@ -1761,8 +1761,8 @@ public class Data {
 	public static final byte P_RANGESHIELD = 71;
 	public static final byte P_SPIRIT = 72;
 	public static final byte P_METALKILL = 73;
-	public static final int P_BLAST = 74;
-	public static final int P_IMUBLAST = 75;
+	public static final byte P_BLAST = 74;
+	public static final byte P_IMUBLAST = 75;
 	public static final byte PROC_TOT = 76;
 
 	public static final boolean[] procSharable = {
