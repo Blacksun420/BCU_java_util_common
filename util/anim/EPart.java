@@ -55,6 +55,7 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 	private int id, img;
 	private P pos = new P(0, 0), piv = new P(0, 0), sca = new P(0, 0);
 	private int z, glow, extType; // extType - 0 : Slow, 1 : Curse
+	private boolean rand = false;
 	private float angle, opacity, extendX, extendY, gsca;
 	private int hf, vf;
 
@@ -89,7 +90,7 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 		else if (m == 1)
 			id = (int) v;
 		else if (m == 2) {
-			if (extType == 1 && img != v)
+			if (rand && img != v)
 				for (int i = 0; i < randSeries.size(); i++) {
 					int r = randSeries.get(i);
 
@@ -98,7 +99,6 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 
 					randSeries.set(i, r);
 				}
-
 			img = (int) v;
 		} else if (m == 3)
 			z = (int) (v * b.ent.length + ind);
@@ -129,13 +129,12 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 			vf = v == 0 ? 1 : -1;
 		else if (m == 50) {
 			extendX = v;
-			extType = 0;
+			rand = false;
 		} else if (m == 51) {
 			extendX = v;
-			extType = 1;
+			rand = true;
 		} else if (m == 52) {
 			extendY = v;
-			extType = 0;
 		} else
 			CommonStatic.ctx.printErr(ErrType.NEW, "unhandled modification " + m);
 
@@ -212,26 +211,7 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 	}
 
 	public void drawPart(FakeGraphics g, P base) {
-		if (img < 0 || id < 0 || opa() < CommonStatic.getConfig().deadOpa * 0.01 + 1e-5 || b.a.parts(img) == null)
-			return;
-		FakeTransform at = g.getTransform();
-		transform(g, base);
-		FakeImage bimg = b.a.parts(img);
-		int w = bimg.getWidth();
-		int h = bimg.getHeight();
-		P p0 = getSize();
-		P tpiv = P.newP(piv).times(p0).times(base);
-		P sc = P.newP(w, h).times(p0).times(base);
-		P.delete(p0);
-		if (extType == 0)
-			drawImg(g, bimg, tpiv, sc, opa(), glow, extendX / b.model.ints[0], extendY / b.model.ints[0]);
-		else if (extType == 1)
-			drawRandom(g, new FakeImage[] { b.a.parts(3), b.a.parts(4), b.a.parts(5), b.a.parts(6) }, tpiv, sc, opa(),
-					glow == 1, extendX / b.model.ints[0]);
-		P.delete(tpiv);
-		P.delete(sc);
-		g.setTransform(at);
-		g.delete(at);
+		drawPartWithOpacity(g, base, 255);
 	}
 
 	/**
@@ -252,11 +232,11 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 		P tpiv = P.newP(piv).times(p0).times(base);
 		P sc = P.newP(w, h).times(p0).times(base);
 		P.delete(p0);
-		if (extType == 0)
+		if (!rand)
 			drawImg(g, bimg, tpiv, sc, opa() * opacity / 255f, glow, extendX / b.model.ints[0], extendY / b.model.ints[0]);
-		else if (extType == 1)
+		else
 			drawRandom(g, new FakeImage[] { b.a.parts(3), b.a.parts(4), b.a.parts(5), b.a.parts(6) }, tpiv, sc, opa(),
-					glow == 1, extendX / b.model.ints[0]);
+					glow, extendX / b.model.ints[0], extendY / b.model.ints[0]);
 		P.delete(tpiv);
 		P.delete(sc);
 		g.setTransform(at);
@@ -308,6 +288,7 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 		gsca = b.model.ints[0];
 		hf = vf = 1;
 		extendX = extendY = 0;
+		rand = false;
 	}
 
 	public P getSize() {

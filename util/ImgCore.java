@@ -39,127 +39,59 @@ public class ImgCore extends Data {
 			else
 				g.setComposite(FakeGraphics.DEF, 0, 0);
 		}
-		if (extendX == 0 && extendY == 0)
+		if ((extendX == 0 || extendX == 1) && (extendY == 0 || extendY == 1))
 			drawImage(g, bimg, -piv.x, -piv.y, sc.x, sc.y);
 		else {
+			if (extendX == 0)
+				extendX = 1;
+			if (extendY == 0)
+				extendY = 1;
+			float oldExtendY = extendY;
 			float x = -piv.x;
 			float y = -piv.y;
-
-			float oldExtendY = extendY;
-			float oldExtendX = extendX;
-
-			if(extendY == 0) {
-				while (extendX > 1) {
-					drawImage(g, bimg, x, y, sc.x, sc.y);
-					x += sc.x;
-					extendX--;
-				}
-			} else {
-				float extendXBackup = extendX;
-
-				while(extendY > 1) {
-					if(extendX == 0) {
-						drawImage(g, bimg, x, y, sc.x, sc.y);
-					} else {
-						x = -piv.x;
-						extendX = extendXBackup;
-
-						while(extendX > 1) {
-							drawImage(g, bimg, x, y, sc.x, sc.y);
-							x += sc.x;
-							extendX--;
-						}
-					}
-
-					y += sc.y;
-					extendY--;
-				}
-			}
 			int w = bimg.getWidth();
 			int h = bimg.getHeight();
-			if (w > 0) {
-				if(extendY == 0) {
-					FakeImage parX = bimg.getSubimage(0, 0, (int) (Math.max(1, w * extendX)), h);
 
-					drawImage(g, parX, x, y, sc.x * extendX, sc.y);
-				} else {
-					FakeImage parY = bimg.getSubimage(0, 0, w, (int) (Math.max(1, h * extendY)));
-
-					if(extendX == 0) {
-						drawImage(g, parY, x, y, sc.x, sc.y * extendY);
-					} else {
-						FakeImage parX = bimg.getSubimage(0, 0, (int) (Math.max(1, w * extendX)), h);
-						FakeImage parXY = bimg.getSubimage(0, 0, parX.getWidth(), parY.getHeight());
-
-						y = -piv.y;
-
-						while(oldExtendY > 1) {
-							drawImage(g, parX, x, y, sc.x * extendX, sc.y);
-
-							y += sc.y;
-							oldExtendY--;
-						}
-
-						x = -piv.x;
-
-						while(oldExtendX > 1) {
-							drawImage(g, parY, x, y, sc.x, sc.y * extendY);
-
-							x += sc.x;
-							oldExtendX--;
-						}
-
-						drawImage(g, parXY, x, y, sc.x * extendX, sc.y * extendY);
-					}
+			while (extendX > 0 || extendY > 0) {
+				float scx = extendX < 1 ? sc.x * extendX : sc.x;
+				while (extendY > 0) {
+					float scy = extendY < 1 ? sc.y * extendY : sc.y;
+					FakeImage pimg = scx == sc.x && scy == sc.y ? bimg : bimg.getSubimage(0, 0,
+							scx == sc.x ? w : (int)Math.max(1, w * extendX), scy == sc.y ? h : (int)Math.max(1, h * extendY));
+					drawImage(g, pimg, x, y, scx, scy);
+					y += scy;
+					extendY--;
+				}
+				x += scx;
+				extendX--;
+				if (extendX > 0) {
+					y = -piv.y;
+					extendY = oldExtendY;
 				}
 			}
 		}
 		g.setComposite(FakeGraphics.DEF, 0, 0);
 	}
 
-	protected static void drawRandom(FakeGraphics g, FakeImage[] bimg, P piv, P sc, float opa, boolean glow, float extendX) {
-		if (opa < CommonStatic.getConfig().fullOpa * 0.01 - 1e-5)
-			if (!glow)
-				g.setComposite(FakeGraphics.TRANS, (int) (opa * 256), 0);
-			else
-				g.setComposite(FakeGraphics.BLEND, (int) (opa * 256), 1);
-		else if (glow)
-			g.setComposite(FakeGraphics.BLEND, 256, 1);
-		else
-			g.setComposite(FakeGraphics.DEF, 0, 0);
-		if (extendX == 0)
-			drawImage(g, bimg[0], -piv.x, -piv.y, sc.x, sc.y);
+	protected static void drawRandom(FakeGraphics g, FakeImage[] bimg, P piv, P sc, float opa, int glow, float extendX, float extendY) {
+		if ((extendX == 0 || extendX == 1) && (extendY == 0 || extendY == 1))
+			drawImg(g, bimg[0], piv, sc, opa, glow, extendX, extendY);
 		else {
-			float x = -piv.x;
 			int i = 0;
-			while (extendX > 1) {
+			while (extendX > 0) {
 				int data;
-
 				if (i >= randSeries.size()) {
-					data = (int) (Math.random() * 3);
-
+					data = (int) (Math.random() * (bimg.length-1));
 					randSeries.add(data);
-				} else {
+				} else
 					data = randSeries.get(i);
-				}
 
-				FakeImage ranImage = bimg[data];
-				drawImage(g, ranImage, x, -piv.y, sc.x, sc.y);
-				x += sc.x;
+				drawImg(g, bimg[data], piv, sc, opa, glow, Math.min(extendX, 1), Math.min(extendY, 1));
+				piv.x -= sc.x;
 				extendX--;
 				i++;
 			}
-
-			int w = (int) (bimg[0].getWidth() * extendX);
-			int h = bimg[0].getHeight();
-			if (w > 0) {
-				FakeImage par;
-				par = bimg[0].getSubimage(0, 0, w, h);
-
-				drawImage(g, par, x, -piv.y, sc.x * extendX, sc.y);
-			}
 		}
-		g.setComposite(FakeGraphics.DEF, 0, 0);
 	}
 
 	protected static void drawSca(FakeGraphics g, P piv, P sc) {

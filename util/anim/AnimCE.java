@@ -480,7 +480,7 @@ public class AnimCE extends AnimCI {
 
 		anims = new MaAnim[Math.max(ori.types.length, TYPEDEF.length)];
 		for (int i = 0; i < anims.length; i++)
-			if (i < ori.anims.length)
+			if (i < ori.anims.length && ori.anims[i] != null)
 				anims[i] = ori.anims[i].clone();
 			else
 				anims[i] = new MaAnim();
