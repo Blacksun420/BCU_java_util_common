@@ -117,7 +117,7 @@ public class ImgCore extends Data {
 		g.setComposite(FakeGraphics.DEF, 0, 0);
 	}
 
-	protected static void drawRandom(FakeGraphics g, FakeImage[] bimg, P piv, P sc, float opa, boolean glow, float extendX, float extendY) {
+	protected static void drawRandom(FakeGraphics g, FakeImage[] bimg, P piv, P sc, float opa, boolean glow, float extendX) {
 		if (opa < CommonStatic.getConfig().fullOpa * 0.01 - 1e-5)
 			if (!glow)
 				g.setComposite(FakeGraphics.TRANS, (int) (opa * 256), 0);
@@ -185,7 +185,6 @@ public class ImgCore extends Data {
 		int iw = Math.round(w);
 		int ih = Math.round(h);
 		g.drawImage(bimg, ix, iy, iw, ih);
-
 	}
 
 }

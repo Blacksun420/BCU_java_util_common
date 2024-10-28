@@ -227,7 +227,7 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 			drawImg(g, bimg, tpiv, sc, opa(), glow, extendX / b.model.ints[0], extendY / b.model.ints[0]);
 		else if (extType == 1)
 			drawRandom(g, new FakeImage[] { b.a.parts(3), b.a.parts(4), b.a.parts(5), b.a.parts(6) }, tpiv, sc, opa(),
-					glow == 1, extendX / b.model.ints[0], extendY / b.model.ints[0]);
+					glow == 1, extendX / b.model.ints[0]);
 		P.delete(tpiv);
 		P.delete(sc);
 		g.setTransform(at);
@@ -256,7 +256,7 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 			drawImg(g, bimg, tpiv, sc, opa() * opacity / 255f, glow, extendX / b.model.ints[0], extendY / b.model.ints[0]);
 		else if (extType == 1)
 			drawRandom(g, new FakeImage[] { b.a.parts(3), b.a.parts(4), b.a.parts(5), b.a.parts(6) }, tpiv, sc, opa(),
-					glow == 1, extendX / b.model.ints[0], extendY / b.model.ints[0]);
+					glow == 1, extendX / b.model.ints[0]);
 		P.delete(tpiv);
 		P.delete(sc);
 		g.setTransform(at);

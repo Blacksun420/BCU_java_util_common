@@ -87,9 +87,10 @@ public class CustomBGEffect extends BackgroundEffect {
 
     @Override
     public void draw(FakeGraphics g, float y, float siz, float midH) {
-        P pee = new P(0, y);
+        P pee = P.newP(0, y);
         preDraw(g, pee, siz, midH);
         postDraw(g, pee, siz, midH);
+        P.delete(pee);
     }
 
     @Override
