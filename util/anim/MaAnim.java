@@ -116,7 +116,7 @@ public class MaAnim extends Data implements BattleStatic {
 			f %= max + 1;
 		if (f == 0)
 			for (EPart e : eAnim.ent)
-				e.setValue();
+				e.setValue(parts);
 
 		for (int i = 0; i < n; i++) {
 			int loop = parts[i].ints[2];

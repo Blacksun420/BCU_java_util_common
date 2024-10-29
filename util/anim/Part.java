@@ -152,11 +152,8 @@ public class Part extends Data implements Cloneable, Comparable<Part> {
 						else
 							ti = (1 - Math.cos(ti * Math.PI)) / 2;
 
-					if (ints[1] == 2 || ints[1] == 4 || ints[1] == 5)
-						if (v1 - v0 < 0)
-							vd = (int) Math.ceil((v1 - v0) * ti + v0);
-						else
-							vd = (int) ((v1 - v0) * ti + v0);
+					if ((ints[1] == 2 || ints[1] == 4 || ints[1] == 5) && v1 < v0)
+						vd = (int) Math.ceil((v1 - v0) * ti + v0);
 					else
 						vd = (int) ((v1 - v0) * ti + v0);
 

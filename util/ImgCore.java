@@ -7,7 +7,6 @@ import common.system.fake.FakeGraphics;
 import common.system.fake.FakeImage;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ImgCore extends Data {
 
@@ -15,8 +14,6 @@ public class ImgCore extends Data {
 	public static final String[] NAME = new String[] { "opacity", "color", "accuracy", "scale" };
 	@StaticPermitted
 	public static final String[] VAL = new String[] { "fast", "default", "quality" };
-
-	protected static List<Integer> randSeries = new ArrayList<>();
 
 	public static void set(FakeGraphics g) {
 		if (CommonStatic.getConfig().battle)
@@ -39,13 +36,13 @@ public class ImgCore extends Data {
 			else
 				g.setComposite(FakeGraphics.DEF, 0, 0);
 		}
-		if ((extendX == 0 || extendX == 1) && (extendY == 0 || extendY == 1))
+		if (extendX == 0)
+			extendX = 1;
+		if (extendY == 0)
+			extendY = 1;
+		if (extendX == 1 && extendY == 1)
 			drawImage(g, bimg, -piv.x, -piv.y, sc.x, sc.y);
 		else {
-			if (extendX == 0)
-				extendX = 1;
-			if (extendY == 0)
-				extendY = 1;
 			float oldExtendY = extendY;
 			float x = -piv.x;
 			float y = -piv.y;
@@ -73,23 +70,34 @@ public class ImgCore extends Data {
 		g.setComposite(FakeGraphics.DEF, 0, 0);
 	}
 
-	protected static void drawRandom(FakeGraphics g, FakeImage[] bimg, P piv, P sc, float opa, int glow, float extendX, float extendY) {
-		if ((extendX == 0 || extendX == 1) && (extendY == 0 || extendY == 1))
-			drawImg(g, bimg[0], piv, sc, opa, glow, extendX, extendY);
-		else {
-			int i = 0;
-			while (extendX > 0) {
-				int data;
-				if (i >= randSeries.size()) {
-					data = (int) (Math.random() * (bimg.length-1));
-					randSeries.add(data);
-				} else
-					data = randSeries.get(i);
+	protected static void drawRandom(FakeGraphics g, ArrayList<Integer> rands, FakeImage[] bimg, P piv, P sc, float opa, int glow, float extendX, float extendY) {
+		if (extendX == 0)
+			extendX = 1;
+		if (extendY == 0)
+			extendY = 1;
 
+		int i = 0;
+		float oldExtendY = extendY;
+		float oldY = piv.y;
+
+		while (extendX > 0 || extendY > 0) {
+			while (extendY > 0) {
+				int data;
+				if (i >= rands.size()) {
+					data = (int) (Math.random() * bimg.length);
+					rands.add(data);
+				} else
+					data = rands.get(i);
 				drawImg(g, bimg[data], piv, sc, opa, glow, Math.min(extendX, 1), Math.min(extendY, 1));
-				piv.x -= sc.x;
-				extendX--;
+				piv.y -= sc.y;
+				extendY--;
 				i++;
+			}
+			piv.x -= sc.x;
+			extendX--;
+			if (extendX > 0) {
+				piv.y = oldY;
+				extendY = oldExtendY;
 			}
 		}
 	}
