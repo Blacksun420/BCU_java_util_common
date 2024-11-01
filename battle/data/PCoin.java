@@ -29,7 +29,7 @@ public class PCoin extends Data {
 		for (String str : qs) {
 			String[] strs = str.trim().split(",");
 
-			if (strs.length == 114) {
+			if (strs.length >= 2) {
 				int[] data = CommonStatic.parseIntsN(str);
 
 				AbUnit u = Identifier.parseInt(data[0], Unit.class).get();
@@ -73,14 +73,16 @@ public class PCoin extends Data {
 		this.du = du;
 		trait = Trait.convertType(strs[1], true);
 
-		for (int i = 0; i < 8; i++)
-			if(strs[2 + i * 14] != 0) {
+		for (int i = 0; i < 8; i++) {
+			if (2 + i * 14 >= strs.length)
+				break;
+			if (strs[2 + i * 14] != 0) {
 				int[] data = new int[14]; //Default length of BC
 				for (int j = 0; j < 14; j++)
 					data[j] = strs[2 + i * 14 + j];
 				if (data[13] == 1) //Super Talent
 					data[13] = 60;
-				if(data[0] == 62) {//Miniwave
+				if (data[0] == 62) {//Miniwave
 					if (data[6] == 0 && data[7] == 0) {
 						data[8] = 20;
 						data[9] = 20;
@@ -111,6 +113,7 @@ public class PCoin extends Data {
 				trueArr[trueArr.length - 1] = Math.max(0, data[13]);
 				info.add(trueArr);
 			}
+		}
 		max = info.stream().mapToInt(i -> Math.max(1, i[1])).toArray();
 		((DataUnit)du).pcoin = this;
 		full = improve(max);

@@ -33,7 +33,7 @@ public class ContBlast extends ContAb {
         for (int i = anims.size() - 1; i >= Math.max(0, anims.size() - 4); i--) {
             if (i > 0) {
                 anims.get(i).ent[3].alter(53, 400 + (100 - (blast.lv * blast.reduction)) * 6);
-                anims.get(i).ent[3].alter(4, 60 * ((i+1) / 2));
+                anims.get(i).ent[3].alter(4, 10 + 40 * ((i+1) / 2));
             }
             anims.get(i).draw(gra, p, psiz);
             gra.setTransform(at);
@@ -53,7 +53,7 @@ public class ContBlast extends ContAb {
         int y = (int) p.y;
         int w = (int) (ra * rat * siz);
 
-        int ch = (int)(150 * blast.lv * rat * siz);
+        int ch = blast.lv == 0 ? 0 : (int)((25 + 100 * blast.lv) * rat * siz);
         if (blast.attacked) {
             gra.fillRect(x + ch, y, w, h);
             gra.fillRect(x - ch, y, w, h);
@@ -74,7 +74,7 @@ public class ContBlast extends ContAb {
             int qrt = (t - 1) % EXPLOSION_DELAY;
             if (qrt == 0) {
                 if (rt > 0)
-                    blast.lv++;
+                    blast.next();
                 if (blast.lv < maxl) {
                     CommonStatic.setSE(EXPLOSION_SE + Math.max(0, 3 - (maxl - blast.lv)));
                     if (blast.lv > 0 && maxl != 3) {

@@ -17,8 +17,6 @@ public class AttackVolcano extends AttackAb {
 
 	public AttackVolcano(Entity e, AttackSimple a, float sta, float end, int vt) {
 		super(e, a, sta, end, false);
-		this.sta = sta;
-		this.end = end;
 		this.waveType = vt;
 		raw = model instanceof AtkModelEntity ? ((AtkModelEntity)model).getDefAtk(matk) : atk;
 		if(dire == 1 && model.b.canon.deco == DECO_BASE_WATER)

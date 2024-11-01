@@ -24,7 +24,7 @@ public class AttackBlast extends AttackAb {
     @Override
     public void capture() {
         capt.clear();
-        float rng = (150 * lv);
+        float rng = lv == 0 ? 0 : 25 + (100 * lv);
 
         List<AbEntity> le = model.b.inRange(touch, attacker != null && attacker.status.rage > 0 ? 2 : dire, sta + rng, end + rng, excludeRightEdge);
         if (lv > 0) {
@@ -51,5 +51,12 @@ public class AttackBlast extends AttackAb {
         for (AbEntity e : capt)
             e.damaged(this);
         attacked = true;
+    }
+
+    public void next() {
+        if (++lv == 1) {
+            sta -= 25;
+            end += 25;
+        }
     }
 }

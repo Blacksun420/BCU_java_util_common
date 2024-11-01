@@ -96,7 +96,6 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 		else if (m == 2) {
 			if (rand && img != v) {
 				int V = (int)v;
-				System.out.println(V-img + " | " + V + ", " + img);
 				rands.replaceAll(i -> Math.abs(i + (V-img)) % randImg.length);
 			}
 			img = (int) v;
