@@ -67,11 +67,11 @@ public class ContBlast extends ContAb {
     public void update() { // FIXME: update on same frame as attack
         t++;
         blast.attacked = false;
-        int rt = t - EXPLOSION_PRE;
+        int rt = t - BLAST_PRE;
         if (rt >= 0 && blast.lv < maxl) {
             if (rt == 0)
                 anims.get(0).changeAnim(maxl == 3 ? BlastEff.EXPLODE : BlastEff.SINGLE, true);
-            int qrt = (t - 1) % EXPLOSION_DELAY;
+            int qrt = (t - 1) % BLAST_ITV;
             if (qrt == 0) {
                 if (rt > 0)
                     blast.next();
