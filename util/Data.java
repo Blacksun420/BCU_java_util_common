@@ -2169,8 +2169,9 @@ public class Data {
 	public static final byte VOLC_POST = 10; // volcano post-atk
 	public static final byte VOLC_SE = 30; // volcano se loop duration
 
-	public static final byte EXPLOSION_DELAY = 10;
-	public static final byte EXPLOSION_PRE = 11;
+	public static final byte BLAST_ITV = 10;
+	public static final byte BLAST_PRE = 11;
+	public static final byte BLAST_DURATION = 15;
 	public static final short EXPLOSION_SE = 167;
 
 	public static final byte[] NYPRE = new byte[] { 18, 1, -1, 27, 37, 18, 10, 1 };
