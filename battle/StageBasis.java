@@ -87,7 +87,7 @@ public class StageBasis extends BattleObj {
 	public Identifier<Music> mus = null;
 	private THEME.TYPE themeType;
 	private boolean bgEffectInitialized = false;
-	public int baseBarrier = 0;
+	public int baseBarrier = 0, rem_spawns;
 
 	public StageBasis(BattleField bf, EStage stage, BasisLU bas, int cnf, long seed, boolean buttonDelayOn, byte saveMode) {
 		b = bas;
@@ -172,6 +172,7 @@ public class StageBasis extends BattleObj {
 
 		isOneLineup = oneLine;
 		this.buttonDelayOn = buttonDelayOn;
+		rem_spawns = est.lim != null && est.lim.stageLimit != null && est.lim.stageLimit.maxUnitSpawn > 0 ? est.lim.stageLimit.maxUnitSpawn : -1;
 	}
 
 	/**
@@ -458,7 +459,7 @@ public class StageBasis extends BattleObj {
 	}
 
 	protected boolean act_spawn(int i, int j, boolean manual) {
-		if (buttonDelay > 0 || ubase.health == 0 || unitRespawnTime > 0)
+		if (buttonDelay > 0 || ubase.health == 0 || unitRespawnTime > 0 || rem_spawns == 0)
 			return false;
 
 		if(buttonDelayOn && manual && selectedUnit[0] == -1) {
@@ -520,6 +521,7 @@ public class StageBasis extends BattleObj {
 			elu.resetCD(i, j);
 			elu.smnd[i][j] = eu;
 			totalSpawned[i][j]++;
+			rem_spawns--;
 			eu.added(-1, st.len - 700);
 
 			le.add(eu);

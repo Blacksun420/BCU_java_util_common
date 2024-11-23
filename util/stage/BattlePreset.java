@@ -1,8 +1,11 @@
 package common.util.stage;
 
+import common.battle.BasisLU;
+import common.battle.LineUp;
 import common.battle.Treasure;
 import common.io.json.JsonClass;
 import common.io.json.JsonField;
+import common.util.unit.AbForm;
 import common.util.unit.Form;
 import common.util.unit.Level;
 
@@ -33,7 +36,7 @@ public class BattlePreset {
 
     public int level; // It seems preset can be activated per crown
 
-    @JsonField(alias = Form.FormJson.class)
+    @JsonField(alias = AbForm.AbFormJson.class)
     public final Form[][] fs = new Form[2][5];
     public final Level[][] levels = new Level[2][5];
 
@@ -57,8 +60,8 @@ public class BattlePreset {
     public String toString() {
         return "BattlePreset{\n" +
                 "level=" + level + "\n" +
-                ", fs=" + Arrays.toString(fs) + "\n" +
-                ", levels=" + Arrays.toString(levels) + "\n" +
+                ", fs=" + Arrays.deepToString(fs) + "\n" +
+                ", levels=" + Arrays.deepToString(levels) + "\n" +
                 ", cannonType=" + cannonType + "\n" +
                 ", tech=" + Arrays.toString(tech) + "\n" +
                 ", trea=" + Arrays.toString(trea) + "\n" +
@@ -69,5 +72,27 @@ public class BattlePreset {
                 ", alien=" + alien + "\n" +
                 ", star=" + star + "\n" +
                 '}';
+    }
+
+    public BasisLU apply() {
+        BasisLU b = new BasisLU();//level variable is BC shit nobody cares about
+
+        b.t().trea = trea.clone();
+        b.t().tech = tech.clone();
+        b.t().bslv = bslv.clone();
+        b.t().gods = gods.clone();
+        b.t().fruit = fruit.clone();
+        b.t().alien = alien;
+        b.t().star = star;
+        b.nyc[0] = cannonType;
+
+        for (byte i = 0; i < 2; i++)
+            for (byte j = 0; j < 5; j++) {
+                if (fs[i][j] == null)
+                    break;
+                b.lu.fs[i][j] = fs[i][j];
+                b.lu.setLv(fs[i][j].unit, levels[i][j]);
+            }
+        return b;
     }
 }

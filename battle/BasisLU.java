@@ -62,7 +62,7 @@ public class BasisLU extends Basis implements Copable<BasisLU>, BattleStatic {
 	}
 
 	protected BasisLU(BasisSet bs, BasisLU bl) {
-		t = new Treasure(this, bs.t());
+		t = new Treasure(this, bl.t());
 		lu = new LineUp(bl.lu);
 		name = "lineup " + bs.lb.size();
 		nyc = bl.nyc.clone();

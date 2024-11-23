@@ -360,6 +360,7 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 			g.scale(hf, vf);
 			P.delete(tpos);
 		} else {
+			g.scale(hf, vf);
 			if (b.model.confs.length > 0) {
 				int[] data = b.model.confs[0];
 				P p0 = getBaseSize(false);

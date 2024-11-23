@@ -467,76 +467,48 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 												parameter.size()
 										);
 									}
-
 									int maxUnitSpawn = parameter.get(0).getAsInt();
-
-									for (Stage stage : map.list) {
-										if (stage.lim == null)
-											stage.lim = new Limit();
-
-										if (stage.lim.stageLimit == null) {
-											stage.lim.stageLimit = new StageLimit();
-										}
-
-										stage.lim.stageLimit.maxUnitSpawn = maxUnitSpawn;
-									}
+									if (map.lim.isEmpty() || map.lim.get(map.lim.size() - 1).stageLimit == null)
+										map.lim.add(new Limit(new StageLimit()));
+									StageLimit slim = map.lim.get(map.lim.size() - 1).stageLimit;
+									slim.maxUnitSpawn = maxUnitSpawn;
 								}
-
 								break;
 						}
 					}
 				}
 			}
-
 			// Battle preset
 			qs = VFile.readLine("./org/data/fixed_formation.csv");
-
 			if (qs != null) {
 				qs.poll();
-
 				while(!qs.isEmpty()) {
 					String[] presetData = qs.poll().split(",");
 
 					if (presetData.length < 4)
 						continue;
-
 					int mapID = CommonStatic.safeParseInt(presetData[0]);
-
 					StageMap map = getMap(mapID);
-
 					if (map == null)
 						continue;
-
 					int stageID = CommonStatic.safeParseInt(presetData[2]);
-
 					if (stageID >= map.list.size())
 						continue;
-
 					Stage targetStage = map.list.get(stageID);
-
 					if (targetStage == null)
 						continue;
-
 					String presetFileName = presetData[3];
-
 					targetStage.preset = new BattlePreset();
-
 					targetStage.preset.level = CommonStatic.safeParseInt(presetData[1]);
 
 					VFile presetFile = VFile.get("./org/battle/preset/" + presetFileName);
-
 					if (presetFile == null)
 						continue;
-
 					String presetFileContents = new String(presetFile.getData().getBytes());
-
 					JsonElement presetElement = JsonParser.parseString(presetFileContents);
-
 					if (!presetElement.isJsonObject())
 						continue;
-
 					JsonObject presetObject = presetElement.getAsJsonObject();
-
 					if (
 						!presetObject.has("chara") ||
 						!presetObject.has("slot") ||
@@ -545,64 +517,48 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 						!presetObject.has("treasure")
 					) {
 						System.out.printf("W/MapColc::read - Invalid preset found : Map ID = %d, Stage ID = %d, Preset File Name = %s\n", mapID, stageID, presetFileName);
-
 						continue;
 					}
-
 					Map<Unit, BattlePreset.LevelObject> levelObjects = new HashMap<>();
-
 					JsonObject charaData = presetObject.getAsJsonObject("chara").getAsJsonObject("data");
-
 					for (String key : charaData.keySet()) {
 						JsonObject o = charaData.getAsJsonObject(key);
 
 						if (o.has("remove") && o.get("remove").getAsBoolean())
 							continue;
-
 						int unitID = CommonStatic.safeParseInt(key);
-
 						Unit u = UserProfile.getBCData().units.get(unitID);
-
 						if (u == null)
 							continue;
 
 						BattlePreset.LevelObject levelData = new BattlePreset.LevelObject();
-
 						if (o.has("evolution")) {
 							levelData.evolution = o.get("evolution").getAsInt() - 1;
 						}
-
 						if (o.has("level")) {
 							levelData.level = o.get("level").getAsInt();
 						}
-
 						if (o.has("plus")) {
 							levelData.plusLevel = o.get("plus").getAsInt();
 						}
-
 						if (levelData.evolution >= u.forms.length)
 							continue;
-
 						levelObjects.put(u, levelData);
 					}
 
 					JsonObject slotData = presetObject.getAsJsonObject("slot")
 							.getAsJsonObject("data")
 							.getAsJsonObject("0");
-
 					JsonArray unitSlotData = slotData.getAsJsonArray("chara");
 
 					int i = 0;
-
 					for (JsonElement e : unitSlotData) {
 						if (!(e instanceof JsonPrimitive)) {
 							continue;
 						}
 
 						JsonPrimitive id = e.getAsJsonPrimitive();
-
 						int unitID;
-
 						if (id.isNumber()) {
 							unitID = id.getAsInt();
 						} else {
@@ -610,12 +566,10 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 						}
 
 						Unit u = UserProfile.getBCData().units.get(unitID);
-
 						if (u == null)
 							continue;
 
 						BattlePreset.LevelObject levelData = levelObjects.get(u);
-
 						if (levelData == null) {
 							System.out.printf("W/MapColc::read - No LevelObject found for unit : %d\n", u.id.id);
 
@@ -623,19 +577,14 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 						}
 
 						targetStage.preset.fs[i / 5][i % 5] = u.forms[levelData.evolution];
-
 						targetStage.preset.levels[i / 5][i % 5] = new Level();
-
 						targetStage.preset.levels[i / 5][i % 5].setLevel(levelData.level);
 						targetStage.preset.levels[i / 5][i % 5].setPlusLevel(levelData.plusLevel);
-
 						i++;
 					}
 
 					targetStage.preset.cannonType = slotData.get("cannon").getAsInt();
-
 					JsonObject abilityData = presetObject.getAsJsonObject("ability").getAsJsonObject("data");
-
 					for (String key : abilityData.keySet()) {
 						int abilityIndex = CommonStatic.safeParseInt(key);
 						JsonObject upgradeData = abilityData.getAsJsonObject(key);
@@ -645,69 +594,51 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 						switch (abilityIndex) {
 							case 0:
 								realIndex = LV_CATK;
-
 								break;
 							case 1:
 								realIndex = LV_CRG;
-
 								break;
 							case 2:
 								realIndex = LV_RECH;
-
 								break;
 							case 3:
 								realIndex = LV_WORK;
-
 								break;
 							case 4:
 								realIndex = LV_WALT;
-
 								break;
 							case 5:
 								realIndex = LV_BASE;
-
 								break;
 							case 6:
 								realIndex = LV_RES;
-
 								break;
 							case 7:
 								realIndex = LV_ACC;
-
 								break;
 							case 8:
 								realIndex = LV_XP;
-
 								break;
 							default:
 								if (abilityIndex != 9) {
 									System.out.printf("W/MapColc::read - Undefined ability index %d found\n", abilityIndex);
 								}
-
 								continue;
 						}
-
 						int level = 0;
-
 						if (upgradeData.has("level")) {
 							level += upgradeData.get("level").getAsInt();
 						}
-
 						if (upgradeData.has("plus")) {
 							level += upgradeData.get("plus").getAsInt();
 						}
-
 						if (level > MLV[realIndex]) {
 							System.out.printf("W/MapColc::read - Provided level for ability index %d is out of range : %d > %d", realIndex, level, MLV[realIndex]);
-
 							level = MLV[realIndex];
 						}
-
 						targetStage.preset.tech[realIndex] = level;
 					}
-
 					JsonObject cannonData = presetObject.getAsJsonObject("cannon").getAsJsonObject("data");
-
 					for (String key : cannonData.keySet()) {
 						int id = CommonStatic.safeParseInt(key);
 
@@ -716,45 +647,34 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 						switch(id) {
 							case 0:
 								realIndex = BASE_H;
-
 								break;
 							case 1:
 								realIndex = BASE_SLOW;
-
 								break;
 							case 2:
 								realIndex = BASE_WALL;
-
 								break;
 							case 3:
 								realIndex = BASE_STOP;
-
 								break;
 							case 4:
 								realIndex = BASE_WATER;
-
 								break;
 							case 5:
 								realIndex = BASE_GROUND;
-
 								break;
 							case 6:
 								realIndex = BASE_BARRIER;
-
 								break;
 							case 7:
 								realIndex = BASE_CURSE;
-
 								break;
 							default:
 								System.out.printf("W/MapColc::read - Unknown cannon ID %d\n", id);
-
 								continue;
 						}
-
 						targetStage.preset.bslv[realIndex] = cannonData.getAsJsonObject(key).get("level").getAsInt();
 					}
-
 					JsonObject treasureObject = presetObject.getAsJsonObject("treasure").getAsJsonObject("data");
 
 					for (String key : treasureObject.keySet()) {
