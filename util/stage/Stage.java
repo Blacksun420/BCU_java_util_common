@@ -79,6 +79,7 @@ public class Stage extends Data
 	public SCDef data = new SCDef(0);
 	@JsonField(defval = "none")
 	public Limit lim = new Limit();
+	public BattlePreset preset;
 	@JsonField(generic = Replay.class, alias = ResourceLocation.class)
 	public ArrayList<Replay> recd = new ArrayList<>();
 

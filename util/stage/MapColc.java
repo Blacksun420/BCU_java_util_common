@@ -1,9 +1,6 @@
 package common.util.stage;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import common.CommonStatic;
 import common.io.assets.Admin.StaticPermitted;
 import common.io.json.JsonClass;
@@ -20,6 +17,8 @@ import common.util.Data;
 import common.util.lang.MultiLangCont;
 import common.util.stage.info.CustomStageInfo;
 import common.util.stage.info.DefStageInfo;
+import common.util.unit.Level;
+import common.util.unit.Unit;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -67,6 +66,7 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 			idmap.put("T", 6);
 			idmap.put("R", 11);
 			idmap.put("SR", 36);
+			idmap.put("G", 37);
 
 			for (int i = 0; i < strs.length; i++)
 				new CastleList.DefCasList(Data.hex(i), strs[i]);
@@ -457,6 +457,449 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 									System.arraycopy(multiplier, 0, slim.cooldownMultiplier, 0, Math.min(slim.cooldownMultiplier.length, multiplier.length));
 								}
 								break;
+							// Max spawn units
+							case 7:
+								if (!parameter.isEmpty()) {
+									if (parameter.size() > 1) {
+										System.out.printf(
+												"W/MapColc::read - Unexpected parameter size for map %d : Size = %d\n",
+												mapID,
+												parameter.size()
+										);
+									}
+
+									int maxUnitSpawn = parameter.get(0).getAsInt();
+
+									for (Stage stage : map.list) {
+										if (stage.lim == null)
+											stage.lim = new Limit();
+
+										if (stage.lim.stageLimit == null) {
+											stage.lim.stageLimit = new StageLimit();
+										}
+
+										stage.lim.stageLimit.maxUnitSpawn = maxUnitSpawn;
+									}
+								}
+
+								break;
+						}
+					}
+				}
+			}
+
+			// Battle preset
+			qs = VFile.readLine("./org/data/fixed_formation.csv");
+
+			if (qs != null) {
+				qs.poll();
+
+				while(!qs.isEmpty()) {
+					String[] presetData = qs.poll().split(",");
+
+					if (presetData.length < 4)
+						continue;
+
+					int mapID = CommonStatic.safeParseInt(presetData[0]);
+
+					StageMap map = getMap(mapID);
+
+					if (map == null)
+						continue;
+
+					int stageID = CommonStatic.safeParseInt(presetData[2]);
+
+					if (stageID >= map.list.size())
+						continue;
+
+					Stage targetStage = map.list.get(stageID);
+
+					if (targetStage == null)
+						continue;
+
+					String presetFileName = presetData[3];
+
+					targetStage.preset = new BattlePreset();
+
+					targetStage.preset.level = CommonStatic.safeParseInt(presetData[1]);
+
+					VFile presetFile = VFile.get("./org/battle/preset/" + presetFileName);
+
+					if (presetFile == null)
+						continue;
+
+					String presetFileContents = new String(presetFile.getData().getBytes());
+
+					JsonElement presetElement = JsonParser.parseString(presetFileContents);
+
+					if (!presetElement.isJsonObject())
+						continue;
+
+					JsonObject presetObject = presetElement.getAsJsonObject();
+
+					if (
+						!presetObject.has("chara") ||
+						!presetObject.has("slot") ||
+						!presetObject.has("ability") ||
+						!presetObject.has("cannon") ||
+						!presetObject.has("treasure")
+					) {
+						System.out.printf("W/MapColc::read - Invalid preset found : Map ID = %d, Stage ID = %d, Preset File Name = %s\n", mapID, stageID, presetFileName);
+
+						continue;
+					}
+
+					Map<Unit, BattlePreset.LevelObject> levelObjects = new HashMap<>();
+
+					JsonObject charaData = presetObject.getAsJsonObject("chara").getAsJsonObject("data");
+
+					for (String key : charaData.keySet()) {
+						JsonObject o = charaData.getAsJsonObject(key);
+
+						if (o.has("remove") && o.get("remove").getAsBoolean())
+							continue;
+
+						int unitID = CommonStatic.safeParseInt(key);
+
+						Unit u = UserProfile.getBCData().units.get(unitID);
+
+						if (u == null)
+							continue;
+
+						BattlePreset.LevelObject levelData = new BattlePreset.LevelObject();
+
+						if (o.has("evolution")) {
+							levelData.evolution = o.get("evolution").getAsInt() - 1;
+						}
+
+						if (o.has("level")) {
+							levelData.level = o.get("level").getAsInt();
+						}
+
+						if (o.has("plus")) {
+							levelData.plusLevel = o.get("plus").getAsInt();
+						}
+
+						if (levelData.evolution >= u.forms.length)
+							continue;
+
+						levelObjects.put(u, levelData);
+					}
+
+					JsonObject slotData = presetObject.getAsJsonObject("slot")
+							.getAsJsonObject("data")
+							.getAsJsonObject("0");
+
+					JsonArray unitSlotData = slotData.getAsJsonArray("chara");
+
+					int i = 0;
+
+					for (JsonElement e : unitSlotData) {
+						if (!(e instanceof JsonPrimitive)) {
+							continue;
+						}
+
+						JsonPrimitive id = e.getAsJsonPrimitive();
+
+						int unitID;
+
+						if (id.isNumber()) {
+							unitID = id.getAsInt();
+						} else {
+							unitID = CommonStatic.safeParseInt(id.getAsString());
+						}
+
+						Unit u = UserProfile.getBCData().units.get(unitID);
+
+						if (u == null)
+							continue;
+
+						BattlePreset.LevelObject levelData = levelObjects.get(u);
+
+						if (levelData == null) {
+							System.out.printf("W/MapColc::read - No LevelObject found for unit : %d\n", u.id.id);
+
+							continue;
+						}
+
+						targetStage.preset.fs[i / 5][i % 5] = u.forms[levelData.evolution];
+
+						targetStage.preset.levels[i / 5][i % 5] = new Level();
+
+						targetStage.preset.levels[i / 5][i % 5].setLevel(levelData.level);
+						targetStage.preset.levels[i / 5][i % 5].setPlusLevel(levelData.plusLevel);
+
+						i++;
+					}
+
+					targetStage.preset.cannonType = slotData.get("cannon").getAsInt();
+
+					JsonObject abilityData = presetObject.getAsJsonObject("ability").getAsJsonObject("data");
+
+					for (String key : abilityData.keySet()) {
+						int abilityIndex = CommonStatic.safeParseInt(key);
+						JsonObject upgradeData = abilityData.getAsJsonObject(key);
+
+						int realIndex;
+
+						switch (abilityIndex) {
+							case 0:
+								realIndex = LV_CATK;
+
+								break;
+							case 1:
+								realIndex = LV_CRG;
+
+								break;
+							case 2:
+								realIndex = LV_RECH;
+
+								break;
+							case 3:
+								realIndex = LV_WORK;
+
+								break;
+							case 4:
+								realIndex = LV_WALT;
+
+								break;
+							case 5:
+								realIndex = LV_BASE;
+
+								break;
+							case 6:
+								realIndex = LV_RES;
+
+								break;
+							case 7:
+								realIndex = LV_ACC;
+
+								break;
+							case 8:
+								realIndex = LV_XP;
+
+								break;
+							default:
+								if (abilityIndex != 9) {
+									System.out.printf("W/MapColc::read - Undefined ability index %d found\n", abilityIndex);
+								}
+
+								continue;
+						}
+
+						int level = 0;
+
+						if (upgradeData.has("level")) {
+							level += upgradeData.get("level").getAsInt();
+						}
+
+						if (upgradeData.has("plus")) {
+							level += upgradeData.get("plus").getAsInt();
+						}
+
+						if (level > MLV[realIndex]) {
+							System.out.printf("W/MapColc::read - Provided level for ability index %d is out of range : %d > %d", realIndex, level, MLV[realIndex]);
+
+							level = MLV[realIndex];
+						}
+
+						targetStage.preset.tech[realIndex] = level;
+					}
+
+					JsonObject cannonData = presetObject.getAsJsonObject("cannon").getAsJsonObject("data");
+
+					for (String key : cannonData.keySet()) {
+						int id = CommonStatic.safeParseInt(key);
+
+						int realIndex;
+
+						switch(id) {
+							case 0:
+								realIndex = BASE_H;
+
+								break;
+							case 1:
+								realIndex = BASE_SLOW;
+
+								break;
+							case 2:
+								realIndex = BASE_WALL;
+
+								break;
+							case 3:
+								realIndex = BASE_STOP;
+
+								break;
+							case 4:
+								realIndex = BASE_WATER;
+
+								break;
+							case 5:
+								realIndex = BASE_GROUND;
+
+								break;
+							case 6:
+								realIndex = BASE_BARRIER;
+
+								break;
+							case 7:
+								realIndex = BASE_CURSE;
+
+								break;
+							default:
+								System.out.printf("W/MapColc::read - Unknown cannon ID %d\n", id);
+
+								continue;
+						}
+
+						targetStage.preset.bslv[realIndex] = cannonData.getAsJsonObject(key).get("level").getAsInt();
+					}
+
+					JsonObject treasureObject = presetObject.getAsJsonObject("treasure").getAsJsonObject("data");
+
+					for (String key : treasureObject.keySet()) {
+						int id = CommonStatic.safeParseInt(key);
+						JsonArray countData = treasureObject.getAsJsonObject(key).getAsJsonArray("count");
+
+						int[] count = new int[3];
+
+						for (int j = 0; j < countData.size(); j++) {
+							if (j >= count.length) {
+								System.out.printf("W/MapColc::read - Treasure data index out of bound : Treasure ID = %d, Size = %d\n", id, countData.size());
+
+								break;
+							}
+
+							count[j] = CommonStatic.safeParseInt(countData.get(j).getAsString());
+						}
+
+						boolean activated;
+
+						if (count[2] == 48) {
+							activated = true;
+						} else {
+							if (count[2] != 0)
+								System.out.printf("W/MapColc::read - Unexpected treasure count number %d : [ %d, %d, %d ]\n", count[2], count[0], count[1], count[2]);
+
+							activated = false;
+						}
+
+						if (!activated)
+							continue;
+
+						BattlePreset.ActivatedTreasure activatedTreasure;
+
+						switch (id) {
+							case 0:
+							case 1:
+							case 2:
+								if (id == 0) {
+									activatedTreasure = BattlePreset.ActivatedTreasure.EOC1;
+								} else if (id == 1) {
+									activatedTreasure = BattlePreset.ActivatedTreasure.EOC2;
+								} else {
+									activatedTreasure = BattlePreset.ActivatedTreasure.EOC3;
+								}
+
+								targetStage.preset.trea[T_WORK] += 100;
+								targetStage.preset.trea[T_WALT] += 100;
+								targetStage.preset.trea[T_RES]  += 100;
+								targetStage.preset.trea[T_XP1]  += 100;
+								targetStage.preset.trea[T_BASE] += 100;
+								targetStage.preset.trea[T_ACC]  += 100;
+								targetStage.preset.trea[T_DEF]  += 100;
+								targetStage.preset.trea[T_ATK]  += 100;
+								targetStage.preset.trea[T_CATK] += 100;
+								targetStage.preset.trea[T_RECH] += 100;
+
+								break;
+							case 3:
+								System.out.println("W/MapColc::read - Treasure ID 3 is activated");
+
+								continue;
+							case 4:
+							case 5:
+							case 6:
+								if (id == 4) {
+									activatedTreasure = BattlePreset.ActivatedTreasure.ITF1;
+								} else if (id == 5) {
+									activatedTreasure = BattlePreset.ActivatedTreasure.ITF2;
+								} else {
+									activatedTreasure = BattlePreset.ActivatedTreasure.ITF3;
+								}
+
+								targetStage.preset.alien 		  += 200;
+								targetStage.preset.trea[T_BASE]   += 100;
+								targetStage.preset.trea[T_RECH]   += 100;
+								targetStage.preset.trea[T_CATK]   += 100;
+								targetStage.preset.fruit[T_BLACK] += 100;
+								targetStage.preset.fruit[T_RED]   += 100;
+								targetStage.preset.fruit[T_FLOAT] += 100;
+								targetStage.preset.fruit[T_ANGEL] += 100;
+
+								break;
+							case 7:
+							case 8:
+							case 9:
+								if (id == 7) {
+									activatedTreasure = BattlePreset.ActivatedTreasure.COTC1;
+								} else if (id == 8) {
+									activatedTreasure = BattlePreset.ActivatedTreasure.COTC2;
+								} else {
+									activatedTreasure = BattlePreset.ActivatedTreasure.COTC3;
+								}
+
+								targetStage.preset.star           += 500;
+								targetStage.preset.fruit[T_METAL] += 100;
+								targetStage.preset.fruit[T_ZOMBIE] += 100;
+								targetStage.preset.fruit[T_ALIEN]  += 100;
+								targetStage.preset.trea[T_XP2]     += 100;
+								targetStage.preset.gods[id - 7]    += 100;
+
+								break;
+							default:
+								System.out.printf("W/MapColc::read - Unknown Treasure ID %d found\n", id);
+
+								continue;
+						}
+
+						targetStage.preset.activatedTreasures.add(activatedTreasure);
+					}
+
+					//validation
+					for (int j = 0; j < MT.length; j++) {
+						if (targetStage.preset.trea[j] > MT[j]) {
+							System.out.printf("W/MapColc::read - Treasure value out of range : %d, %d\n", j, targetStage.preset.trea[j]);
+
+							targetStage.preset.trea[j] = MT[j];
+						}
+					}
+
+					if (targetStage.preset.alien > 600) {
+						System.out.printf("W/MapColc::read - ItF crystal value out of range : %d\n", targetStage.preset.alien);
+
+						targetStage.preset.alien = 600;
+					}
+
+					if (targetStage.preset.star > 1500) {
+						System.out.printf("W/MapColc::read - CotC crystal value out of range : %d\n", targetStage.preset.star);
+
+						targetStage.preset.star = 1500;
+					}
+
+					for (int j = 0; j < targetStage.preset.fruit.length; j++) {
+						if (targetStage.preset.fruit[j] > 300) {
+							System.out.printf("W/MapColc::read - Fruit treasure value out of range : %d, %d\n", j, targetStage.preset.fruit[j]);
+
+							targetStage.preset.fruit[j] = 300;
+						}
+					}
+
+					for (int j = 0; j < targetStage.preset.gods.length; j++) {
+						if (targetStage.preset.gods[j] > 100) {
+							System.out.printf("W/MapColc::read - God mask treasure value out of range : %d, %d\n", j, targetStage.preset.fruit[j]);
+
+							targetStage.preset.gods[j] = 100;
 						}
 					}
 				}

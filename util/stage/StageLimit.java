@@ -11,7 +11,7 @@ import java.util.HashSet;
 public class StageLimit extends Data implements BattleStatic {
 
     @JsonField(defval = "0")
-    public int maxMoney = 0, globalCooldown = 0, globalCost = 0;
+    public int maxMoney = 0, globalCooldown = 0, globalCost = 0, maxUnitSpawn = 0;
     @JsonField(defval = "this.defCD")
     public int[] cooldownMultiplier = { 100, 100, 100, 100, 100, 100 };
     @JsonField(defval = "this.defMoney")
@@ -36,8 +36,8 @@ public class StageLimit extends Data implements BattleStatic {
         return true;
     }
     public boolean defDeploy() {
-        for (int cd : cooldownMultiplier)
-            if (cd != -1)
+        for (int d : rarityDeployLimit)
+            if (d != -1)
                 return false;
         return true;
     }
@@ -55,10 +55,17 @@ public class StageLimit extends Data implements BattleStatic {
         }
 
         sl.maxMoney = maxMoney;
+        sl.maxUnitSpawn = maxUnitSpawn;
         sl.globalCooldown = globalCooldown;
         sl.cooldownMultiplier = cooldownMultiplier.clone();
         sl.costMultiplier = costMultiplier.clone();
+        sl.globalCost = globalCost;
         sl.bannedCatCombo.addAll(bannedCatCombo);
+
+        sl.cooldownMultiplier = cooldownMultiplier.clone();
+        sl.costMultiplier = costMultiplier.clone();
+        sl.rarityDeployLimit = rarityDeployLimit.clone();
+
         return sl;
     }
 
@@ -68,6 +75,7 @@ public class StageLimit extends Data implements BattleStatic {
         combined.globalCooldown = globalCooldown == 0 ? second.globalCooldown : second.globalCooldown == 0 ? globalCooldown : Math.max(globalCooldown, second.globalCooldown);
         combined.globalCost = globalCost == -1 ? second.globalCost : second.globalCost == -1 ? globalCost : Math.max(globalCost, second.globalCost);
         combined.coolStart = coolStart || second.coolStart;
+        combined.maxUnitSpawn = maxUnitSpawn == 0 ? second.maxUnitSpawn : second.maxUnitSpawn == 0 ? maxUnitSpawn : Math.min(maxUnitSpawn, second.maxUnitSpawn);
         for (int i = 0; i < costMultiplier.length; i++)
             combined.costMultiplier[i] = Math.max(costMultiplier[i], second.costMultiplier[i]);
         for (int i = 0; i < cooldownMultiplier.length; i++)
@@ -78,6 +86,6 @@ public class StageLimit extends Data implements BattleStatic {
     }
 
     public boolean isBlank() {
-        return maxMoney == 0 && globalCooldown == 0 && globalCost == 0 && defCD() && defMoney() && defDeploy() && !coolStart && bannedCatCombo.isEmpty();
+        return maxMoney == 0 && globalCooldown == 0 && globalCost == 0 && maxUnitSpawn == 0 && defCD() && defMoney() && defDeploy() && !coolStart && bannedCatCombo.isEmpty();
     }
 }
