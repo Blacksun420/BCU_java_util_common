@@ -325,6 +325,7 @@ public class Res extends ImgCore {
 		FakeImage[] parts = ic001.cut(img001.getImg());
 		byte[] vals = new byte[] { 5, 19, 30, 40, 51, 62, 73, 88, 115 };
 		byte[] adds = new byte[] { 1, 2, 2, 0, 0, 1, 1, 1, 0 };
+		aux.num[0] = new VImg[12];
 		aux.num[5] = new VImg[12];
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 10; j++)
@@ -333,6 +334,8 @@ public class Res extends ImgCore {
 				aux.num[i][10] = new VImg(parts[vals[i] + 5]);
 			if (adds[i] == 2)
 				aux.num[i][10] = new VImg(parts[vals[i] - 6]);
+			if (i == 0)
+				aux.num[i][11] = new VImg(parts[103]);
 			if (i == 5)
 				aux.num[i][11] = new VImg(parts[108]);
 		}
