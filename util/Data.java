@@ -156,6 +156,16 @@ public class Data {
 			}
 		}
 
+		@JsonClass(noTag = NoTag.LOAD) // Similar to WAVEI. Supports ids
+		public static class MOVEI extends MULT {
+			@Order(1)
+			@JsonField(defval = "0")
+			public int id;
+			@Order(2)
+			@JsonField(defval = "false")
+			public boolean useIds;
+		}
+
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class IMUAD extends IMU {
 			@Order(2)
@@ -514,6 +524,9 @@ public class Data {
 			public int dis;
 			@Order(5)
 			public int itv;
+			@Order(6)
+			@JsonField(defval = "0")
+			public int id;
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -1315,7 +1328,7 @@ public class Data {
 		@Order(37)
 		public final IMU IMUPOIATK = new IMU();
 		@Order(38)
-		public final MULT IMUMOVING = new MULT();
+		public final MOVEI IMUMOVING = new MOVEI();
 		@Order(39)
 		public final CANNI IMUCANNON = new CANNI();
 		@Order(40)

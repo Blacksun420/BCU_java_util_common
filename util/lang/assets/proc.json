@@ -676,7 +676,7 @@
         "full_name": "Moving Attack",
         "tooltip": null,
         "format": [
-            "(prob)% chance to have moving hit box, ",
+            "(prob)% chance to have moving hit box[(id!=0){ with an ID of (id)}], ",
             "originated at a distance of (dis) from this entity ",
             "with (width) widths, ",
             " (speed) speed, and (_dispTime(itv)) interval for (_dispTime(time))"
@@ -705,6 +705,10 @@
             "itv": {
                 "name": "interval",
                 "tooltip": null
+            },
+            "id": {
+                "name": "id",
+                "tooltip": "sets the ID of moving attack, allowing for type-based resistance discrimination"
             }
         }
     },
@@ -712,11 +716,19 @@
         "abbr_name": "imu. Move",
         "full_name": "Immune/Resistant to Moving Atk",
         "tooltip": null,
-        "format": "[(mult==100){Immune}(mult<100&mult>0){Resistant}(mult<0){Weak}] to Moving Attacks[(mult<100&mult>0){ (_left)Decreases damage taken by (mult)%(_right)}(mult<0){ (_left)Increases damage taken by (_abs(mult))%(_right)}]",
+        "format": "[(mult==100){Immune}(mult<100&mult>0){Resistant}(mult<0){Weak}] to Moving Attacks[(useIds){ with an ID of (id)}][(mult<100&mult>0){ (_left)Decreases damage taken by (mult)%(_right)}(mult<0){ (_left)Increases damage taken by (_abs(mult))%(_right)}]",
         "class": {
             "mult": {
                 "name": "percent",
                 "tooltip": null
+            },
+            "id": {
+                "name": "id",
+                "tooltip": "Non-zero values will only make resistance apply to moving attacks with this id, if id checks are enabled"
+            },
+            "useIds": {
+                "name": "use ids",
+                "tooltip": "Enable ID checks"
             }
         }
     },

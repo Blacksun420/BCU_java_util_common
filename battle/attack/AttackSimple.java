@@ -125,7 +125,7 @@ public class AttackSimple extends AttackAb {
 			MOVEWAVE mw = proc.MOVEWAVE;
 			int dire = model.getDire();
 			float p0 = model.getPos() + dire * mw.dis;
-			new ContMove(this, p0, mw.width, mw.speed, 1, mw.time, mw.itv, layer);
+			new ContMove(this, p0, mw.width, mw.speed, 1, mw.time, mw.itv, layer, mw.id);
 			return;
 		}
 		for (AbEntity e : capt) {

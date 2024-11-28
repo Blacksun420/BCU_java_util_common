@@ -7,13 +7,13 @@ import common.system.fake.FakeGraphics;
 
 public class ContMove extends ContAb {
 
-	private final int itv, move, ran, rep;
+	private final int itv, move, ran, rep, id;
 	private float t, rem, rept;
 	private final AttackWave atk;
 	private boolean tempAtk;
 
 	/**
-	 * conf: range, move, itrv, tot, rept,layer
+	 * conf: range, move, itrv, tot, rept, layer, id
 	 */
 	public ContMove(AttackSimple as, float p, int... conf) {
 		super(as.model.b, p, conf[5]);
@@ -24,6 +24,7 @@ public class ContMove extends ContAb {
 		ran = conf[0];
 		rep = conf[4];
 		rept = rep > 0 ? rep : -1;
+		id = conf[6];
 		atk = new AttackWave(as.attacker, as, 0, 0, WT_MOVE);
 	}
 

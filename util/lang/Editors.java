@@ -462,11 +462,12 @@ public class Editors {
 		map().put("MOVEWAVE", new EditControl<>(Proc.MOVEWAVE.class, (t) -> {
 			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0) {
-				t.dis = t.itv = t.speed = t.time = t.width = 0;
+				t.dis = t.itv = t.speed = t.time = t.width = t.id = 0;
 			} else {
 				t.width = Math.max(0, t.width);
 				t.time = Math.max(1, t.time);
 				t.itv = Math.max(1, t.itv);
+				t.id = Math.max(0, t.id);
 			}
 		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
@@ -635,7 +636,18 @@ public class Editors {
 
 		map().put("IMUSEAL", imu);
 
-		map().put("IMUMOVING", wavei);
+		map().put("IMUMOVING", new EditControl<>(Proc.MOVEI.class, (t) -> {
+			t.mult = Math.min(t.mult, 100);
+			if (t.mult == 0)
+				t.useIds = false;
+			if (t.useIds)
+				t.id = Math.max(0, t.id);
+			else
+				t.id = 0;
+		}, eg -> t -> {
+			setComponentVisibility(eg, t.exists(), 1);
+			setComponentVisibility(eg, t.useIds, 1, 2);
+		}));
 
 		map().put("IMURAGE", imu);
 
