@@ -116,6 +116,10 @@ public class StageBasis extends BattleObj {
 		}
 		ubase = eu != null ? eu : new ECastle(this, bas);
 		ubase.added(-1, st.len - 800);
+		if (st.preset != null && st.preset.baseHealthBoost) {
+			ubase.maxH += 20000;
+			ubase.health = ubase.maxH;
+		}
 		est.assign(this);
 		est.setBaseBarrier();
 		int sttime = 3;
