@@ -39,7 +39,7 @@ public class Data {
 			}
 			@Override
 			public boolean exists() {
-				return prob != 0;
+				return prob > 0;
 			}
 
 			@Override
@@ -138,6 +138,13 @@ public class Data {
 				}
 				return super.setTalent(nps);
 			}
+		}
+
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class WEAKEN extends PTM {
+			@Order(3)
+			@JsonField(defval = "false")
+			public boolean stackable;
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -937,6 +944,19 @@ public class Data {
 			}
 		}
 
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class BLESSING extends PT {
+			@Order(2)
+			@JsonField(defval = "0")
+			public int abis;
+			@Order(3)
+			@JsonField(defval = "null")
+			public Proc procs;
+			@Order(4)
+			@JsonField(defval = "false")
+			public boolean stackable;
+		}
+
 		public static abstract class IntType implements Cloneable, BattleStatic {
 
 			@Documented
@@ -1405,6 +1425,8 @@ public class Data {
 		public final IMU IMUBLAST = new IMU();
 		@Order(76)
 		public final PM DRAIN = new PM();
+		@Order(77)
+		public final BLESSING BLESSING = new BLESSING();
 
 		@Override
 		public Proc clone() {
@@ -1779,7 +1801,8 @@ public class Data {
 	public static final byte P_BLAST = 74;
 	public static final byte P_IMUBLAST = 75;
 	public static final byte P_DRAIN = 76;
-	public static final byte PROC_TOT = 77;
+	public static final byte P_BLESS = 77;
+	public static final byte PROC_TOT = 78;
 
 	public static final boolean[] procSharable = {
 			false, //kb
