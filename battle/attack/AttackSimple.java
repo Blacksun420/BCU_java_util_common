@@ -40,24 +40,26 @@ public class AttackSimple extends AttackAb {
 
 		if((eab & AB_CKILL) > 0)
 			touch |= TCH_CORPSE;
-
 		dire *= mask.getDire();
 	}
 
 	@Override
 	public void capture() {
+		capt.clear();
+		if (matk.getDire() == -2) {
+			capt.add(attacker);
+			return;
+		}
 		List<AbEntity> le = model.b.inRange(touch, attacker != null && attacker.status.rage > 0 ? 2 : dire, sta, end, excludeRightEdge);
 		if (attacker != null && (attacker.status.rage > 0 || attacker.status.hypno > 0))
 			le.remove(attacker);
 
 		if(attacker != null && isLongAtk && !le.contains(model.b.getBase(attacker.dire))) {
-			if(attacker.dire == -1 && dire == -1 && sta <= model.b.getBase(attacker.dire).pos)
-				le.add(model.b.getBase(attacker.dire));
-			else if (attacker.dire == 1 && dire == 1 && sta >= model.b.getBase(attacker.dire).pos)
+			if((attacker.dire == -1 && dire <= -1 && sta <= model.b.getBase(attacker.dire).pos) ||
+					(attacker.dire == 1 && dire >= 1 && sta >= model.b.getBase(attacker.dire).pos))
 				le.add(model.b.getBase(attacker.dire));
 		}
 		le.removeIf(attacked::contains);
-		capt.clear();
 		if (canon > -2 || model instanceof Sniper)
 			le.remove(model.b.ebase);
 		if ((abi & AB_ONLY) == 0)
@@ -67,7 +69,7 @@ public class AttackSimple extends AttackAb {
 				if (e.isBase() || e.ctargetable(trait, attacker))
 					capt.add(e);
 		if (!range) {
-			if (capt.isEmpty())
+			if (capt.size() <= 1)
 				return;
 
 			List<AbEntity> ents = new ArrayList<>();
@@ -94,10 +96,8 @@ public class AttackSimple extends AttackAb {
 						ents.add(e);
 				}
 			}
-
 			capt.clear();
-			int r = (int) (model.b.r.nextFloat() * ents.size());
-			capt.add(ents.get(r));
+			capt.add(ents.get((int)(model.b.r.nextFloat() * ents.size())));
 		} else
 			capt.sort(Comparator.comparingDouble(e -> -e.getProc().REMOTESHIELD.prob));
 	}

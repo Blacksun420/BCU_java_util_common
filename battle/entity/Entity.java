@@ -1971,6 +1971,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				}
 			}
 		}
+		if (atk.attacker != null && atk.attacker.health > 0 && atk.getProc().DRAIN.mult > 0 && btargetable(atk))
+			atk.attacker.health = Math.min(atk.attacker.health + (long)(dmg * atk.getProc().DRAIN.mult / 100), atk.attacker.maxH);
 		processProcs(atk);
 	}
 

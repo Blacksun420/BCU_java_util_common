@@ -42,7 +42,7 @@ public abstract class AttackAb extends BattleObj {
 		dire = ent.getDire();
 		origin = this;
 		model = ent;
-		trait = matk != null && matk.getATKTraits().size() > 0 ? matk.getATKTraits() : tr;
+		trait = matk != null && !matk.getATKTraits().isEmpty() ? matk.getATKTraits() : tr;
 		atk = ATK;
 		proc = pro;
 		abi = eab;
