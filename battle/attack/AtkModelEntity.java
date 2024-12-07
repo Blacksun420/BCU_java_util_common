@@ -14,8 +14,9 @@ import java.util.List;
 
 public abstract class AtkModelEntity extends AtkModelAb {
 
-	public static final String[] par = { "SUMMON", "KB", "STOP", "SLOW", "WEAK", "WARP", "CURSE", "SNIPER", "SEAL", "POISON", "BOSS", "RAGE", "HYPNO", "POIATK", "ARMOR", "SPEED",
-			"LETHARGY", "DRAIN", "ATKBASE", "CRIT", "WAVE", "BREAK", "SATK", "VOLC", "MINIVOLC", "MINIWAVE", "MOVEWAVE", "SHIELDBREAK", "WORKERLV", "CDSETTER", "METALKILL", "BLAST"};
+	public static final String[] par = { "SUMMON", "KB", "STOP", "SLOW", "WEAK", "WARP", "CURSE", "SNIPER", "SEAL", "POISON", "BOSS", "RAGE", "HYPNO", "POIATK",
+			"ARMOR", "SPEED", "LETHARGY", "DRAIN", "BLESSING",//post-cursedProcs
+			"ATKBASE", "CRIT", "WAVE", "BREAK", "SATK", "VOLC", "MINIVOLC", "MINIWAVE", "MOVEWAVE", "SHIELDBREAK", "WORKERLV", "CDSETTER", "METALKILL", "BLAST"};
 	/**
 	 * Gets Attack Model for enemies
 	 * @param e The entity
@@ -150,8 +151,8 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		return (int)(Math.round(matk.getAtk() * d0) * d1);
 	}
 	public int getEffMult(int dmg) {
-		if (e.status.weak[0] > 0)
-			dmg = (int) (dmg * e.status.weak[1] / 100);
+		if (e.status.getWeaken() != 1)
+			dmg = (int) (dmg * e.status.getWeaken());
 		if (e.status.strengthen != 0)
 			dmg += dmg * e.status.strengthen / 100;
 		dmg *= e.auras.getAtkAura();

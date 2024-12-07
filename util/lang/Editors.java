@@ -275,9 +275,7 @@ public class Editors {
 				t.smartImu = 0;
 		}, eg -> t -> setComponentVisibility(eg, t.mult != 0 || t.block != 0, 2));
 
-		EditControl<Proc.MULT> wavei = new EditControl<>(Proc.MULT.class, t -> t.mult = Math.min(t.mult, 100));
-
-		map().put("KB", new EditControl<>(Proc.PTD.class, (t) -> {
+        map().put("KB", new EditControl<>(Proc.PTD.class, (t) -> {
 			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0) {
 				t.dis = t.time = 0;
@@ -323,13 +321,13 @@ public class Editors {
 			}
 		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
-		map().put("WEAK", new EditControl<>(Proc.PTM.class, (t) -> {
+		map().put("WEAK", new EditControl<>(Proc.WEAKEN.class, (t) -> {
 			t.prob = Math.max(0, Math.min(t.prob, 100));
-			if (t.prob == 0)
+			if (t.prob == 0) {
 				t.mult = t.time = 0;
-			else {
+				t.stackable = false;
+			} else
 				t.time = Math.max(t.time, 1);
-			}
 		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("LETHARGY", new EditControl<>(Proc.LETHARGY.class, (t) -> {
@@ -874,6 +872,22 @@ public class Editors {
 		}));
 
 		map().put("IMUBLAST", imu);
+
+		map().put("DRAIN", new EditControl<>(Proc.PM.class, (t) -> {
+			t.prob = Math.max(0, Math.min(t.prob, 100));
+			if (t.prob == 0)
+				t.mult = 0;
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
+
+		map().put("BLESSING", new EditControl<>(Proc.BLESSING.class, (t) -> {
+			t.prob = Math.max(0, Math.min(t.prob, 100));
+			if (t.prob == 0) {
+				t.time = t.abis = 0;
+				t.stackable = false;
+				t.procs = null;
+				t.traits.clear();
+			}
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 	}
 
 	private static void setComponentVisibility(EditorGroup egg, boolean boo, int... fields) {

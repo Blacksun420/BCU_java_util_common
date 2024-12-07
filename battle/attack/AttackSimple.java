@@ -40,7 +40,8 @@ public class AttackSimple extends AttackAb {
 
 		if((eab & AB_CKILL) > 0)
 			touch |= TCH_CORPSE;
-		dire *= mask.getDire();
+		if (Math.abs(dire) == 1)
+			dire *= mask.getDire();
 	}
 
 	@Override

@@ -107,7 +107,7 @@
         "abbr_name": "weak",
         "full_name": "Weaken",
         "tooltip": null,
-        "format": "(prob)% chance to [(mult>100){strengthen}(mult<=100){weaken}] target's attack to (mult)% for (_dispTimeF(time))",
+        "format": "(prob)% chance to [(mult>100){strengthen}(mult<=100){weaken}] target's attack to (mult)% for (_dispTimeF(time))[(stackable){ (_left)Stackable(_right)}]",
         "class": {
             "prob": {
                 "name": "chance",
@@ -120,6 +120,10 @@
             "mult": {
                 "name": "multiplier",
                 "tooltip": "What percent of original attack the target will be weaken to"
+            },
+            "stackable": {
+                "name": "Stackable",
+                "tooltip": "If true, the weaken effect will stack, increasing the effect the more stacks there are"
             }
         }
     },
@@ -1847,6 +1851,56 @@
             "block": {
                 "name": "Blocker",
                 "tooltip": "Set from 1 to 99 to reduce duration amongst all units. Set to 100 to completely block slow. Set negative to increase the effect."
+            }
+        }
+    },
+    "DRAIN": {
+        "abbr_name": "absorb",
+        "full_name": "Absorber",
+        "tooltip": "Drains HP per enemy damaged",
+        "format": "(prob)% chance to absorb (mult)% of the damage dealt as HP",
+        "class": {
+            "prob": {
+                "name": "chance",
+                "tooltip": null
+            },
+            "mult": {
+                "name": "multiplier",
+                "tooltip": "What percent of original attack the target will be weaken to"
+            }
+        }
+    },
+    "BLESSING": {
+        "abbr_name": "bless",
+        "full_name": "Blessing",
+        "tooltip": "Gives procs and abilities to affected entities. The opposite of curse, essentially",
+        "format": ["(prob)% chance to bless units for (_dispTime(time)), granting the blessed entities ",
+            "[(abis!=0){Abilities: (_bitMask(abis))[(procs|traits){, }]}][(procs){Procs: (_proc(procs))[(traits){, }]}]",
+            "[(traits){Traits: (_toString(traits))}].[(stackable){This blessing is stackable.}]"],
+        "class": {
+            "prob": {
+                "name": "chance",
+                "tooltip": null
+            },
+            "time": {
+                "name": "duration",
+                "tooltip": null
+            },
+            "abis": {
+                "name": "abilities",
+                "tooltip": "Like attacks' alt abi, it grants abilities. It can't remove them though"
+            },
+            "procs": {
+                "name": "Procs",
+                "tooltip": "Adds the procs on top of the unit's procs"
+            },
+            "stackable": {
+                "name": "Stackable",
+                "tooltip": "Allows multiple blessings to be stacked"
+            },
+            "traits": {
+                "name": "Added Traits",
+                "tooltip": "Temporarily adds traits to the blessed entities"
             }
         }
     }

@@ -30,7 +30,7 @@ public class EEnemy extends Entity {
 		mark = m;
 		isBase = mark <= -1;
 		layer = d0 == d1 ? d0 : d0 + (int) (b.r.nextFloat() * (d1 - d0 + 1));
-		traits = de.getTraits();
+		traits = new SortedPackSet<>(de.getTraits());
 
 		skipSpawnBurrow = mark >= 1;
 	}

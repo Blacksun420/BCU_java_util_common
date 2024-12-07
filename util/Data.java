@@ -11,9 +11,11 @@ import common.pack.Context.ErrType;
 import common.pack.Context.RunExc;
 import common.pack.Context.SupExc;
 import common.pack.Identifier;
+import common.pack.SortedPackSet;
 import common.util.pack.Background;
 import common.util.pack.EffAnim;
 import common.util.stage.Music;
+import common.util.unit.Trait;
 import common.util.unit.Unit;
 
 import java.lang.annotation.*;
@@ -60,6 +62,10 @@ public class Data {
 			@JsonField(defval = "0")
 			public double mult;
 
+			@Override
+			public boolean exists() {
+				return mult != 0;
+			}
 			@Override
 			public int[] setTalent(int[] nps) {
 				if (!exists()) {
@@ -153,6 +159,10 @@ public class Data {
 			@JsonField(defval = "0")
 			public float block;
 
+			@Override
+			public boolean exists() {
+				return mult != 0 || block != 0;
+			}
 			@Override
 			public int[] setTalent(int[] nps) {
 				nps[2] = Math.min(nps[2], (int)(100-mult));
@@ -947,14 +957,17 @@ public class Data {
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class BLESSING extends PT {
 			@Order(2)
-			@JsonField(defval = "0")
-			public int abis;
-			@Order(3)
-			@JsonField(defval = "null")
-			public Proc procs;
-			@Order(4)
 			@JsonField(defval = "false")
 			public boolean stackable;
+			@Order(3)
+			@JsonField(defval = "0")
+			public int abis;
+			@Order(4)
+			@JsonField(defval = "null||isBlank")
+			public Proc procs;
+			@Order(5)
+			@JsonField(generic = Trait.class, alias = Identifier.class, defval = "isEmpty")
+			public SortedPackSet<Trait> traits = new SortedPackSet<>();
 		}
 
 		public static abstract class IntType implements Cloneable, BattleStatic {
@@ -982,6 +995,17 @@ public class Data {
 						fs.set(this, v);
 					else if (fs.getType() == boolean.class)
 						fs.set(this, v != 0);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			public void add(IntType it) {
+				try {
+					for (Field fs : getDeclaredFields())
+						if (fs.getType() == int.class)
+							fs.set(this, (int)fs.get(this) + (int)fs.get(it));
+						else if (fs.getType() == boolean.class)
+							fs.set(this, (boolean)fs.get(this) || (boolean)fs.get(it));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -1193,7 +1217,6 @@ public class Data {
 					e.printStackTrace();
 				}
 			}
-
 			/**
 			 * Modifies Identifier, used for talents only
 			 */
@@ -1201,14 +1224,12 @@ public class Data {
 			public void set(int i, Identifier<?> id) {
 				try {
 					Field[] fs = getDeclaredFields();
-					int loc = 0, lastloc = 0;
+					int loc = 0;
 					for (int j = 0; j < fs.length && loc < i; j++)
 						if (IntType.class.isAssignableFrom(fs[j].getType())) {
 							int len = ((IntType) fs[j].get(this)).getDeclaredFields().length - 1;
-							if (j + loc + len >= i) {
-								lastloc = i - j - loc;
-								break;
-							}
+							if (j + loc + len >= i)
+                                break;
 							loc += len;
 						}
 					Field f = fs[i - loc];
@@ -1220,8 +1241,7 @@ public class Data {
 
 			public void set(ProcItem pi) {
 				try {
-					Field[] fs = getDeclaredFields();
-					for (Field f : fs)
+					for (Field f : getDeclaredFields())
 						if (f.getType().isPrimitive())
 							f.set(this, f.get(pi));
 						else if (IntType.class.isAssignableFrom(f.getType()))
@@ -1229,8 +1249,50 @@ public class Data {
 						else if (f.getType() == Identifier.class) {
 							Identifier<?> id = (Identifier<?>) f.get(pi);
 							f.set(this, id == null ? null : id.clone());
+						} else if (f.getType() == Proc.class) {
+							Proc p = (Proc) f.get(pi);
+							f.set(this, p == null ? null : p.clone());
+						} else if (f.getType() == SortedPackSet.class) {
+							SortedPackSet<?> l = (SortedPackSet<?>)f.get(pi);
+							f.set(this, l.clone());
 						} else
 							throw new Exception("unknown field " + f.getType() + " " + f.getName());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			public void add(ProcItem pi) {
+				if (!pi.exists())
+					return;
+				try {
+					for (Field f : getDeclaredFields()) {
+						if (f.getType() == int.class)
+							f.set(this, (int)f.get(this) + (int)f.get(pi));
+						else if (f.getType() == float.class)
+							f.set(this, (float)f.get(this) + (float)f.get(pi));
+						else if (f.getType() == double.class)
+							f.set(this, (double)f.get(this) + (double)f.get(pi));
+						else if (f.getType() == boolean.class)
+							f.set(this, (boolean)f.get(this) || (boolean)f.get(pi));
+						else if (IntType.class.isAssignableFrom(f.getType())) {
+							((IntType)f.get(this)).add((IntType)f.get(pi));
+						} else if (f.getType() == Identifier.class) {
+							Identifier<?> id = (Identifier<?>)f.get(pi);
+							if (id != null)
+								f.set(this, id.clone());
+						} else if (f.getType() == Proc.class) {
+							Proc p = (Proc)f.get(pi);
+							if (p != null)
+								f.set(this, p.clone());
+						} else if (f.getType() == SortedPackSet.class) {
+							SortedPackSet<Comparable<? super Comparable>> l = (SortedPackSet<Comparable<? super Comparable>>)f.get(pi), m = (SortedPackSet<Comparable<? super Comparable>>)f.get(this);
+							for (Comparable<? super Comparable> o : l)
+								if (!m.contains(o))
+									m.add(o);
+							f.set(this, m);
+						} else
+							throw new Exception("unknown field " + f.getType() + " " + f.getName());
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -1288,7 +1350,7 @@ public class Data {
 		@Order(7)
 		public final VOLC VOLC = new VOLC();
 		@Order(8)
-		public final PTM WEAK = new PTM();
+		public final WEAKEN WEAK = new WEAKEN();
 		@Order(9)
 		public final PROB BREAK = new PROB();
 		@Order(10)
@@ -1882,6 +1944,7 @@ public class Data {
 			false, //BAJA BLAST
 			true,  //imu.blast
 			false, //Drain/ABsorb
+			false, //Bless
 	};
 
 	/**
@@ -2025,7 +2088,8 @@ public class Data {
 			{ PC_P, P_DMGINC}, // 38: ExtraDmg
 			{ PC_P, P_DEFINC},  // 39: Resistance
 			{ PC_P, P_RANGESHIELD}, //40: Range Shield
-			{ PC_P, P_SPIRIT} //41: Spirit summon
+			{ PC_P, P_SPIRIT}, //41: Spirit summon
+			{ PC_P, P_DRAIN}, //42: Drain
 	};
 
 	public static int[] get_CORRES(int ind) {

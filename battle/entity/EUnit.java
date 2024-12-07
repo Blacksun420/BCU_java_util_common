@@ -23,8 +23,6 @@ import java.util.List;
 
 public class EUnit extends Entity {
 
-	private static final SortedPackSet<Trait> blank = new SortedPackSet<>(0);
-
 	public static class OrbHandler extends BattleObj {
 
 		protected static float getOrb(double mult, AttackAb atk, SortedPackSet<Trait> traits, Treasure t) {
@@ -54,7 +52,7 @@ public class EUnit extends Entity {
 	public EUnit(StageBasis b, MaskUnit de, EAnimU ea, float d0, int layer0, int layer1, Level level, PCoin pc, int[] index, boolean isBase) {
 		super(b, de, ea, d0, pc, level);
 		layer = layer0 == layer1 ? layer0 : layer0 + (int) (b.r.nextFloat() * (layer1 - layer0 + 1));
-		traits = de.getTraits();
+		traits = new SortedPackSet<>(de.getTraits());
 		lvl = level.getTotalLv();
 		this.index = index;
 		this.isBase = isBase;
@@ -70,7 +68,7 @@ public class EUnit extends Entity {
 	public EUnit(StageBasis b, MaskUnit de, EAnimU ea, float d0) {
 		super(b, de, ea, d0, null, null);
 		layer = de.getFront() + (int) (b.r.nextFloat() * (de.getBack() - de.getFront() + 1));
-		traits = de.getTraits();
+		traits = new SortedPackSet<>(de.getTraits());
 		this.index = null;
 
 		lvl = 1;
@@ -96,7 +94,10 @@ public class EUnit extends Entity {
 	@Override
 	public void update() {
 		super.update();
-		traits = status.curse == 0 && status.seal == 0 ? data.getTraits() : blank;
+		if (status.curse > 0 || status.seal > 0)
+			traits.clear();
+		else if (traits.isEmpty())
+			traits.addAll(data.getTraits());
 		if (kbTime == 0)
 			lastPosition = pos;
 	}

@@ -9,6 +9,8 @@ import common.io.json.JsonField;
 import common.pack.Context.ErrType;
 import common.pack.Identifier;
 import common.pack.SortedPackSet;
+import common.util.Data;
+import common.util.Data.Proc;
 import common.util.pack.Background;
 import common.util.unit.AbEnemy;
 import common.util.unit.Trait;
@@ -18,7 +20,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Stack;
 
@@ -122,6 +124,30 @@ public class Formatter {
 		public String resDiv(double mult) {
 			return df.format(mult / 100.0);
 		}
+
+		public String bitMask(int ind) {
+			StringBuilder str = new StringBuilder("[");
+			for(int i = 0; i < 32; i++) {
+				if (((1 << i) & ind) > 0)
+					str.append(i).append(", ");
+			}
+			return str.toString().substring(0, str.length() - 2) + "]";
+		}
+		public String proc(Proc p) {
+			StringBuilder str = new StringBuilder("[");
+			for(int i = 0; i < Data.PROC_TOT; i++) {
+				Proc.ProcItem item = p.getArr(i);
+				if(!item.exists())
+					continue;
+				String format = ProcLang.get().get(i).format;
+				String formatted = format(format, item, this);
+				str.append(formatted).append(", ");
+			}
+			return str.toString().substring(0, str.length() - 2) + "]";
+		}
+		public String toString(Object obj) {
+			return obj.toString();
+		}
 	}
 
 	private class BoolElem extends Comp {
@@ -151,7 +177,12 @@ public class Formatter {
 						return fi0 < fi1;
 					}
 			}
-			return (Boolean) new RefObj(p0, p1).eval();
+			Object o = new RefObj(p0, p1).eval();
+			if (o instanceof Boolean)
+				return (Boolean)o;
+			if (o instanceof Collection)
+				return !((Collection<?>)o).isEmpty();
+			return o != null;
 		}
 
 		private boolean test(int i, int j) {
