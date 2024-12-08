@@ -308,14 +308,15 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		if (matk.getAltAbi() != 0)
 			e.altAbi(matk.getAltAbi());
 
-		if (getProc(matk).TIME.prob != 0 && (getProc(matk).TIME.prob == 100 || b.r.nextFloat() * 100 < getProc(matk).TIME.prob)) {
-			b.tstop = Math.max(b.tstop, getProc(matk).TIME.time);
-			b.timeFlow = (100f - getProc(matk).TIME.intensity) / 100;
+		Proc p = getProc(matk);
+		if (p.TIME.prob != 0 && (p.TIME.prob == 100 || b.r.nextFloat() * 100 < p.TIME.prob)) {
+			b.tstop = Math.max(b.tstop, p.TIME.time);
+			b.timeFlow = (100f - p.TIME.intensity) / 100;
 		}
-		Proc.THEME t = getProc(matk).THEME;
+		Proc.THEME t = p.THEME;
 		if (t.prob != 0 && (t.prob == 100 || b.r.nextFloat() * 100 < t.prob))
 			b.changeTheme(t);
-		Proc.WORKLV w = getProc(matk).WORKERLV;
+		Proc.WORKLV w = p.WORKERLV;
 		if (w.prob != 0 && (w.prob == 100 || b.r.nextFloat() * 100 < w.prob))
 			b.changeWorkerLv(w.mult);
 	}
@@ -334,7 +335,14 @@ public abstract class AtkModelEntity extends AtkModelAb {
 	public Proc getProc(MaskAtk matk) {
 		if (e.status.seal > 0)
 			return empty;
-		return matk.getProc();
+		if (e.status.blessings.isEmpty() || !matk.canProc())
+			return matk.getProc();
+		Proc p = matk.getProc().clone();
+		for (common.util.Data.Proc.BLESSING b : e.status.blessings.keySet())
+			if (b.procs != null)
+				for (int i = 0; i < PROC_TOT; i++)
+					p.getArr(i).add(b.procs.getArr(i));
+		return p;
 	}
 
 	public Proc getProc(int ind) {
@@ -342,20 +350,20 @@ public abstract class AtkModelEntity extends AtkModelAb {
 	}
 
 	protected void setProc(MaskAtk matk, Proc proc, int startOff) {
-
+		Proc p = getProc(matk);
 		for (int i = startOff; i < par.length; i++)
-			if (getProc(matk).get(par[i]).perform(b.r))
-				proc.get(par[i]).set(getProc(matk).get(par[i]));
-		for (int b : BCShareable) proc.getArr(b).set(getProc(matk).getArr(b));
-		if (getProc(matk).SUMMON.perform(b.r)) {
-			SUMMON sprc = getProc(matk).SUMMON;
+			if (p.get(par[i]).perform(b.r))
+				proc.get(par[i]).set(p.get(par[i]));
+		for (int b : BCShareable) proc.getArr(b).set(p.getArr(b));
+		if (p.SUMMON.perform(b.r)) {
+			SUMMON sprc = p.SUMMON;
 			SUMMON.TYPE conf = sprc.type;
 			if (!conf.on_hit && !conf.on_kill)
 				summon(sprc, e, matk, 0);
 			else
 				proc.SUMMON.set(sprc);
 		}
-		Proc.CDSETTER c = getProc(matk).CDSETTER;
+		Proc.CDSETTER c = p.CDSETTER;
 		if (c.perform(b.r)) {
 			if (c.slot == 10)
 				proc.CDSETTER.set(c);

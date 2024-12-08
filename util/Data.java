@@ -1058,8 +1058,10 @@ public class Data {
 							f.set(this, 0);
 						else if (IntType.class.isAssignableFrom(f.getType()))
 							f.set(this, (f.getType().getDeclaredConstructor().newInstance()));
-						else if (f.getType() == Identifier.class)
+						else if (f.getType() == Identifier.class || f.getType() == Proc.class)
 							f.set(this, null);
+						else if (f.getType() == SortedPackSet.class)
+							((SortedPackSet<?>)f.get(this)).clear();
 						else
 							throw new Exception("unknown field " + f.getType() + " " + f.getName());
 				} catch (Exception e) {
@@ -1072,12 +1074,19 @@ public class Data {
 			public ProcItem clone() {
 				try {
 					ProcItem ans = (ProcItem) super.clone();
-					Field[] fs = getDeclaredFields();
-					for (Field f : fs)
-						if (IntType.class.isAssignableFrom(f.getType()) && f.get(this) != null) {
-							f.set(ans, ((IntType) f.get(this)).clone());
-						} else if (f.getType() == Identifier.class && f.get(this) != null)
-							f.set(ans, ((Identifier<?>) f.get(this)).clone());
+					for (Field f : getDeclaredFields())
+						if (f.get(this) != null) {
+							if (IntType.class.isAssignableFrom(f.getType()))
+								f.set(ans, ((IntType) f.get(this)).clone());
+							else if (f.getType() == Identifier.class)
+								f.set(ans, ((Identifier<?>) f.get(this)).clone());
+							else if (f.getType() == Proc.class) {
+								f.set(ans, ((Proc) f.get(this)).clone());
+								for (Field ff : Proc.getDeclaredFields())
+									ff.setAccessible(true);
+							} else if (f.getType() == SortedPackSet.class)
+								f.set(ans, ((SortedPackSet<?>)f.get(this)).clone());
+						}
 					return ans;
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -1497,8 +1506,7 @@ public class Data {
 		public Proc clone() {
 			try {
 				Proc ans = new Proc();
-				Field[] fs = getDeclaredFields();
-				for (Field f : fs) {
+				for (Field f : getDeclaredFields()) {
 					f.setAccessible(true);
 					if(f.get(this) != null)
 						f.set(ans, ((ProcItem) f.get(this)).clone());

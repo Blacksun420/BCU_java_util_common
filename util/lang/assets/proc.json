@@ -1887,7 +1887,7 @@
         "full_name": "Blessing",
         "tooltip": "Gives procs and abilities to affected entities. The opposite of curse, essentially",
         "format": ["(prob)% chance to bless units for (_dispTime(time)), granting the blessed entities ",
-            "[(abis!=0){Abilities: (_bitMask(abis))[(procs|traits){, }]}][(procs){Procs: (_proc(procs))[(traits){, }]}]",
+            "[(abis!=0){Abilities: (_bitMask(abis))[((procs)|(traits)){, }]}][(procs){Procs: (_proc(procs))[(traits){, }]}]",
             "[(traits){Traits: (_toString(traits))}].[(stackable){This blessing is stackable.}]"],
         "class": {
             "prob": {

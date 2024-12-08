@@ -126,10 +126,11 @@ public class ContVolcano extends ContAb {
 				v.proc.get(s).clear();
 		} else if (v.attacker.status.seal == 0 && !performed[3]) {
 			AtkModelEntity aam = (AtkModelEntity) v.model;
+			Proc p = aam.getProc(v.matk);
 			for (String s : sealp)
-				if (!v.proc.get(s).exists() && (defProc.get(s).exists() || (!performed[1] && aam.getProc(v.matk).get(s).perform(aam.b.r)))) {
-					defProc.get(s).set(aam.getProc(v.matk).get(s));
-					v.proc.get(s).set(aam.getProc(v.matk).get(s));
+				if (!v.proc.get(s).exists() && (defProc.get(s).exists() || (!performed[1] && p.get(s).perform(aam.b.r)))) {
+					defProc.get(s).set(p.get(s));
+					v.proc.get(s).set(p.get(s));
 				}
 			performed[1] = performed[3] = true;
 		}
@@ -140,10 +141,11 @@ public class ContVolcano extends ContAb {
 				v.proc.get(s).clear();
 		} else if (v.attacker.status.curse == 0 && v.attacker.status.seal == 0 && !performed[2]) {
 			AtkModelEntity aam = (AtkModelEntity) v.model;
+			Proc p = aam.getProc(v.matk);
 			for (String s : cursep)
-				if (!v.proc.get(s).exists() && (defProc.get(s).exists() || (!performed[0] && aam.getProc(v.matk).get(s).perform(aam.b.r)))) {
-					defProc.get(s).set(aam.getProc(v.matk).get(s));
-					v.proc.get(s).set(aam.getProc(v.matk).get(s));
+				if (!v.proc.get(s).exists() && (defProc.get(s).exists() || (!performed[0] && p.get(s).perform(aam.b.r)))) {
+					defProc.get(s).set(p.get(s));
+					v.proc.get(s).set(p.get(s));
 				}
 			performed[0] = performed[2] = true;
 		}

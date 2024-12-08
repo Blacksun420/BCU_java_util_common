@@ -191,7 +191,6 @@ public class Formatter {
 					return false;
 			return true;
 		}
-
 	}
 
 	private class BoolExp extends Comp {

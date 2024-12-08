@@ -1281,7 +1281,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				for (int i = 0; i < PROC_TOT; i++) {
 					e.proc.getArr(i).set(e.data.getProc().getArr(i));
 					for (Proc.BLESSING b : blessings.keySet())
-						e.proc.getArr(i).add(b.procs.getArr(i));
+						if (b.procs != null)
+							e.proc.getArr(i).add(b.procs.getArr(i));
 				}
 				if (e.dire == 1 || curse + seal == 0) {
 					e.traits.clear();
@@ -2258,8 +2259,9 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				status.clearBlessings();
 			Proc.BLESSING b = (Proc.BLESSING)atk.getProc().BLESSING.clone();
 			status.blessings.put(b, (float)b.time);
-			for (int i = 0; i < PROC_TOT; i++)
-				proc.getArr(i).add(b.procs.getArr(i));
+			if (b.procs != null)
+				for (int i = 0; i < PROC_TOT; i++)
+					proc.getArr(i).add(b.procs.getArr(i));
 			if (dire == 1 || (status.curse + status.seal <= 0))
 				traits.addAll(b.traits);
 		}
