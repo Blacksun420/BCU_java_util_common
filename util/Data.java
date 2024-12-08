@@ -147,7 +147,7 @@ public class Data {
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
-		public static class WEAKEN extends PTM {
+		public static class PTMS extends PTM {
 			@Order(3)
 			@JsonField(defval = "false")
 			public boolean stackable;
@@ -518,7 +518,7 @@ public class Data {
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
-		public static class LETHARGY extends PTM {
+		public static class LETHARGY extends PTMS {
 			@JsonClass(noTag = NoTag.LOAD)
 			public static class TYPE extends IntType {
 				@Order(0)
@@ -618,6 +618,9 @@ public class Data {
 			@Order(3)
 			@JsonField(defval = "0")
 			public int type;
+			@Order(4)
+			@JsonField(defval = "false")
+			public boolean stackable;
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -1350,7 +1353,7 @@ public class Data {
 		@Order(7)
 		public final VOLC VOLC = new VOLC();
 		@Order(8)
-		public final WEAKEN WEAK = new WEAKEN();
+		public final PTMS WEAK = new PTMS();
 		@Order(9)
 		public final PROB BREAK = new PROB();
 		@Order(10)
@@ -1378,7 +1381,7 @@ public class Data {
 		@Order(21)
 		public final PM POIATK = new PM();
 		@Order(22)
-		public final PTM ARMOR = new PTM();
+		public final PTMS ARMOR = new PTMS();
 		@Order(23)
 		public final SPEED SPEED = new SPEED();
 		@Order(24)

@@ -249,7 +249,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					effs[A_SLOW] = (dire == -1 ? effas().A_SLOW : effas().A_E_SLOW).getEAnim(DefEff.DEF);
 					break;
 				} case P_LETHARGY: {
-					effs[A_LETHARGY] = (dire == -1 ? effas().A_LETHARGY : effas().A_E_LETHARGY).getEAnim(e.status.lethargy[1] > 0 ? LethargyEff.DOWN : LethargyEff.UP);
+					effs[A_LETHARGY] = (dire == -1 ? effas().A_LETHARGY : effas().A_E_LETHARGY).getEAnim(e.status.getLethargy() > 0 ? LethargyEff.DOWN : LethargyEff.UP);
 					break;
 				} case P_WEAK: {
 					if (e.status.getWeaken() == 1)
@@ -315,15 +315,11 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					CommonStatic.setSE(SE_BARRIER_NON);
 					break;
 				} case P_ARMOR: {
-					ArmorEff index = e.status.armor[1] >= 0 ? ArmorEff.DEBUFF : ArmorEff.BUFF;
+					ArmorEff index = e.status.getArmor() >= 0 ? ArmorEff.DEBUFF : ArmorEff.BUFF;
 					effs[A_ARMOR] = (dire == -1 ? effas().A_ARMOR : effas().A_E_ARMOR).getEAnim(index);
 					break;
 				} case P_SPEED: {
-					SpeedEff index;
-					if (e.status.speed[2] <= 1)
-						index = e.status.speed[1] >= 0 ? SpeedEff.UP : SpeedEff.DOWN;
-					else
-						index = e.status.speed[1] >= e.data.getSpeed() ? SpeedEff.UP : SpeedEff.DOWN;
+					SpeedEff index = e.status.getSpeed(e.data.getSpeed()) >= e.data.getSpeed() ? SpeedEff.UP : SpeedEff.DOWN;
 					effs[A_SPEED] = (dire == -1 ? effas().A_SPEED : effas().A_E_SPEED).getEAnim(index);
 					break;
 				} case HEAL: {
@@ -405,10 +401,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				effs[A_SLOW] = null;
 			if (e.status.weaks.isEmpty())
 				effs[A_DOWN] = effs[A_WEAK_UP] = null;
-			if (e.status.lethargy[0] == 0) {
-				e.status.lethargy[2] = -1;
+			if (e.status.lethargies.isEmpty())
 				effs[A_LETHARGY] = null;
-			}
 			if (e.status.curse == 0)
 				effs[A_CURSE] = null;
 			if (e.status.inv[0] == 0 && e.status.wild == 0)
@@ -427,9 +421,9 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				effs[A_UP] = null;
 			if (effs[A_B] != null && effs[A_B].done())
 				effs[A_B] = null;
-			if (e.status.armor[0] == 0)
+			if (e.status.armors.isEmpty())
 				effs[A_ARMOR] = null;
-			if (e.status.speed[0] == 0)
+			if (e.status.speeds.isEmpty())
 				effs[A_SPEED] = null;
 			if(effs[A_HEAL] != null && effs[A_HEAL].done())
 				effs[A_HEAL] = null;
@@ -1242,9 +1236,9 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		public int kb, strengthen, money, dcut, dcap, poison;
 		public double slow, curse, seal, wild, rage, hypno;
 		public final int[] shield = new int[2];
-		public final double[] stop = new double[2], armor = new double[2], inv = new double[2];
-		public final float[] warp = new float[3], burs = new float[2], revs = new float[2], lethargy = new float[3], speed = new float[3];
-		public final LinkedList<Double[]> weaks = new LinkedList<>();
+		public final double[] stop = new double[2], inv = new double[2];
+		public final float[] warp = new float[3], burs = new float[2], revs = new float[2];
+		public final LinkedList<double[]> weaks = new LinkedList<>(), armors = new LinkedList<>(), speeds = new LinkedList<>(), lethargies = new LinkedList<>();
 		public final HashMap<Proc.BLESSING, Float> blessings = new HashMap<>();
 
 		private final Entity e;
@@ -1260,20 +1254,14 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				stop[0] -= time;
 			if (slow > 0)
 				slow -= time;
-			weaks.removeIf(weak -> {
-				weak[0] -= time;
-				return weak[0] <= 0;
-			});
+			weaks.removeIf(weak -> (weak[0] -= time) <= 0);
+			armors.removeIf(armr -> (armr[0] -= time) <= 0);
+			speeds.removeIf(sped -> (sped[0] -= time) <= 0);
+			lethargies.removeIf(leth -> (leth[0] -= time) <= 0);
 			if (curse > 0)
 				curse -= time;
 			if (seal > 0)
 				seal -= time;
-			if (armor[0] > 0)
-				armor[0] -= time;
-			if (speed[0] > 0)
-				speed[0] -= time;
-			if (lethargy[0] > 0)
-				lethargy[0] -= time;
 			if (inv[0] > 0)
 				inv[0] -= time;
 			else if (inv[1] > 0)
@@ -1306,9 +1294,36 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 		public float getWeaken() {
 			float mag = 1f;
-			for (Double[] weak : weaks)
-				mag *= weak[1];
+			for (double[] weak : weaks)
+				mag *= (float)weak[1];
 			return mag;
+		}
+		public float getArmor() {
+			float mag = 0f;
+			for (double[] armor : armors)
+				mag += (float)armor[1];
+			return mag;
+		}
+		public float getSpeed(float mov) {
+			for (double[] speed : speeds) {
+				if (speed[2] == 2)
+					mov = (float)speed[1] * 0.5f;
+				else if (speed[2] == 1)
+					mov *= (float)speed[1];
+				else
+					mov += (float)speed[1] * 0.5f;
+			}
+			return mov;
+		}
+		public float getLethargy() {
+			float tba = 0f;
+			for (double[] lethargy : lethargies) {
+				if (lethargy[2] == 1)
+					tba += (float)(e.data.getTBA() * (lethargy[1] / 100.0));
+				else if (lethargy[2] == 0)
+					tba += (float)lethargy[1];
+			}
+			return tba;
 		}
 
 		/**
@@ -1340,28 +1355,20 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			if (hypno != 0)
 				e.anim.getEff(P_HYPNO);
 
-			if (pm.armor[0] != 0) {
-				armor[0] = pm.armor[0];
-				armor[1] = pm.armor[1];
+			armors.addAll(pm.armors);
+			if (!armors.isEmpty())
 				e.anim.getEff(P_ARMOR);
-			}
-			if (pm.lethargy[0] != 0) {
-				lethargy[0] = pm.lethargy[0];
-				lethargy[1] = pm.lethargy[1];
-				lethargy[2] = pm.lethargy[2];
+			lethargies.addAll(pm.lethargies);
+			if (!lethargies.isEmpty())
 				e.anim.getEff(P_LETHARGY);
-			}
-			if (pm.speed[0] != 0) {
-				speed[0] = pm.speed[0];
-				speed[1] = pm.speed[1];
-				speed[2] = pm.speed[2];
+			speeds.addAll(pm.speeds);
+			if (!speeds.isEmpty())
 				e.anim.getEff(P_SPEED);
-			}
 			for (int i = 0; i < pm.weaks.size(); i++)
 				if (i >= weaks.size())
 					weaks.add(pm.weaks.get(i).clone());
 				else {
-					Double[] ws = weaks.get(i), ps = pm.weaks.get(i);
+					double[] ws = weaks.get(i), ps = pm.weaks.get(i);
 					if (ps[0] != 0) {
 						if ((ws[0] - 100) * (ps[0] - 100) == 1)
 							ws[0] = Math.max(ws[0], ps[0]);
@@ -1385,9 +1392,11 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		public void removeActive(boolean one) {
 			e.pois.list.clear();
 			weaks.clear();
+			armors.clear();
+			speeds.clear();
+			lethargies.clear();
 			clearBlessings();
-			stop[0] = armor[0] = slow = curse = seal = poison = one ? 1 : 0;
-			speed[0] = lethargy[0] = one ? 1 : 0;
+			stop[0] = slow = curse = seal = poison = one ? 1 : 0;
 		}
 		public void clearBlessings() {
 			blessings.clear();
@@ -1956,8 +1965,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					if (!isBase)
 						if (atk.getProc().ARMOR.prob > 0 && checkAIImmunity(atk.getProc().ARMOR.mult, getProc().IMUARMOR.smartImu, getProc().IMUARMOR.mult < 0) && getProc().IMUARMOR.mult < 100)
 							reflectAtk *= (100 + atk.getProc().ARMOR.mult) / 100.0;
-						else if (status.armor[0] > 0)
-							reflectAtk *= (100 + status.armor[1]) / 100.0;
+						else if (!status.armors.isEmpty())
+							reflectAtk *= (100 + status.getArmor()) / 100.0;
 					reflectAtk *= auras.getDefAura();
 
 					AttackSimple as = new AttackSimple(this, aam, reflectAtk, traits, getAbi(), reflectProc, ds[0], ds[1],
@@ -1973,8 +1982,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			if (!isBase)
 				if (atk.getProc().ARMOR.prob > 0 && checkAIImmunity(atk.getProc().ARMOR.mult, getProc().IMUARMOR.smartImu, getProc().IMUARMOR.mult < 0) && getProc().IMUARMOR.mult < 100)
 					d *= (100 + atk.getProc().ARMOR.mult) / 100.0;
-				else if (status.armor[0] > 0)
-					d *= (100 + status.armor[1]) / 100.0;
+				else if (!status.armors.isEmpty())
+					d *= (100 + status.getArmor()) / 100.0;
 			d *= auras.getDefAura();
 
 			e.damageGiven += Math.min(d, health);
@@ -2074,13 +2083,12 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		}
 		if (atk.getProc().WEAK.time > 0) {
 			float rst = getResistValue(atk, true, checkAIImmunity(atk.getProc().WEAK.mult - 100, getProc().IMUWEAK.smartImu, getProc().IMUWEAK.mult > 0) ? getProc().IMUWEAK.mult : 0);
-
 			if (rst > 0f) {
 				double val = Math.floor((int)(atk.getProc().WEAK.time * time) * rst);
 				if (status.weaks.isEmpty() || atk.getProc().WEAK.stackable)
-					status.weaks.add(new Double[]{val, atk.getProc().WEAK.mult / 100.0});
+					status.weaks.add(new double[]{Math.abs(val), atk.getProc().WEAK.mult / 100.0});
 				else {
-					Double[] curw = new Double[]{status.weaks.get(0)[0], (double)status.getWeaken()};
+					double[] curw = new double[]{status.weaks.get(0)[0], status.getWeaken()};
 					status.weaks.clear();
 					if (val < 0)
 						curw[0] = Math.max(curw[0], Math.abs(val));
@@ -2100,35 +2108,35 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				anim.getEff(INV);
 		}
 		if (atk.getProc().LETHARGY.time > 0) {
-			int val = (int) (atk.getProc().LETHARGY.time * time);
 			float rst = getResistValue(atk, true, checkAIImmunity(atk.getProc().LETHARGY.mult, getProc().IMULETHARGY.smartImu, getProc().IMULETHARGY.mult > 0) ? getProc().IMULETHARGY.mult : 0);
 			if (rst > 0f) {
-				val = (int)(val * rst);
-				if (val < 0)
-					status.lethargy[0] = Math.max(status.lethargy[0], Math.abs(val));
-				else
-					status.lethargy[0] = val;
+				int val = (int)((int)(atk.getProc().LETHARGY.time * time) * rst);
+				if (status.lethargies.isEmpty() || atk.getProc().LETHARGY.stackable)
+					status.lethargies.add(new double[]{Math.abs(val), atk.getProc().LETHARGY.mult / 100.0});
+				else {
+					double[] curw = new double[]{status.lethargies.get(0)[0], status.getLethargy(), atk.getProc().LETHARGY.type.percentage ? 1 : 0};
+					status.lethargies.clear();
+					if (val < 0)
+						curw[0] = Math.max(curw[0], Math.abs(val));
+					else
+						curw[0] = val;
 
-				if (atk.getProc().LETHARGY.mult > 0)
-					status.lethargy[1] = (int) Math.max(status.lethargy[1], atk.getProc().LETHARGY.mult);
-				else if (val < 0)
-					status.lethargy[1] = (int) Math.min(status.lethargy[1], atk.getProc().LETHARGY.mult);
-				else
-					status.lethargy[1] = (int) atk.getProc().LETHARGY.mult;
-
-				boolean t = atk.getProc().LETHARGY.type.percentage;
-				if (status.lethargy[2] == -1 || (t && status.lethargy[1] * data.getTBA() > status.lethargy[1] + data.getTBA()) ||
-						(!t && status.lethargy[1] * data.getTBA() < status.lethargy[1] + data.getTBA()))
-					status.lethargy[2] = t ? 1 : 0;
+					if (atk.getProc().LETHARGY.mult > 0)
+						curw[1] = (int) Math.max(curw[1], atk.getProc().LETHARGY.mult);
+					else if (val < 0)
+						curw[1] = (int) Math.min(curw[1], atk.getProc().LETHARGY.mult);
+					else
+						curw[1] = (int) atk.getProc().LETHARGY.mult;
+					status.lethargies.add(curw);
+				}
 				anim.getEff(P_LETHARGY);
 			} else
 				anim.getEff(INV);
 		}
 		if (atk.getProc().CURSE.time != 0 || atk.getProc().CURSE.prob > 0) {
-			int val = (int) (atk.getProc().CURSE.time * time);
 			float rst = getResistValue(atk, true, getProc().IMUCURSE.mult);
 			if (rst > 0f) {
-				val = (int) (val * rst);
+				int val = (int) ((int)(atk.getProc().CURSE.time * time) * rst);
 				if (val < 0)
 					status.curse = Math.max(status.curse, Math.abs(val));
 				else
@@ -2194,8 +2202,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			float res = getResistValue(atk, true, checkAIImmunity(atk.getProc().ARMOR.mult, getProc().IMUARMOR.smartImu, getProc().IMUARMOR.mult < 0) ? getProc().IMUARMOR.mult : 0);
 			if (res > 0f) {
 				int val = (int) (atk.getProc().ARMOR.time * time * res);
-				status.armor[0] = val;
-				status.armor[1] = atk.getProc().ARMOR.mult;
+				status.armors.add(new double[]{val, atk.getProc().ARMOR.mult});
 				anim.getEff(P_ARMOR);
 			} else
 				anim.getEff(INV);
@@ -2212,9 +2219,12 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 			if (res > 0f) {
 				int val = (int) (atk.getProc().SPEED.time * time * res);
-				status.speed[0] = val;
-				status.speed[1] = atk.getProc().SPEED.speed;
-				status.speed[2] = atk.getProc().SPEED.type;
+				if (!atk.getProc().SPEED.stackable)
+					status.speeds.clear();
+				else if (atk.getProc().SPEED.type == 2)
+					status.speeds.removeIf(spd -> spd[2] == 2);
+				status.speeds.add(new double[]{val, atk.getProc().SPEED.speed, atk.getProc().SPEED.type});
+				status.speeds.sort(Comparator.comparingDouble(s -> -s[2]));
 				anim.getEff(P_SPEED);
 			} else
 				anim.getEff(INV);
@@ -2356,8 +2366,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		long ext = health * hb % maxH;
 		if (ext == 0)
 			ext = maxH;
-		if (status.armor[0] > 0)
-			damage = (long) (damage * (100 + status.armor[1]) / 100.0);
+		if (!status.armors.isEmpty())
+			damage = (long) (damage * (100 + status.getArmor()) / 100.0);
 
 		damage *= auras.getDefAura();
 		if (!isBase && damage > 0 && kbTime <= 0 && kbTime != -1 && (ext <= damage * hb || health < damage))
@@ -2669,11 +2679,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 * @return Effective TBA
 	 */
 	private double getEffectiveTBA() {
-		double tba = waitTime + auras.getTbaAura();
-		if (status.lethargy[2] == 1)
-			tba += data.getTBA() * (status.lethargy[1] / 100.0);
-		else if (status.lethargy[2] == 0)
-			tba += status.lethargy[1];
+		double tba = waitTime + auras.getTbaAura() + status.getLethargy();
 		return Math.max(0, tba);
 	}
 
@@ -2859,14 +2865,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 */
 	public float getSpeed(int spd, float extmov) {
 		float mov = status.slow > 0 ? 0.25f : spd * 0.5f;
-		if (status.speed[0] > 0 && status.slow == 0) {
-			if (status.speed[2] == 0)
-				mov += status.speed[1] * 0.5f;
-			else if (status.speed[2] == 1)
-				mov = mov * (100 + status.speed[1]) / 100;
-			else if (status.speed[2] == 2)
-				mov = status.speed[1] * 0.5f;
-		}
+		if (!status.speeds.isEmpty() && status.slow == 0)
+			mov = status.getSpeed(mov);
 		mov += extmov;
 		mov *= auras.getSpdAura();
 		return mov;
