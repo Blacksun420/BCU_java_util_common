@@ -2113,7 +2113,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			if (rst > 0f) {
 				int val = (int)((int)(atk.getProc().LETHARGY.time * time) * rst);
 				if (status.lethargies.isEmpty() || atk.getProc().LETHARGY.stackable)
-					status.lethargies.add(new double[]{Math.abs(val), atk.getProc().LETHARGY.mult / 100.0});
+					status.lethargies.add(new double[]{Math.abs(val), atk.getProc().LETHARGY.mult / 100.0, atk.getProc().LETHARGY.type.percentage ? 1 : 0});
 				else {
 					double[] curw = new double[]{status.lethargies.get(0)[0], status.getLethargy(), atk.getProc().LETHARGY.type.percentage ? 1 : 0};
 					status.lethargies.clear();
@@ -2202,6 +2202,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		if (!isBase && atk.getProc().ARMOR.time > 0) {
 			float res = getResistValue(atk, true, checkAIImmunity(atk.getProc().ARMOR.mult, getProc().IMUARMOR.smartImu, getProc().IMUARMOR.mult < 0) ? getProc().IMUARMOR.mult : 0);
 			if (res > 0f) {
+				if (!atk.getProc().ARMOR.stackable)
+					status.armors.clear();
 				int val = (int) (atk.getProc().ARMOR.time * time * res);
 				status.armors.add(new double[]{val, atk.getProc().ARMOR.mult});
 				anim.getEff(P_ARMOR);

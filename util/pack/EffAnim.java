@@ -473,10 +473,18 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 		public EffAnim<DefEff> A_METAL_KILLER;
 		@Order(92)
 		public EffAnim<DefEff> A_E_METAL_KILLER;
-		@Order(80)
+		@Order(93)
 		public EffAnim<BlastEff> A_BLAST;
-		@Order(81)
+		@Order(94)
 		public EffAnim<BlastEff> A_E_BLAST;
+		@Order(95)
+		public EffAnim<DefEff> A_DRAIN;
+		@Order(96)
+		public EffAnim<DefEff> A_E_DRAIN;
+		@Order(97)
+		public EffAnim<DefEff> A_BLESS;
+		@Order(98)
+		public EffAnim<DefEff> A_E_BLESS;
 
 		public EffAnim<?>[] values() {
 			Field[] fld = FieldOrder.getDeclaredFields(EffAnimStore.class);
