@@ -2199,7 +2199,9 @@ public class Data {
 	public static final byte A_RAGE = 33;
 	public static final byte A_HYPNO = 34;
 	public static final byte A_RANGESHIELD = 35;
-	public static final byte A_TOT = 36;
+	public static final byte A_DRAIN = 36;
+	public static final byte A_BLESS = 37;
+	public static final byte A_TOT = 38;
 
 	// atk type index used in filter page
 	public static final byte ATK_SINGLE = 0;

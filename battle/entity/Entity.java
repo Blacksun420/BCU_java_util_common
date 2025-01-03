@@ -171,37 +171,30 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			}
 
 			for(int i = 0; i < effs.length; i++) {
-				if(i == A_B || i == A_DEMON_SHIELD || i == A_COUNTER || i == A_DMGCUT || i == A_DMGCAP || i == A_REMSHIELD || i == A_RANGESHIELD)
+				if(i == A_B || i == A_HEAL || i == A_DEMON_SHIELD || i == A_COUNTER || i == A_DMGCUT || i == A_DMGCAP || i == A_REMSHIELD || i == A_RANGESHIELD || i == A_DRAIN)
 					continue;
-
 				if ((i == A_SLOW && e.status.stop[0] != 0) || (i == A_UP && e.status.getWeaken() != 1) || (i == A_CURSE && e.status.seal != 0))
 					continue;
 
 				EAnimD<?> eae = effs[i];
-
 				if (eae == null)
 					continue;
-
 				float offset = 0f;
 
 				g.setTransform(at);
 				eae.draw(g, new P(x, p.y+offset), siz * 0.75f);
 				x -= EWID * e.dire * siz;
 			}
-
 			x = p.x;
 
-			for(int i = 0; i < effs.length; i++) {
-				if(i == A_B || i == A_DEMON_SHIELD || i == A_COUNTER || i == A_DMGCUT || i == A_DMGCAP || i == A_REMSHIELD || i == A_RANGESHIELD) {
+			for(int i = A_B; i < effs.length; i++) {
+				if(i == A_B || i == A_HEAL || i == A_DEMON_SHIELD || i == A_COUNTER || i == A_DMGCUT || i == A_DMGCAP || i == A_REMSHIELD || i == A_RANGESHIELD || i == A_DRAIN) {
 					EAnimD<?> eae = effs[i];
-
 					if(eae == null)
 						continue;
-
 					float offset = -25f * siz;
 
 					g.setTransform(at);
-
 					eae.draw(g, new P(x, p.y + offset), siz * 0.75f);
 				}
 			}
@@ -385,6 +378,12 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				} case RANGESHIELD_SINGLE: {
 					effs[A_RANGESHIELD] = (dire == -1 ? effas().A_RANGESHIELD : effas().A_E_RANGESHIELD).getEAnim(RangeShieldEff.SINGLE);
 					break;
+				} case P_DRAIN: {
+					effs[A_DRAIN] = (dire == -1 ? effas().A_DRAIN : effas().A_E_DRAIN).getEAnim(DefEff.DEF);
+					break;
+				} case P_BLESS: {
+					effs[A_BLESS] = effas().A_BLESS.getEAnim(DefEff.DEF); //(dire == -1 ? effas().A_BLESS : effas().A_E_BLESS).getEAnim(DefEff.DEF);
+					break;
 				}
 			}
 		}
@@ -437,6 +436,16 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				effs[A_RAGE] = null;
 			if (e.status.hypno == 0)
 				effs[A_HYPNO] = null;
+			if (e.status.blessings.isEmpty())
+				effs[A_BLESS] = null;
+			if(effs[A_RANGESHIELD] != null && effs[A_RANGESHIELD].done())
+				effs[A_RANGESHIELD] = null;
+			if(effs[A_DRAIN] != null && effs[A_DRAIN].done())
+				effs[A_DRAIN] = null;
+			if(effs[A_REMSHIELD] != null && effs[A_REMSHIELD].done())
+				effs[A_REMSHIELD] = null;
+			if(effs[A_DEMON_SHIELD] != null && effs[A_DEMON_SHIELD].done())
+				effs[A_DEMON_SHIELD] = null;
 			efft -= e.getTimeFreeze();
 		}
 
@@ -2035,8 +2044,10 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				}
 			}
 		}
-		if (atk.attacker != null && atk.attacker.health > 0 && atk.getProc().DRAIN.mult > 0 && btargetable(atk))
-			atk.attacker.health = Math.min(atk.attacker.health + (long)(dmg * atk.getProc().DRAIN.mult / 100), atk.attacker.maxH);
+		if (atk.attacker != null && atk.attacker.health > 0 && atk.getProc().DRAIN.mult > 0 && btargetable(atk)) {
+			atk.attacker.health = Math.min(atk.attacker.health + (long) (dmg * atk.getProc().DRAIN.mult / 100), atk.attacker.maxH);
+			atk.attacker.anim.getEff(P_DRAIN);
+		}
 		processProcs(atk);
 	}
 
@@ -2257,7 +2268,9 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				anim.getEff(INV);
 		}
 		if (atk.getProc().BLESSING.exists()) {
-			if (!atk.getProc().BLESSING.stackable)
+			if (status.blessings.isEmpty())
+				anim.getEff(P_BLESS);
+			else if (!atk.getProc().BLESSING.stackable)
 				status.clearBlessings();
 			Proc.BLESSING b = (Proc.BLESSING)atk.getProc().BLESSING.clone();
 			status.blessings.put(b, (float)b.time);

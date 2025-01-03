@@ -483,8 +483,6 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 		public EffAnim<DefEff> A_E_DRAIN;
 		@Order(97)
 		public EffAnim<DefEff> A_BLESS;
-		@Order(98)
-		public EffAnim<DefEff> A_E_BLESS;
 
 		public EffAnim<?>[] values() {
 			Field[] fld = FieldOrder.getDeclaredFields(EffAnimStore.class);
@@ -791,6 +789,18 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 		effas.A_MEGAWAVE = new EffAnim<>(path, wah, iwah, DefEff.values());
 		wah = new VImg(path + ".png");
 		effas.A_E_MEGAWAVE = new EffAnim<>(path, wah, iwah, DefEff.values());
+
+        path = "./org/battle/skill_drain/skill_drain";
+        ImgCut idrn = ImgCut.newIns(path + ".imgcut");
+        VImg drn = new VImg(path + ".png");
+        effas.A_DRAIN = new EffAnim<>(path, drn, idrn, DefEff.values());
+        effas.A_E_DRAIN = new EffAnim<>(path, drn, idrn, DefEff.values());
+        effas.A_DRAIN.rev = true;
+
+        path = "./org/battle/skill_blessing/skill_blessing";
+        ImgCut ibls = ImgCut.newIns(path + ".imgcut");
+        VImg bls = new VImg(path + ".png");
+        effas.A_BLESS = new EffAnim<>(path, bls, ibls, DefEff.values());
 	}
 
 	private final VImg vimg;
@@ -825,8 +835,13 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 			mamodel = MaModel.newIns(str + ".mamodel");
 		}
 		anims = new MaAnim[types.length];
-		for (int i = 0; i < types.length; i++)
+		for (int i = 0; i < types.length; i++) {
 			anims[i] = MaAnim.newIns(str + types[i].path() + ".maanim");
+			for (Part p : anims[i].parts)
+				for (int j = 0; j < p.moves.length - 1; j++)
+					if (p.moves[j][0] == p.moves[j+1][0]-1)
+						p.moves[j][2] = 1;
+		}
 		if (rev)
 			revert();
 	}

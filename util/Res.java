@@ -263,6 +263,8 @@ public class Res extends ImgCore {
 		aux.icon[1][P_DEFINC] = new VImg(parts[204]);
 		aux.icon[1][P_DMGINC] = new VImg(parts[206]);
 		aux.icon[1][P_RANGESHIELD] = new VImg("./org/page/icons/TargetShield.png");
+		aux.icon[1][P_DRAIN] = new VImg("./org/page/icons/Drain.png");
+		aux.icon[1][P_BLESS] = new VImg("./org/page/icons/Blessing.png");
 
 		langIcons();
 		//Trait icons that remain the same regardless of language

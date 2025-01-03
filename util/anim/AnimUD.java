@@ -121,16 +121,12 @@ public class AnimUD extends AnimU<AnimUD.DefImgLoader> {
 
 		private MaAnim[] filterValidAnims(MaAnim[] original) {
 			int end = 0;
-
-			for (int i = 0; i < original.length; i++) {
+			for (int i = 0; i < original.length; i++)
 				if (original[i] != null && original[i].n != 0)
 					end = i;
-			}
 
 			MaAnim[] fixed = new MaAnim[end + 1];
-
 			System.arraycopy(original, 0, fixed, 0, end + 1);
-
 			return fixed;
 		}
 	}
@@ -149,7 +145,12 @@ public class AnimUD extends AnimU<AnimUD.DefImgLoader> {
 
 	@Override
 	public void partial() {
+		if (partial)
+			return;
 		super.partial();
+		if (!partial)//There was an error loading if partial is still false
+			return;
+
 		if (types.length == 5)
 			types[4] = TYPEDEF[ENTRY]; //Iron Wall
 	}
