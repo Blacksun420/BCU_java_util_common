@@ -2386,21 +2386,27 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		if (!status.armors.isEmpty())
 			damage = (long) (damage * (100 + status.getArmor()) / 100.0);
 
-		damage *= auras.getDefAura();
+		damage = (long)(damage * auras.getDefAura());
 		if (!isBase && damage > 0 && kbTime <= 0 && kbTime != -1 && (ext <= damage * hb || health < damage))
 			interrupt(INT_HB, KB_DIS[INT_HB]);
 		health -= damage;
-
 		if (health > maxH)
 			health = maxH;
-		damage = 0;
 
 		// increase damage
 		float strong = getProc().STRONG.health;
-		if ((touchable() & TCH_CORPSE) == 0 && status.strengthen == 0 && strong > 0 && health * 100 <= maxH * strong) {
-			status.strengthen = getProc().STRONG.mult;
-			anim.getEff(P_STRONG);
+		if ((touchable() & TCH_CORPSE) == 0 && strong > 0 && damage != 0) {
+			boolean wz = status.strengthen == 0;
+			if (getProc().STRONG.incremental && health * 100 > maxH * strong) {
+				System.out.println((((1.0 * maxH - health) / maxH) * strong));
+				status.strengthen = (int) (getProc().STRONG.mult * (((1.0 * maxH - health) / maxH) * strong));
+			} else if (health * 100 <= maxH * strong)
+				status.strengthen = getProc().STRONG.mult;
+
+			if (wz && status.strengthen != 0)
+				anim.getEff(P_STRONG);
 		}
+		damage = 0;
 		// lethal strike
 		if (getProc().LETHAL.prob > 0 && health <= 0) {
 			boolean b = getProc().LETHAL.prob == 100 || basis.r.nextFloat() * 100 < getProc().LETHAL.prob;

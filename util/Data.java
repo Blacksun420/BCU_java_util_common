@@ -298,6 +298,9 @@ public class Data {
 			public float health;
 			@Order(1)
 			public int mult;
+			@Order(2)
+			@JsonField(defval = "false")
+			public boolean incremental;
 
 			@Override
 			public int[] setTalent(int[] nps) {
