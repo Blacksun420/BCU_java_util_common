@@ -47,7 +47,7 @@ public class AttackSimple extends AttackAb {
 	@Override
 	public void capture() {
 		capt.clear();
-		if (matk.getDire() == -2) {
+		if (matk != null && matk.getDire() == -2) {
 			capt.add(attacker);
 			return;
 		}
