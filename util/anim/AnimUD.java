@@ -153,6 +153,12 @@ public class AnimUD extends AnimU<AnimUD.DefImgLoader> {
 
 		if (types.length == 5)
 			types[4] = TYPEDEF[ENTRY]; //Iron Wall
+		
+		for (MaAnim ma : anims)
+			for (Part p : ma.parts)
+				for (int j = 0; j < p.moves.length - 1; j++)
+					if (p.moves[j][0] == p.moves[j+1][0]-1)
+						p.moves[j][2] = 1;
 	}
 
 	@Override

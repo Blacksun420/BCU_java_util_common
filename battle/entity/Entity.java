@@ -247,7 +247,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				} case P_WEAK: {
 					if (e.status.getWeaken() == 1)
 						break;
-					if (e.status.getWeaken() < 100) {
+					if (e.status.getWeaken() < 1) {
 						effs[A_DOWN] = (dire == -1 ? effas().A_DOWN : effas().A_E_DOWN).getEAnim(DefEff.DEF);
 						effs[A_WEAK_UP] = null;
 					} else {
@@ -398,9 +398,10 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				effs[A_STOP] = null;
 			if (e.status.slow == 0)
 				effs[A_SLOW] = null;
-			if (e.status.weaks.isEmpty())
-				effs[A_DOWN] = effs[A_WEAK_UP] = null;
-			if (e.status.lethargies.isEmpty())
+			if (e.status.weaks.isEmpty()) {
+				effs[A_DOWN] = null;
+				effs[A_WEAK_UP] = null;
+			} if (e.status.lethargies.isEmpty())
 				effs[A_LETHARGY] = null;
 			if (e.status.curse == 0)
 				effs[A_CURSE] = null;
@@ -1319,7 +1320,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				if (speed[2] == 2)
 					mov = (float)speed[1] * 0.5f;
 				else if (speed[2] == 1)
-					mov *= (float)speed[1];
+					mov += mov * ((float)speed[1] / 100f);
 				else
 					mov += (float)speed[1] * 0.5f;
 			}
