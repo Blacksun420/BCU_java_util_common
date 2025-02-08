@@ -84,13 +84,8 @@ public class PCoin extends Data {
 					data[13] = 60;
 				if (data[0] == 62) {//Miniwave
 					if (data[6] == 0 && data[7] == 0) {
-						data[8] = 20;
-						data[9] = 20;
-					} else {
-						data[8] = data[6];
-						data[9] = data[7];
-						data[6] = 0;
-						data[7] = 0;
+						data[6] = 20;
+						data[7] = 20;
 					}
 				}
 
@@ -267,6 +262,8 @@ public class PCoin extends Data {
 				fieldTOT += ans.getProc().getArr(type[1]).getAllFields().length;
 			else if (type[0] == PC_BASE)
 				fieldTOT = 1;
+			if (du instanceof DataUnit)
+				fieldTOT = Math.min(fieldTOT, 4);
 
 			int maxlv = info.get(i)[1];
 			int[] modifs = new int[fieldTOT];
@@ -291,7 +288,7 @@ public class PCoin extends Data {
 						tar.set(2, (modifs[2] + modifs[3]) / 4);
 						tar.set(3, modifs[1] * 20);
 						if (type[1] == P_MINIVOLC && tar.get(5) == 0)
-							tar.set(5, 20);
+							tar.set(4, 20);
 					} else {
 						tar.set(0, tar.get(0) + modifs[0]);
 						tar.set(1, tar.get(1) + Math.min(modifs[1], modifs[2]));
@@ -425,16 +422,12 @@ public class PCoin extends Data {
 
 			int[] COR = get_CORRES(ii[0]);
 			if (COR[0] == 5) {
-				if (COR[1] == P_IMUWAVE && COR[5] >= 100)
+				if (COR[1] == P_IMUWAVE && ii[5] >= 100)
 					ni[0] = 23;//Port old waveblock talent
 				else if (COR[1] == P_DMGINC)
 					ni[0] = ni[3] < 300 ? 5 : 7;
 				else if (COR[1] == P_DEFINC)
 					ni[0] = ni[3] < 400 ? 5 : 6;
-			} else if (COR[0] == PC_P && (COR[1] == P_MINIVOLC || COR[1] == P_MINIWAVE)) {
-				int ad = COR[1] == P_MINIVOLC ? 2 : 0; //The missless waves removal
-				ni[6 + ad] = ii[8 + ad];
-				ni[7 + ad] = ii[9 + ad];
 			}
 
 			boolean add = ni[0] > 0; //Prevent custom talent porting coz it crash main

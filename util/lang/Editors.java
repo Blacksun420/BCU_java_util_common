@@ -264,6 +264,15 @@ public class Editors {
 			t.mult = Math.min(t.mult, 100);
 		});
 
+		EditControl<Proc.IMUI> imui = new EditControl<>(Proc.IMUI.class, t -> {
+			t.block = Math.min(t.block, 100);
+			if (t.block == 100)
+				t.mult = Math.min(0, t.mult);
+			t.mult = Math.min(t.mult, 100);
+			if (!t.exists())
+				t.pid.clear();
+		});
+
 		EditControl<Proc.IMUAD> imuad = new EditControl<>(Proc.IMUAD.class, t -> {
 			t.block = Math.min(t.block, 100);
 			if (t.block == 100)
@@ -318,6 +327,7 @@ public class Editors {
 			if (t.prob == 0) {
 				t.lv = 0;
 				t.type.hitless = false;
+				t.pid.clear();
 			}
 		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
@@ -461,12 +471,12 @@ public class Editors {
 		map().put("MOVEWAVE", new EditControl<>(Proc.MOVEWAVE.class, (t) -> {
 			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0) {
-				t.dis = t.itv = t.speed = t.time = t.width = t.id = 0;
+				t.dis = t.itv = t.speed = t.time = t.width = 0;
+				t.pid.clear();
 			} else {
 				t.width = Math.max(0, t.width);
 				t.time = Math.max(1, t.time);
 				t.itv = Math.max(1, t.itv);
-				t.id = Math.max(0, t.id);
 			}
 		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
@@ -561,6 +571,7 @@ public class Editors {
 			if (t.prob == 0) {
 				t.dis_0 = t.dis_1 = t.time = 0;
 				t.type.hitless = false;
+				t.pid.clear();
 			} else
 				t.time = Math.max(1, t.time / Data.VOLC_ITV) * Data.VOLC_ITV;
 		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
@@ -570,6 +581,7 @@ public class Editors {
 			if (t.prob == 0) {
 				t.dis_0 = t.dis_1 = t.time = t.mult = 0;
 				t.type.hitless = false;
+				t.pid.clear();
 			} else {
 				t.time = Math.max(1, t.time / Data.VOLC_ITV) * Data.VOLC_ITV;
 
@@ -604,6 +616,7 @@ public class Editors {
 			if (t.prob == 0) {
 				t.lv = t.multi = 0;
 				t.type.hitless = false;
+				t.pid.clear();
 			} else {
 				t.lv = MathUtil.clip(t.lv, 1, 35);
 
@@ -618,7 +631,7 @@ public class Editors {
 
 		map().put("IMUSLOW", imu);
 
-		map().put("IMUWAVE", imu);
+		map().put("IMUWAVE", imui);
 
 		map().put("IMUWEAK", imuad);
 
@@ -630,7 +643,7 @@ public class Editors {
 
 		map().put("IMUPOIATK", imu);
 
-		map().put("IMUVOLC", imu);
+		map().put("IMUVOLC", imui);
 
 		map().put("IMUSUMMON", imu);
 
@@ -639,15 +652,8 @@ public class Editors {
 		map().put("IMUMOVING", new EditControl<>(Proc.MOVEI.class, (t) -> {
 			t.mult = Math.min(t.mult, 100);
 			if (t.mult == 0)
-				t.useIds = false;
-			if (t.useIds)
-				t.id = Math.max(0, t.id);
-			else
-				t.id = 0;
-		}, eg -> t -> {
-			setComponentVisibility(eg, t.exists(), 1);
-			setComponentVisibility(eg, t.useIds, 1, 2);
-		}));
+				t.pid.clear();
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("IMURAGE", imu);
 
@@ -873,7 +879,7 @@ public class Editors {
 			setComponentVisibility(eg, t.lv > 1, 4);
 		}));
 
-		map().put("IMUBLAST", imu);
+		map().put("IMUBLAST", imui);
 
 		map().put("DRAIN", new EditControl<>(Proc.PM.class, (t) -> {
 			t.prob = Math.max(0, Math.min(t.prob, 100));

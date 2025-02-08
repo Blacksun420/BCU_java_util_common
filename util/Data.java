@@ -173,14 +173,18 @@ public class Data {
 			}
 		}
 
+		@JsonClass(noTag = NoTag.LOAD) // Similar to IMU. Supports ids
+		public static class IMUI extends IMU {
+			@Order(2)
+			@JsonField(defval = "isEmpty")
+			public ProcID pid = new ProcID();
+		}
+
 		@JsonClass(noTag = NoTag.LOAD) // Similar to WAVEI. Supports ids
 		public static class MOVEI extends MULT {
 			@Order(1)
-			@JsonField(defval = "0")
-			public int id;
-			@Order(2)
-			@JsonField(defval = "false")
-			public boolean useIds;
+			@JsonField(defval = "isEmpty")
+			public ProcID pid = new ProcID();
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -211,12 +215,15 @@ public class Data {
 			}
 			@Order(1)
 			public int lv;
-			@Order(2)
+			@Order(3)
 			@JsonField(defval = "hitless false")
 			public TYPE type = new TYPE();
-			@Order(3)
+			@Order(4)
 			@JsonField(defval = "false")
 			public boolean inverted;
+			@Order(5)
+			@JsonField(defval = "isEmpty")
+			public ProcID pid = new ProcID();
 
 			@Override
 			public int[] setTalent(int[] nps) {
@@ -229,7 +236,7 @@ public class Data {
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class MINIWAVE extends WAVE {
-			@Order(3)
+			@Order(2)
 			@JsonField(defval = "20")
 			public int multi;
 		}
@@ -253,9 +260,12 @@ public class Data {
 			public int dis_1;
 			@Order(3)
 			public int time;
-			@Order(4)
+			@Order(5)
 			@JsonField(defval = "hitless false")
 			public TYPE type = new TYPE();
+			@Order(6)
+			@JsonField(defval = "isEmpty")
+			public ProcID pid = new ProcID();
 
 			@Override
 			public int[] setTalent(int[] nps) {
@@ -273,7 +283,7 @@ public class Data {
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class MINIVOLC extends VOLC {
-			@Order(5)
+			@Order(4)
 			@JsonField(defval = "20")
 			public int mult;
 		}
@@ -290,6 +300,9 @@ public class Data {
 			@Order(4)
 			@JsonField(defval = "30")
 			public float reduction;
+			@Order(5)
+			@JsonField(defval = "isEmpty")
+			public ProcID pid = new ProcID();
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -545,8 +558,8 @@ public class Data {
 			@Order(5)
 			public int itv;
 			@Order(6)
-			@JsonField(defval = "0")
-			public int id;
+			@JsonField(defval = "isEmpty")
+			public ProcID pid = new ProcID();
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -976,6 +989,57 @@ public class Data {
 			public SortedPackSet<Trait> traits = new SortedPackSet<>();
 		}
 
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class ProcID implements Cloneable, BattleStatic {
+			@Order(0)
+			@JsonField(generic = Integer.class)
+			public SortedPackSet<Integer> l = new SortedPackSet<>();
+
+			public ProcID() {
+			}
+			public ProcID(ProcID pid) {
+				setData(pid.getData());
+			}
+			public void setData(int[] data) {
+				l.clear();
+				for (int i : data)
+					l.add(i);
+			}
+
+			public boolean match(ProcID pid) {
+				if (isEmpty() || ((pid.isEmpty()) && l.contains(0)))
+					return true; //ID 0 grants immunity to all default procs. It's like ID 0
+				for (int pack : pid.l)
+					if (l.contains(pack))
+						return true;
+				return false;
+			}
+
+			public boolean isEmpty() {
+				return l.isEmpty();
+			}
+			public void clear() {
+				l.clear();
+			}
+
+			public int[] getData() {
+				int[] is = new int[l.size()];
+				int i = 0;
+				for (int k : l)
+					is[i++] = k;
+				return is;
+			}
+
+			@Override
+			public ProcID clone() {
+				return new ProcID(this);
+			}
+			@Override
+			public String toString() {
+				return l.toString();
+			}
+		}
+
 		public static abstract class IntType implements Cloneable, BattleStatic {
 
 			@Documented
@@ -1065,6 +1129,8 @@ public class Data {
 							f.set(this, null);
 						else if (f.getType() == SortedPackSet.class)
 							((SortedPackSet<?>)f.get(this)).clear();
+						else if (f.getType() == ProcID.class)
+							((ProcID)f.get(this)).clear();
 						else
 							throw new Exception("unknown field " + f.getType() + " " + f.getName());
 				} catch (Exception e) {
@@ -1087,8 +1153,10 @@ public class Data {
 								f.set(ans, ((Proc) f.get(this)).clone());
 								for (Field ff : Proc.getDeclaredFields())
 									ff.setAccessible(true);
-							} else if (f.getType() == SortedPackSet.class)
-								f.set(ans, ((SortedPackSet<?>)f.get(this)).clone());
+							} else if (f.getType() == SortedPackSet.class) {
+								f.set(ans, ((SortedPackSet<?>) f.get(this)).clone());
+							} else if (f.getType() == ProcID.class)
+								f.set(ans, ((ProcID)f.get(this)).clone());
 						}
 					return ans;
 				} catch (Exception e) {
@@ -1145,6 +1213,10 @@ public class Data {
 						return ((Identifier<?>)f.get(this)).id;
 					else if (f.getType() == boolean.class)
 						return f.getBoolean(this) ? 1 : 0;
+					else if (f.getType() == ProcID.class) {
+						SortedPackSet<Integer> l = ((ProcID)f.get(this)).l;
+						return l.isEmpty() ? 0 : l.get(l.size() - 1);
+					}
 					return f.getType() == int.class ? f.getInt(this) : (int)f.getDouble(this);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -1226,7 +1298,11 @@ public class Data {
 						((IntType)f.get(this)).set(loc, v);
 					else if (f.getType() == boolean.class)
 						f.set(this, v != 0);
-					else
+					else if (f.getType() == ProcID.class) {
+						ProcID pid = (ProcID)f.get(this);
+						if (v != 0 || !pid.isEmpty())
+							pid.l.add(v);
+					} else
 						f.set(this, v);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -1270,6 +1346,9 @@ public class Data {
 						} else if (f.getType() == SortedPackSet.class) {
 							SortedPackSet<?> l = (SortedPackSet<?>)f.get(pi);
 							f.set(this, l.clone());
+						} else if (f.getType() == ProcID.class) {
+							ProcID l = (ProcID)f.get(pi);
+							f.set(this, l.clone());
 						} else
 							throw new Exception("unknown field " + f.getType() + " " + f.getName());
 				} catch (Exception e) {
@@ -1300,10 +1379,12 @@ public class Data {
 							if (p != null)
 								f.set(this, p.clone());
 						} else if (f.getType() == SortedPackSet.class) {
-							SortedPackSet<Comparable<? super Comparable>> l = (SortedPackSet<Comparable<? super Comparable>>)f.get(pi), m = (SortedPackSet<Comparable<? super Comparable>>)f.get(this);
-							for (Comparable<? super Comparable> o : l)
-								if (!m.contains(o))
-									m.add(o);
+							SortedPackSet<Comparable<? super Comparable>> l = (SortedPackSet<Comparable<? super Comparable>>) f.get(pi), m = (SortedPackSet<Comparable<? super Comparable>>) f.get(this);
+							m.addAll(l);
+							f.set(this, m);
+						} else if (f.getType() == ProcID.class) {
+							ProcID l = (ProcID)f.get(pi), m = (ProcID)f.get(this);
+							m.l.addAll(l.l);
 							f.set(this, m);
 						} else
 							throw new Exception("unknown field " + f.getType() + " " + f.getName());
@@ -1407,9 +1488,9 @@ public class Data {
 		@Order(28)
 		public final IMU IMUSLOW = new IMU();
 		@Order(29)
-		public final IMU IMUWAVE = new IMU();
+		public final IMUI IMUWAVE = new IMUI();
 		@Order(30)
-		public final IMU IMUVOLC = new IMU();
+		public final IMUI IMUVOLC = new IMUI();
 		@Order(31)
 		public final IMUAD IMUWEAK = new IMUAD();
 		@Order(32)
@@ -1499,7 +1580,7 @@ public class Data {
 		@Order(74)
 		public final BLAST BLAST = new BLAST();
 		@Order(75)
-		public final IMU IMUBLAST = new IMU();
+		public final IMUI IMUBLAST = new IMUI();
 		@Order(76)
 		public final PM DRAIN = new PM();
 		@Order(77)

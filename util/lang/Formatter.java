@@ -182,6 +182,8 @@ public class Formatter {
 				return (Boolean)o;
 			if (o instanceof Collection)
 				return !((Collection<?>)o).isEmpty();
+			if (o instanceof Proc.ProcID)
+				return !((Proc.ProcID)o).isEmpty();
 			return o != null;
 		}
 

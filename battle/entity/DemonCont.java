@@ -23,10 +23,10 @@ public class DemonCont extends EAnimCont {
     @Override
     public void update(float flow) {
         super.update(flow);
-        if (played == 0 && getAnim().ind() >= COUNTER_SURGE_FORESWING) {
+        if (played == 1 && getAnim().ind() >= COUNTER_SURGE_FORESWING) {
             ent.aam.getCounterSurge(pos, volc);
             played++;
-        } else if (played == 1 && getAnim().ind() >= COUNTER_SURGE_SOUND) {
+        } else if (played == 0 && getAnim().ind() >= COUNTER_SURGE_SOUND) {
             CommonStatic.setSE(SE_COUNTER_SURGE);
             played++;
         }

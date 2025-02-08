@@ -216,7 +216,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		float sta = p0 + (getDire() == 1 ? W_VOLC_PIERCE : W_VOLC_INNER);
 		float end = p0 - (getDire() == 1 ? W_VOLC_INNER : W_VOLC_PIERCE);
 
-		e.summoned.add(new ContVolcano(new AttackVolcano(e, as, sta, end, WT_VOLC), p0, e.layer, ds.time));
+		e.summoned.add(new ContVolcano(new AttackVolcano(e, as, sta, end, WT_VOLC, ds.pid), p0, e.layer, ds.time));
 	}
 
 	/**
@@ -238,7 +238,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		float sta = p0 + (getDire() == 1 ? W_VOLC_PIERCE : W_VOLC_INNER);
 		float end = p0 - (getDire() == 1 ? W_VOLC_INNER : W_VOLC_PIERCE);
 
-		e.summoned.add(new ContVolcano(new AttackVolcano(e, as, sta, end, mult >= 100 ? WT_VOLC : WT_MIVC), p0, e.layer, itm.time, true));
+		e.summoned.add(new ContVolcano(new AttackVolcano(e, as, sta, end, mult >= 100 ? WT_VOLC : WT_MIVC, itm.pid), p0, e.layer, itm.time, true));
 	}
 
 	@Override

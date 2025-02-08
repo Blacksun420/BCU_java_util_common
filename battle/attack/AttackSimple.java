@@ -126,7 +126,7 @@ public class AttackSimple extends AttackAb {
 			MOVEWAVE mw = proc.MOVEWAVE;
 			int dire = model.getDire();
 			float p0 = model.getPos() + dire * mw.dis;
-			new ContMove(this, p0, mw.width, mw.speed, 1, mw.time, mw.itv, layer, mw.id);
+			new ContMove(this, p0, mw.width, mw.speed, 1, mw.time, mw.itv, layer);
 			return;
 		}
 		for (AbEntity e : capt) {
@@ -176,7 +176,7 @@ public class AttackSimple extends AttackAb {
 			float p0 = model.getPos() + dire * addp;
 			float sta = p0 + (dire == 1 ? W_VOLC_PIERCE : W_VOLC_INNER);
 			float end = p0 - (dire == 1 ? W_VOLC_INNER : W_VOLC_PIERCE);
-			ContVolcano volcano = new ContVolcano(new AttackVolcano(attacker, this, sta, end, WT_VOLC), p0, layer, volc.time, false);
+			ContVolcano volcano = new ContVolcano(new AttackVolcano(attacker, this, sta, end, WT_VOLC, volc.pid), p0, layer, volc.time, false);
 			if(attacker != null)
 				attacker.summoned.add(volcano);
 		}
@@ -188,7 +188,7 @@ public class AttackSimple extends AttackAb {
 			float sta = p0 + (dire == 1 ? W_VOLC_PIERCE : W_VOLC_INNER);
 			float end = p0 - (dire == 1 ? W_VOLC_INNER : W_VOLC_PIERCE);
 
-			ContVolcano volcano = new ContVolcano(new AttackVolcano(attacker, this, sta, end, WT_MIVC), p0, layer, volc.time, false);
+			ContVolcano volcano = new ContVolcano(new AttackVolcano(attacker, this, sta, end, WT_MIVC, volc.pid), p0, layer, volc.time, false);
 			volcano.v.raw = (int)(volcano.v.raw * (proc.MINIVOLC.mult / 100.0));
 
 			if(attacker != null)

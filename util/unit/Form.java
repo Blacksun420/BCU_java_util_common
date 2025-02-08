@@ -185,6 +185,8 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 								default:
 									trueArr = Arrays.copyOf(data, 3);
 							}
+							for (int i = 10; i < trueArr.length - 1; i++)
+								trueArr[i] = 0;//Just in case so mainBCU talents don't get buggy
 							if (data.length == 14)
 								trueArr[trueArr.length - 1] = Math.max(0, data[13]); //super talent lv
 							return trueArr;

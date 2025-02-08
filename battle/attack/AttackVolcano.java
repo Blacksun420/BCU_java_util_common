@@ -13,11 +13,13 @@ public class AttackVolcano extends AttackAb {
 	private float volcTime = VOLC_ITV;
 
 	protected final List<Entity> vcapt = new ArrayList<>();
+	public final Proc.ProcID pid;
 	public boolean active = true;
 
-	public AttackVolcano(Entity e, AttackSimple a, float sta, float end, int vt) {
+	public AttackVolcano(Entity e, AttackSimple a, float sta, float end, int vt, Proc.ProcID id) {
 		super(e, a, sta, end, false);
 		this.waveType = vt;
+		pid = id;
 		raw = model instanceof AtkModelEntity ? ((AtkModelEntity)model).getDefAtk(matk) : atk;
 		if(dire == 1 && model.b.canon.deco == DECO_BASE_WATER)
 			raw *= model.b.b.t().getDecorationMagnification(model.b.canon.deco);

@@ -1725,15 +1725,18 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			}
 		// if immune to wave and the attack is wave, jump out
 		if (atk.waveType != 5 && (((WT_WAVE | WT_MINI | WT_MEGA) & atk.waveType) > 0) && atk.canon != 16) {
-			if (getProc().IMUWAVE.mult > 0)
-				anim.getEff(P_WAVE);
-			if (getProc().IMUWAVE.mult == 100)
-				return;
-			else
-				dmg = (int) (dmg * (100 - getProc().IMUWAVE.mult) / 100);
+			Proc.WAVE w = (WT_WAVE & atk.waveType) > 0 ? atk.getProc().WAVE : atk.getProc().MINIWAVE;
+			if (getProc().IMUWAVE.pid.match(w.pid)) {
+				if (getProc().IMUWAVE.mult > 0)
+					anim.getEff(P_WAVE);
+				if (getProc().IMUWAVE.mult == 100)
+					return;
+				else
+					dmg = (int) (dmg * (100 - getProc().IMUWAVE.mult) / 100);
+			}
 		}
 
-		if ((atk.waveType & WT_MOVE) > 0 && (!getProc().IMUMOVING.useIds || atk.getProc().MOVEWAVE.id == getProc().IMUMOVING.id)) {
+		if ((atk.waveType & WT_MOVE) > 0 && getProc().IMUMOVING.pid.match(atk.getProc().MOVEWAVE.pid)) {
 			if (getProc().IMUMOVING.mult > 0)
 				anim.getEff(P_WAVE);
 			if (getProc().IMUMOVING.mult == 100)
@@ -1741,7 +1744,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			else
 				dmg = (int) (dmg * (100 - getProc().IMUMOVING.mult) / 100);
 		}
-		if ((atk.waveType & WT_BLST) > 0) {
+		if ((atk.waveType & WT_BLST) > 0 && getProc().IMUBLAST.pid.match(atk.getProc().BLAST.pid)) {
 			if (getProc().IMUBLAST.mult > 0)
 				anim.getEff(P_WAVE);
 			if (getProc().IMUBLAST.mult == 100)
@@ -1749,7 +1752,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			else
 				dmg = (int) (dmg * (100 - getProc().IMUBLAST.mult) / 100);
 		}
-		if ((atk.waveType & (WT_VOLC | WT_MIVC)) > 0) {
+		if ((atk.waveType & (WT_VOLC | WT_MIVC)) > 0 && getProc().IMUVOLC.pid.match(((AttackVolcano)atk).pid)) {
 			if (getProc().IMUVOLC.mult > 0)
 				anim.getEff(P_WAVE);
 			if (getProc().IMUVOLC.mult == 100)
@@ -2063,211 +2066,38 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 		float f = getFruit(atk.trait, atk.dire, 1);
 		float time = atk.origin instanceof AttackCanon ? 1 : 1 + f * 0.2f / 3;
-		float dist = 1 + f * 0.1f;
-		if (atk.getProc().STOP.time != 0 || atk.getProc().STOP.prob > 0) {
+		if (atk.getProc().STOP.time != 0 || atk.getProc().STOP.prob > 0)
+			freeze(atk, time);
+		if (atk.getProc().SLOW.time != 0 || atk.getProc().SLOW.prob > 0)
+			slow(atk, time);
+		if (atk.getProc().WEAK.time > 0)
+			weaken(atk, time);
+		if (atk.getProc().LETHARGY.time > 0)
+			lethargy(atk, time);
+		if (atk.getProc().CURSE.time != 0 || atk.getProc().CURSE.prob > 0)
+			curse(atk, time);
+		if (atk.getProc().KB.dis != 0)
+			knockback(atk, f);
 
-			float rst = getResistValue(atk, true, getProc().IMUSTOP.mult);
-			if (rst > 0f) {
-				int val = (int)((int)(atk.getProc().STOP.time * time) * rst);
-				double tim = atk.getProc().STOP.mult != 0 ? atk.getProc().STOP.mult : 100;
-				if (val < 0) {
-					status.stop[0] = Math.max(status.stop[0], Math.abs(val));
-					status.stop[1] = Math.max(status.stop[1], (100 - tim) / 100);
-				} else {
-					status.stop[0] = val;
-					status.stop[1] = (100 - tim) / 100;
-				}
-				anim.getEff(P_STOP);
-			} else
-				anim.getEff(INV);
-		}
-		if (atk.getProc().SLOW.time != 0 || atk.getProc().SLOW.prob > 0) {
-			float rst = getResistValue(atk, true, getProc().IMUSLOW.mult);
-
-			if (rst > 0f) {
-				int val = (int)((int)(atk.getProc().SLOW.time * time) * rst);
-				if (val < 0)
-					status.slow = Math.max(status.slow, Math.abs(val));
-				else
-					status.slow = val;
-				anim.getEff(P_SLOW);
-			} else
-				anim.getEff(INV);
-		}
-		if (atk.getProc().WEAK.time > 0) {
-			float rst = getResistValue(atk, true, checkAIImmunity(atk.getProc().WEAK.mult - 100, getProc().IMUWEAK.smartImu, getProc().IMUWEAK.mult > 0) ? getProc().IMUWEAK.mult : 0);
-			if (rst > 0f) {
-				double val = Math.floor((int)(atk.getProc().WEAK.time * time) * rst);
-				if (status.weaks.isEmpty() || atk.getProc().WEAK.stackable)
-					status.weaks.add(new double[]{Math.abs(val), atk.getProc().WEAK.mult / 100.0});
-				else {
-					double[] curw = new double[]{status.weaks.get(0)[0], status.getWeaken()};
-					status.weaks.clear();
-					if (val < 0)
-						curw[0] = Math.max(curw[0], Math.abs(val));
-					else
-						curw[0] = val;
-
-					if (atk.getProc().WEAK.mult > 100)
-						curw[1] = Math.max(curw[1], atk.getProc().WEAK.mult / 100.0);
-					else if (val < 0)
-						curw[1] = Math.min(curw[1], atk.getProc().WEAK.mult / 100.0);
-					else
-						curw[1] = atk.getProc().WEAK.mult / 100.0;
-					status.weaks.add(curw);
-				}
-				anim.getEff(P_WEAK);
-			} else
-				anim.getEff(INV);
-		}
-		if (atk.getProc().LETHARGY.time > 0) {
-			float rst = getResistValue(atk, true, checkAIImmunity(atk.getProc().LETHARGY.mult, getProc().IMULETHARGY.smartImu, getProc().IMULETHARGY.mult > 0) ? getProc().IMULETHARGY.mult : 0);
-			if (rst > 0f) {
-				int val = (int)((int)(atk.getProc().LETHARGY.time * time) * rst);
-				if (status.lethargies.isEmpty() || atk.getProc().LETHARGY.stackable)
-					status.lethargies.add(new double[]{Math.abs(val), atk.getProc().LETHARGY.mult, atk.getProc().LETHARGY.type.percentage ? 1 : 0});
-				else {
-					double[] curw = new double[]{status.lethargies.get(0)[0], status.getLethargy(), atk.getProc().LETHARGY.type.percentage ? 1 : 0};
-					status.lethargies.clear();
-					if (val < 0)
-						curw[0] = Math.max(curw[0], Math.abs(val));
-					else
-						curw[0] = val;
-
-					if (atk.getProc().LETHARGY.mult > 0)
-						curw[1] = (int) Math.max(curw[1], atk.getProc().LETHARGY.mult);
-					else if (val < 0)
-						curw[1] = (int) Math.min(curw[1], atk.getProc().LETHARGY.mult);
-					else
-						curw[1] = (int) atk.getProc().LETHARGY.mult;
-					status.lethargies.add(curw);
-				}
-				anim.getEff(P_LETHARGY);
-			} else
-				anim.getEff(INV);
-		}
-		if (atk.getProc().CURSE.time != 0 || atk.getProc().CURSE.prob > 0) {
-			float rst = getResistValue(atk, true, getProc().IMUCURSE.mult);
-			if (rst > 0f) {
-				int val = (int) ((int)(atk.getProc().CURSE.time * time) * rst);
-				if (val < 0)
-					status.curse = Math.max(status.curse, Math.abs(val));
-				else
-					status.curse = val;
-				anim.getEff(P_CURSE);
-			} else
-				anim.getEff(INV);
-		}
-		if (atk.getProc().KB.dis != 0) {
-			float rst = getResistValue(atk, true, getProc().IMUKB.mult);
-			if (rst > 0f) {
-				status.kb = atk.getProc().KB.time;
-				interrupt(atk.getProc().KB.time == KB_TIME[INT_HB] ? INT_HB : P_KB, atk.getProc().KB.dis * dist * rst);
-			} else
-				anim.getEff(INV);
-		}
 		if (atk.getProc().SNIPER.prob > 0)
 			interrupt(INT_ASS, KB_DIS[INT_ASS]);
-
 		if (atk.getProc().BOSS.prob > 0)
 			interrupt(INT_SW, KB_DIS[INT_SW]);
 
-		if (atk.getProc().WARP.exists()) {
-			float rst = getResistValue(atk, true, getProc().IMUWARP.mult);
-			if (rst > 0f) {
-				Data.Proc.WARP warp = atk.getProc().WARP;
-				interrupt(INT_WARP, warp.dis == warp.dis_1 ? warp.dis : warp.dis + (int) (basis.r.nextFloat() * (warp.dis_1 - warp.dis)));
-				EffAnim<WarpEff> e = effas().A_W;
-				int len = e.len(WarpEff.ENTER) + e.len(WarpEff.EXIT);
-				int val = (int)(atk.getProc().WARP.time * rst);
-				status.warp[0] = val + len;
-			} else
-				anim.getEff(INVWARP);
-		}
-
-		if (atk.getProc().SEAL.prob > 0) {
-			float rst = getResistValue(atk, true, proc.IMUSEAL.mult);
-			if (rst > 0f) {
-				int val = (int) (atk.getProc().SEAL.time * time);
-				val = (int) (val * rst);
-				if (val < 0)
-					status.seal = Math.max(status.seal, Math.abs(val));
-				else
-					status.seal = val;
-				anim.getEff(P_SEAL);
-			} else
-				anim.getEff(INV);
-		}
-		if (atk.getProc().POISON.time > 0) {
-			float res = getResistValue(atk, true, checkAIImmunity(atk.getProc().POISON.damage, getProc().IMUPOI.smartImu, getProc().IMUPOI.mult < 0) ? getProc().IMUPOI.mult : 0);
-			if (res > 0f) {
-				POISON ws = (POISON) atk.getProc().POISON.clone();
-				ws.time = (int)(ws.time * res);
-				if (atk.atk != 0 && ws.type.modifAffected)
-					ws.damage = (int) (ws.damage * (float) getDamage(atk, atk.atk) / atk.atk);
-
-				pois.add(ws);
-				anim.getEff(P_POISON);
-			} else
-				anim.getEff(INV);
-		}
-		if (!isBase && atk.getProc().ARMOR.time > 0) {
-			float res = getResistValue(atk, true, checkAIImmunity(atk.getProc().ARMOR.mult, getProc().IMUARMOR.smartImu, getProc().IMUARMOR.mult < 0) ? getProc().IMUARMOR.mult : 0);
-			if (res > 0f) {
-				if (!atk.getProc().ARMOR.stackable)
-					status.armors.clear();
-				int val = (int) (atk.getProc().ARMOR.time * time * res);
-				status.armors.add(new double[]{val, atk.getProc().ARMOR.mult});
-				anim.getEff(P_ARMOR);
-			} else
-				anim.getEff(INV);
-		}
-		if (atk.getProc().SPEED.time > 0) {
-			float res = getResistValue(atk, true, getProc().IMUSPEED.mult);
-			boolean b;
-			if (atk.getProc().SPEED.type == 2)
-				b = (data.getSpeed() > atk.getProc().SPEED.speed && res > 0) || (data.getSpeed() < atk.getProc().SPEED.speed && res < 0);
-			else
-				b = res < 0;
-			if (!checkAIImmunity(atk.getProc().SPEED.speed, getProc().IMUSPEED.smartImu, b))
-				res = 1;
-
-			if (res > 0f) {
-				int val = (int) (atk.getProc().SPEED.time * time * res);
-				if (!atk.getProc().SPEED.stackable)
-					status.speeds.clear();
-				else if (atk.getProc().SPEED.type == 2)
-					status.speeds.removeIf(spd -> spd[2] == 2);
-				status.speeds.add(new double[]{val, atk.getProc().SPEED.speed, atk.getProc().SPEED.type});
-				status.speeds.sort(Comparator.comparingDouble(s -> -s[2]));
-				anim.getEff(P_SPEED);
-			} else
-				anim.getEff(INV);
-		}
-		if (atk.getProc().RAGE.time > 0) {
-			float res = getResistValue(atk, true, getProc().IMURAGE.mult);
-			if (res > 0f) {
-				int t = (int) ((atk.getProc().RAGE.time * time) * res);
-				if (t < 0)
-					status.rage = Math.max(Math.abs(t), status.rage);
-				else
-					status.rage = t;
-				anim.getEff(P_RAGE);
-			} else
-				anim.getEff(INV);
-		}
-		if (atk.getProc().HYPNO.time > 0) {
-			float res = getResistValue(atk, true, getProc().IMUHYPNO.mult);
-			if (res > 0f) {
-				int t = (int) ((atk.getProc().HYPNO.time * time) * res);
-				if (t < 0)
-					status.hypno = Math.max(Math.abs(t), status.hypno);
-				else
-					status.hypno = t;
-				anim.getEff(P_HYPNO);
-			} else
-				anim.getEff(INV);
-		}
+		if (atk.getProc().WARP.exists())
+			warp(atk);
+		if (atk.getProc().SEAL.prob > 0)
+			seal(atk, time);
+		if (atk.getProc().POISON.time > 0)
+			poison(atk);
+		if (!isBase && atk.getProc().ARMOR.time > 0)
+			breakArmor(atk, time);
+		if (atk.getProc().SPEED.time > 0)
+			hasten(atk, time);
+		if (atk.getProc().RAGE.time > 0)
+			enrage(atk, time);
+		if (atk.getProc().HYPNO.time > 0)
+			hypnotize(atk, time);
 		if (atk.getProc().BLESSING.exists()) {
 			if (status.blessings.isEmpty())
 				anim.getEff(P_BLESS);
@@ -2281,6 +2111,206 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			if (dire == 1 || (status.curse + status.seal <= 0))
 				traits.addAll(b.traits);
 		}
+	}
+	public void freeze(AttackAb atk, float time) {
+		float rst = getResistValue(atk, true, getProc().IMUSTOP.mult + (getProc().IMUSTOP.block == 100 ? 100 : 0));
+
+		if (rst > 0f) {
+			int val = (int)((int)(atk.getProc().STOP.time * time) * rst);
+			double tim = atk.getProc().STOP.mult != 0 ? atk.getProc().STOP.mult : 100;
+			if (val < 0) {
+				status.stop[0] = Math.max(status.stop[0], Math.abs(val));
+				status.stop[1] = Math.max(status.stop[1], (100 - tim) / 100);
+			} else {
+				status.stop[0] = val;
+				status.stop[1] = (100 - tim) / 100;
+			}
+			anim.getEff(P_STOP);
+		} else
+			anim.getEff(INV);
+	}
+	public void slow(AttackAb atk, float time) {
+		float rst = getResistValue(atk, true, getProc().IMUSLOW.mult + (getProc().IMUSLOW.block == 100 ? 100 : 0));
+		if (rst > 0f) {
+			int val = (int)((int)(atk.getProc().SLOW.time * time) * rst);
+			if (val < 0)
+				status.slow = Math.max(status.slow, Math.abs(val));
+			else
+				status.slow = val;
+			anim.getEff(P_SLOW);
+		} else
+			anim.getEff(INV);
+	}
+	public void weaken(AttackAb atk, float time) {
+		double i = getProc().IMUWEAK.mult + (getProc().IMUWEAK.block == 100 ? 100 : 0);
+		float rst = getResistValue(atk, true, checkAIImmunity(atk.getProc().WEAK.mult - 100, getProc().IMUWEAK.smartImu, i > 0) ? i : 0);
+		if (rst > 0f) {
+			double val = Math.floor((int)(atk.getProc().WEAK.time * time) * rst);
+			if (status.weaks.isEmpty() || atk.getProc().WEAK.stackable)
+				status.weaks.add(new double[]{Math.abs(val), atk.getProc().WEAK.mult / 100.0});
+			else {
+				double[] curw = new double[]{status.weaks.get(0)[0], status.getWeaken()};
+				status.weaks.clear();
+				if (val < 0)
+					curw[0] = Math.max(curw[0], Math.abs(val));
+				else
+					curw[0] = val;
+
+				if (atk.getProc().WEAK.mult > 100)
+					curw[1] = Math.max(curw[1], atk.getProc().WEAK.mult / 100.0);
+				else if (val < 0)
+					curw[1] = Math.min(curw[1], atk.getProc().WEAK.mult / 100.0);
+				else
+					curw[1] = atk.getProc().WEAK.mult / 100.0;
+				status.weaks.add(curw);
+			}
+			anim.getEff(P_WEAK);
+		} else
+			anim.getEff(INV);
+	}
+	public void lethargy(AttackAb atk, float time) {
+		double i = getProc().IMULETHARGY.mult + (getProc().IMULETHARGY.block == 100 ? 100 : 0);
+		float rst = getResistValue(atk, true, checkAIImmunity(atk.getProc().LETHARGY.mult, getProc().IMULETHARGY.smartImu, i > 0) ? i : 0);
+		if (rst > 0f) {
+			int val = (int)((int)(atk.getProc().LETHARGY.time * time) * rst);
+			if (status.lethargies.isEmpty() || atk.getProc().LETHARGY.stackable)
+				status.lethargies.add(new double[]{Math.abs(val), atk.getProc().LETHARGY.mult, atk.getProc().LETHARGY.type.percentage ? 1 : 0});
+			else {
+				double[] curw = new double[]{status.lethargies.get(0)[0], status.getLethargy(), atk.getProc().LETHARGY.type.percentage ? 1 : 0};
+				status.lethargies.clear();
+				if (val < 0)
+					curw[0] = Math.max(curw[0], Math.abs(val));
+				else
+					curw[0] = val;
+
+				if (atk.getProc().LETHARGY.mult > 0)
+					curw[1] = (int) Math.max(curw[1], atk.getProc().LETHARGY.mult);
+				else if (val < 0)
+					curw[1] = (int) Math.min(curw[1], atk.getProc().LETHARGY.mult);
+				else
+					curw[1] = (int) atk.getProc().LETHARGY.mult;
+				status.lethargies.add(curw);
+			}
+			anim.getEff(P_LETHARGY);
+		} else
+			anim.getEff(INV);
+	}
+	public void curse(AttackAb atk, float time) {
+		float rst = getResistValue(atk, true, getProc().IMUCURSE.mult + (getProc().IMUCURSE.block == 100 ? 100 : 0));
+		if (rst > 0f) {
+			int val = (int) ((int)(atk.getProc().CURSE.time * time) * rst);
+			if (val < 0)
+				status.curse = Math.max(status.curse, Math.abs(val));
+			else
+				status.curse = val;
+			anim.getEff(P_CURSE);
+		} else
+			anim.getEff(INV);
+	}
+	public void knockback(AttackAb atk, float f) {
+		float rst = getResistValue(atk, true, getProc().IMUKB.mult + (getProc().IMUKB.block == 100 ? 100 : 0));
+		if (rst > 0f) {
+			status.kb = atk.getProc().KB.time;
+			interrupt(atk.getProc().KB.time == KB_TIME[INT_HB] ? INT_HB : P_KB, atk.getProc().KB.dis * (1 + f * 0.1f) * rst);
+		} else
+			anim.getEff(INV);
+	}
+	public void warp(AttackAb atk) {
+		float rst = getResistValue(atk, true, getProc().IMUWARP.mult + (getProc().IMUWARP.block == 100 ? 100 : 0));
+		if (rst > 0f) {
+			Data.Proc.WARP warp = atk.getProc().WARP;
+			interrupt(INT_WARP, warp.dis == warp.dis_1 ? warp.dis : warp.dis + (int) (basis.r.nextFloat() * (warp.dis_1 - warp.dis)));
+			EffAnim<WarpEff> e = effas().A_W;
+			int len = e.len(WarpEff.ENTER) + e.len(WarpEff.EXIT);
+			int val = (int)(atk.getProc().WARP.time * rst);
+			status.warp[0] = val + len;
+		} else
+			anim.getEff(INVWARP);
+	}
+	public void seal(AttackAb atk, float time) {
+		float rst = getResistValue(atk, true, proc.IMUSEAL.mult + (getProc().IMUSEAL.block == 100 ? 100 : 0));
+		if (rst > 0f) {
+			int val = (int) (atk.getProc().SEAL.time * time);
+			val = (int) (val * rst);
+			if (val < 0)
+				status.seal = Math.max(status.seal, Math.abs(val));
+			else
+				status.seal = val;
+			anim.getEff(P_SEAL);
+		} else
+			anim.getEff(INV);
+	}
+	public void poison(AttackAb atk) {
+		double i = getProc().IMUPOI.mult + (getProc().IMUPOI.block == 100 ? 100 : 0);
+		float res = getResistValue(atk, true, checkAIImmunity(atk.getProc().POISON.damage, getProc().IMUPOI.smartImu, i < 0) ? i : 0);
+		if (res > 0f) {
+			POISON ws = (POISON) atk.getProc().POISON.clone();
+			ws.time = (int)(ws.time * res);
+			if (atk.atk != 0 && ws.type.modifAffected)
+				ws.damage = (int) (ws.damage * (float) getDamage(atk, atk.atk) / atk.atk);
+
+			pois.add(ws);
+			anim.getEff(P_POISON);
+		} else
+			anim.getEff(INV);
+	}
+	public void breakArmor(AttackAb atk, float time) {
+		double i = getProc().IMUARMOR.mult + (getProc().IMUARMOR.block == 100 ? 100 : 0);
+		float res = getResistValue(atk, true, checkAIImmunity(atk.getProc().ARMOR.mult, getProc().IMUARMOR.smartImu, i < 0) ? i : 0);
+		if (res > 0f) {
+			if (!atk.getProc().ARMOR.stackable)
+				status.armors.clear();
+			int val = (int) (atk.getProc().ARMOR.time * time * res);
+			status.armors.add(new double[]{val, atk.getProc().ARMOR.mult});
+			anim.getEff(P_ARMOR);
+		} else
+			anim.getEff(INV);
+	}
+	public void hasten(AttackAb atk, float time) {
+		float res = getResistValue(atk, true, getProc().IMUSPEED.mult + (getProc().IMUSPEED.block == 100 ? 100 : 0));
+		boolean b;
+		if (atk.getProc().SPEED.type == 2)
+			b = (data.getSpeed() > atk.getProc().SPEED.speed && res > 0) || (data.getSpeed() < atk.getProc().SPEED.speed && res < 0);
+		else
+			b = res < 0;
+		if (!checkAIImmunity(atk.getProc().SPEED.speed, getProc().IMUSPEED.smartImu, b))
+			res = 1;
+
+		if (res > 0f) {
+			int val = (int) (atk.getProc().SPEED.time * time * res);
+			if (!atk.getProc().SPEED.stackable)
+				status.speeds.clear();
+			else if (atk.getProc().SPEED.type == 2)
+				status.speeds.removeIf(spd -> spd[2] == 2);
+			status.speeds.add(new double[]{val, atk.getProc().SPEED.speed, atk.getProc().SPEED.type});
+			status.speeds.sort(Comparator.comparingDouble(s -> -s[2]));
+			anim.getEff(P_SPEED);
+		} else
+			anim.getEff(INV);
+	}
+	public void enrage(AttackAb atk, float time) {
+		float res = getResistValue(atk, true, getProc().IMURAGE.mult + (getProc().IMURAGE.block == 100 ? 100 : 0));
+		if (res > 0f) {
+			int t = (int) ((atk.getProc().RAGE.time * time) * res);
+			if (t < 0)
+				status.rage = Math.max(Math.abs(t), status.rage);
+			else
+				status.rage = t;
+			anim.getEff(P_RAGE);
+		} else
+			anim.getEff(INV);
+	}
+	public void hypnotize(AttackAb atk, float time) {
+		float res = getResistValue(atk, true, getProc().IMUHYPNO.mult + (getProc().IMUHYPNO.block == 100 ? 100 : 0));
+		if (res > 0f) {
+			int t = (int) ((atk.getProc().HYPNO.time * time) * res);
+			if (t < 0)
+				status.hypno = Math.max(Math.abs(t), status.hypno);
+			else
+				status.hypno = t;
+			anim.getEff(P_HYPNO);
+		} else
+			anim.getEff(INV);
 	}
 
 	/**
@@ -2970,7 +3000,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	/**
 	 * get the extra proc time due to fruits, for EEnemy only
 	 */
-	private float getFruit(SortedPackSet<Trait> trait, int dire, int e) {
+	public float getFruit(SortedPackSet<Trait> trait, int dire, int e) {
 		if (!receive(dire) || receive(e))
 			return 0;
 		SortedPackSet<Trait> sharedTraits = trait.inCommon(traits);
