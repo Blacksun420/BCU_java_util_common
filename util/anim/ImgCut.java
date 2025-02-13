@@ -79,6 +79,25 @@ public class ImgCut extends Data implements Cloneable {
 		strs = ic.strs.clone();
 	}
 
+	public void addLine(int ind) {
+		int[][] data = cuts;
+		String[] name = strs;
+
+		cuts = new int[++n][];
+		strs = new String[n];
+
+		for (int i = 0; i < data.length; i++) {
+			cuts[i] = data[i];
+			strs[i] = name[i];
+		}
+
+		if (ind >= 0)
+			cuts[n - 1] = cuts[ind].clone();
+		else
+			cuts[n - 1] = new int[] { 0, 0, 1, 1 };
+		strs[n - 1] = "";
+	}
+
 	@Override
 	public ImgCut clone() {
 		return new ImgCut(this);

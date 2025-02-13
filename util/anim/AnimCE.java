@@ -155,6 +155,35 @@ public class AnimCE extends AnimCI {
 		return redo.peek().name;
 	}
 
+	public void removeICline(int ind) {
+		int[][] data = imgcut.cuts;
+		String[] name = imgcut.strs;
+
+		imgcut.cuts = new int[--imgcut.n][];
+		imgcut.strs = new String[imgcut.n];
+
+		for (int i = 0; i < ind; i++) {
+			imgcut.cuts[i] = data[i];
+			imgcut.strs[i] = name[i];
+		}
+		for (int i = ind + 1; i < data.length; i++) {
+			imgcut.cuts[i - 1] = data[i];
+			imgcut.strs[i - 1] = name[i];
+		}
+
+		for (int[] ints : anim.mamodel.parts)
+			if (ints[2] > ind)
+				ints[2]--;
+		for (MaAnim ma : anim.anims)
+			for (Part part : ma.parts)
+				if (part.ints[1] == 2)
+					for (int[] ints : part.moves)
+						if (ints[1] > ind)
+							ints[1]--;
+		ICedited();
+		unSave("imgcut remove line");
+	}
+
 	public void ICedited() {
 		check();
 		parts = imgcut.cut(getNum());
