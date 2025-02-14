@@ -117,9 +117,11 @@ public abstract class Source {
 		public void onInjectSource() {
 			Object zip = UserProfile.getStatic(UserProfile.CURRENT_PACK, () -> null);
 
-			if (this.pack.equals(LOCAL) && zip instanceof ZipSource) {
-				this.pack = ((ZipSource) zip).id;
-				this.id = "_mapped_" + this.id;
+			if (this.pack.equals(LOCAL)) {
+				if (zip instanceof ZipSource) {
+					this.pack = ((ZipSource) zip).id;
+					this.id = "_mapped_" + this.id;
+				} else return;
 			}
 			AnimU<?> anim = getAnim();
 
