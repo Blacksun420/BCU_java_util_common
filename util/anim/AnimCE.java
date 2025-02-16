@@ -189,6 +189,25 @@ public class AnimCE extends AnimCI {
 		parts = imgcut.cut(getNum());
 	}
 
+	public void addMMline(int ind, int spr) {
+		if (ind == 0)
+			ind++;
+		int[] inds = new int[mamodel.n];
+		for (int i = 0; i < mamodel.n; i++)
+			inds[i] = i < ind ? i : i + 1;
+		reorderModel(inds);
+		mamodel.n++;
+		int[] move = new int[mamodel.n];
+		for (int i = 0; i < mamodel.n; i++)
+			move[i] = i < ind ? i : i - 1;
+		mamodel.reorder(move);
+		int[] newl = new int[14];
+		newl[2] = Math.max(spr, 0);
+		newl[8] = newl[9] = newl[11] = 1000;
+		mamodel.parts[ind] = newl;
+		unSave("mamodel add line");
+	}
+
 	public final void addAttack() {
 		int ind = 2 + getAtkCount();
 		MaAnim[] newMaAnim = new MaAnim[anims.length + 1];
