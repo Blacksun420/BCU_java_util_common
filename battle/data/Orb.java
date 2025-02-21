@@ -106,20 +106,15 @@ public class Orb extends Data {
 
 				Unit u = (Unit) Identifier.parseInt(id, Unit.class).get();
 
-				if (u == null || u.forms.length != 3) {
+				if (u == null || u.forms.length < 3)
 					continue;
+				Orb o = strs.length == 2 ? new Orb(slots) : new Orb(slots, new int[] { CommonStatic.parseIntN(strs[2]), CommonStatic.parseIntN(strs[3]) });
+				for (int i = 2; i < u.forms.length; i++) {
+					Form f = u.forms[i];
+					if (f == null)
+						break;
+					f.orbs = o;
 				}
-
-				Form f = u.forms[2];
-
-				if (f == null) {
-					continue;
-				}
-
-				if(strs.length == 2) {
-					f.orbs = new Orb(slots);
-				} else
-					f.orbs = new Orb(slots, new int[] { CommonStatic.parseIntN(strs[2]), CommonStatic.parseIntN(strs[3]) });
 			}
 
 			String pre = "./org/page/orb/equipment_";

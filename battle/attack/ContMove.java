@@ -13,7 +13,7 @@ public class ContMove extends ContAb {
 	private boolean tempAtk;
 
 	/**
-	 * conf: range, move, itrv, tot, rept, layer, id
+	 * conf: range, move, itrv, tot, rept,layer
 	 */
 	public ContMove(AttackSimple as, float p, int... conf) {
 		super(as.model.b, p, conf[5]);

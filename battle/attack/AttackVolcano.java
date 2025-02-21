@@ -2,7 +2,6 @@ package common.battle.attack;
 
 import common.battle.entity.AbEntity;
 import common.battle.entity.Entity;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +24,6 @@ public class AttackVolcano extends AttackAb {
 			raw *= model.b.b.t().getDecorationMagnification(model.b.canon.deco);
 	}
 
-	@Override
 	public void capture() {
 		List<AbEntity> le = model.b.inRange(touch, attacker.status.rage > 0 ? 2 : dire, sta, end, excludeRightEdge);
 		capt.clear();
@@ -35,7 +33,6 @@ public class AttackVolcano extends AttackAb {
 				capt.add(e);
 	}
 
-	@Override
 	public void excuse() {
 		process();
 
