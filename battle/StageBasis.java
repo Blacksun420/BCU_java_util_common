@@ -89,6 +89,9 @@ public class StageBasis extends BattleObj {
 	private boolean bgEffectInitialized = false;
 	public int baseBarrier = 0, rem_spawns;
 
+	private final int[] dupeCD = new int[3]; //[0 = index i, 1 = index j, 2 = amount left, 3 = default time]
+	private float dupeTime = -1;
+
 	public StageBasis(BattleField bf, EStage stage, BasisLU bas, int cnf, long seed, boolean buttonDelayOn, byte saveMode) {
 		b = bas;
 		r = new CopRand(seed);
@@ -524,7 +527,7 @@ public class StageBasis extends BattleObj {
 			}
 			CommonStatic.setSE(SE_SPEND_SUC);
 			elu.resetCD(i, j);
-			elu.smnd[i][j] = eu;
+			elu.smnd[i][j] = true;
 			totalSpawned[i][j]++;
 			rem_spawns--;
 			eu.added(-1, st.len - 700);
@@ -535,6 +538,15 @@ public class StageBasis extends BattleObj {
 				unitRespawnTime = st.minUSpawn;
 			else
 				unitRespawnTime = st.minUSpawn + (int) ((st.maxUSpawn - st.minUSpawn) * r.nextFloat());
+
+			int[] dupe = duplicateDeployData(b.lu.fs[i][j].unit().getRarity());
+			if (dupe[0] != 0) {
+				dupeCD[0] = i;
+				dupeCD[1] = j;
+				dupeCD[2] = dupe[0];
+				dupeCD[3] = dupe[1];
+				dupeTime = dupe[1];
+			}
 			return true;
 		}
 		return false;
@@ -568,6 +580,20 @@ public class StageBasis extends BattleObj {
 			unitRespawnTime -= timeFlow;
 		if(respawnTime > 0 && active)
 			respawnTime -= timeFlow;
+		if (dupeCD[2] != 0) {
+			dupeTime -= timeFlow;
+			if (dupeTime <= 0 && !cantDeploy(b.lu.fs[dupeCD[0]][dupeCD[1]].unit().getRarity(), b.lu.efs[dupeCD[0]][dupeCD[1]].getWill())
+					&& b.lu.efs[dupeCD[0]][dupeCD[1]] != null) {
+				EUnit eu = b.lu.efs[dupeCD[0]][dupeCD[1]].getEntity(this, new int[]{dupeCD[0],dupeCD[1]}, false);
+				if (eu != null) {
+					eu.added(-1, st.len - 700);
+					le.add(eu);
+
+					dupeCD[2]--;
+					dupeTime = dupeCD[3];
+				}
+			}
+		}
 		elu.update(ftime, timeFlow);
 
 		if (buttonDelay > 0 && (buttonDelay -= timeFlow) <= 0) {
@@ -887,5 +913,22 @@ public class StageBasis extends BattleObj {
 		if (est.lim.stageLimit == null)
 			return 0;
 		return est.lim.stageLimit.globalCost * 100;
+	}
+
+	public int[] duplicateDeployData(int rarity) {
+		if (est.lim.stageLimit == null)
+			return new int[]{0, 0};
+		return new int[]{est.lim.stageLimit.deployDuplicationTimes[rarity], est.lim.stageLimit.deployDuplicationDelay[rarity]};
+	}
+
+	public BattleList<EUnit> getAllOf(int i, int j) {
+		BattleList<EUnit> es = new BattleList<>(le.size());
+		for (Entity e : le)
+			if (e.anim.dead == -1 && e instanceof EUnit) {
+				EUnit eu = (EUnit)e;
+				if (eu.index[0] == i && eu.index[j] == j)
+					es.add((EUnit) e);
+			}
+		return es;
 	}
 }

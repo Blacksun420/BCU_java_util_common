@@ -18,6 +18,12 @@ public class StageLimit extends Data implements BattleStatic {
     public int[] costMultiplier = { 100, 100, 100, 100, 100, 100 };
     @JsonField(defval = "this.defDeploy")
     public int[] rarityDeployLimit = { -1, -1, -1, -1, -1, -1 }; // -1 for none
+
+    @JsonField(defval = "this.defDupe")
+    public int[] deployDuplicationTimes = { 0, 0, 0, 0, 0, 0 }; // 0 for deactivated
+    @JsonField(defval = "this.defDupe")
+    public int[] deployDuplicationDelay = { 0, 0, 0, 0, 0, 0 }; // unit is frame
+
     @JsonField(defval = "false")
     public boolean coolStart = false;
     @JsonField(generic = Integer.class, defval = "isEmpty")
@@ -38,6 +44,12 @@ public class StageLimit extends Data implements BattleStatic {
     public boolean defDeploy() {
         for (int d : rarityDeployLimit)
             if (d != -1)
+                return false;
+        return true;
+    }
+    public boolean defDupe() {
+        for (int d : deployDuplicationTimes)
+            if (d > 0)
                 return false;
         return true;
     }
@@ -86,6 +98,6 @@ public class StageLimit extends Data implements BattleStatic {
     }
 
     public boolean isBlank() {
-        return maxMoney == 0 && globalCooldown == 0 && globalCost == 0 && maxUnitSpawn == 0 && defCD() && defMoney() && defDeploy() && !coolStart && bannedCatCombo.isEmpty();
+        return maxMoney == 0 && globalCooldown == 0 && globalCost == 0 && maxUnitSpawn == 0 && defCD() && defMoney() && defDeploy() && !coolStart && bannedCatCombo.isEmpty() && defDupe();
     }
 }

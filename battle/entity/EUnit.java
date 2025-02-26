@@ -86,9 +86,9 @@ public class EUnit extends Entity {
 	public void kill(boolean glass) {
 		super.kill(glass);
 		if (!glass && status.money != 0)
-			basis.money -= (status.money / 100.0) * (index != null ? basis.elu.price[index[0]][index[1]] : ((MaskUnit)data).getPrice());
-		if (index != null && basis.elu.smnd[index[0]][index[1]] == this)
-			basis.elu.smnd[index[0]][index[1]] = null;
+			basis.money = (int)(basis.money-((status.money / 100.0) * (index != null ? basis.elu.price[index[0]][index[1]] : ((MaskUnit)data).getPrice())));
+		if (index != null)
+			basis.elu.smnd[index[0]][index[1]] = !basis.getAllOf(index[0],index[1]).isEmpty();
  	}
 
 	@Override
@@ -113,9 +113,9 @@ public class EUnit extends Entity {
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_EVA)) && (e.getAbi() & AB_EKILL) > 0)
 				ans *= basis.b.t().getEKDef(basis.elu.getInc(C_EKILL));
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_BARON)) && (e.getAbi() & AB_BAKILL) > 0)
-				ans *= 0.7;
+				ans = (float)(ans * 0.7);
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_BEAST)) && matk.getProc().BSTHUNT.type.active)
-				ans *= 0.6;
+				ans = (float)(ans * 0.6);
 		}
 		return ans;
 	}
@@ -169,18 +169,18 @@ public class EUnit extends Entity {
 			sharedTraits.addIf(atk.trait, t -> !t.BCTrait() && ((t.targetType && isAntiTraited) || t.others.contains((Form)data.getPack())));
 			if (!sharedTraits.isEmpty()) {
 				if (status.curse == 0 && getProc().DEFINC.mult != 0)
-					ans *= basis.b.t().getDEF(getProc().DEFINC.mult, atk.trait, sharedTraits, ((MaskUnit) data).getOrb(), level, basis.elu.getInc(getProc().DEFINC.mult < 400 ? C_GOOD : C_RESIST));
+					ans = (int)(ans * basis.b.t().getDEF(getProc().DEFINC.mult, atk.trait, sharedTraits, ((MaskUnit) data).getOrb(), level, basis.elu.getInc(getProc().DEFINC.mult < 400 ? C_GOOD : C_RESIST)));
 				if (atk.attacker.status.curse == 0 && atk.attacker.getProc().DMGINC.mult != 0)
-					ans *= atk.attacker.getProc().DMGINC.mult / 100.0;
+					ans = (int)(ans * atk.attacker.getProc().DMGINC.mult / 100.0);
 			}
 			if (atk.trait.contains(UserProfile.getBCData().traits.get(TRAIT_WITCH)) && (getAbi() & AB_WKILL) > 0)
-				ans *= basis.b.t().getWKDef(basis.elu.getInc(C_WKILL));
+				ans = (int)(ans * basis.b.t().getWKDef(basis.elu.getInc(C_WKILL)));
 			if (atk.trait.contains(UserProfile.getBCData().traits.get(TRAIT_EVA)) && (getAbi() & AB_EKILL) > 0)
-				ans *= basis.b.t().getEKDef(basis.elu.getInc(C_EKILL));
+				ans = (int)(ans * basis.b.t().getEKDef(basis.elu.getInc(C_EKILL)));
 			if (atk.trait.contains(UserProfile.getBCData().traits.get(TRAIT_BARON)) && (getAbi() & AB_BAKILL) > 0)
-				ans *= 0.7;
+				ans = (int)(ans * 0.7);
 			if (atk.trait.contains(UserProfile.getBCData().traits.get(Data.TRAIT_BEAST)) && getProc().BSTHUNT.type.active)
-				ans *= 0.6; //Not sure
+				ans = (int)(ans * 0.6); //Not sure
 			if (atk.trait.contains(UserProfile.getBCData().traits.get(Data.TRAIT_SAGE)) && (getAbi() & AB_SKILL) > 0)
 				ans = (int) (ans * SUPER_SAGE_HUNTER_HP);
 		}

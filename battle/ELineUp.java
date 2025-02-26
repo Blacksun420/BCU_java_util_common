@@ -17,7 +17,7 @@ public class ELineUp extends BattleObj {
 
 	private final Proc.SPIRIT[][] spData = new Proc.SPIRIT[2][5];
 	public final int[][] scount = new int[2][5], sGlow = new int[2][5];
-	public final EUnit[][] smnd = new EUnit[2][5];
+	public final boolean[][] smnd = new boolean[2][5];
 
 	public final int[] inc;
 
@@ -74,19 +74,26 @@ public class ELineUp extends BattleObj {
 	 * reset recharge time of a spirit and spawn it
 	 */
 	protected final void deploySpirit(int i, int j, StageBasis sb, EUnit spi) {//spi will always be an EUnit I just don't want to import it
-		spi.added(-1, Math.min(Math.max(sb.ebase.pos + spi.data.getRange(), smnd[i][j].lastPosition + SPIRIT_SUMMON_RANGE), sb.ubase.pos));
-		CommonStatic.setSE(SE_SPIRIT_SUMMON);
-		sb.money -= spiritCost(i, j, sb.st.getCont().price);
-		scount[i][j]--;
-		scd[i][j] = spData[i][j].cd1;
-		cool[i][j] = Math.min(Math.max(0, cool[i][j] + spData[i][j].summonerCd), maxC[i][j]);
-		sb.le.add(spi);
-		if (!(spi instanceof ESpirit))
-			spi.setSummon(spData[i][j].animType, null);
+		boolean firstDeploy = true;
+		for (EUnit u : sb.getAllOf(i, j)) {
+			EUnit rit = firstDeploy ? spi : ((EForm)sb.b.lu.efs[i][j]).invokeSpirit(sb, spi.index);
+			rit.added(-1, Math.min(Math.max(sb.ebase.pos + rit.data.getRange(), u.lastPosition + SPIRIT_SUMMON_RANGE), sb.ubase.pos));
+			if (firstDeploy) {
+				CommonStatic.setSE(SE_SPIRIT_SUMMON);
+				sb.money -= spiritCost(i, j, sb.st.getCont().price);
+				scount[i][j]--;
+				scd[i][j] = spData[i][j].cd1;
+				cool[i][j] = Math.min(Math.max(0, cool[i][j] + spData[i][j].summonerCd), maxC[i][j]);
+				firstDeploy = false;
+			}
+			sb.le.add(rit);
+			if (!(rit instanceof ESpirit))
+				rit.setSummon(spData[i][j].animType, null);
+		}
 	}
 
 	public final boolean validSpirit(int i, int j) {
-		return spData[i][j] != null && smnd[i][j] != null;
+		return spData[i][j] != null && smnd[i][j];
 	}
 
 	public final boolean readySpirit(int i, int j) {

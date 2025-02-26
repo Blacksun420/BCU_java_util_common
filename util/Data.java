@@ -2140,6 +2140,7 @@ public class Data {
 			{ PC_P, P_BSTHUNT, 1 }, //64 : behemoth slayer
 			{ PC_P, P_MINIVOLC }, //65 : MiniSurge
 			{ PC_AB, AB_SKILL }, //66 : super sage hunter
+			{ PC_P, P_BLAST } //67 : Blast
 	};
 	public static final int[][] PC_CUSTOM = new int[][] { //Use negative ints to handle (it would be so awesome, it would be so cool)
 			{ -1, 0 }, // 0:

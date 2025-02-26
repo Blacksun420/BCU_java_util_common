@@ -296,6 +296,10 @@ public class PCoin extends Data {
 						for (int j = 3; j < fieldTOT; j++)
 							tar.set(j, tar.get(j) + modifs[j]);
 					}
+				} else if (du instanceof DataUnit && type[1] == P_BLAST) {
+					tar.set(0, modifs[0]);
+					tar.set(1, modifs[1] / 4);
+					tar.set(2, (modifs[1] + modifs[2]) / 4);
 				} else if (du instanceof DataUnit || ((CustomEntity)du).common || procSharable[type[1]])
 					for (int j = 0; j < fieldTOT; j++)
 						if (tar.getAllFields()[j].getType() == Identifier.class) {

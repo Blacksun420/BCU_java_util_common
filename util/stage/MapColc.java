@@ -430,9 +430,7 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 									if (slim.costMultiplier.length != multiplier.length)
 										System.out.printf(
 												"W/MapColc::read - Desynced cost multiplier data -> Original = %d, Obtained = %d, Data = [ %s ]%n",
-												slim.costMultiplier.length,
-												multiplier.length,
-												Arrays.toString(multiplier)
+												slim.costMultiplier.length, multiplier.length, Arrays.toString(multiplier)
 										);
 									System.arraycopy(multiplier, 0, slim.costMultiplier, 0, Math.min(slim.costMultiplier.length, multiplier.length));
 								}
@@ -450,9 +448,7 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 									if (slim.cooldownMultiplier.length != multiplier.length)
 										System.out.printf(
 												"W/MapColc::read - Desynced cost multiplier data -> Original = %d, Obtained = %d, Data = [ %s ]%n",
-												slim.cooldownMultiplier.length,
-												multiplier.length,
-												Arrays.toString(multiplier)
+												slim.cooldownMultiplier.length, multiplier.length, Arrays.toString(multiplier)
 										);
 									System.arraycopy(multiplier, 0, slim.cooldownMultiplier, 0, Math.min(slim.cooldownMultiplier.length, multiplier.length));
 								}
@@ -463,8 +459,7 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 									if (parameter.size() > 1) {
 										System.out.printf(
 												"W/MapColc::read - Unexpected parameter size for map %d : Size = %d\n",
-												mapID,
-												parameter.size()
+												mapID, parameter.size()
 										);
 									}
 									int maxUnitSpawn = parameter.get(0).getAsInt();
@@ -472,6 +467,33 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 										map.lim.add(new Limit(new StageLimit()));
 									StageLimit slim = map.lim.get(map.lim.size() - 1).stageLimit;
 									slim.maxUnitSpawn = maxUnitSpawn;
+								}
+								break;
+							case 8:
+								if (!parameter.isEmpty()) {
+									if (parameter.size() > 3) {
+										System.out.printf(
+												"W/MapColc::read - Unexpected parameter size for map %d : Size = %d\n",
+												mapID, parameter.size()
+										);
+									}
+									List<Integer> indices = new ArrayList<>();
+
+									int bitMask = parameter.get(0).getAsInt();
+									int deployTimes = parameter.get(1).getAsInt();
+									int deployDelay = parameter.get(2).getAsInt();
+									for (int i = 0; i < 5; i++)
+										if ((bitMask & (1 << i)) != 0)
+											indices.add(i);
+
+									if (map.lim.isEmpty() || map.lim.get(map.lim.size() - 1).stageLimit == null)
+										map.lim.add(new Limit(new StageLimit()));
+									StageLimit slim = map.lim.get(map.lim.size() - 1).stageLimit;
+
+									for (int index : indices) {
+										slim.deployDuplicationTimes[index] = deployTimes;
+										slim.deployDuplicationDelay[index] = deployDelay;
+									}
 								}
 								break;
 						}
