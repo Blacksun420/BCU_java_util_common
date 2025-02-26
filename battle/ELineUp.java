@@ -78,18 +78,17 @@ public class ELineUp extends BattleObj {
 		for (EUnit u : sb.getAllOf(i, j)) {
 			EUnit rit = firstDeploy ? spi : ((EForm)sb.b.lu.efs[i][j]).invokeSpirit(sb, spi.index);
 			rit.added(-1, Math.min(Math.max(sb.ebase.pos + rit.data.getRange(), u.lastPosition + SPIRIT_SUMMON_RANGE), sb.ubase.pos));
-			if (firstDeploy) {
-				CommonStatic.setSE(SE_SPIRIT_SUMMON);
-				sb.money -= spiritCost(i, j, sb.st.getCont().price);
-				scount[i][j]--;
-				scd[i][j] = spData[i][j].cd1;
-				cool[i][j] = Math.min(Math.max(0, cool[i][j] + spData[i][j].summonerCd), maxC[i][j]);
-				firstDeploy = false;
-			}
 			sb.le.add(rit);
 			if (!(rit instanceof ESpirit))
 				rit.setSummon(spData[i][j].animType, null);
+			firstDeploy = false;
 		}
+
+		CommonStatic.setSE(SE_SPIRIT_SUMMON);
+		sb.money -= spiritCost(i, j, sb.st.getCont().price);
+		scount[i][j]--;
+		scd[i][j] = spData[i][j].cd1;
+		cool[i][j] = Math.min(Math.max(0, cool[i][j] + spData[i][j].summonerCd), maxC[i][j]);
 	}
 
 	public final boolean validSpirit(int i, int j) {
