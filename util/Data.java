@@ -2190,6 +2190,7 @@ public class Data {
 			{ PC_P, P_RANGESHIELD}, //40: Range Shield
 			{ PC_P, P_SPIRIT}, //41: Spirit summon
 			{ PC_P, P_DRAIN}, //42: Drain
+			{ PC_P, P_SPEEDUP} //43: Adrenaline
 	};
 
 	public static int[] get_CORRES(int ind) {
