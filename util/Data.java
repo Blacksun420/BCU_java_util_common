@@ -1585,6 +1585,8 @@ public class Data {
 		public final PM DRAIN = new PM();
 		@Order(77)
 		public final BLESSING BLESSING = new BLESSING();
+		@Order(78)
+		public final STRONG SPEEDUP = new STRONG();
 
 		@Override
 		public Proc clone() {
@@ -1959,7 +1961,8 @@ public class Data {
 	public static final byte P_IMUBLAST = 75;
 	public static final byte P_DRAIN = 76;
 	public static final byte P_BLESS = 77;
-	public static final byte PROC_TOT = 78;
+	public static final byte P_SPEEDUP = 78;
+	public static final byte PROC_TOT = 79;
 
 	public static final boolean[] procSharable = {
 			false, //kb
@@ -2040,6 +2043,7 @@ public class Data {
 			true,  //imu.blast
 			false, //Drain/ABsorb
 			false, //Bless
+			true //adrenaline
 	};
 
 	/**
@@ -2286,7 +2290,8 @@ public class Data {
 	public static final byte A_RANGESHIELD = 35;
 	public static final byte A_DRAIN = 36;
 	public static final byte A_BLESS = 37;
-	public static final byte A_TOT = 38;
+	public static final byte A_DRENALINE = 38;
+	public static final byte A_TOT = 39;
 
 	// atk type index used in filter page
 	public static final byte ATK_SINGLE = 0;

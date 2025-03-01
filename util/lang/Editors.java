@@ -369,8 +369,18 @@ public class Editors {
 
 		map().put("STRONG", new EditControl<>(Proc.STRONG.class, (t) -> {
 			t.health = Math.max(0, Math.min(t.health, 99.9999999f));
-			if (t.health == 0)
+			if (t.health == 0) {
 				t.mult = 0;
+				t.incremental = false;
+			}
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
+
+		map().put("SPEEDUP", new EditControl<>(Proc.STRONG.class, (t) -> {
+			t.health = Math.max(0, Math.min(t.health, 99.9999999f));
+			if (t.health == 0) {
+				t.mult = 0;
+				t.incremental = false;
+			}
 		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("LETHAL", prob);

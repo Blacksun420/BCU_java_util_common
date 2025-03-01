@@ -384,6 +384,11 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				} case P_BLESS: {
 					effs[A_BLESS] = effas().A_BLESS.getEAnim(DefEff.DEF); //(dire == -1 ? effas().A_BLESS : effas().A_E_BLESS).getEAnim(DefEff.DEF);
 					break;
+				} case P_SPEEDUP: {
+					EffAnim<SpeedEff> eff = dire == -1 ? effas().A_SPEED : effas().A_E_SPEED;
+					SpeedEff index;
+					index = e.status.adrenaline >= 100 ? SpeedEff.UP : SpeedEff.DOWN;
+					effs[A_DRENALINE] = eff.getEAnim(index);
 				}
 			}
 		}
@@ -412,7 +417,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					effs[A_POIS[i]] = null;
 			if (e.status.seal == 0)
 				effs[A_SEAL] = null;
-
+			if (e.status.adrenaline == 0)
+				effs[A_DRENALINE] = null;
 			if (effs[A_SHIELD] != null && effs[A_SHIELD].done())
 				effs[A_SHIELD] = null;
 			if (effs[A_WAVE_INVALID] != null && effs[A_WAVE_INVALID].done())
@@ -1243,7 +1249,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	public static class ProcManager extends BattleObj {
 
 		public boolean lethal;
-		public int kb, strengthen, money, dcut, dcap, poison;
+		public int kb, strengthen, adrenaline, money, dcut, dcap, poison;
 		public double slow, curse, seal, wild, rage, hypno;
 		public final int[] shield = new int[2];
 		public final double[] stop = new double[2], inv = new double[2];
@@ -2429,13 +2435,24 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		if ((touchable() & TCH_CORPSE) == 0 && strong > 0 && damage != 0) {
 			boolean wz = status.strengthen == 0;
 			if (getProc().STRONG.incremental && health * 100 > maxH * strong) {
-				System.out.println((((1.0 * maxH - health) / maxH) * strong));
 				status.strengthen = (int) (getProc().STRONG.mult * (((1.0 * maxH - health) / maxH) * strong));
 			} else if (health * 100 <= maxH * strong)
 				status.strengthen = getProc().STRONG.mult;
 
 			if (wz && status.strengthen != 0)
 				anim.getEff(P_STRONG);
+		}
+		// adrenaline
+		float threshold = getProc().SPEEDUP.health;
+		if ((touchable() & TCH_CORPSE) == 0 && threshold > 0 && damage != 0) {
+			boolean wz = status.adrenaline == 0;
+			if (getProc().SPEEDUP.incremental && health * 100 > maxH * threshold) {
+				status.adrenaline = (int) (getProc().SPEEDUP.mult * (((1.0 * maxH - health) / maxH) * threshold));
+			} else if (health * 100 <= maxH * threshold)
+				status.adrenaline = getProc().SPEEDUP.mult;
+
+			if (wz && status.adrenaline != 0)
+				anim.getEff(P_SPEEDUP);
 		}
 		damage = 0;
 		// lethal strike
@@ -2921,6 +2938,11 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		float mov = status.slow > 0 ? 0.25f : spd * 0.5f;
 		if (!status.speeds.isEmpty() && status.slow == 0)
 			mov = status.getSpeed(mov);
+
+		if (status.adrenaline > 0) {
+			mov *= status.adrenaline / 100f;
+			mov = (float) Math.round(mov * 4f) / 4f;
+		}
 		mov += extmov;
 		mov *= auras.getSpdAura();
 		return mov;
