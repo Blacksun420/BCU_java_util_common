@@ -564,7 +564,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				}
 				for (int i = e.spInd; i < e.data.getResurrection().length; i++) {
 					AtkDataModel adm = e.data.getResurrection()[i];
-					if ((soul == null && !e.dead) || (soul != null && adm.pre >= soul.len() - dead) || (soul != null && dead == 0 && adm.pre >= soul.len() && !e.dead)) {
+					if ((soul == null && !e.dead) || (soul != null && soul.len() - dead >= adm.pre) || (soul != null && dead == 0 && !e.dead)) {
 						e.spInd++;
 						e.basis.getAttack(e.aam.getSpAttack(RES, i));
 					}
