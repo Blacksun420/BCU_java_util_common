@@ -58,7 +58,7 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 		ld1 = adm.ld1;
 		range = adm.range;
 		traits = new SortedPackSet<>(adm.traits);
-		traits.removeIf(t -> !(t.id.pack.equals(ene.getPack().getID().pack) || UserProfile.getUserPack(ene.getPack().getID().pack).desc.dependency.contains(t.id.pack)));
+		traits.removeIf(t -> !(t.id.pack.equals(Identifier.DEF) || t.id.pack.equals(ce.getPack().getID().pack) || UserProfile.getUserPack(ce.getPack().getID().pack).desc.dependency.contains(t.id.pack)));
 		dire = adm.dire;
 		count = adm.count;
 		targ = adm.targ;

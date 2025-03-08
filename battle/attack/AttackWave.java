@@ -39,8 +39,10 @@ public class AttackWave extends AttackAb {
 	public void capture() {
 		List<AbEntity> le = model.b.inRange(touch, attacker != null && attacker.status.rage > 0 ? 2 : dire, sta, end, excludeRightEdge);
 		le.remove(dire == 1 ? model.b.ubase : model.b.ebase);
+		if (attacker != null && (attacker.status.rage > 0 || attacker.status.hypno > 0))
+			le.remove(attacker);
 		if (incl != null)
-			le.removeIf(incl::contains);
+			le.removeAll(incl);
 		capt.clear();
 		if ((abi & AB_ONLY) == 0)
 			capt.addAll(le);

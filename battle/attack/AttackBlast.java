@@ -29,11 +29,13 @@ public class AttackBlast extends AttackAb {
         List<AbEntity> le = model.b.inRange(touch, attacker != null && attacker.status.rage > 0 ? 2 : dire, sta + rng, end + rng, excludeRightEdge);
         if (lv > 0) {
             List<AbEntity> nle = model.b.inRange(touch, attacker != null && attacker.status.rage > 0 ? 2 : dire, sta - rng, end - rng, excludeRightEdge);
-            nle.removeIf(le::contains);
+            nle.removeAll(le);
             le.addAll(nle);
         }
         le.remove(dire == 1 ? model.b.ubase : model.b.ebase);
-        capt.removeIf(ents::contains);
+        if (attacker != null && (attacker.status.rage > 0 || attacker.status.hypno > 0))
+            le.remove(attacker);
+        capt.removeAll(ents);
         if ((abi & AB_ONLY) == 0)
             capt.addAll(le);
         else
