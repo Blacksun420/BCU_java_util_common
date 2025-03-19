@@ -3,7 +3,6 @@ package common.util.stage;
 import common.battle.StageBasis;
 import common.io.json.JsonClass;
 import common.io.json.JsonClass.JCConstructor;
-import common.io.json.JsonClass.NoTag;
 import common.io.json.JsonField;
 import common.io.json.JsonField.GenType;
 import common.pack.FixIndexList;
@@ -41,6 +40,10 @@ public class SCDef implements Copable<SCDef> {
 
 		@JCConstructor
 		public Line() {
+		}
+
+		public Line(Identifier<AbEnemy> e) {
+			enemy = e;
 		}
 
 		public Line(int[] arr) {
@@ -198,7 +201,7 @@ public class SCDef implements Copable<SCDef> {
 			if (e != null)
 				pre.addAll(e.getPossible());
 		}
-		while (pre.size() > 0) {
+		while (!pre.isEmpty()) {
 			for (Enemy e : pre)
 				temp.addAll(e.de.getSummon());
 			ans.addAll(temp);
@@ -220,6 +223,6 @@ public class SCDef implements Copable<SCDef> {
 	}
 
 	public boolean empty() {
-		return datas.length + sdef == 0 && smap.isEmpty() && sub.size() == 0;
+		return datas.length + sdef == 0 && smap.isEmpty() && sub.isEmpty();
 	}
 }
