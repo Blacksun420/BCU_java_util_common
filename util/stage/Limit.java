@@ -50,6 +50,31 @@ public class Limit extends Data implements BattleStatic {
 
 		public PackLimit() {
 		}
+
+		public PackLimit(Limit l) {
+			fa = l.fa;
+			star = l.star;
+			rare = l.rare;
+			num = l.num;
+			line = l.line;
+			min = l.min;
+			max = l.max;
+			group = l.group;
+			lvr = l.lvr;
+			stageLimit = l.stageLimit != null ? l.stageLimit.clone() : null;
+		}
+
+		@Override
+		public Limit clone() {
+			return new PackLimit(this);
+		}
+
+		@Override
+		public String toString() {
+			if (name.isEmpty())
+				return super.toString();
+			return name;
+		}
 	}
 
 	@JsonField(defval = "0")
@@ -182,6 +207,10 @@ public class Limit extends Data implements BattleStatic {
 
 	@Override
 	public String toString() {
+		return starString();
+	}
+
+	public String starString() {
 		if (star == 0)
 			return "all stars";
 		LinkedList<Integer> stars = formatStar(star);
