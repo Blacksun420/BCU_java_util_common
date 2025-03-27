@@ -41,6 +41,8 @@ public class MixedBGEffect extends BackgroundEffect {
 
     @Override
     public void check() {
+        for (BackgroundEffect effect : effects)
+            effect.check();
     }
 
     @Override
@@ -97,7 +99,7 @@ public class MixedBGEffect extends BackgroundEffect {
                 temp = CommonStatic.def.getUILang(0, "bgeffdum").replace("_", "" + id.id);
             return temp;
         }
-        if (getName().length() == 0)
+        if (getName().isEmpty())
             return id.toString();
         return Data.trio(id.id) + " - " + getName();
     }

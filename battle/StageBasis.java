@@ -631,7 +631,7 @@ public class StageBasis extends BattleObj {
 					else
 						enemyStatistics.get((Enemy)e.data.getPack())[2]++;
 
-					if (e.door > 0 && !e.getAnim().anim().getEAnim(AnimU.TYPEDEF[AnimU.WALK]).unusable())
+					if (e.door > 0 && e.getAnim().anim().getEAnim(AnimU.TYPEDEF[AnimU.ENTRY]).unusable())
 						doors.add(new DoorCont(this, e));
 					else
 						le.add(e);

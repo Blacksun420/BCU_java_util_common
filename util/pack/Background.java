@@ -398,7 +398,7 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 		if(loaded)
 			return;
 
-		if (img == null) {
+		if (img == null || (img.bimg != null && !img.bimg.isValid())) {
 			PackData pack = getCont();
 			if (pack == null)
 				return;
@@ -408,10 +408,12 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 					img = new VImg(VFile.get("./org/img/bg/bg"+Data.trio(id.id)+".png"));
 				else
 					img = new VImg(VFile.get("./org/img/bg/bg"+Data.trio(reference.id)+".png"));
-			} else if (pack instanceof PackData.UserPack)
+			} else if (reference == null)
 				img = ((PackData.UserPack) getCont()).source.readImage(Source.BasePath.BG.toString(), id.id);
-			else
-				return;
+			else {
+				reference.get().check();
+				img = new VImg(reference.get().img.getImg());
+			}
 		}
 
 		img.mark(Marker.BG);

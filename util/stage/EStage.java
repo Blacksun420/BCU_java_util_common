@@ -81,7 +81,7 @@ public class EStage extends BattleObj {
 				AbEnemy e = Identifier.getOr(data.enemy, AbEnemy.class);
 				EEnemy ee = e.getEntity(b, data, multi, mulatk, data.layer_0, data.layer_1, data.boss);
 
-				if (data.doorchance > 0 && b.r.nextFloat() * 100 < data.doorchance)
+				if (data.doorchance > 0 && (data.doorchance == 100 || b.r.nextFloat() * 100 < data.doorchance))
 					ee.door = data.doordis_0 == data.doordis_1 ? data.doordis_0 : ((data.doordis_1 - data.doordis_0) * b.r.nextFloat()) + data.doordis_0;
 				ee.group = data.group;
 				ee.rev = data.rev;
