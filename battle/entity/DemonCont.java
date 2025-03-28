@@ -15,7 +15,7 @@ public class DemonCont extends EAnimCont {
         if ((atk.waveType & WT_VOLC) > 0)
             volc = atk.handler.ds ? atk.attacker.getProc().DEATHSURGE : atk.getProc().VOLC;
         else
-            volc = atk.getProc().MINIVOLC;
+            volc = atk.handler.ds ? atk.attacker.getProc().MINIDEATHSURGE : atk.getProc().MINIVOLC;
         ent = e;
         e.basis.lea.add(this);
     }

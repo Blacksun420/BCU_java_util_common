@@ -45,7 +45,7 @@ public class EEnemy extends Entity {
 		}
 		if (rev != null) {
 			rev.triggerRevival(basis, basis.est.mul, layer, group, pos);
-			if (!anim.deathSurge && rev.soul != null)
+			if (anim.deathSurge == 0 && rev.soul != null)
 				anim.dead = rev.soul.get().getEAnim(AnimU.SOUL[0]).len();
 		}
 		if (mark >= 1 && basis.st.bossGuard) {

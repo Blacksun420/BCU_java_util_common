@@ -53,7 +53,7 @@ public class DoorCont extends EAnimCont {
         return entLeft ? 0 : ent.data.getWill() + 1;
     }
 
-    public boolean ECheck(Entity e) {
-        return !drawn && e.layer >= layer;
+    public boolean ECheck(int lay) {
+        return !drawn && lay >= layer;
     }
 }

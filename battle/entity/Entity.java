@@ -95,7 +95,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		/**
 		 * responsive effect FSM type
 		 */
-		private byte eftp;
+		private byte eftp = A_EFF_INV;
 
 		/**
 		 * on-entity effect icons<br>
@@ -247,13 +247,10 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				} case P_WEAK: {
 					if (e.status.getWeaken() == 1)
 						break;
-					if (e.status.getWeaken() < 1) {
+					if (e.status.getWeaken() < 1)
 						effs[A_DOWN] = (dire == -1 ? effas().A_DOWN : effas().A_E_DOWN).getEAnim(DefEff.DEF);
-						effs[A_WEAK_UP] = null;
-					} else {
-						effs[A_WEAK_UP] = (dire == -1 ? effas().A_WEAK_UP : effas().A_E_WEAK_UP).getEAnim(WeakUpEff.UP);
-						effs[A_DOWN] = null;
-					}
+					else
+						effs[A_DOWN] = (dire == -1 ? effas().A_WEAK_UP : effas().A_E_WEAK_UP).getEAnim(WeakUpEff.UP);
 					break;
 				} case P_CURSE: {
 					effs[A_CURSE] = (dire == -1 ? effas().A_CURSE : effas().A_E_CURSE).getEAnim(DefEff.DEF);
@@ -403,10 +400,9 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				effs[A_STOP] = null;
 			if (e.status.slow <= 0)
 				effs[A_SLOW] = null;
-			if (e.status.weaks.isEmpty()) {
+			if (e.status.weaks.isEmpty())
 				effs[A_DOWN] = null;
-				effs[A_WEAK_UP] = null;
-			} if (e.status.lethargies.isEmpty())
+			if (e.status.lethargies.isEmpty())
 				effs[A_LETHARGY] = null;
 			if (e.status.curse <= 0)
 				effs[A_CURSE] = null;
@@ -501,7 +497,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			e.status.burs[1] = 0;
 		}
 
-		protected boolean deathSurge = false;
+		protected byte deathSurge = 0;
 
 		/**
 		 * set kill anim
@@ -512,11 +508,13 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				dead = 0;
 				return;
 			}
+			if (e.getProc().DEATHSURGE.perform(e.basis.r))
+				deathSurge |= 1;
+			if (e.getProc().MINIDEATHSURGE.perform(e.basis.r))
+				deathSurge |= 2;
 
-			if (e.getProc().DEATHSURGE.perform(e.basis.r)) {
-				deathSurge = true;
-
-				e.status.weaks.clear();
+			if (deathSurge != 0) {
+				e.status.weaks.clear();//TODO: Temporary as deathsurge and minisurge will hve different souls
 				soul = CommonStatic.getBCAssets().demonSouls.get((1 - e.getDire()) / 2).getEAnim(AnimU.SOUL[0]);
 				dead = soul.len();
 				CommonStatic.setSE(SE_DEATH_SURGE);
@@ -558,9 +556,9 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			if (anim.done() && anim.type == AnimU.TYPEDEF[AnimU.ENTRY])
 				setAnim(AnimU.TYPEDEF[AnimU.IDLE], true);
 			if (dead >= 0) {
-				if (deathSurge && soul.len() - dead >= 21) {// 21 is guessed delay compared to BC
-					e.aam.getDeathSurge();
-					deathSurge = false;
+				if (deathSurge != 0 && soul.len() - dead >= 21) {// 21 is guessed delay compared to BC
+					e.aam.getDeathSurge(deathSurge);
+					deathSurge = 0;
 				}
 				for (int i = e.spInd; i < e.data.getResurrection().length; i++) {
 					AtkDataModel adm = e.data.getResurrection()[i];
@@ -3156,7 +3154,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	}
 
 	public int getLayer() {
-		if (!anim.deathSurge && anim.dead >= 0)
+		if (anim.deathSurge == 0 && anim.dead >= 0)
 			return 0;
 		return layer;
 	}

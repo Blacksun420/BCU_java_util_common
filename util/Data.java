@@ -207,6 +207,13 @@ public class Data {
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
+		public static class REFUND extends PM {
+			@Order(2)
+			@JsonField(defval = "1")
+			public int count;
+		}
+
+		@JsonClass(noTag = NoTag.LOAD)
 		public static class WAVE extends PROB {
 			@JsonClass(noTag = NoTag.LOAD)
 			public static class TYPE extends IntType {
@@ -1587,6 +1594,10 @@ public class Data {
 		public final BLESSING BLESSING = new BLESSING();
 		@Order(78)
 		public final STRONG SPEEDUP = new STRONG();
+		@Order(79)
+		public final MINIVOLC MINIDEATHSURGE = new MINIVOLC();
+		@Order(80)
+		public final REFUND REFUND = new REFUND();
 
 		@Override
 		public Proc clone() {
@@ -1962,7 +1973,9 @@ public class Data {
 	public static final byte P_DRAIN = 76;
 	public static final byte P_BLESS = 77;
 	public static final byte P_SPEEDUP = 78;
-	public static final byte PROC_TOT = 79;
+	public static final byte P_MINIDEATHSURGE = 79;
+	public static final byte P_REFUND = 80;
+	public static final byte PROC_TOT = 81;
 
 	public static final boolean[] procSharable = {
 			false, //kb
@@ -2038,12 +2051,14 @@ public class Data {
 			true,  //Resistant but good
 			true,  //Range Shield
 			true,  //spirit summon
-			false,  //TOTAL METALHEAD DEATH
+			false, //TOTAL METALHEAD DEATH
 			false, //BAJA BLAST
 			true,  //imu.blast
 			false, //Drain/ABsorb
 			false, //Bless
-			true //adrenaline
+			true,  //adrenaline
+			true,  //Mini Death Surge
+			true   //Refund
 	};
 
 	/**
@@ -2190,7 +2205,8 @@ public class Data {
 			{ PC_P, P_RANGESHIELD}, //40: Range Shield
 			{ PC_P, P_SPIRIT}, //41: Spirit summon
 			{ PC_P, P_DRAIN}, //42: Drain
-			{ PC_P, P_SPEEDUP} //43: Adrenaline
+			{ PC_P, P_SPEEDUP}, //43: Adrenaline
+			{ PC_P, P_REFUND} //44: Refund
 	};
 
 	public static int[] get_CORRES(int ind) {
@@ -2276,23 +2292,22 @@ public class Data {
 	public static final byte A_IMUATK = 20;
 	public static final byte A_ARMOR = 21;
 	public static final byte A_SPEED = 22;
-	public static final byte A_WEAK_UP = 23;
-	public static final byte A_HEAL = 24;
-	public static final byte A_DEMON_SHIELD = 25;
-	public static final byte A_COUNTER = 26;
-	public static final byte A_DMGCUT = 27;
-	public static final byte A_DMGCAP = 28;
-	public static final byte A_LETHARGY = 29;
-	public static final byte A_REMSHIELD = 30;
-	public static final byte A_WEAKAURA = 31;
-	public static final byte A_STRONGAURA = 32;
-	public static final byte A_RAGE = 33;
-	public static final byte A_HYPNO = 34;
-	public static final byte A_RANGESHIELD = 35;
-	public static final byte A_DRAIN = 36;
-	public static final byte A_BLESS = 37;
-	public static final byte A_DRENALINE = 38;
-	public static final byte A_TOT = 39;
+	public static final byte A_HEAL = 23;
+	public static final byte A_DEMON_SHIELD = 24;
+	public static final byte A_COUNTER = 25;
+	public static final byte A_DMGCUT = 26;
+	public static final byte A_DMGCAP = 27;
+	public static final byte A_LETHARGY = 28;
+	public static final byte A_REMSHIELD = 29;
+	public static final byte A_WEAKAURA = 30;
+	public static final byte A_STRONGAURA = 31;
+	public static final byte A_RAGE = 32;
+	public static final byte A_HYPNO = 33;
+	public static final byte A_RANGESHIELD = 34;
+	public static final byte A_DRAIN = 35;
+	public static final byte A_BLESS = 36;
+	public static final byte A_DRENALINE = 37;
+	public static final byte A_TOT = 38;
 
 	// atk type index used in filter page
 	public static final byte ATK_SINGLE = 0;

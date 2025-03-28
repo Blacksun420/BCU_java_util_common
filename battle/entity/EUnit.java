@@ -15,7 +15,6 @@ import common.pack.UserProfile;
 import common.util.BattleObj;
 import common.util.Data;
 import common.util.anim.EAnimU;
-import common.util.unit.Form;
 import common.util.unit.Level;
 import common.util.unit.Trait;
 
@@ -86,9 +85,14 @@ public class EUnit extends Entity {
 	public void kill(boolean glass) {
 		super.kill(glass);
 		if (!glass && status.money != 0)
-			basis.money = (int)(basis.money-((status.money / 100.0) * (index != null ? basis.elu.price[index[0]][index[1]] : ((MaskUnit)data).getPrice())));
+			basis.money = (int)(basis.money-((status.money / 100.0) * (index != null ? basis.elu.price[index[0]][index[1]] : ((MaskUnit)data).getPrice() * basis.st.getCont().price * 100)));
 		if (index != null)
 			basis.elu.smnd[index[0]][index[1]] = !basis.getAllOf(index[0],index[1]).isEmpty();
+
+		int kills = basis.totalKilled.getOrDefault(data.getPack(), 0) + 1;
+		basis.totalKilled.put(((MaskUnit)data).getPack(), kills);
+		if (getProc().REFUND.count > 0 && kills % getProc().REFUND.count == 0 && getProc().REFUND.perform(basis.r))
+			basis.money = (int)(basis.money+((getProc().REFUND.mult / 100.0) * (index != null ? basis.elu.price[index[0]][index[1]] : ((MaskUnit)data).getPrice() * basis.st.getCont().price * 100)));
  	}
 
 	@Override
@@ -166,7 +170,7 @@ public class EUnit extends Entity {
 		if (atk.model instanceof AtkModelEnemy) {
 			SortedPackSet<Trait> sharedTraits = traits.inCommon(atk.trait);
 			boolean isAntiTraited = targetTraited(atk.trait);
-			sharedTraits.addIf(atk.trait, t -> !t.BCTrait() && ((t.targetType && isAntiTraited) || t.others.contains((Form)data.getPack())));
+			sharedTraits.addIf(atk.trait, t -> !t.BCTrait() && ((t.targetType && isAntiTraited) || t.others.contains(((MaskUnit)data).getPack())));
 			if (!sharedTraits.isEmpty()) {
 				if (status.curse == 0 && getProc().DEFINC.mult != 0)
 					ans = (int)(ans * basis.b.t().getDEF(getProc().DEFINC.mult, atk.trait, sharedTraits, ((MaskUnit) data).getOrb(), level, basis.elu.getInc(getProc().DEFINC.mult < 400 ? C_GOOD : C_RESIST)));
