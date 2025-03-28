@@ -131,9 +131,10 @@ public class PCoin extends Data {
 	}
 
 	public AtkDataModel[] getAtks(MaskUnit ans, int tal) {
-		if (tal >= atks.size())
+		int ind = getAtkInd(tal);
+		if (ind == -1)
 			return new AtkDataModel[0];
-		int[][] inds = atks.get(getAtkInd(tal));
+		int[][] inds = atks.get(ind);
 		AtkDataModel[] as = new AtkDataModel[inds.length];
 		for (int i = 0; i < as.length; i++)
 			as[i] = (AtkDataModel)ans.getAtkModel(inds[i][0], inds[i][1]);
