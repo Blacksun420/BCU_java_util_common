@@ -70,7 +70,7 @@ public class AssetLoader {
 
 	}
 
-	public static final String CORE_VER = "0.7.10.0";
+	public static final String CORE_VER = "0.7.11.0";
 	public static final byte FORK_VER = 11;
 
 	private static final int LEN = 1024;
@@ -97,6 +97,8 @@ public class AssetLoader {
 				for (ZipDesc zip : list)
 					if (Data.getVer(zip.desc.BCU_VERSION) <= Data.getVer(CORE_VER))
 						zips.put(zip.desc.id, zip);
+					else
+						System.out.println(zip.desc.names + " requires core version " + zip.desc.BCU_VERSION + ". Current Core Version: " + CORE_VER);
 			}
 			for (ZipDesc zip : zips.values())
 				VFile.getBCFileTree().merge(zip.tree);

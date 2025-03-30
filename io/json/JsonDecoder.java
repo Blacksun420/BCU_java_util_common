@@ -505,6 +505,14 @@ public class JsonDecoder {
 				f.setBoolean(val, Boolean.parseBoolean(str));
 			else if (f.getType() == String.class)
 				f.set(val, str);
+			else if (Enum.class.isAssignableFrom(f.getType())) {
+				Object[] constants = f.getType().getEnumConstants();
+				for (Object constant : constants)
+					if (constant.toString().equals(str)) {
+						f.set(obj, constant);
+						break;
+					}
+			}
 			else if (str.contains(" ")) {
 				Object nvar = f.get(val);
 				Field nf = nvar.getClass().getField(str.substring(0, str.indexOf(" ")));
