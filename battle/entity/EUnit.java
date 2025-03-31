@@ -299,7 +299,7 @@ public class EUnit extends Entity {
 	private float getOrb(double mult, SortedPackSet<Trait> eTraits, SortedPackSet<Trait> traits, Treasure t) {
 		final byte ORB_LV = mult < 500 && mult > 100 ? mult < 300 ? ORB_STRONG : ORB_MASSIVE : -1;
 		final Map<Byte,int[]> ORB_MULTIS = ORB_LV == -1 ? null : Orb.EFFECT.get(ORB_LV);
-		final float div = ORB_LV == ORB_STRONG ? 100 : 300;
+		final float div = ORB_LV == ORB_STRONG ? 1000 : 300;
 		float ini = 1;
 		if (!traits.isEmpty())
 			ini = (float) ((mult/100f) + (ORB_LV == ORB_STRONG ? 0.3f : mult > 100 ? 1f : 0f) / 3 * t.getFruit(traits));
