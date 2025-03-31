@@ -1133,6 +1133,8 @@ public class Data {
 					for (Field f : fs)
 						if (f.getType() == int.class || f.getType() == float.class || f.getType() == double.class)
 							f.set(this, 0);
+						else if (f.getType() == boolean.class)
+							f.setBoolean(this, false);
 						else if (IntType.class.isAssignableFrom(f.getType()))
 							f.set(this, (f.getType().getDeclaredConstructor().newInstance()));
 						else if (f.getType() == Identifier.class || f.getType() == Proc.class)

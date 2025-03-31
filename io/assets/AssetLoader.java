@@ -117,6 +117,24 @@ public class AssetLoader {
 		}
 	}
 
+	public static void removeTemp() {
+		Set<String> prev = previewAssets();
+		if (prev == null)
+			return;
+		try {
+			File folder = CommonStatic.ctx.getAssetFile("./assets/");
+			for (File f : folder.listFiles()) {
+				if (!f.getName().startsWith("temp_"))
+					continue;
+				String fileName = f.getName().substring(5, f.getName().indexOf('.'));//5 is length of temp
+				if (prev.contains(fileName + ".assets.bcuzips"))
+					Context.delete(f);
+			}
+		} catch (Exception e) {
+			CommonStatic.ctx.noticeErr(e, ErrType.WARN, "failed to remove unused assets");
+		}
+	}
+
 	public static void merge() {
 		try {
 			File folder = CommonStatic.ctx.getAssetFile("./assets/");
@@ -128,7 +146,7 @@ public class AssetLoader {
 				String fileName = f.getName().substring(0, f.getName().indexOf('.'));
 				if(!CommonStatic.isInteger(fileName)) {
 					Map<String, File> sub = map.computeIfAbsent(fileName.contains("fork_essentials") ? "fork_essentials"
-							: "custom", k -> new TreeMap<>());
+							: fileName.startsWith("temp_") ? fileName : "custom", k -> new TreeMap<>());
 					sub.put(fileName, f);
 				} else {
 					String pre = fileName.substring(0, 2);
