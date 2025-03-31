@@ -64,8 +64,8 @@ public class CommonStatic {
 		// Background resources
 		public final List<ImgCut> iclist = new ArrayList<>();
 
-		// Available data for orb, will be used for GUI
-		// Map<Type, Map<Trait, Grades>>
+		/** Available data for orb, will be used for GUI.
+		 * Format: Map<\Type, Map<\Trait, Grades>>**/
 		public final Map<Byte, Map<Integer, List<Byte>>> ORB = new TreeMap<>();
 		public final Map<Byte, Integer> DATA = new HashMap<>();
 		public final SortedPackSet<DemonSoul> demonSouls = new SortedPackSet<>();

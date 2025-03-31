@@ -164,14 +164,24 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		MaskAtk[] atks = data.getAtks(ind);
 		if (atks == null)
 			return 0;
-		for (MaskAtk atk : atks) {
+		for (int i = 0; i < atks.length; i++) {
+			if (act[ind][i] == 0)
+				continue;
+			MaskAtk atk = atks[i];
 			int dmg = getEffAtk(atk) * atk.getDire();
 			float[] ranges = inRange(atk);
 			List<AbEntity> ents = e.basis.inRange(atk.getTarget(), atk.getDire() * getDire(), ranges[0], ranges[1], false);
 			for (AbEntity ent : ents)
-				total += Math.min(ent.health * atk.getDire(), dmg * ent.calcDamageMult(dmg, e, atk));
+				total = total + (int)(Math.min(ent.health * atk.getDire(), dmg * ent.calcDamageMult(dmg, e, atk)));
 		}
 		return total;
+	}
+
+	public boolean isUsable(int ind) {
+		for (int act : act[ind])
+			if (act != 0)
+				return true;
+		return false;
 	}
 
 	/**

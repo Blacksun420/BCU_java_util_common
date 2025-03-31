@@ -9,6 +9,7 @@ import common.util.pack.bgeffect.BackgroundEffect;
 import common.util.stage.Revival;
 import common.util.unit.AbEnemy;
 import common.util.unit.AbForm;
+import common.util.unit.Character;
 import common.util.unit.Trait;
 
 import java.lang.reflect.Array;
@@ -35,7 +36,7 @@ public strictfp class BattleObj extends ImgCore implements Cloneable {
 
 	public static final String NONC = "NONC_";
 
-	private static final Class<?>[] EXCLUDE = { Number.class, String.class, Boolean.class, BattleStatic.class, Trait.class, Enum.class, BackgroundEffect.class, BattleField.class, AbEnemy.class, AbForm.class, Revival.class };
+	private static final Class<?>[] EXCLUDE = { Number.class, String.class, Boolean.class, BattleStatic.class, Trait.class, Enum.class, BackgroundEffect.class, BattleField.class, Character.class, AbEnemy.class, AbForm.class, Revival.class };
 
 	private static final Set<Class<?>> OLD = new HashSet<>();
 	private static final Set<Class<?>> UNCHECKED = new HashSet<>();

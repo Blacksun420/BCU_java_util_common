@@ -200,7 +200,7 @@ public abstract class PackData implements IndexContainer {
 			}
 			String dem = "demonsoul"; // TODO identify if anim is enemy or not in demon soul name in effect page
 			CommonStatic.getBCAssets().demonSouls.add(new DemonSoul(0, new AnimUD(pre + dem + mid, "demonsoul_" + Data.duo(0), null, null), true));
-			CommonStatic.getBCAssets().demonSouls.add(new DemonSoul(0, new AnimUD(pre + dem + mid, "demonsoul_" + Data.duo(0), null, null), false));
+			CommonStatic.getBCAssets().demonSouls.add(new DemonSoul(0, new AnimUD(pre + dem + mid, "demonsoul_" + Data.duo(1), null, null), true));
 		}
 
 		private void loadUnits(Consumer<Double> bar) {

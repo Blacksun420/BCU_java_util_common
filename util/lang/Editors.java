@@ -303,7 +303,8 @@ public class Editors {
 			else {
 				if (t.mult >= 100)
 					t.mult = 0;
-				t.time = Math.max(t.time, 1);
+				if (t.time == 0)
+					t.time = 1;
 			}
 		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
@@ -584,7 +585,10 @@ public class Editors {
 				t.pid.clear();
 			} else
 				t.time = Math.max(1, t.time / Data.VOLC_ITV) * Data.VOLC_ITV;
-		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
+		}, eg -> t -> {
+			setComponentVisibility(eg, t.exists(), 1);
+			setComponentVisibility(eg, false, 6);//count field which is only used for deathsurge
+		}));
 
 		map().put("MINIVOLC", new EditControl<>(Proc.MINIVOLC.class, (t) -> {
 			t.prob = Math.max(0, Math.min(t.prob, 100));
@@ -598,7 +602,10 @@ public class Editors {
 				if(t.mult == 0)
 					t.mult = 20;
 			}
-		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
+		}, eg -> t -> {
+			setComponentVisibility(eg, t.exists(), 1);
+			setComponentVisibility(eg, false, 7);//count field which is only used for deathsurge
+		}));
 
 		map().put("ARMOR", new EditControl<>(Proc.PTMS.class, (t) -> {
 			t.prob = Math.max(0, Math.min(t.prob, 100));
@@ -709,8 +716,10 @@ public class Editors {
 			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0)
 				t.dis_0 = t.dis_1 = t.time = 0;
-			else
+			else {
 				t.time = Math.max(1, t.time / Data.VOLC_ITV) * Data.VOLC_ITV;
+				t.deaths = Math.max(1, t.deaths);
+			}
 		}, eg -> t -> {
 			setComponentVisibility(eg, t.exists(), 1);
 			setComponentVisibility(eg, false, 4, 5);
@@ -722,6 +731,7 @@ public class Editors {
 				t.dis_0 = t.dis_1 = t.time = t.mult = 0;
 			else {
 				t.time = Math.max(1, t.time / Data.VOLC_ITV) * Data.VOLC_ITV;
+				t.deaths = Math.max(1, t.deaths);
 				if (t.mult == 0)
 					t.mult = 20;
 			}

@@ -273,6 +273,9 @@ public class Data {
 			@Order(6)
 			@JsonField(defval = "isEmpty")
 			public ProcID pid = new ProcID();
+			@Order(7)
+			@JsonField(defval = "1")
+			public int deaths = 1;//Only for deathsurges
 
 			@Override
 			public int[] setTalent(int[] nps) {
@@ -2409,14 +2412,15 @@ public class Data {
 	public static final byte ORB_STRONG = 2;
 	public static final byte ORB_MASSIVE = 3;
 	public static final byte ORB_RESISTANT = 4;
+	public static final byte ORB_MINIDEATHSURGE = 5;
+	public static final byte ORB_RESWAVE = 6;
+	public static final byte ORB_REFUND = 7;
+	public static final byte ORB_RESKB = 8;
+	public static final byte ORB_SOLBUFF = 9;
+	public static final byte ORB_BAKILL = 10;
+	public static final byte ORB_TYPE_TOTAL = 11;
 	public static final byte ORB_TYPE = 0, ORB_TRAIT = 1, ORB_GRADE = 2, ORB_TOT = 3;
 
-	public static final short[] ORB_ATK_MULTI = { 100, 200, 300, 400, 500 }; // Atk orb multiplication
-	public static final byte[] ORB_RES_MULTI = { 4, 8, 12, 16, 20 }; // Resist orb multiplication
-	public static final byte[] ORB_STR_DEF_MULTI = {2, 4, 6, 8, 10};
-	public static final float[] ORB_STR_ATK_MULTI = {0.06f, 0.12f, 0.18f, 0.24f, 0.3f};
-	public static final float[] ORB_MASSIVE_MULTI = {0.1f, 0.2f, 0.3f, 0.4f, 0.5f};
-	public static final byte[] ORB_RESISTANT_MULTI = {5, 10, 15, 20, 25};
 	public static final short[] GATYA = { 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 160, 161, 164, 167,
 			168, 169, 170, 171, 179, 180, 181, 182, 183, 184};
 

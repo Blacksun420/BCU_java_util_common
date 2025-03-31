@@ -5,6 +5,7 @@ import common.io.json.JsonClass;
 import common.io.json.JsonClass.NoTag;
 import common.io.json.JsonField;
 import common.util.BattleStatic;
+import common.util.Data;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -162,6 +163,15 @@ public class Level implements BattleStatic, LevelInterface {
 		}
 		if (valid)
 			orbs = orb;
+	}
+
+	public boolean equippingOrb(int type) {
+		if (orbs == null)
+			return false;
+		for (int[] orb : orbs)
+			if (orb[Data.ORB_TYPE] == type)
+				return true;
+		return false;
 	}
 
 	@JsonField(tag = "lvs", io = JsonField.IOType.R, generic = Integer.class)

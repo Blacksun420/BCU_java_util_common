@@ -174,19 +174,17 @@ public class Stage extends Data
 					for (int i = 0; i < intl; i++)
 						if(i < ss.length)
 							data[i] = Integer.parseInt(ss[i]);
-						else
-							//Handle missing value manually
-							if(i == 9)
+						else if(i == SCDef.M) //Handle missing value manually
 								data[i] = 100;
 
-					data[0] -= 2;
-					data[2] *= 2;
-					data[3] *= 2;
-					data[4] *= 2;
+					data[SCDef.E] -= 2;
+					data[SCDef.S0] *= 2;
+					data[SCDef.R0] *= 2;
+					data[SCDef.R1] *= 2;
 
 					if (timeLimit == 0 && intl > 9 && data[5] > 100 && data[9] == 100) {
-						data[9] = data[5];
-						data[5] = 100;
+						data[SCDef.M] = data[SCDef.C0];
+						data[SCDef.C0] = 100;
 					}
 
 					if (ss.length > 11 && CommonStatic.isInteger(ss[11])) {

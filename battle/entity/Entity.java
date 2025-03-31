@@ -502,19 +502,19 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		/**
 		 * set kill anim
 		 */
-		private void kill() {
+		private void kill(int kills) {
 			if ((e.getAbi() & AB_GLASS) != 0) {
 				e.dead = true;
 				dead = 0;
 				return;
 			}
-			if (e.getProc().DEATHSURGE.perform(e.basis.r))
+			if (kills % e.getProc().DEATHSURGE.deaths == 0 && e.getProc().DEATHSURGE.perform(e.basis.r))
 				deathSurge |= 1;
-			if (e.getProc().MINIDEATHSURGE.perform(e.basis.r))
+			if (kills % e.getProc().MINIDEATHSURGE.deaths == 0 && e.getProc().MINIDEATHSURGE.perform(e.basis.r))
 				deathSurge |= 2;
 
 			if (deathSurge != 0) {
-				e.status.weaks.clear();//TODO: Temporary as deathsurge and minisurge will hve different souls
+				e.status.weaks.clear();
 				soul = CommonStatic.getBCAssets().demonSouls.get((1 - e.getDire()) / 2).getEAnim(AnimU.SOUL[0]);
 				dead = soul.len();
 				CommonStatic.setSE(SE_DEATH_SURGE);
@@ -670,9 +670,12 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				} else {
 					int totShare = 0;
 					for (int i = 0; i < e.data.getAtkTypeCount(); i++)
-						totShare += e.data.getShare(i);
-					int r = (int) (e.basis.r.nextDouble() * totShare);
+						if (e.aam.isUsable(i))
+							totShare += e.data.getShare(i);
+					int r = (int) (e.basis.r.nextFloat() * totShare);
 					for (int i = 0; i < e.data.getAtkTypeCount(); i++) {
+						if (!e.aam.isUsable(i))
+							continue;
 						r -= e.data.getShare(i);
 						if (r <= 0) {
 							e.aam.atkType = i;
@@ -1110,7 +1113,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					return em.kbTime == -1;
 				return true;
 			});
-			List<AbEntity> lm = e.basis.inRange(TCH_ZOMBX, e.getDire(), 0, e.basis.st.len, false); //TODO - why was this negative
+			List<AbEntity> lm = e.basis.inRange(TCH_ZOMBX, -e.getDire(), 0, e.basis.st.len, false);
 			for (AbEntity abEntity : lm) {
 				if (abEntity == e)
 					continue;
@@ -2394,7 +2397,10 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			return;
 		kbTime = -1;
 		atkm.stopAtk();
-		anim.kill();
+		int kills = basis.totalKilled.getOrDefault(data.getPack(), 0) + 1;
+		basis.totalKilled.put(data.getPack(), kills);
+
+		anim.kill(kills);
 	}
 
 	/**

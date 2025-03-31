@@ -18,6 +18,7 @@ import common.util.pack.bgeffect.BackgroundEffect;
 import common.util.stage.*;
 import common.util.stage.MapColc.DefMapColc;
 import common.util.unit.*;
+import common.util.unit.Character;
 
 import java.util.*;
 
@@ -30,7 +31,7 @@ public class StageBasis extends BattleObj {
 	public final long[][] totalDamageTaken = new long[2][5];
 	public final long[][] totalDamageGiven = new long[2][5];
 	public final int[][] totalSpawned = new int[2][5];
-	public final TreeMap<Form, Integer> totalKilled = new TreeMap<>();
+	public final HashMap<Character, Integer> totalKilled = new HashMap<>();
 	public final TreeMap<Enemy, long[]> enemyStatistics = new TreeMap<>();
 	public final int[] nyc;
 	public final boolean[][] locks = new boolean[2][5];
