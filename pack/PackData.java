@@ -216,7 +216,7 @@ public abstract class PackData implements IndexContainer {
 				while (lastId++ < id) {//Passes through missing slots
 					qs.poll();
 					qt.poll();
-					units.add(units.get(0));//Create a placeholder, because sure
+					units.add(new Unit(lastId - 1));//Create a placeholder, because sure
 				}
 				String[] strs = qs.poll().split(",");
 

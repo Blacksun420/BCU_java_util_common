@@ -42,6 +42,15 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 		uid = unit.id;
 		orbs = new Orb(-1);
 	}
+	//Used solely to make placeholders
+	public Form(Unit u, MaskUnit d) {
+		du = d;
+		unit = u;
+		uid = unit.id;
+		orbs = new Orb(0);
+		anim = new AnimUD("./org/unit/000/f/", "000_f", "edi000_f.png", "uni000_f00.png");
+		anim.getUni().setCut(CommonStatic.getBCAssets().unicut);
+	}
 
 	public Form(Unit u, int f, String str, AnimU<?> ac, CustomUnit cu) {
 		unit = u;

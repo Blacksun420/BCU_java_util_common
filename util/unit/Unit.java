@@ -99,6 +99,12 @@ public class Unit extends Data implements AbUnit {
 	public Unit(Identifier<AbUnit> identifier) {
 		id = identifier;
 	}
+	//Placeholder making
+	public Unit(int i) {
+		id = Identifier.rawParseInt(i, Unit.class);
+		forms = new Form[] { new Form(this, UserProfile.getBCData().units.get(0).forms[0].du.clone()) };
+		lv = new UnitLevel();
+	}
 
 	public Unit(Identifier<AbUnit> id, AnimU<?> ce, CustomUnit cu) {
 		this.id = id;
