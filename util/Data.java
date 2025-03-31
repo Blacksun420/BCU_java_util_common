@@ -275,7 +275,7 @@ public class Data {
 			public ProcID pid = new ProcID();
 			@Order(7)
 			@JsonField(defval = "1")
-			public int deaths = 1;//Only for deathsurges
+			public int spawns = 1;//Only for deathsurges
 
 			@Override
 			public int[] setTalent(int[] nps) {

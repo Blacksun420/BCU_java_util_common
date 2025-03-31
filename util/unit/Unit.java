@@ -14,6 +14,7 @@ import common.pack.Source;
 import common.pack.Source.ResourceLocation;
 import common.pack.Source.Workspace;
 import common.pack.UserProfile;
+import common.system.VImg;
 import common.system.files.VFile;
 import common.util.Data;
 import common.util.anim.AnimCE;
@@ -191,6 +192,11 @@ public class Unit extends Data implements AbUnit {
 	@Override
 	public Identifier<AbUnit> getID() {
 		return id;
+	}
+
+	@Override
+	public VImg getIcon() {
+		return forms[0].getIcon();
 	}
 
 	@Override

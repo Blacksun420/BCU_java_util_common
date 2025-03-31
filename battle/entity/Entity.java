@@ -23,7 +23,6 @@ import common.util.anim.EAnimU;
 import common.util.pack.EffAnim;
 import common.util.pack.EffAnim.*;
 import common.util.pack.Soul;
-import common.util.unit.Enemy;
 import common.util.unit.Level;
 import common.util.unit.Trait;
 import org.jetbrains.annotations.NotNull;
@@ -502,15 +501,15 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		/**
 		 * set kill anim
 		 */
-		private void kill(int kills) {
+		private void kill() {
 			if ((e.getAbi() & AB_GLASS) != 0) {
 				e.dead = true;
 				dead = 0;
 				return;
 			}
-			if (kills % e.getProc().DEATHSURGE.deaths == 0 && e.getProc().DEATHSURGE.perform(e.basis.r))
+			if (e.getProc().DEATHSURGE.perform(e.basis.r))
 				deathSurge |= 1;
-			if (kills % e.getProc().MINIDEATHSURGE.deaths == 0 && e.getProc().MINIDEATHSURGE.perform(e.basis.r))
+			if (e.getProc().MINIDEATHSURGE.perform(e.basis.r))
 				deathSurge |= 2;
 
 			if (deathSurge != 0) {
@@ -2009,11 +2008,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 			e.damageGiven += Math.min(d, health);
 			sumDamage(d, false);
-			if(e instanceof EUnit && ((EUnit) e).index != null) {
-				int[] index = ((EUnit)e).index;
-				basis.totalDamageGiven[index[0]][index[1]] += Math.min(d, health);
-			} else if (e instanceof EEnemy)
-				basis.enemyStatistics.get((Enemy)e.data.getPack())[0] += Math.min(d, health);
+			basis.dmgStatistics.get(e.data.getPack())[0] += Math.min(d, health);
 		});
 		if (proc)
 			processProcs0(atk, FDmg);
@@ -2047,11 +2042,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				if (e != null) {
 					long totDmg = Math.min((long)(maxH * poiDmg), Math.max(0, health - dmg));
 					e.damageGiven += totDmg;
-					if(e instanceof EUnit && ((EUnit) e).index != null) {
-						int[] index = ((EUnit) e).index;
-						basis.totalDamageGiven[index[0]][index[1]] += totDmg;
-					} else
-						basis.enemyStatistics.get((Enemy)e.data.getPack())[0] += totDmg;
+					basis.dmgStatistics.get(e.data.getPack())[0] += totDmg;
 				}
 			}
 		}
@@ -2397,10 +2388,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			return;
 		kbTime = -1;
 		atkm.stopAtk();
-		int kills = basis.totalKilled.getOrDefault(data.getPack(), 0) + 1;
-		basis.totalKilled.put(data.getPack(), kills);
 
-		anim.kill(kills);
+		anim.kill();
 	}
 
 	/**
@@ -3179,6 +3168,21 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		return getTime() * base;
 	}
 
+	@Override
+	public void added(int dire, float pos) {
+		super.added(dire, pos);
+		int spwn = basis.spawns.getOrDefault(data.getPack(), 0) + 1;
+		basis.spawns.put(data.getPack(), spwn);
+		if (spwn == 1)//first spawned
+			basis.dmgStatistics.put(data.getPack(), new long[2]);
+
+		if (getProc().DEATHSURGE.prob > 0 && spwn % getProc().DEATHSURGE.spawns != 0)
+			getProc().DEATHSURGE.clear();
+		if (getProc().MINIDEATHSURGE.prob > 0 && spwn % getProc().MINIDEATHSURGE.spawns != 0)
+			getProc().MINIDEATHSURGE.clear();
+		if (getProc().REFUND.prob > 0 && spwn % getProc().REFUND.count != 0)
+			getProc().REFUND.clear();
+	}
 	@Override
 	public int compareTo(@NotNull Entity ent) {
 		return Integer.compare(layer, ent.layer);

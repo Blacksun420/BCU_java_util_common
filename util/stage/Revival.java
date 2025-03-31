@@ -78,8 +78,6 @@ public class Revival extends Data {
         ee.group = group;
         ee.rev = rev;
         ee.added(1, pos);
-        if (!b.enemyStatistics.containsKey((Enemy)ee.data.getPack()))
-            b.enemyStatistics.put((Enemy)ee.data.getPack(), new long[]{0, 0, 1});
         b.le.add(ee);
 
         if (bgm != null) {

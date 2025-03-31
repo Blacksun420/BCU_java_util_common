@@ -85,11 +85,7 @@ public class ECastle extends AbEntity {
 
 		if (atk.attacker != null) {
 			atk.attacker.damageGiven += Math.min(ans, health);
-			if(atk.attacker instanceof EUnit && ((EUnit)atk.attacker).index != null) {
-				int[] index = ((EUnit)atk.attacker).index;
-				sb.totalDamageGiven[index[0]][index[1]] += Math.min(ans, health);
-			} else if (atk.attacker instanceof EEnemy)
-				sb.enemyStatistics.get((Enemy)atk.attacker.data.getPack())[0] += Math.min(ans, health);
+			sb.dmgStatistics.get(atk.attacker.data.getPack())[0] += Math.min(ans, health);
 		}
 		health -= ans;
 

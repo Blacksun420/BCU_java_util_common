@@ -1381,8 +1381,8 @@
         "abbr_name": "D.Surge",
         "full_name": "Death Surge",
         "tooltip": null,
-        "format": ["[(prob<100){(prob)% chance to make}(prob==100){Makes}] a surge attack[(pid){ with (_toString(pid)) IDs}] for (_dispTime(time))",
-            "[(deaths==1){ when killed}(deaths>1){ for each (deaths) of this unit killed}] (_left)Created within (dis_0) ~ (dis_1) range(_right)"],
+        "format": ["[(spawns>1){Every (spawns)th deployed[(prob<100){ has}] }][(prob<100){(prob)% chance to make}(prob==100){Makes}] ",
+            "a surge attack[(pid){ with (_toString(pid)) IDs}] for (_dispTime(time)) when killed (_left)Created within (dis_0) ~ (dis_1) range(_right)"],
         "class": {
             "prob": {
                 "name": "chance",
@@ -1404,7 +1404,7 @@
                 "name": "ID",
                 "tooltip": "Sets the IDs of the surge attack, allowing for type-based resistance discrimination"
             },
-            "deaths": {
+            "spawns": {
                 "name": "Kill Count",
                 "tooltip": "Amount of kills per surge proc"
             }
@@ -1414,8 +1414,8 @@
         "abbr_name": "M.D.Surge",
         "full_name": "Mini Death Surge",
         "tooltip": null,
-        "format": ["[(prob<100){(prob)% chance to make}(prob==100){Makes}] a mini-surge attack[(pid){ with (_toString(pid)) IDs}] ",
-            "for (_dispTime(time))[(deaths==1){ when killed}(deaths>1){ for each (deaths) of this unit killed}] (_left)Created within ",
+        "format": ["[(spawns>1){Every (spawns)th deployed[(prob<100){ has}] }][(prob<100){(prob)% chance to make}(prob==100){Makes}] ",
+            "a mini-surge attack[(pid){ with (_toString(pid)) IDs}] for (_dispTime(time)) when killed (_left)Created within ",
             "(dis_0) ~ (dis_1) range[(mult!=20){, deals (mult)% of attacker's damage}](_right)"],
         "class": {
             "prob": {
@@ -1442,7 +1442,7 @@
                 "name": "ID",
                 "tooltip": "Sets the IDs of the surge attack, allowing for type-based resistance discrimination"
             },
-            "deaths": {
+            "spawns": {
                 "name": "Kill Count",
                 "tooltip": "Amount of kills per surge proc"
             }
@@ -2079,7 +2079,7 @@
         "abbr_name": "Refund",
         "full_name": "Refund",
         "tooltip": null,
-        "format": "[(prob<100){(prob)% chance to refund}(prob==100){Refunds}] (mult)% of unit's cost [(count==1){when killed}(count>1){for each (count) of this unit killed}]",
+        "format": "[(count>1){Every (count)th deployed[(prob<100){ has}] }] [(prob<100){(prob)% chance to refund}(prob==100){Refunds}] (mult)% of unit's cost when killed",
         "class": {
             "prob": {
                 "name": "chance",

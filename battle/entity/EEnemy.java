@@ -14,7 +14,6 @@ import common.util.anim.AnimU;
 import common.util.anim.EAnimU;
 import common.util.pack.EffAnim;
 import common.util.stage.Revival;
-import common.util.unit.Enemy;
 import common.util.unit.Trait;
 
 public class EEnemy extends Entity {
@@ -83,7 +82,7 @@ public class EEnemy extends Entity {
 	@Override
 	protected void sumDamage(int atk, boolean raw) {
 		if (CommonStatic.getConfig().rawDamage == raw)
-			basis.enemyStatistics.get((Enemy)data.getPack())[1] += atk;
+			basis.dmgStatistics.get(data.getPack())[1] += atk;
 	}
 
 	@Override

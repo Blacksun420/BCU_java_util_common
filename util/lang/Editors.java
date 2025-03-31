@@ -718,7 +718,7 @@ public class Editors {
 				t.dis_0 = t.dis_1 = t.time = 0;
 			else {
 				t.time = Math.max(1, t.time / Data.VOLC_ITV) * Data.VOLC_ITV;
-				t.deaths = Math.max(1, t.deaths);
+				t.spawns = Math.max(1, t.spawns);
 			}
 		}, eg -> t -> {
 			setComponentVisibility(eg, t.exists(), 1);
@@ -731,7 +731,7 @@ public class Editors {
 				t.dis_0 = t.dis_1 = t.time = t.mult = 0;
 			else {
 				t.time = Math.max(1, t.time / Data.VOLC_ITV) * Data.VOLC_ITV;
-				t.deaths = Math.max(1, t.deaths);
+				t.spawns = Math.max(1, t.spawns);
 				if (t.mult == 0)
 					t.mult = 20;
 			}

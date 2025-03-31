@@ -11,7 +11,7 @@ import common.system.VImg;
 import java.util.Set;
 
 @IndexCont(PackData.class)
-public interface AbEnemy extends Comparable<AbEnemy>, Indexable<PackData, AbEnemy> {
+public interface AbEnemy extends Comparable<AbEnemy>, Indexable<PackData, AbEnemy>, AbCharacter {
 
 	@Override
 	default int compareTo(AbEnemy e) {
@@ -19,12 +19,6 @@ public interface AbEnemy extends Comparable<AbEnemy>, Indexable<PackData, AbEnem
 	}
 
 	EEnemy getEntity(StageBasis sb, Object obj, float mul, float mul1, int d0, int d1, int m);
-
-	VImg getIcon();
-
-	default VImg getPreview() {
-		return null;
-	}
 
 	@Override
 	Identifier<AbEnemy> getID();

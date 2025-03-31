@@ -28,11 +28,8 @@ public class StageBasis extends BattleObj {
 	public final Stage st;
 	public final EStage est;
 	public final ELineUp elu;
-	public final long[][] totalDamageTaken = new long[2][5];
-	public final long[][] totalDamageGiven = new long[2][5];
-	public final int[][] totalSpawned = new int[2][5];
-	public final HashMap<Character, Integer> totalKilled = new HashMap<>();
-	public final TreeMap<Enemy, long[]> enemyStatistics = new TreeMap<>();
+	public final HashMap<Character, Integer> spawns = new HashMap<>();
+	public final HashMap<Character, long[]> dmgStatistics = new HashMap<>();
 	public final int[] nyc;
 	public final boolean[][] locks = new boolean[2][5];
 	public final AbEntity ebase, ubase;
@@ -106,16 +103,11 @@ public class StageBasis extends BattleObj {
 			ebase = ee;
 			shock = ee.mark == -2;
 			ebase.added(1, shock ? boss_spawn : 700);
-			enemyStatistics.put((Enemy)ee.data.getPack(), new long[]{0, 0, -1});
 		} else {
 			ebase = new ECastle(this);
 			ebase.added(1, 800);
 		}
 		EUnit eu = est.ubase(this);
-		if (eu != null) {
-			totalDamageGiven[1] = new long[6];
-			totalDamageTaken[1] = new long[6];
-		}
 		ubase = eu != null ? eu : new ECastle(this, bas);
 		ubase.added(-1, st.len - 800);
 		if (st.preset != null && st.preset.baseHealthBoost) {
@@ -527,7 +519,6 @@ public class StageBasis extends BattleObj {
 			CommonStatic.setSE(SE_SPEND_SUC);
 			elu.resetCD(i, j);
 			elu.smnd[i][j] = true;
-			totalSpawned[i][j]++;
 			rem_spawns--;
 			eu.added(-1, st.len - 700);
 
@@ -624,11 +615,6 @@ public class StageBasis extends BattleObj {
 
 				if (e != null) {
 					e.added(1, (e.mark >= 1 ? boss_spawn : 700f) + (st.len - 800 - ebase.pos) * e.door / 100);
-
-					if (!enemyStatistics.containsKey((Enemy)e.data.getPack()))
-						enemyStatistics.put((Enemy)e.data.getPack(), new long[]{0, 0, 1});
-					else
-						enemyStatistics.get((Enemy)e.data.getPack())[2]++;
 
 					if (e.door > 0 && e.getAnim().type != AnimU.TYPEDEF[AnimU.ENTRY] && !e.getAnim().anim().getEAnim(AnimU.TYPEDEF[AnimU.WALK]).unusable())
 						doors.add(new DoorCont(this, e));

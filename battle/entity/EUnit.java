@@ -92,7 +92,7 @@ public class EUnit extends Entity {
 								getProc().MINIDEATHSURGE.dis_0 = 200;
 								getProc().MINIDEATHSURGE.dis_1 = 500;
 								getProc().MINIDEATHSURGE.time = 20;
-								getProc().MINIDEATHSURGE.deaths = 2;
+								getProc().MINIDEATHSURGE.spawns = 2;
 							}
 							getProc().MINIDEATHSURGE.mult += eff;
 							break;
@@ -129,8 +129,7 @@ public class EUnit extends Entity {
 		if (index != null)
 			basis.elu.smnd[index[0]][index[1]] = !basis.getAllOf(index[0],index[1]).isEmpty();
 
-		int kills = basis.totalKilled.get(data.getPack());
-		if (getProc().REFUND.count > 0 && kills % getProc().REFUND.count == 0 && getProc().REFUND.perform(basis.r))
+		if (getProc().REFUND.perform(basis.r))
 			basis.money = (int)(basis.money+((getProc().REFUND.mult / 100.0) * (index != null ? basis.elu.price[index[0]][index[1]] : ((MaskUnit)data).getPrice() * basis.st.getCont().price * 100)));
  	}
 
@@ -191,7 +190,7 @@ public class EUnit extends Entity {
 	@Override
 	protected void sumDamage(int atk, boolean raw) {
 		if (index != null && CommonStatic.getConfig().rawDamage == raw)
-			basis.totalDamageTaken[index[0]][index[1]] += atk;
+			basis.dmgStatistics.get(data.getPack())[1] += atk;
 	}
 
 	@Override

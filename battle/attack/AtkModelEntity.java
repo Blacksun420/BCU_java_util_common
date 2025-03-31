@@ -437,7 +437,8 @@ public abstract class AtkModelEntity extends AtkModelAb {
 					for (int i = 0; i < proc.amount; i++) {
 						int dis = proc.dis == proc.max_dis ? proc.dis : (int) (proc.dis + b.r.nextDouble() * (proc.max_dis - proc.dis + 1));
 						double up = ent.pos + getDire() * dis;
-						IForm ef = IForm.newIns(u instanceof Unit ? u.getForms()[Math.max(proc.form - 1, 0)] : (AbForm)u, lvl);
+						Form f = u.getForms()[Math.max(proc.form - 1, 0)];
+						IForm ef = IForm.newIns(u instanceof Unit ? f : (AbForm)u, lvl);
 						EUnit eu = ef.invokeEntity(b, lvl, minlayer, maxlayer);
 						if (conf.same_health)
 							eu.health = e.health;
@@ -491,11 +492,6 @@ public abstract class AtkModelEntity extends AtkModelAb {
 							ee.status.pass(e.status);
 						if (e != ent && (proc.type.pass_proc & 2) > 0)
 							ee.status.pass(ent.status);
-
-						if (!b.enemyStatistics.containsKey((Enemy)ee.data.getPack()))
-							b.enemyStatistics.put((Enemy)ee.data.getPack(), new long[]{0, 0, 1});
-						else
-							b.enemyStatistics.get((Enemy)ee.data.getPack())[2]++;
 					}
 				}
 			}
