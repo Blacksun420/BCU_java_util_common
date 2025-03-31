@@ -210,7 +210,14 @@ public abstract class PackData implements IndexContainer {
 
 			Queue<String> qt = VFile.readLine("./org/data/unitlevel.csv");
 			FixIndexList<UnitLevel> l = unitLevels;
+			int lastId = 0;
 			for (VFile p : list) {
+				int id = CommonStatic.parseIntN(p.getName());
+				while (lastId++ < id) {//Passes through missing slots
+					qs.poll();
+					qt.poll();
+					units.add(units.get(0));//Create a placeholder, because sure
+				}
 				String[] strs = qs.poll().split(",");
 
 				Unit u = new Unit(p, new int[]{Integer.parseInt(strs[strs.length - 2]), Integer.parseInt(strs[strs.length - 1])});
