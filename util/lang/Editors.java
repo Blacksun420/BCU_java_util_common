@@ -539,7 +539,7 @@ public class Editors {
 			}
 		}, eg -> t -> {
 			setComponentVisibility(eg, t.exists(), 1);
-			setComponentVisibility(eg, t.type.areaAttack || !t.type.outRange, 2, 4);
+			setComponentVisibility(eg, t.exists() && (t.type.areaAttack || !t.type.outRange), 2, 4);
 		}));
 
 		map().put("IMUATK", new EditControl<>(Proc.IMUATK.class, (t) -> {
@@ -575,7 +575,7 @@ public class Editors {
 			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0)
 				t.mult = 0;
-		}));
+		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("VOLC", new EditControl<>(Proc.VOLC.class, (t) -> {
 			t.prob = Math.max(0, Math.min(t.prob, 100));

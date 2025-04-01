@@ -412,7 +412,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					effs[A_POIS[i]] = null;
 			if (e.status.seal <= 0)
 				effs[A_SEAL] = null;
-			if (e.status.adrenaline <= 0)
+			if (e.status.adrenaline == 100)
 				effs[A_DRENALINE] = null;
 			if (effs[A_SHIELD] != null && effs[A_SHIELD].done())
 				effs[A_SHIELD] = null;
@@ -1249,7 +1249,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	public static class ProcManager extends BattleObj {
 
 		public boolean lethal;
-		public int kb, strengthen, adrenaline, money, dcut, dcap, poison;
+		public int kb, strengthen, adrenaline = 100, money, dcut, dcap, poison;
 		public double slow, curse, seal, wild, rage, hypno;
 		public final int[] shield = new int[2];
 		public final double[] stop = new double[2], inv = new double[2];
@@ -2428,7 +2428,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		if ((touchable() & TCH_CORPSE) == 0 && strong > 0 && damage != 0) {
 			boolean wz = status.strengthen == 0;
 			if (getProc().STRONG.incremental && health * 100 > maxH * strong) {
-				status.strengthen = (int) (getProc().STRONG.mult * (((1.0 * maxH - health) / maxH) * strong));
+				status.strengthen = (int)(getProc().STRONG.mult * (maxH - health) / (maxH * (100 - strong) / 100.0));
 			} else if (health * 100 <= maxH * strong)
 				status.strengthen = getProc().STRONG.mult;
 
@@ -2438,13 +2438,13 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		// adrenaline
 		float threshold = getProc().SPEEDUP.health;
 		if ((touchable() & TCH_CORPSE) == 0 && threshold > 0 && damage != 0) {
-			boolean wz = status.adrenaline == 0;
+			boolean wz = status.adrenaline == 100;
 			if (getProc().SPEEDUP.incremental && health * 100 > maxH * threshold) {
-				status.adrenaline = (int) (getProc().SPEEDUP.mult * (((1.0 * maxH - health) / maxH) * threshold));
+				status.adrenaline = 100 + (int)((getProc().SPEEDUP.mult - 100) * (maxH - health) / (maxH * (100 - threshold) / 100.0));
 			} else if (health * 100 <= maxH * threshold)
 				status.adrenaline = getProc().SPEEDUP.mult;
 
-			if (wz && status.adrenaline != 0)
+			if (wz && status.adrenaline != 100)
 				anim.getEff(P_SPEEDUP);
 		}
 		damage = 0;
@@ -2710,7 +2710,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 		if (tba > 0)
 			waitTime = Math.max(0, waitTime - getTime());
-		boolean canAttack = canAct && (!isBase || !(data.getSpeed() == 0 && data.allAtk(0) == 0));
+		boolean canAttack = canAct && (!isBase || !(data.getSpeed() == 0 && data.getRange() == 0 && data.allAtk(0) == 0));
 		// update wait and attack state
 		if (canAttack) {
 			// if it can attack, setup attack state
@@ -2932,7 +2932,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		if (!status.speeds.isEmpty() && status.slow == 0)
 			mov = status.getSpeed(mov);
 
-		if (status.adrenaline > 0) {
+		if (status.adrenaline != 100) {
 			mov *= status.adrenaline / 100f;
 			mov = (float) Math.round(mov * 4f) / 4f;
 		}
