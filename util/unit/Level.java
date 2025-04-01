@@ -169,7 +169,7 @@ public class Level implements BattleStatic, LevelInterface {
 		if (orbs == null)
 			return false;
 		for (int[] orb : orbs)
-			if (orb[Data.ORB_TYPE] == type)
+			if (orb.length == Data.ORB_TOT && orb[Data.ORB_TYPE] == type)
 				return true;
 		return false;
 	}
