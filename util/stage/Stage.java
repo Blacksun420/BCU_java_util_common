@@ -13,6 +13,7 @@ import common.pack.IndexContainer;
 import common.pack.PackData.PackDesc;
 import common.pack.PackData.UserPack;
 import common.pack.Source.ResourceLocation;
+import common.pack.UserProfile;
 import common.system.BasedCopable;
 import common.system.files.VFile;
 import common.util.BattleStatic;
@@ -367,6 +368,29 @@ public class Stage extends Data
 		if (jobj.has("name"))
 			names.put(jobj.get("name").getAsString());
 		recd.removeIf(Objects::isNull);
+	}
+
+	@JsonDecoder.PostLoad
+	public void PostLoad() {
+		MapColc.PackMapColc mc = (MapColc.PackMapColc)getMC();
+		if (mc.pack.desc.FORK_VERSION < 12) {
+			if (mc.pack.desc.FORK_VERSION < 11) {
+				if (UserProfile.isOlderPack(mc.pack, "0.7.8.2") && lim.stageLimit != null)
+					lim.stageLimit.coolStart = lim.stageLimit.globalCooldown > 0 || lim.stageLimit.maxMoney > 0;
+				lim.setStar(lim.star); //All star will have to be 0 coz 1 << 0 is 1 though
+				if (mc.pack.desc.FORK_VERSION < 5 && timeLimit > 0)
+					timeLimit *= 60;
+			}
+			int basepos = 800;
+			if (data.datas.length > 0 && data.getSimple(data.datas.length - 1).castle_0 == 0)
+				basepos = data.getSimple(data.datas.length - 1).boss >= 1 ? (int)Math.ceil(Identifier.getOr(castle, CastleImg.class).boss_spawn) : 700;
+
+			for (Line l : data.datas)
+				if (l.doorchance > 0) {
+					l.doordis_0 = (len - 500 - basepos) * l.doordis_0 / 100;
+					l.doordis_1 = (len - 500 - basepos) * l.doordis_1 / 100;
+				}
+		}
 	}
 
 	@JsonField(tag = "timeLimit", io = JsonField.IOType.W, backCompat = JsonField.CompatType.UPST)

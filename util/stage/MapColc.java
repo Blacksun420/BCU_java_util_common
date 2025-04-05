@@ -1073,29 +1073,6 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 		public SaveData getSave(boolean force) {
 			return force ? pack.save : pack.getSave();
 		}
-
-		@JsonDecoder.OnInjected
-		public void onInjected() {
-			if (pack.desc.FORK_VERSION < 11)
-				for (StageMap smaps : maps) {
-					for (Limit lim : smaps.lim)
-						lim.setStar(lim.star); //Convert star limit to bitmask. There's only 4 stars anyway
-
-					for (Stage st : smaps.list) {
-						if (st.lim != null)
-							st.lim.setStar(st.lim.star); //All star will have to be 0 coz 1 << 0 is 1 though
-						if (pack.desc.FORK_VERSION < 5 && st.timeLimit > 0)
-							st.timeLimit *= 60;
-					}
-				}
-			if (UserProfile.isOlderPack(pack, "0.7.8.2"))
-				for (StageMap sm : maps)
-					for (Stage st : sm.list) {
-						if (st.lim.stageLimit == null)
-							continue;
-						st.lim.stageLimit.coolStart = st.lim.stageLimit.globalCooldown > 0 || st.lim.stageLimit.maxMoney > 0;
-					}
-		}
 	}
 
 	public static class StItr implements Iterator<Stage>, Iterable<Stage> {

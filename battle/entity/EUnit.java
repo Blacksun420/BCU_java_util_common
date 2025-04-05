@@ -52,7 +52,7 @@ public class EUnit extends Entity {
 	private static float getD(String sid, float d0, Level lv) {
 		if (lv.getOrbs() != null && (sid.equals("000000") || sid.equals("000013") || sid.equals("000034"))) //SoL, UL, ZL respectively, last ones may not be there
 			for (int[] orb : lv.getOrbs())
-				if (orb[ORB_TYPE] == ORB_SOLBUFF)
+				if (orb.length == ORB_TOT && orb[ORB_TYPE] == ORB_SOLBUFF)
 					return d0 * (100 + Orb.get(ORB_SOLBUFF,(byte)orb[ORB_GRADE])[1]) / 100;
 		return d0;
 	}
@@ -225,7 +225,7 @@ public class EUnit extends Entity {
 				if(((MaskUnit)data).getOrb() != null && level.getOrbs() != null) {
 					int[][] levelOrbs = level.getOrbs();
 					for (int[] orb : levelOrbs)
-						if (orb[ORB_TYPE] == ORB_BAKILL)
+						if (orb.length == ORB_TOT && orb[ORB_TYPE] == ORB_BAKILL)
 							ans = (int)(ans * Orb.EFFECT.get(ORB_BAKILL).get((byte)orb[ORB_GRADE])[1] / 100.0);
 				}
 			}
@@ -276,7 +276,7 @@ public class EUnit extends Entity {
 		int ans = atk ? 0 : matk;
 		for (int[] line : level.getOrbs()) {
 			int ORB = atk ? ORB_ATK : ORB_RES;
-			if (line.length == 0 || line[ORB_TYPE] != ORB)
+			if (line.length != ORB_TOT || line[ORB_TYPE] != ORB)
 				continue;
 			List<Trait> orbType = Trait.convertOrb(line[ORB_TRAIT]);
 			boolean orbValid = false;

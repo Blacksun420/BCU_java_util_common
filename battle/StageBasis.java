@@ -266,7 +266,7 @@ public class StageBasis extends BattleObj {
 		return ans;
 	}
 	public boolean cantDeploy(int rare, int wp) {
-		if (rare != -1 && est.lim.stageLimit != null && est.lim.stageLimit.rarityDeployLimit[rare] != -1) {
+		if (rare != -1 && est.lim.stageLimit != null && est.lim.stageLimit.rarityDeployLimit[rare] > 0) {
 			int ans = wp;
 			for (Entity ent : le)
 				if (ent.dire == -1 && !ent.dead && ((MaskUnit) ent.data).getPack().unit.rarity == rare)
@@ -614,9 +614,9 @@ public class StageBasis extends BattleObj {
 				EEnemy e = est.allow();
 
 				if (e != null) {
-					e.added(1, (e.mark >= 1 ? boss_spawn : 700f) + (st.len - 800 - ebase.pos) * e.door / 100);
+					e.added(1, e.mark >= 1 ? boss_spawn : 700f + e.door);
 
-					if (e.door > 0 && e.getAnim().type != AnimU.TYPEDEF[AnimU.ENTRY] && !e.getAnim().anim().getEAnim(AnimU.TYPEDEF[AnimU.WALK]).unusable())
+					if (e.door != 0 && e.getAnim().type != AnimU.TYPEDEF[AnimU.ENTRY] && !e.getAnim().anim().getEAnim(AnimU.TYPEDEF[AnimU.WALK]).unusable())
 						doors.add(new DoorCont(this, e));
 					else
 						le.add(e);

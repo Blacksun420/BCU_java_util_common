@@ -471,7 +471,7 @@ public class Editors {
 					t.form = 1;
 					t.mult = Math.max(1, t.mult);
 				}
-				t.type.anim_type = MathUtil.clip(t.type.anim_type, 0, 4);
+				t.type.anim_type = MathUtil.clip(t.type.anim_type, 0, 6);
 			}
 		}, eg -> t -> {
 			EditorSupplier edi = UserProfile.getStatic("Editor_Supplier", () -> null);
@@ -840,9 +840,11 @@ public class Editors {
 
 		map().put("AI", new EditControl<>(Proc.AI.class, (t) -> {
 			t.retreatDist = Math.max(0, t.retreatDist);
-			if (t.retreatDist == 0)
+			if (t.retreatDist == 0) {
 				t.retreatSpeed = 0;
-		}, eg -> t -> setComponentVisibility(eg, t.retreatDist > 0, 1, 2)));
+				t.danger = false;
+			}
+		}, eg -> t -> setComponentVisibility(eg, t.retreatDist > 0, 1, 4, 4)));
 
 		map().put("DEMONVOLC", new EditControl<>(Proc.PM.class, (t) -> {
 			t.prob = Math.max(0, Math.min(t.prob, 100));
@@ -886,7 +888,7 @@ public class Editors {
 					t.animType = 0;
 					t.type.inv = true;
 				} else {
-					t.animType = MathUtil.clip(t.animType, 0, 5);
+					t.animType = MathUtil.clip(t.animType, 0, 6);
 				}
 			}
 		}, eg -> t -> {

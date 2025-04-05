@@ -1,6 +1,7 @@
 package common.util.stage;
 
 import common.io.json.JsonClass;
+import common.io.json.JsonDecoder;
 import common.io.json.JsonField;
 import common.util.BattleStatic;
 import common.util.Data;
@@ -43,7 +44,7 @@ public class StageLimit extends Data implements BattleStatic {
     }
     public boolean defDeploy() {
         for (int d : rarityDeployLimit)
-            if (d != -1)
+            if (d > 0)
                 return false;
         return true;
     }

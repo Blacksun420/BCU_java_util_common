@@ -60,7 +60,7 @@ public class Formatter {
 			return "" + Math.abs(v);
 		}
 
-		public String bg(Identifier<Background> id) {
+		public String id(Identifier<?> id) {
 			return Identifier.get(id) + "";
 		}
 

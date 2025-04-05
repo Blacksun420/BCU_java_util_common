@@ -137,8 +137,40 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 				if (f == this)
 					return false;
 			}
-		//TODO - check for Summon and RandomUnits
+		for (Unit u : pack.units)
+			for (Form f : u.forms) {
+				if (f == this)
+					continue;
+				if (uid.equals(f.du.getProc().SUMMON.id) && fid == f.du.getProc().SUMMON.form - 1)
+					return false;
+				if (uid.equals(f.du.getProc().SPIRIT.id) && fid == f.du.getProc().SPIRIT.form - 1)
+					return false;
+				if (recursiveBlessUsed(f.du.getProc().BLESSING))
+					return false;
+			}
+		for (Enemy e : pack.enemies) {//Just in case since enemies can summon units
+			if (uid.equals(e.de.getProc().SUMMON.id) && fid == e.de.getProc().SUMMON.form - 1)
+				return false;
+			if (uid.equals(e.de.getProc().SPIRIT.id) && fid == e.de.getProc().SPIRIT.form - 1)
+				return false;
+			if (recursiveBlessUsed(e.de.getProc().BLESSING))
+				return false;
+		}
+		for (UniRand ru : pack.randUnits)
+			for (Form f : ru.getForms())
+				if (f == this)
+					return false;
 		return true;
+	}
+
+	private boolean recursiveBlessUsed(Proc.BLESSING bless) {
+		if (bless.procs == null)
+			return false;
+		if (uid.equals(bless.procs.SUMMON.id) && fid == bless.procs.SUMMON.form - 1)
+			return true;
+		if (uid.equals(bless.procs.SPIRIT.id) && fid == bless.procs.SPIRIT.form - 1)
+			return true;
+		return recursiveBlessUsed(bless.procs.BLESSING);
 	}
 
 	@OnInjected
@@ -149,7 +181,7 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 		if ((unit != null || uid != null)) {
 			Unit u = unit == null ? (Unit) uid.get() : unit;
 			PackData.UserPack pack = (PackData.UserPack) u.getCont();
-			if (pack.desc.FORK_VERSION < 9) {
+			if (pack.desc.FORK_VERSION < 12) {
 				inject(pack, jobj.getAsJsonObject("du"), form);
 				if (pack.desc.FORK_VERSION < 7) {
 					if (pack.desc.FORK_VERSION < 1) {
@@ -206,7 +238,7 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 						});
 					}
 				} //Finish FORK_VERSION 7 checks
-			} //Finish FORK_VERSION 9 checks
+			} //Finish FORK_VERSION 12 checks
 		}
 		if (form.getPCoin() != null) {
 			form.pcoin.verify();

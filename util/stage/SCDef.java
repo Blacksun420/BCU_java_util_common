@@ -27,14 +27,14 @@ public class SCDef implements Copable<SCDef> {
 		@JsonField(defval = "1")
 		public int number = 1;
 		@JsonField(defval = "0")
-		public int boss, group, spawn_0, spawn_1, respawn_0, respawn_1, castle_1, layer_0, kill_count;
+		public int boss, group, spawn_0, spawn_1, respawn_0, respawn_1, castle_1, layer_0, kill_count, doordis_0, doordis_1;
 		@JsonField(defval = "100")
 		public int multiple = 100, mult_atk = 100, castle_0 = 100;
 		@JsonField(defval = "9")
 		public int layer_1 = 9;
 
 		@JsonField(backCompat = JsonField.CompatType.FORK, defval = "0")
-		public byte doorchance, doordis_0, doordis_1;
+		public byte doorchance;
 		@JsonField(backCompat = JsonField.CompatType.FORK, defval = "null")
 		public Revival rev;
 

@@ -118,7 +118,7 @@ public class EEnemy extends Entity {
 				if(((MaskUnit)atk.attacker.data).getOrb() != null && ((EUnit)atk.attacker).level.getOrbs() != null) {
 					int[][] levelOrbs = ((EUnit)atk.attacker).level.getOrbs();
 					for (int[] orb : levelOrbs)
-						if (orb[ORB_TYPE] == ORB_BAKILL)
+						if (orb.length == ORB_TOT && orb[ORB_TYPE] == ORB_BAKILL)
 							ans = (int)(ans * Orb.get(ORB_BAKILL,(byte)orb[ORB_GRADE])[0] / 100.0);
 				}
 			}

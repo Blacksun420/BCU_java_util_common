@@ -150,7 +150,7 @@ public class Enemy extends Character implements AbEnemy {
 		enemy.pack = this;
 
 		PackData.UserPack pack = (PackData.UserPack) getCont();
-		if (pack.desc.FORK_VERSION < 9) {
+		if (pack.desc.FORK_VERSION < 12) {
 			inject(pack, jobj.getAsJsonObject("de"), enemy);
 			//Updates stuff to match this fork without core version issues
 			if (pack.desc.FORK_VERSION < 1) {
@@ -177,7 +177,7 @@ public class Enemy extends Character implements AbEnemy {
 							ma.getProc().SUMMON.form = 1; //There for imports
 					}
 			} //Finish FORK_VERSION 1 checks
-		} //Finish FORK_VERSION 6 checks
+		} //Finish FORK_VERSION 12 checks
 	}
 
 	@JsonDecoder.PostLoad

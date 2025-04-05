@@ -2507,7 +2507,10 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			bdist = -1;
 		} else if (conf == 5)
 			atkm.setUp(); // conf 5 - Sets animation to attack animation. Used mainly for spirits
-		else if (conf != 4)
+		else if (conf == 6) {
+			basis.le.remove(this); // conf 6 - Sets animation to Everywhere Door animation
+			basis.doors.add(new DoorCont(basis, this));
+		} else if (conf != 4)
 			anim.setAnim(AnimU.TYPEDEF[AnimU.WALK], true); // conf 0 - Sets animation to walk animation. conf 4 - sets the animation to entry, if unit has one
 
 		if (bond != null) {
@@ -2957,7 +2960,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					mv = (Math.abs(pos - e.pos) < getProc().AI.retreatDist) ? getSpeed(-getProc().AI.retreatSpeed, 0) : 0;
 					break;
 				}
-			if (e.atkm.atkTime == 0 || e.aam.getAtk(e.atkm.preID, getTouch()) < 0)
+			if (!getProc().AI.danger || e.atkm.atkTime == 0 || e.aam.getAtk(e.atkm.preID, getTouch()) < 0)
 				continue;
 			float[] ds = e.aam.inRange(e.atkm.preID);
 			float sta = Math.min(ds[0], ds[1]), end = Math.max(ds[0], ds[1]);

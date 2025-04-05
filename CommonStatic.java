@@ -609,6 +609,8 @@ public class CommonStatic {
 	 * Gets the minimum position value for a custom enemy.
 	 */
 	public static float customEnemyMinPos(MaModel model) {
+		if (model.confs.length == 0)//Failsafe
+			return 2.5f * ((-1f * model.parts[0][6] * model.parts[0][8]) / model.ints[0]);
 		int x = ((model.confs[0][2] - model.parts[0][6]) * model.parts[0][8]) / model.ints[0];
 		return 2.5f * x;
 	}

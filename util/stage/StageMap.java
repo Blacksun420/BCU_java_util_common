@@ -225,6 +225,18 @@ public class StageMap extends Data implements BasedCopable<StageMap, MapColc>,
 			nlim.stageLimit = lim;
 			this.lim.add(nlim);
 		}
+
+		MapColc.PackMapColc mc = (MapColc.PackMapColc)getCont();
+		if (mc.pack.desc.FORK_VERSION < 11) {
+			if (UserProfile.isOlderPack(mc.pack, "0.7.8.2"))
+				for (Limit l : lim) {
+					if (l.stageLimit == null)
+						continue;
+					l.stageLimit.coolStart = l.stageLimit.globalCooldown > 0 || l.stageLimit.maxMoney > 0;
+				}
+			for (Limit l : lim)
+				l.setStar(l.star); //Convert star limit to bitmask. There's only 4 stars anyway
+		}
 	}
 
 	@JsonDecoder.PostLoad

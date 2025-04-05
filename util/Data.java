@@ -892,9 +892,7 @@ public class Data {
 				@Order(1)
 				@JsonField(defval = "false")
 				public boolean calcblindspot;
-				//@Order(2)
-				//@JsonField(defval = "false")
-				//public boolean manualcontrol; //The player controls the unit manually; Arrow keys to move, spacebar to attack
+
 				public boolean unencodable() {
 					return !(calcstrongest || calcblindspot);
 				}
@@ -908,6 +906,12 @@ public class Data {
 			@Order(2)
 			@JsonField(defval = "unencodable")
 			public TYPE type = new TYPE();
+			@Order(3)
+			@JsonField(defval = "false")
+			public boolean danger;
+			//@Order(4)
+			//@JsonField(defval = "false")
+			//public boolean manualcontrol; //The player controls the unit manually; Arrow keys to move, spacebar to attack
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
