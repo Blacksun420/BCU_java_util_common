@@ -334,7 +334,7 @@ public class CommonStatic {
 			FR("fr", "Français"),
 			ES("es", "Español"),
 			IT("it", "Italiano"),
-			TH("th", "Thai");
+			TH("th", "ภาษาไทย");
 
 			public final String code, name;
 

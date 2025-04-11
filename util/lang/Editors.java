@@ -840,11 +840,9 @@ public class Editors {
 
 		map().put("AI", new EditControl<>(Proc.AI.class, (t) -> {
 			t.retreatDist = Math.max(0, t.retreatDist);
-			if (t.retreatDist == 0) {
+			if (t.retreatDist == 0 && !t.danger)
 				t.retreatSpeed = 0;
-				t.danger = false;
-			}
-		}, eg -> t -> setComponentVisibility(eg, t.retreatDist > 0, 1, 4, 4)));
+		}, eg -> t -> setComponentVisibility(eg, t.retreatDist > 0 || t.danger, 1, 2)));
 
 		map().put("DEMONVOLC", new EditControl<>(Proc.PM.class, (t) -> {
 			t.prob = Math.max(0, Math.min(t.prob, 100));

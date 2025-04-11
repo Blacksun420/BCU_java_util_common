@@ -224,7 +224,8 @@ public class StageBasis extends BattleObj {
 		if (slot == -1 || b.lu.efs[Math.floorDiv(slot, 5)][slot % 5] == null)
 			slot = (int) (r.nextFloat() * totUni); //Pick random unit if chosen one isn't there
 
-		CDChange(amount, slot / 5, slot % 5, type);
+		if (CDChange(amount, slot / 5, slot % 5, type))
+			CommonStatic.setSE(amount < 0 ? SE_P_RESEARCHUP : SE_P_RESEARCHDOWN);
 	}
 	public void changeUnitsCooldown(int amount, int type) {
 		for (byte s = 0; s < 10; s++) {

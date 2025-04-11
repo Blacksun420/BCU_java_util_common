@@ -139,7 +139,7 @@ public class UpdateCheck {
 		Set<String> local = AssetLoader.previewAssets();
 		Set<String> req = new HashSet<>(UserProfile.getPool(REG_REQLIB));
 		if(local != null)
-			req.removeIf(id -> local.contains("asset_" + id.replace("temp_", "")));
+			req.removeIf(id -> local.contains("asset_" + id) || local.contains("asset_" + id.replace("temp_", "")));
 		req.removeIf(id -> id.startsWith("temp_") && req.contains(id.replace("temp_", "")));
 		if (json == null && !req.isEmpty())
 			throw new Exception("internet connection required: missing required libraries: " + req);

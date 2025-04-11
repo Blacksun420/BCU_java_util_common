@@ -2712,7 +2712,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		}
 
 		if (tba > 0)
-			waitTime = Math.max(0, waitTime - getTime());
+			waitTime = waitTime - getTime();
 		boolean canAttack = canAct && (!isBase || !(data.getSpeed() == 0 && data.getRange() == 0 && data.allAtk(0) == 0));
 		// update wait and attack state
 		if (canAttack) {
