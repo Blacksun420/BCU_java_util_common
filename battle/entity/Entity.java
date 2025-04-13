@@ -1915,7 +1915,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		}
 
 		tokens.add(atk);
-		atk.playSound(isBase, basis.r.irDouble() < 0.5);
+		atk.playSound(isBase);
 		hit = 2;
 		damage += dmg;
 		zx.damaged(atk);
@@ -2917,7 +2917,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 */
 	protected float getMov(float extmov) {
 		float mov = getSpeed(data.getSpeed(), extmov);
-		if (mov > 0 && getProc().AI.retreatDist > 0)
+		if (mov > 0 && (getProc().AI.danger || getProc().AI.retreatDist > 0))
 			mov = AIMove(mov);
 
 		anim.negSpeed = mov < 0;

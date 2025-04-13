@@ -115,7 +115,7 @@ public class UpdateCheck {
 				"110400", "110403", "110500", "110503", "110504", "110505", "110506", "110600", "110603", "110604",
 				"110700", "110703", "110800", "110900", "110903", "111000", "111003", "111005", "120000", "120100",
 				"120200", "120203", "120300", "120400", "120500", "120503", "120600", "120700", "130000", "130100",
-				"130200", "130300", "130400", "130500", "130600", "130700", "140000", "140100", "140200", "temp_140300",
+				"130200", "130300", "130400", "130500", "130600", "130700", "140000", "140100", "140200", "140300",
 				"fork_essentials"
 		);
 	}
@@ -139,8 +139,7 @@ public class UpdateCheck {
 		Set<String> local = AssetLoader.previewAssets();
 		Set<String> req = new HashSet<>(UserProfile.getPool(REG_REQLIB));
 		if(local != null)
-			req.removeIf(id -> local.contains("asset_" + id) || local.contains("asset_" + id.replace("temp_", "")));
-		req.removeIf(id -> id.startsWith("temp_") && req.contains(id.replace("temp_", "")));
+			req.removeIf(id -> local.contains("asset_" + id.replace("temp_", "")));
 		if (json == null && !req.isEmpty())
 			throw new Exception("internet connection required: missing required libraries: " + req);
 		List<Downloader> set = new ArrayList<>();
@@ -151,7 +150,7 @@ public class UpdateCheck {
 				continue;
 			if (!aj.type.equals("core") && !contains(type, aj.type))
 				continue;
-			if (local != null && local.contains("asset_" + aj.id))
+			if (local != null && (local.contains("asset_" + aj.id.replace("temp_", ""))))
 				continue;
 			String url = URL_NEW + aj.id + ".asset.bcuzip";
 			if (aj.id.contains("fork_essentials") || aj.id.startsWith("temp_"))

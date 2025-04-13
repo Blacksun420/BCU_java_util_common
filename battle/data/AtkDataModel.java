@@ -35,10 +35,10 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 	@JsonField(backCompat = JsonField.CompatType.FORK, defval = "0")
 	public int alt;
 	@JsonField(generic = Trait.class, alias = Identifier.class, backCompat = JsonField.CompatType.FORK, defval = "isEmpty")
-	public SortedPackSet<Trait> traits = new SortedPackSet<>(); //Gives attacks their own typings
+	public SortedPackSet<Trait> traits = new SortedPackSet<>();//Gives attacks their own typings
 
-	@JsonField(defval = "null")
-	public Identifier<Music> audio, audio1;
+	@JsonField(generic = Music.class, alias = Identifier.class, defval = "isEmpty")
+	public SortedPackSet<Music> audios = new SortedPackSet<>();//Gives custom audio to attacks
 
 	@JsonField(defval = "isBlank")
 	public Proc proc = Proc.blank();
@@ -65,8 +65,7 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 		alt = adm.alt;
 		move = adm.move;
 		proc = adm.proc.clone();
-		audio = adm.audio;
-		audio1 = adm.audio1;
+		audios = new SortedPackSet<>(adm.audios);
 	}
 
 	protected AtkDataModel(CustomEntity ene, MaskEntity me, int i) {
@@ -217,8 +216,10 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 	}
 
 	@Override
-	public Identifier<Music> getAudio(boolean sec) {
-		return sec ? audio1 : audio;
+	public Identifier<Music> getAudio() {
+		if (audios.isEmpty())
+			return null;
+		return audios.get(audios.size() == 1 ? 0 : (int)(Math.random() * audios.size())).id;
 	}
 
 	@JsonDecoder.OnInjected
@@ -230,6 +231,10 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 			if ((ce instanceof CustomUnit && spTrait && dire == -1) || (ce instanceof CustomEnemy && ((spTrait && dire == 1) || (!spTrait && dire == -1))))
 				traits.addAll(ce.traits);
 		}
+		if (jobj.has("audio"))
+			audios.add((Music)JsonDecoder.decode(jobj.get("audio"), Identifier.class).get());
+		if (jobj.has("audio1"))
+			audios.add((Music)JsonDecoder.decode(jobj.get("audio1"), Identifier.class).get());
 		if (proc.WARP.dis_1 < proc.WARP.dis)
 			proc.WARP.dis_1 = proc.WARP.dis;
 	}

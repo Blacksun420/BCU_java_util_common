@@ -36,8 +36,6 @@ public class AttackVolcano extends AttackAb {
 	}
 
 	public void excuse() {
-		process();
-
 		if (volcTime <= 0) {
 			volcTime = VOLC_ITV;
 			vcapt.clear();
@@ -46,6 +44,7 @@ public class AttackVolcano extends AttackAb {
 
 		if(attacker != null)
 			atk = ((AtkModelEntity)model).getEffMult(raw);
+		process();
 
 		for (AbEntity e : capt) {
 			e.damaged(this);

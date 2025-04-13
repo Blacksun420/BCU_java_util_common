@@ -29,6 +29,7 @@ public abstract class AttackAb extends BattleObj {
 	public boolean excludeRightEdge = false, isCounter = false;
 
 	public int touch = TCH_N, dire, canon = -2, waveType = 0;
+	private boolean playedSound = false;
 
 	protected final Proc proc;
 	public final HashSet<Proc.REMOTESHIELD> r = new HashSet<>();
@@ -88,6 +89,7 @@ public abstract class AttackAb extends BattleObj {
 
 	protected void process() {
 		duration--;
+		playedSound = false;
 		final ArrayList<AbEntity> uncapt = new ArrayList<>(capt.size());
 		for (AbEntity ae : capt) {
 			if (ae instanceof Entity) {
@@ -104,7 +106,7 @@ public abstract class AttackAb extends BattleObj {
 							e.knockback(this, f);
 						proc.KB.clear();
 					} else
-						proc.KB.dis *= (100 - imus.IMUKB.block) / 100.0;
+						proc.KB.dis = (int)(proc.KB.dis * (100 - imus.IMUKB.block) / 100.0);
 				}
 				if (proc.SLOW.time > 0 && imus.IMUSLOW.block != 0) {
 					if (imus.IMUSLOW.block > 0)
@@ -114,7 +116,7 @@ public abstract class AttackAb extends BattleObj {
 							e.slow(this, time);
 						proc.SLOW.clear();
 					} else
-						proc.SLOW.time *= (100 - imus.IMUSLOW.block) / 100.0;
+						proc.SLOW.time = (int)(proc.SLOW.time * (100 - imus.IMUSLOW.block) / 100.0);
 				}
 				if (proc.STOP.time > 0 && imus.IMUSTOP.block != 0) {
 					if (imus.IMUSTOP.block > 0)
@@ -124,7 +126,7 @@ public abstract class AttackAb extends BattleObj {
 							e.freeze(this, time);
 						proc.STOP.clear();
 					} else
-						proc.STOP.time *= (100 - imus.IMUSTOP.block) / 100.0;
+						proc.STOP.time = (int)(proc.STOP.time * (100 - imus.IMUSTOP.block) / 100.0);
 				}
 				if (proc.WEAK.time > 0 && checkAIImmunity(proc.WEAK.mult - 100,imus.IMUWEAK.smartImu, imus.IMUWEAK.block > 0)) {
 					if (imus.IMUWEAK.block > 0)
@@ -134,7 +136,7 @@ public abstract class AttackAb extends BattleObj {
 							e.weaken(this, time);
 						proc.WEAK.clear();
 					} else
-						proc.WEAK.time *= (100 - imus.IMUWEAK.block) / 100.0;
+						proc.WEAK.time = (int)(proc.WEAK.time * (100 - imus.IMUWEAK.block) / 100.0);
 				}
 				if (proc.LETHARGY.time > 0 && checkAIImmunity(proc.LETHARGY.mult,imus.IMULETHARGY.smartImu, imus.IMULETHARGY.block > 0)) {
 					if (imus.IMULETHARGY.block > 0)
@@ -144,7 +146,7 @@ public abstract class AttackAb extends BattleObj {
 							e.lethargy(this, time);
 						proc.LETHARGY.clear();
 					} else
-						proc.LETHARGY.time *= (100 - imus.IMULETHARGY.block) / 100.0;
+						proc.LETHARGY.time = (int)(proc.LETHARGY.time * (100 - imus.IMULETHARGY.block) / 100.0);
 				}
 				if (proc.WARP.prob > 0 && imus.IMUWARP.block != 0) {
 					if (imus.IMUWARP.block > 0)
@@ -154,7 +156,7 @@ public abstract class AttackAb extends BattleObj {
 							e.warp(this);
 						proc.WARP.clear();
 					} else
-						proc.WARP.time *= (100 - imus.IMUWARP.block) / 100.0;
+						proc.WARP.time = (int)(proc.WARP.time * (100 - imus.IMUWARP.block) / 100.0);
 				}
 				if (proc.CURSE.time > 0 && imus.IMUCURSE.block != 0) {
 					if (imus.IMUCURSE.block > 0)
@@ -164,7 +166,7 @@ public abstract class AttackAb extends BattleObj {
 							e.curse(this, time);
 						proc.CURSE.clear();
 					} else
-						proc.CURSE.time *= (100 - imus.IMUCURSE.block) / 100.0;
+						proc.CURSE.time = (int)(proc.CURSE.time * (100 - imus.IMUCURSE.block) / 100.0);
 				}
 				if (proc.POISON.damage != 0 && imus.IMUPOI.block != 0 && checkAIImmunity(proc.POISON.damage, imus.IMUPOI.smartImu, imus.IMUPOI.block < 0)) {
 					if (imus.IMUPOI.block > 0)
@@ -174,7 +176,7 @@ public abstract class AttackAb extends BattleObj {
 							e.poison(this);
 						proc.POISON.clear();
 					} else
-						proc.POISON.damage *= (100 - imus.IMUPOI.block) / 100.0;
+						proc.POISON.damage = (int)(proc.POISON.damage * (100 - imus.IMUPOI.block) / 100.0);
 				}
 				if (proc.SEAL.time > 0 && imus.IMUSEAL.block != 0) {
 					if (imus.IMUSEAL.block > 0)
@@ -184,7 +186,7 @@ public abstract class AttackAb extends BattleObj {
 							e.seal(this, time);
 						proc.SEAL.clear();
 					} else
-						proc.SEAL.time *= (100 - imus.IMUSEAL.block) / 100.0;
+						proc.SEAL.time = (int)(proc.SEAL.time * (100 - imus.IMUSEAL.block) / 100.0);
 				}
 				if (proc.RAGE.time > 0 && imus.IMURAGE.block != 0) {
 					if (imus.IMURAGE.block > 0)
@@ -194,7 +196,7 @@ public abstract class AttackAb extends BattleObj {
 							e.enrage(this, time);
 						proc.RAGE.clear();
 					} else
-						proc.RAGE.time *= (100 - imus.IMURAGE.block) / 100.0;
+						proc.RAGE.time = (int)(proc.RAGE.time * (100 - imus.IMURAGE.block) / 100.0);
 				}
 				if (proc.HYPNO.time > 0 && imus.IMUHYPNO.block != 0) {
 					if (imus.IMUHYPNO.block > 0)
@@ -204,7 +206,7 @@ public abstract class AttackAb extends BattleObj {
 							e.hypnotize(this, time);
 						proc.HYPNO.clear();
 					} else
-						proc.HYPNO.time *= (100 - imus.IMUHYPNO.block) / 100.0;
+						proc.HYPNO.time = (int)(proc.HYPNO.time * (100 - imus.IMUHYPNO.block) / 100.0);
 				}
 				if (proc.ARMOR.time > 0 && imus.IMUARMOR.block != 0 && checkAIImmunity(proc.ARMOR.mult, imus.IMUARMOR.smartImu, imus.IMUARMOR.block < 0)) {
 					if (imus.IMUARMOR.block > 0)
@@ -214,7 +216,7 @@ public abstract class AttackAb extends BattleObj {
 							e.breakArmor(this, time);
 						proc.ARMOR.clear();
 					} else
-						proc.ARMOR.time *= (100 - imus.IMUARMOR.block) / 100.0;
+						proc.ARMOR.time = (int)(proc.ARMOR.time * (100 - imus.IMUARMOR.block) / 100.0);
 				}
 				if (proc.SPEED.time > 0 && imus.IMUSPEED.block != 0) {
 					boolean b;
@@ -231,7 +233,7 @@ public abstract class AttackAb extends BattleObj {
 								e.hasten(this, time);
 							proc.SPEED.clear();
 						} else
-							proc.SPEED.time *= (100 - imus.IMUSPEED.block) / 100.0;
+							proc.SPEED.time = (int)(proc.SPEED.time * (100 - imus.IMUSPEED.block) / 100.0);
 					}
 				}
 				if (handleMisc(e))
@@ -250,7 +252,7 @@ public abstract class AttackAb extends BattleObj {
 					if (imus.IMUSUMMON.block == 100)
 						proc.SUMMON.clear();
 					else
-						proc.SUMMON.mult *= (100 - imus.IMUSUMMON.block) / 100.0;
+						proc.SUMMON.mult = (int)(proc.SUMMON.mult * (100 - imus.IMUSUMMON.block) / 100.0);
 				}
 				if (proc.CRIT.mult > 0 && imus.CRITI.block != 0) {
 					if (imus.CRITI.block > 0)
@@ -314,21 +316,18 @@ public abstract class AttackAb extends BattleObj {
 	/**
 	 * Plays the default hit sound. If this attack has a custom sound effect, it is played over the in-game sound effects
 	 * @param isBase If attacked entity is base
-	 * @param alt Plays SE 0 if true, SE 1 if false
 	 */
-	public void playSound(boolean isBase, boolean alt) {
+	public void playSound(boolean isBase) {
 		if (isBase)
 			CommonStatic.setSE(SE_HIT_BASE);
-		else {
-			Identifier<Music> sfx0 = matk == null ? null : matk.getAudio(false);
-			Identifier<Music> sfx1 = matk == null ? null : matk.getAudio(true);
-			if (sfx0 == null && sfx1 == null)
-				CommonStatic.setSE(alt ? SE_HIT_0 : SE_HIT_1);
-			else if (alt || sfx1 == null)
-				CommonStatic.setSE(sfx0);
-			else
-				CommonStatic.setSE(sfx1);
-		}
+		if (isBase || playedSound)
+			return;
+		playedSound = true;
+		Identifier<Music> csfx = matk == null ? null : matk.getAudio();
+		if (csfx == null)
+			CommonStatic.setSE(Math.random() < 0.5 ? SE_HIT_0 : SE_HIT_1);
+		else
+			CommonStatic.setSE(csfx);
 	}
 
 	public void notifyEntity(Consumer<Entity> notifier) {

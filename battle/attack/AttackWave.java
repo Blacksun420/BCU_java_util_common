@@ -54,10 +54,9 @@ public class AttackWave extends AttackAb {
 
 	@Override
 	public void excuse() {
-		process();
-
 		if(attacker != null)
 			atk = ((AtkModelEntity)model).getEffMult(raw);
+		process();
 		for (AbEntity e : capt) {
 			if (e instanceof Entity) {
 				e.damaged(this);

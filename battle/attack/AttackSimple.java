@@ -135,13 +135,9 @@ public class AttackSimple extends AttackAb {
 		}
 		r.clear();
 		if (dire == 0) {
-			Identifier<Music> sfx0 = matk.getAudio(false);
-			Identifier<Music> sfx1 = matk.getAudio(true);
-			boolean b = sfx1 == null || attacker.basis.r.irDouble() < 0.5;
-			if (sfx0 != null && b)
-				CommonStatic.setSE(sfx0);
-			else if (!b)
-				CommonStatic.setSE(sfx1);
+			Identifier<Music> sfx = matk.getAudio();
+			if (sfx != null)
+				CommonStatic.setSE(sfx);
 		}
 		if (proc.WAVE.exists() && (!capt.isEmpty() || proc.WAVE.type.hitless)) {
 			int dire = model.getDire();
@@ -194,7 +190,6 @@ public class AttackSimple extends AttackAb {
 			if(attacker != null)
 				attacker.summoned.add(volcano);
 		}
-
 		if (!capt.isEmpty() && proc.BLAST.exists()) {
 			int dire = model.getDire();
 			Proc.BLAST blast = proc.BLAST;

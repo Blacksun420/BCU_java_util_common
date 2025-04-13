@@ -57,7 +57,7 @@ public class StageBasis extends BattleObj {
 	public final float boss_spawn;
 	public final int[] shakeCoolDown = {0, 0};
 
-	public float siz;
+	public float siz, shockP = 700f;
 	public int work_lv, money, maxMoney, maxCannon, upgradeCost, max_num, pos;
 	public int frontLineup = 0;
 	public boolean lineupChanging = false;
@@ -615,7 +615,7 @@ public class StageBasis extends BattleObj {
 				EEnemy e = est.allow();
 
 				if (e != null) {
-					e.added(1, e.mark >= 1 ? boss_spawn : 700f + e.door);
+					e.added(1, (e.mark >= 1 ? boss_spawn : 700f) + e.door);
 
 					if (e.door != 0 && e.getAnim().type != AnimU.TYPEDEF[AnimU.ENTRY] && !e.getAnim().anim().getEAnim(AnimU.TYPEDEF[AnimU.WALK]).unusable())
 						doors.add(new DoorCont(this, e));
@@ -734,9 +734,10 @@ public class StageBasis extends BattleObj {
 					entity.interrupt(INT_SW, KB_DIS[INT_SW]);
 					entity.postUpdate();
 				}
-			lea.add(new EAnimCont(700, 9, effas().A_SHOCKWAVE.getEAnim(DefEff.DEF)));
+			lea.add(new EAnimCont(shockP, 9, effas().A_SHOCKWAVE.getEAnim(DefEff.DEF)));
 			CommonStatic.setSE(SE_BOSS);
 			shock = false;
+			shockP = 700;
 		}
 
 		if (timeFlow > 0) {

@@ -49,6 +49,7 @@ public class AttackBlast extends AttackAb {
     public void excuse() {
         atk = ((AtkModelEntity)model).getEffMult(raw);
         atk -= (int)(lv * reduction / 100 * atk);
+        process();
 
         for (AbEntity e : capt)
             e.damaged(this);

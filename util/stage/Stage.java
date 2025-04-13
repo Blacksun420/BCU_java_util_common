@@ -183,11 +183,11 @@ public class Stage extends Data
 					data[SCDef.R0] *= 2;
 					data[SCDef.R1] *= 2;
 
-					if (timeLimit == 0 && intl > 9 && data[5] > 100 && data[9] == 100) {
-						data[SCDef.M] = data[SCDef.C0];
+					if (timeLimit == 0 && data[SCDef.C0] > 100) {
+						if (intl > 9 && data[SCDef.M] == 100)
+							data[SCDef.M] = data[SCDef.C0];
 						data[SCDef.C0] = 100;
 					}
-
 					if (ss.length > 11 && CommonStatic.isInteger(ss[11])) {
 						data[SCDef.M1] = Integer.parseInt(ss[11]);
 
@@ -198,7 +198,6 @@ public class Stage extends Data
 
 					if(ss.length > 12 && CommonStatic.isInteger(ss[12]) && Integer.parseInt(ss[12]) == 1)
 						data[SCDef.S0] *= -1;
-
 					if(ss.length > 13 && CommonStatic.isInteger(ss[13]))
 						data[SCDef.KC] = Integer.parseInt(ss[13]);
 

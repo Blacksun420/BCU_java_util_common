@@ -127,7 +127,7 @@ public class AssetLoader {
 				if (!f.getName().startsWith("temp_"))
 					continue;
 				String fileName = f.getName().substring(5, f.getName().indexOf('.'));//5 is length of temp
-				if (prev.contains(fileName + ".assets.bcuzips"))
+				if (prev.contains("asset_" + fileName))
 					Context.delete(f);
 			}
 		} catch (Exception e) {

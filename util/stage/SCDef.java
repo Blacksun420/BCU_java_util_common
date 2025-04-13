@@ -51,14 +51,11 @@ public class SCDef implements Copable<SCDef> {
 			number = arr[N];
 			boss = arr[B];
 			multiple = arr[M];
-			group = arr[G];
 			spawn_0 = arr[S0];
 			respawn_0 = arr[R0];
-			castle_0 = arr[C0];
+			castle_0 = castle_1 = arr[C0];
 			layer_0 = arr[L0];
-			spawn_1 = arr[S1];
 			respawn_1 = arr[R1];
-			castle_1 = arr[C1];
 			layer_1 = arr[L1];
 			mult_atk = arr[M1];
 			kill_count = arr[KC];
@@ -75,8 +72,7 @@ public class SCDef implements Copable<SCDef> {
 		}
 	}
 
-	public static final int SIZE = 15, E = 0, N = 1, S0 = 2, R0 = 3, R1 = 4, C0 = 5, L0 = 6, L1 = 7, B = 8, M = 9,
-			S1 = 10, C1 = 11, G = 12, M1 = 13, KC = 14;
+	public static final int SIZE = 12, E = 0, N = 1, S0 = 2, R0 = 3, R1 = 4, C0 = 5, L0 = 6, L1 = 7, B = 8, M = 9, M1 = 10, KC = 11;
 
 	@JsonField(defval = "isEmpty")
 	public Line[] datas;
