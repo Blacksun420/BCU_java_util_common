@@ -60,6 +60,8 @@ public class AttackSimple extends AttackAb {
 					(attacker.dire == 1 && dire >= 1 && sta >= model.b.getBase(attacker.dire).pos))
 				le.add(model.b.getBase(attacker.dire));
 		}
+		if (attacker != null && attacker.getProc().AI.ignHypno)
+			le.removeIf(e -> e instanceof Entity && ((Entity)e).status.hypno > 0);
 		le.removeIf(attacked::contains);
 		if (canon > -2 || model instanceof Sniper)
 			le.remove(model.b.ebase);

@@ -2638,6 +2638,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				if (aura.exists()) {
 					int dir = i == 0 ? getDire() : -getDire();
 					List<AbEntity> le = basis.inRange(getTouch(), dir, pos + (aura.min_dis * getDire()), pos + (aura.max_dis * getDire()), false);
+					if (getProc().AI.ignHypno)
+						le.removeIf(e -> e instanceof Entity && ((Entity)e).status.hypno > 0);
 					if (aura.skip_self)
 						le.remove(this);
 					if (dir == 1 || basis.getBase(-1) instanceof ECastle)
@@ -3118,6 +3120,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		List<AbEntity> le = basis.inRange(getTouch(), getDire(), ds[0], ds[1], false);
 		if (status.hypno > 0)
 			le.remove(this);
+		if (getProc().AI.ignHypno)
+			le.removeIf(e -> e instanceof Entity && ((Entity)e).status.hypno > 0);
 
 		float bpos = basis.getBase(getDire()).pos;
 		float poss = status.hypno == 0 ? pos : pos + (data.getWidth() * -dire);

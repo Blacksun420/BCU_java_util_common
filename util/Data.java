@@ -909,7 +909,10 @@ public class Data {
 			@Order(3)
 			@JsonField(defval = "false")
 			public boolean danger;
-			//@Order(4)
+			@Order(4)
+			@JsonField(defval = "false")
+			public boolean ignHypno;
+			//@Order(5)
 			//@JsonField(defval = "false")
 			//public boolean manualcontrol; //The player controls the unit manually; Arrow keys to move, spacebar to attack
 		}

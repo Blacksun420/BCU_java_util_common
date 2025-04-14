@@ -231,6 +231,29 @@ public class UserProfile {
 		loadPacks(false);
 	}
 
+	public static boolean addPack(File f) {
+		if (!f.getName().endsWith(".pack.bcuzip") && !f.getName().endsWith(".userpack"))
+			return false;
+		UserPack pack = CommonStatic.ctx.noticeErr(() -> readZipPack(f), ErrType.WARN,
+				"failed to load external pack " + f, () -> setStatic(CURRENT_PACK, null));
+		if (pack == null)
+			return false;
+		UserPack p = getUserPack(pack.desc.id);
+		if (p != null) {
+			CommonStatic.ctx.printErr(ErrType.WARN, ((ZipSource) p.source).getPackFile().getName()
+					+ " has same ID with " + ((ZipSource) pack.source).getPackFile().getName());
+			return false;
+		}
+		checkMissingParents(pack);
+		UserProfile profile = profile();
+
+		profile.pending = new HashMap<>();
+		profile.pending.put(pack.desc.id, pack);
+        boolean added = profile.add(pack);
+		profile.pending = null;
+		return added;
+	}
+
 	public static UserPack initJsonPack(String id) throws Exception {
 		File f = CommonStatic.ctx.getWorkspaceFile("./" + id + "/pack.json");
 		File folder = f.getParentFile();
@@ -247,7 +270,7 @@ public class UserProfile {
 	}
 
 	public static void checkMissingParents(UserPack pk) {
-		SortedPackSet<String> deps = pk.preGetDependencies();
+		SortedPackSet<String> deps = new SortedPackSet<>(pk.preGetDependencies());
 		deps.removeIf(profile.packmap::containsKey);
 		if (!deps.isEmpty())
 			CommonStatic.ctx.printErr(ErrType.WARN, pk.desc.names + " (" + pk.desc.id + ")"
@@ -356,9 +379,8 @@ public class UserProfile {
 	}
 
 	public static void unloadAllUserPacks() {
-		for (UserPack pack : getUserPacks()) {
+		for (UserPack pack : getUserPacks())
 			pack.unregister();
-		}
 
 		profile().packmap.clear();
 		profile().packlist.clear();
@@ -395,7 +417,6 @@ public class UserProfile {
 	private boolean add(UserPack pack) {
 		packlist.add(pack);
 		SortedPackSet<String> deps = pack.editable ? pack.desc.dependency : pack.preGetDependencies();
-
 		if (!canAdd(deps))
 			return false;
 

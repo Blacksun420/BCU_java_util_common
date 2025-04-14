@@ -37,8 +37,8 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 	@JsonField(generic = Trait.class, alias = Identifier.class, backCompat = JsonField.CompatType.FORK, defval = "isEmpty")
 	public SortedPackSet<Trait> traits = new SortedPackSet<>();//Gives attacks their own typings
 
-	@JsonField(generic = Music.class, alias = Identifier.class, defval = "isEmpty")
-	public SortedPackSet<Music> audios = new SortedPackSet<>();//Gives custom audio to attacks
+	@JsonField(generic = Identifier.class, defval = "isEmpty")
+	public SortedPackSet<Identifier<Music>> audios = new SortedPackSet<>();//Gives custom audio to attacks
 
 	@JsonField(defval = "isBlank")
 	public Proc proc = Proc.blank();
@@ -219,9 +219,10 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 	public Identifier<Music> getAudio() {
 		if (audios.isEmpty())
 			return null;
-		return audios.get(audios.size() == 1 ? 0 : (int)(Math.random() * audios.size())).id;
+		return audios.get(audios.size() == 1 ? 0 : (int)(Math.random() * audios.size()));
 	}
 
+	@SuppressWarnings("unchecked")
 	@JsonDecoder.OnInjected
 	public void onInjected(JsonObject jobj) {
 		if (proc == null)
@@ -232,9 +233,9 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 				traits.addAll(ce.traits);
 		}
 		if (jobj.has("audio"))
-			audios.add((Music)JsonDecoder.decode(jobj.get("audio"), Identifier.class).get());
+			audios.add((Identifier<Music>)JsonDecoder.decode(jobj.get("audio"), Identifier.class));
 		if (jobj.has("audio1"))
-			audios.add((Music)JsonDecoder.decode(jobj.get("audio1"), Identifier.class).get());
+			audios.add((Identifier<Music>)JsonDecoder.decode(jobj.get("audio1"), Identifier.class));
 		if (proc.WARP.dis_1 < proc.WARP.dis)
 			proc.WARP.dis_1 = proc.WARP.dis;
 	}
