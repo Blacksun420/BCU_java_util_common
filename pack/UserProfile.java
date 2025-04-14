@@ -154,10 +154,8 @@ public class UserProfile {
 
 	public static void loadPacks(boolean loadWorkspace) {
 		UserProfile profile = profile();
-
-		if (profile.pending == null) {
+		if (profile.pending == null)
 			profile.pending = new HashMap<>();
-		}
 
 		File packs = CommonStatic.ctx.getAuxFile("./packs");
 		File workspace = CommonStatic.ctx.getWorkspaceFile(".");
@@ -169,7 +167,6 @@ public class UserProfile {
 
 					if (pack != null) {
 						UserPack p = profile.pending.put(pack.desc.id, pack);
-
 						if (p != null)
 							CommonStatic.ctx.printErr(ErrType.WARN, ((ZipSource) p.source).getPackFile().getName()
 									+ " has same ID with " + ((ZipSource) pack.source).getPackFile().getName());
@@ -231,27 +228,24 @@ public class UserProfile {
 		loadPacks(false);
 	}
 
-	public static boolean addPack(File f) {
+	public static UserPack addExternalPack(File f) {
 		if (!f.getName().endsWith(".pack.bcuzip") && !f.getName().endsWith(".userpack"))
-			return false;
+			return null;
 		UserPack pack = CommonStatic.ctx.noticeErr(() -> readZipPack(f), ErrType.WARN,
 				"failed to load external pack " + f, () -> setStatic(CURRENT_PACK, null));
 		if (pack == null)
-			return false;
+			return null;
 		UserPack p = getUserPack(pack.desc.id);
 		if (p != null) {
 			CommonStatic.ctx.printErr(ErrType.WARN, ((ZipSource) p.source).getPackFile().getName()
 					+ " has same ID with " + ((ZipSource) pack.source).getPackFile().getName());
-			return false;
+			return null;
 		}
-		checkMissingParents(pack);
-		UserProfile profile = profile();
-
-		profile.pending = new HashMap<>();
-		profile.pending.put(pack.desc.id, pack);
-        boolean added = profile.add(pack);
-		profile.pending = null;
-		return added;
+		if (!profile().add(pack)) {
+			checkMissingParents(pack);
+			return null;
+		}
+		return pack;
 	}
 
 	public static UserPack initJsonPack(String id) throws Exception {
@@ -420,7 +414,7 @@ public class UserProfile {
 		if (!canAdd(deps))
 			return false;
 
-		CommonStatic.ctx.loadProg(1.0 * packmap.size() / pending.size(), "Reading " + (pack.desc.names.toString().isEmpty() ? pack.desc.id : pack.desc.names.toString()) + " data...");
+		CommonStatic.ctx.loadProg(pending == null ? 0.5 : 1.0 * packmap.size() / pending.size(), "Reading " + (pack.desc.names.toString().isEmpty() ? pack.desc.id : pack.desc.names.toString()) + " data...");
 		if (CommonStatic.ctx.noticeErr(pack::load, ErrType.WARN, "failed to load pack " + pack.desc, () -> setStatic(CURRENT_PACK, null))) {
 			packmap.put(pack.desc.id, pack);
 		} else
