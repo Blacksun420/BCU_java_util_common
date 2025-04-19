@@ -54,6 +54,12 @@ public class Data {
 				nps[3] = Math.min(nps[3], (int)(100-prob));
 				return super.setTalent(nps);
 			}
+
+			@Override
+			public void add(ProcItem proc) {
+				super.add(proc);
+				prob = Math.max(0, Math.min(prob, 100));
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -171,6 +177,13 @@ public class Data {
 				nps[5] = Math.min(nps[5], (int)(100-block));
 				return super.setTalent(nps);
 			}
+
+			@Override
+			public void add(ProcItem proc) {
+				super.add(proc);
+				mult = Math.max(0, Math.min(mult, 100));
+				block = Math.max(0, Math.min(block, 100));
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD) // Similar to IMU. Supports ids
@@ -215,16 +228,11 @@ public class Data {
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class WAVE extends PROB {
-			@JsonClass(noTag = NoTag.LOAD)
-			public static class TYPE extends IntType {
-				@Order(0)
-				public boolean hitless;
-			}
 			@Order(1)
 			public int lv;
 			@Order(3)
-			@JsonField(defval = "hitless false")
-			public TYPE type = new TYPE();
+			@JsonField(defval = "false")
+			public boolean hitless;
 			@Order(4)
 			@JsonField(defval = "false")
 			public boolean inverted;
@@ -238,6 +246,18 @@ public class Data {
 				nps[4] = Math.max(min, nps[4]);
 				nps[5] = Math.max(min, nps[5]);
 				return super.setTalent(nps);
+			}
+
+			@Override
+			public void add(ProcItem proc) {
+				super.add(proc);
+				lv = Math.max(1, lv);
+			}
+
+			@JsonDecoder.OnInjected
+			public void inject(JsonObject jobj) {
+				if (jobj.has("type") && jobj.getAsJsonObject("type").has("hitless"))
+					hitless = jobj.getAsJsonObject("type").get("hitless").getAsBoolean();
 			}
 		}
 
@@ -256,11 +276,6 @@ public class Data {
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class VOLC extends PROB {
-			@JsonClass(noTag = NoTag.LOAD)
-			public static class TYPE extends IntType {
-				@Order(0)
-				public boolean hitless;
-			}
 			@Order(1)
 			public int dis_0;
 			@Order(2)
@@ -268,8 +283,8 @@ public class Data {
 			@Order(3)
 			public int time;
 			@Order(5)
-			@JsonField(defval = "hitless false")
-			public TYPE type = new TYPE();
+			@JsonField(defval = "false")
+			public boolean hitless;
 			@Order(6)
 			@JsonField(defval = "isEmpty")
 			public ProcID pid = new ProcID();
@@ -288,6 +303,19 @@ public class Data {
 				nps[6] = Math.max(d0, nps[6]);
 				nps[7] = Math.max(d1, nps[7]);
 				return super.setTalent(nps);
+			}
+
+			@Override
+			public void add(ProcItem proc) {
+				super.add(proc);
+				spawns = Math.max(1, spawns);
+				time = Math.max(20, time);
+			}
+
+			@JsonDecoder.OnInjected
+			public void inject(JsonObject jobj) {
+				if (jobj.has("type") && jobj.getAsJsonObject("type").has("hitless"))
+					hitless = jobj.getAsJsonObject("type").get("hitless").getAsBoolean();
 			}
 		}
 
@@ -313,6 +341,13 @@ public class Data {
 			@Order(5)
 			@JsonField(defval = "isEmpty")
 			public ProcID pid = new ProcID();
+
+			@Override
+			public void add(ProcItem proc) {
+				super.add(proc);
+				lv = Math.max(1, lv);
+				reduction = Math.min(reduction, 100f / lv);
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -359,28 +394,12 @@ public class Data {
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class REVIVE extends ProcItem {
-
-			@JsonClass(noTag = NoTag.LOAD)
-			public static class TYPE extends IntType {
-				@BitCount(2)
-				@Order(0)
-				@JsonField(defval = "0")
-				public int range_type;
-				@Order(1)
-				@JsonField(defval = "false")
-				public boolean imu_zkill;
-				@Order(2)
-				@JsonField(defval = "false")
-				public boolean revive_non_zombie;
-				@Order(3)
-				@JsonField(defval = "false")
-				public boolean revive_others;
-
-				public boolean unencodable() {
-					return !(imu_zkill || revive_others);
-				}
+			public enum RANGE {
+				ACTIVE,
+				PRESENT,
+				ALIVE,
+				FOREVER
 			}
-
 			@Order(0)
 			public int count;
 			@Order(1)
@@ -394,8 +413,17 @@ public class Data {
 			@JsonField(defval = "0")
 			public int dis_1;
 			@Order(5)
-			@JsonField(defval = "unencodable")
-			public TYPE type = new TYPE();
+			@JsonField(defval = "0")
+			public RANGE range_type;
+			@Order(6)
+			@JsonField(defval = "false")
+			public boolean imu_zkill;
+			@Order(7)
+			@JsonField(defval = "false")
+			public boolean revive_non_zombie;
+			@Order(8)
+			@JsonField(defval = "false")
+			public boolean revive_others;
 
 			@Override
 			public int[] setTalent(int[] nps) {
@@ -409,16 +437,25 @@ public class Data {
 				nps[11] = Math.max(d1, nps[11]);
 				return super.setTalent(nps);
 			}
+
+			@JsonDecoder.OnInjected
+			public void inject(JsonObject jobj) {
+				if (jobj.has("type")) {
+					JsonObject type = jobj.getAsJsonObject("type");
+					if (type.has("range_type"))
+						range_type = RANGE.values()[type.get("range_type").getAsInt()];
+					if (type.has("imu_zkill"))
+						imu_zkill = type.get("imu_zkill").getAsBoolean();
+					if (type.has("revive_non_zombie"))
+						revive_non_zombie = type.get("revive_non_zombie").getAsBoolean();
+					if (type.has("revive_others"))
+						revive_others = type.get("revive_others").getAsBoolean();
+				}
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD) // Starred Barrier
 		public static class BARRIER extends ProcItem {
-
-			@JsonClass(noTag = NoTag.LOAD)
-			public static class TYPE extends IntType {
-				@Order(0)
-				public boolean magnif;
-			}
 			@Order(0)
 			public int health;
 			@Order(1)
@@ -428,8 +465,8 @@ public class Data {
 			@JsonField(defval = "0")
 			public int timeout;
 			@Order(3)
-			@JsonField(defval = "magnif false")
-			public TYPE type = new TYPE();
+			@JsonField(defval = "false")
+			public boolean magnif;
 
 			@Override
 			public int[] setTalent(int[] nps) {
@@ -437,6 +474,12 @@ public class Data {
 				nps[2] = Math.max(min, nps[2]);
 				nps[3] = Math.max(min, nps[3]);
 				return super.setTalent(nps);
+			}
+
+			@JsonDecoder.OnInjected
+			public void inject(JsonObject jobj) {
+				if (jobj.has("type") && jobj.getAsJsonObject("type").has("magnif"))
+					magnif = jobj.getAsJsonObject("type").get("magnif").getAsBoolean();
 			}
 		}
 
@@ -458,13 +501,9 @@ public class Data {
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class BSTHUNT extends ProcItem {
-			@JsonClass(noTag = NoTag.LOAD)
-			public static class TYPE extends IntType {
-				@Order(0)
-				public boolean active;
-			}
 			@Order(0)
-			public TYPE type = new TYPE();
+			@JsonField(defval = "dodges")
+			public boolean active;
 			@Order(1)
 			@JsonField(defval = "0")
 			public float prob;
@@ -481,6 +520,13 @@ public class Data {
 				nps[3] = Math.min(nps[3], (int)(100-prob));
 				return super.setTalent(nps);
 			}
+			public boolean dodges() {
+				return prob > 0;
+			}
+			@JsonDecoder.OnInjected
+			public void inject() {
+				active = true;
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -495,11 +541,6 @@ public class Data {
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class AURA extends ProcItem {
-			@JsonClass(noTag = NoTag.LOAD)
-			public static class TYPE extends IntType {
-				@Order(0)
-				public boolean trait; //classic ignore/consider trait
-			}
 			@Order(0)
 			@JsonField(defval = "0")
 			public int amult; //Modifies Damage
@@ -517,8 +558,8 @@ public class Data {
 			@Order(5)
 			public int max_dis;
 			@Order(6)
-			@JsonField(defval = "trait false")
-			public TYPE type = new TYPE();
+			@JsonField(defval = "false")
+			public boolean trait;
 			@Order(7)
 			@JsonField(defval = "false")
 			public boolean skip_self;
@@ -541,18 +582,25 @@ public class Data {
 				nps[13] = Math.max(d1, nps[13]);
 				return super.setTalent(nps);
 			}
+
+			@JsonDecoder.OnInjected
+			public void inject(JsonObject jobj) {
+				if (jobj.has("type") && jobj.getAsJsonObject("type").has("trait"))
+					trait = jobj.getAsJsonObject("type").get("trait").getAsBoolean();
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class LETHARGY extends PTMS {
-			@JsonClass(noTag = NoTag.LOAD)
-			public static class TYPE extends IntType {
-				@Order(0)
-				public boolean percentage;
-			}
 			@Order(3)
-			@JsonField(defval = "percentage false")
-			public TYPE type = new TYPE();
+			@JsonField(defval = "false")
+			public boolean percentage;
+
+			@JsonDecoder.OnInjected
+			public void inject(JsonObject jobj) {
+				if (jobj.has("type") && jobj.getAsJsonObject("type").has("percentage"))
+					percentage = jobj.getAsJsonObject("type").get("percentage").getAsBoolean();
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -574,34 +622,37 @@ public class Data {
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class POISON extends PT {
-
-			@JsonClass(noTag = NoTag.LOAD)
-			public static class TYPE extends IntType {
-				@BitCount(2)
-				@Order(0)
-				@JsonField(defval = "0")
-				public int damage_type;
-				@Order(1)
-				@JsonField(defval = "false")
-				public boolean unstackable;
-				@Order(2)
-				@JsonField(defval = "false")
-				public boolean ignoreMetal;
-				@Order(3)
-				@JsonField(defval = "false")
-				public boolean modifAffected;
-
-				public boolean unencodable() {
-					return !(damage_type > 0 || unstackable || ignoreMetal || modifAffected);
-				}
-			}
 			@Order(2)
 			public int damage;
 			@Order(3)
 			public int itv;
 			@Order(4)
-			@JsonField(defval = "unencodable")
-			public TYPE type = new TYPE();
+			@JsonField(defval = "0")
+			public int damage_type;
+			@Order(5)
+			@JsonField(defval = "false")
+			public boolean unstackable;
+			@Order(6)
+			@JsonField(defval = "false")
+			public boolean ignoreMetal;
+			@Order(7)
+			@JsonField(defval = "false")
+			public boolean modifAffected;
+
+			@JsonDecoder.OnInjected
+			public void inject(JsonObject jobj) {
+				if (jobj.has("type")) {
+					JsonObject type = jobj.getAsJsonObject("type");
+					if (type.has("damage_type"))
+						damage_type = type.get("damage_type").getAsInt();
+					if (type.has("unstackable"))
+						unstackable = type.get("unstackable").getAsBoolean();
+					if (type.has("ignoreMetal"))
+						ignoreMetal = type.get("ignoreMetal").getAsBoolean();
+					if (type.has("modifAffected"))
+						modifAffected = type.get("modifAffected").getAsBoolean();
+				}
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -651,35 +702,14 @@ public class Data {
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class SUMMON extends PROB {
-
-			@JsonClass(noTag = NoTag.LOAD)
-			public static class TYPE extends IntType {
-				@BitCount(2)
-				@Order(0)
-				@JsonField(defval = "0")
-				public int anim_type;
-				@Order(1)
-				@JsonField(defval = "false")
-				public boolean ignore_limit;
-				@Order(2)
-				@JsonField(defval = "false")
-				public boolean fix_buff;
-				@Order(3)
-				@JsonField(defval = "false")
-				public boolean same_health;
-				@Order(4)
-				@JsonField(defval = "false")
-				public boolean bond_hp;
-				@Order(5)
-				@JsonField(defval = "false")
-				public boolean on_hit;
-				@Order(6)
-				@JsonField(defval = "false")
-				public boolean on_kill;
-				@BitCount(2)
-				@Order(7)
-				@JsonField(defval = "0")
-				public int pass_proc;
+			public enum ANIM {
+				NONE,
+				WARP,
+				BURROW,
+				BURROW_DISABLE,
+				ENTRY,
+				ATTACK,
+				EVERYWHERE_DOOR
 			}
 
 			@Order(1)
@@ -701,26 +731,65 @@ public class Data {
 			@JsonField(defval = "9")
 			public int max_layer;
 			@Order(7)
-			public TYPE type = new TYPE();
+			@JsonField(defval = "NONE")
+			public ANIM anim_type;
 			@Order(8)
+			@JsonField(defval = "false")
+			public boolean ignore_limit;
+			@Order(9)
+			@JsonField(defval = "false")
+			public boolean fix_buff;
+			@Order(10)
+			@JsonField(defval = "false")
+			public boolean same_health;
+			@Order(11)
+			@JsonField(defval = "false")
+			public boolean bond_hp;
+			@Order(12)
+			@JsonField(defval = "false")
+			public boolean on_hit;
+			@Order(13)
+			@JsonField(defval = "false")
+			public boolean on_kill;
+			@Order(14)
+			@JsonField(defval = "0")
+			public int pass_proc;
+			@Order(15)
 			@JsonField(defval = "0")
 			public int time;
-			@Order(9)
+			@Order(16)
 			@JsonField(defval = "1")
 			public int amount;
-			@Order(10)
+			@Order(17)
 			@JsonField(defval = "1")
 			public int form;
+
+			@JsonDecoder.OnInjected
+			public void inject(JsonObject jobj) {
+				if (jobj.has("type")) {
+					JsonObject type = jobj.getAsJsonObject("type");
+					if (type.has("anim_type"))
+						anim_type = ANIM.values()[type.get("anim_type").getAsInt()];
+					if (type.has("ignore_limit"))
+						ignore_limit = type.get("ignore_limit").getAsBoolean();
+					if (type.has("fix_buff"))
+						fix_buff = type.get("fix_buff").getAsBoolean();
+					if (type.has("same_health"))
+						same_health = type.get("same_health").getAsBoolean();
+					if (type.has("bond_hp"))
+						bond_hp = type.get("bond_hp").getAsBoolean();
+					if (type.has("on_hit"))
+						on_hit = type.get("on_hit").getAsBoolean();
+					if (type.has("on_kill"))
+						on_kill = type.get("on_kill").getAsBoolean();
+					if (type.has("pass_proc"))
+						pass_proc = type.get("pass_proc").getAsInt();
+				}
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class THEME extends PT {
-
-			@JsonClass(noTag = NoTag.LOAD)
-			public static class TYPE extends IntType {
-				@Order(0)
-				public boolean kill;
-			}
 			@Order(2)
 			@JsonField(defval = "null")
 			public Identifier<Background> id;
@@ -728,37 +797,18 @@ public class Data {
 			@JsonField(defval = "null")
 			public Identifier<Music> mus;
 			@Order(4)
-			@JsonField(defval = "kill false")
-			public TYPE type = new TYPE();
+			@JsonField(defval = "false")
+			public boolean kill;
+
+			@JsonDecoder.OnInjected
+			public void inject(JsonObject jobj) {
+				if (jobj.has("type") && jobj.getAsJsonObject("type").has("kill"))
+					kill = jobj.getAsJsonObject("type").get("kill").getAsBoolean();
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class COUNTER extends PROB {
-			@JsonClass(noTag = NoTag.LOAD)
-			public static class TYPE extends IntType {
-				@BitCount(2)
-				@Order(0)
-				@JsonField(defval = "0")
-				public int counterWave;
-				@BitCount(2)
-				@Order(1)
-				@JsonField(defval = "0")
-				public int procType;
-				@Order(1)
-				@JsonField(defval = "false")
-				public boolean useOwnDamage;
-				@Order(2)
-				@JsonField(defval = "false")
-				public boolean outRange;
-				@Order(3)
-				@JsonField(defval = "false")
-				public boolean areaAttack;
-
-				public boolean unencodable() {
-					return !(counterWave > 0 || procType > 0 || useOwnDamage || outRange || areaAttack);
-				}
-			}
-
 			@Order(1)
 			public int damage;
 			@Order(2)
@@ -766,38 +816,57 @@ public class Data {
 			@Order(3)
 			public int maxRange;
 			@Order(4)
-			@JsonField(defval = "unencodable")
-			public TYPE type = new TYPE();
+			@JsonField(defval = "0")
+			public int counterWave;
 			@Order(5)
 			@JsonField(defval = "0")
+			public int procType;
+			@Order(6)
+			@JsonField(defval = "false")
+			public boolean useOwnDamage;
+			@Order(7)
+			@JsonField(defval = "false")
+			public boolean outRange;
+			@Order(8)
+			@JsonField(defval = "false")
+			public boolean areaAttack;
+			@Order(9)
+			@JsonField(defval = "0")
 			public int maxDamage;
+
+			@JsonDecoder.OnInjected
+			public void inject(JsonObject jobj) {
+				if (jobj.has("type")) {
+					JsonObject type = jobj.getAsJsonObject("type");
+					if (type.has("counterWave"))
+						counterWave = type.get("counterWave").getAsInt();
+					if (type.has("procType"))
+						procType = type.get("procType").getAsInt();
+					if (type.has("useOwnDamage"))
+						useOwnDamage = type.get("useOwnDamage").getAsBoolean();
+					if (type.has("outRange"))
+						outRange = type.get("outRange").getAsBoolean();
+					if (type.has("areaAttack"))
+						areaAttack = type.get("areaAttack").getAsBoolean();
+				}
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class DMGCUT extends PROB {
-			@JsonClass(noTag = NoTag.LOAD)
-			public static class TYPE extends IntType {
-				@Order(0)
-				@JsonField(defval = "false")
-				public boolean traitIgnore;
-				@Order(1)
-				@JsonField(defval = "false")
-				public boolean procs;
-				@Order(2)
-				@JsonField(defval = "false")
-				public boolean magnif;
-
-				public boolean unencodable() {
-					return !(traitIgnore || procs || magnif);
-				}
-			}
 			@Order(1)
 			public int dmg;
 			@Order(2)
 			public int reduction;
 			@Order(3)
-			@JsonField(defval = "unencodable")
-			public TYPE type = new TYPE();
+			@JsonField(defval = "false")
+			public boolean traitIgnore;
+			@Order(4)
+			@JsonField(defval = "false")
+			public boolean procs;
+			@Order(5)
+			@JsonField(defval = "false")
+			public boolean magnif;
 
 			@Override
 			public int[] setTalent(int[] nps) {
@@ -806,53 +875,56 @@ public class Data {
 				nps[5] = Math.max(min, nps[5]);
 				return super.setTalent(nps);
 			}
+
+			@JsonDecoder.OnInjected
+			public void inject(JsonObject jobj) {
+				if (jobj.has("type")) {
+					JsonObject type = jobj.getAsJsonObject("type");
+					if (type.has("traitIgnore"))
+						traitIgnore = type.get("traitIgnore").getAsBoolean();
+					if (type.has("procs"))
+						procs = type.get("procs").getAsBoolean();
+					if (type.has("magnif"))
+						magnif = type.get("magnif").getAsBoolean();
+				}
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class DMGCAP extends PROB {
-			@JsonClass(noTag = NoTag.LOAD)
-			public static class TYPE extends IntType {
-				@Order(0)
-				@JsonField(defval = "false")
-				public boolean traitIgnore;
-				@Order(1)
-				@JsonField(defval = "false")
-				public boolean nullify;
-				@Order(2)
-				@JsonField(defval = "false")
-				public boolean procs;
-				@Order(3)
-				@JsonField(defval = "false")
-				public boolean magnif;
-
-				public boolean unencodable() {
-					return !(traitIgnore || nullify || procs || magnif);
-				}
-			}
 			@Order(1)
 			public int dmg;
 			@Order(2)
-			public TYPE type = new TYPE();
+			@JsonField(defval = "false")
+			public boolean traitIgnore;
+			@Order(3)
+			@JsonField(defval = "false")
+			public boolean nullify;
+			@Order(4)
+			@JsonField(defval = "false")
+			public boolean procs;
+			@Order(5)
+			@JsonField(defval = "false")
+			public boolean magnif;
+
+			@JsonDecoder.OnInjected
+			public void inject(JsonObject jobj) {
+				if (jobj.has("type")) {
+					JsonObject type = jobj.getAsJsonObject("type");
+					if (type.has("traitIgnore"))
+						traitIgnore = type.get("traitIgnore").getAsBoolean();
+					if (type.has("nullify"))
+						nullify = type.get("nullify").getAsBoolean();
+					if (type.has("procs"))
+						procs = type.get("procs").getAsBoolean();
+					if (type.has("magnif"))
+						magnif = type.get("magnif").getAsBoolean();
+				}
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class REMOTESHIELD extends PROB {
-			@JsonClass(noTag = NoTag.LOAD)
-			public static class TYPE extends IntType {
-				@Order(0)
-				@JsonField(defval = "false")
-				public boolean traitCon;
-				@Order(1)
-				@JsonField(defval = "false")
-				public boolean procs;
-				@Order(2)
-				@JsonField(defval = "false")
-				public boolean waves;
-
-				public boolean unencodable() {
-					return !(traitCon || procs || waves);
-				}
-			}
 			@Order(1)
 			public int minrange;
 			@Order(2)
@@ -864,7 +936,14 @@ public class Data {
 			@JsonField(defval = "0")
 			public int block;
 			@Order(5)
-			public TYPE type = new TYPE();
+			@JsonField(defval = "false")
+			public boolean traitCon;
+			@Order(6)
+			@JsonField(defval = "false")
+			public boolean procs;
+			@Order(7)
+			@JsonField(defval = "false")
+			public boolean waves;
 
 			@Override
 			public int[] setTalent(int[] nps) {
@@ -880,23 +959,23 @@ public class Data {
 
 				return super.setTalent(nps);
 			}
+
+			@JsonDecoder.OnInjected
+			public void inject(JsonObject jobj) {
+				if (jobj.has("type")) {
+					JsonObject type = jobj.getAsJsonObject("type");
+					if (type.has("traitCon"))
+						traitCon = type.get("traitCon").getAsBoolean();
+					if (type.has("procs"))
+						procs = type.get("procs").getAsBoolean();
+					if (type.has("waves"))
+						waves = type.get("waves").getAsBoolean();
+				}
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class AI extends ProcItem {
-			@JsonClass(noTag = NoTag.LOAD)
-			public static class TYPE extends IntType {
-				@Order(0)
-				@JsonField(defval = "false")
-				public boolean calcstrongest;
-				@Order(1)
-				@JsonField(defval = "false")
-				public boolean calcblindspot;
-
-				public boolean unencodable() {
-					return !(calcstrongest || calcblindspot);
-				}
-			}
 			@Order(0)
 			@JsonField(defval = "0")
 			public int retreatDist;
@@ -904,38 +983,48 @@ public class Data {
 			@JsonField(defval = "0")
 			public int retreatSpeed;
 			@Order(2)
-			@JsonField(defval = "unencodable")
-			public TYPE type = new TYPE();
+			@JsonField(defval = "false")
+			public boolean calcstrongest;
 			@Order(3)
 			@JsonField(defval = "false")
-			public boolean danger;
+			public boolean calcblindspot;
 			@Order(4)
 			@JsonField(defval = "false")
+			public boolean danger;
+			@Order(5)
+			@JsonField(defval = "false")
 			public boolean ignHypno;
-			//@Order(5)
+			//@Order(6)
 			//@JsonField(defval = "false")
 			//public boolean manualcontrol; //The player controls the unit manually; Arrow keys to move, spacebar to attack
+
+			@JsonDecoder.OnInjected
+			public void inject(JsonObject jobj) {
+				if (jobj.has("type")) {
+					JsonObject type = jobj.getAsJsonObject("type");
+					if (type.has("calcstrongest"))
+						calcstrongest = type.get("calcstrongest").getAsBoolean();
+					if (type.has("calcblindspot"))
+						calcblindspot = type.get("calcblindspot").getAsBoolean();
+				}
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class RANGESHIELD extends PM {
-			@JsonClass(noTag = NoTag.LOAD)
-			public static class TYPE extends IntType {
-				@Order(0)
-				public boolean range;
-			}
 			@Order(2)
-			@JsonField(defval = "range false")
-			public TYPE type = new TYPE();
+			@JsonField(defval = "false")
+			public boolean range;
+
+			@JsonDecoder.OnInjected
+			public void inject(JsonObject jobj) {
+				if (jobj.has("type") && jobj.getAsJsonObject("type").has("range"))
+					range = jobj.getAsJsonObject("type").get("range").getAsBoolean();
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class SPIRIT extends ProcItem {
-			@JsonClass(noTag = NoTag.LOAD)
-			public static class TYPE extends IntType {
-				@Order(0)
-				public boolean inv;
-			}
 			@Order(0)
 			public Identifier<?> id;
 			@Order(1)
@@ -960,8 +1049,8 @@ public class Data {
 			@JsonField(defval = "1")
 			public int form;
 			@Order(8)
-			@JsonField(defval = "inv false")
-			public TYPE type = new TYPE();
+			@JsonField(defval = "false")
+			public boolean inv;
 
 			public int[] setTalent(int[] nps) {
 				if (id == null && nps[2] == 0)
@@ -987,6 +1076,12 @@ public class Data {
 					nps[17] = Math.min(nps[17], fs);
 				}
 				return super.setTalent(nps);
+			}
+
+			@JsonDecoder.OnInjected
+			public void inject(JsonObject jobj) {
+				if (jobj.has("type") && jobj.getAsJsonObject("type").has("inv"))
+					inv = jobj.getAsJsonObject("type").get("inv").getAsBoolean();
 			}
 		}
 
@@ -1057,82 +1152,6 @@ public class Data {
 			}
 		}
 
-		public static abstract class IntType implements Cloneable, BattleStatic {
-
-			@Documented
-			@Retention(value = RetentionPolicy.RUNTIME)
-			@Target(value = ElementType.FIELD)
-			public @interface BitCount {
-				int value();
-			}
-
-			@Override
-			public IntType clone() throws CloneNotSupportedException {
-				return (IntType) super.clone();
-			}
-
-			public Field[] getDeclaredFields() {
-				return FieldOrder.getDeclaredFields(this.getClass());
-			}
-
-			public void set(int i, int v) {
-				try {
-					Field fs = getDeclaredFields()[i];
-					if (fs.getType() == int.class)
-						fs.set(this, v);
-					else if (fs.getType() == boolean.class)
-						fs.set(this, v != 0);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-			public void add(IntType it) {
-				try {
-					for (Field fs : getDeclaredFields())
-						if (fs.getType() == int.class)
-							fs.set(this, (int)fs.get(this) + (int)fs.get(it));
-						else if (fs.getType() == boolean.class)
-							fs.set(this, (boolean)fs.get(this) || (boolean)fs.get(it));
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-
-			public IntType load(int val) throws Exception {
-				Field[] fs = getDeclaredFields();
-				for (int i = 0; i < fs.length;) {
-					BitCount c = fs[i].getAnnotation(BitCount.class);
-					if (c == null) {
-						fs[i].set(this, (val >> i & 1) == 1);
-						i++;
-					} else {
-						fs[i].set(this, val >> i & (1 << c.value()) - 1);
-						i += c.value();
-					}
-				}
-				return this;
-			}
-
-			public int toInt() throws Exception {
-				Field[] fs = getDeclaredFields();
-				int ans = 0;
-				for (int i = 0; i < fs.length;) {
-					BitCount c = fs[i].getAnnotation(BitCount.class);
-					if (c == null) {
-						if (fs[i].getBoolean(this))
-							ans |= 1 << i;
-						i++;
-					} else {
-						int val = fs[i].getInt(this);
-						ans |= val << i;
-						i += c.value();
-					}
-				}
-				return ans;
-			}
-
-		}
-
 		public static abstract class ProcItem implements Cloneable, BattleStatic {
 			public ProcItem clear() {
 				try {
@@ -1142,14 +1161,14 @@ public class Data {
 							f.set(this, 0);
 						else if (f.getType() == boolean.class)
 							f.setBoolean(this, false);
-						else if (IntType.class.isAssignableFrom(f.getType()))
-							f.set(this, (f.getType().getDeclaredConstructor().newInstance()));
 						else if (f.getType() == Identifier.class || f.getType() == Proc.class)
 							f.set(this, null);
 						else if (f.getType() == SortedPackSet.class)
 							((SortedPackSet<?>)f.get(this)).clear();
 						else if (f.getType() == ProcID.class)
 							((ProcID)f.get(this)).clear();
+						else if (Enum.class.isAssignableFrom(f.getType()))
+							f.set(this, f.getType().getEnumConstants()[0]);
 						else
 							throw new Exception("unknown field " + f.getType() + " " + f.getName());
 				} catch (Exception e) {
@@ -1164,9 +1183,7 @@ public class Data {
 					ProcItem ans = (ProcItem) super.clone();
 					for (Field f : getDeclaredFields())
 						if (f.get(this) != null) {
-							if (IntType.class.isAssignableFrom(f.getType()))
-								f.set(ans, ((IntType) f.get(this)).clone());
-							else if (f.getType() == Identifier.class)
+							if (f.getType() == Identifier.class)
 								f.set(ans, ((Identifier<?>) f.get(this)).clone());
 							else if (f.getType() == Proc.class) {
 								f.set(ans, ((Proc) f.get(this)).clone());
@@ -1204,9 +1221,6 @@ public class Data {
 						} else if (f.getType() == boolean.class) {
 							if (f.getBoolean(this))
 								return true;
-						} else {
-							if (((IntType) f.get(this)).toInt() > 0)
-								return true;
 						}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -1216,20 +1230,11 @@ public class Data {
 
 			public int get(int i) { //Only used for talents
 				try {
-					Field[] fs = getDeclaredFields();
-					int loc = 0;
-					for (int j = 0; j < i; j++)
-						if (IntType.class.isAssignableFrom(fs[j].getType())) {
-							int len = ((IntType) fs[j].get(this)).getDeclaredFields().length - 1;
-							loc = Math.min(i - j, len);
-							break;
-						}
-					Field f = fs[i - loc];
-					if (IntType.class.isAssignableFrom(f.getType())) {
-						Field ff = ((IntType)f.get(this)).getDeclaredFields()[loc];
-						return ff.getType() == int.class ? ff.getInt(f.get(this)) : ff.getBoolean(f.get(this)) ? 1 : 0;
-					} else if (f.getType() == Identifier.class)
+					Field f = getDeclaredFields()[i];
+					if (f.getType() == Identifier.class)
 						return ((Identifier<?>)f.get(this)).id;
+					else if (Enum.class.isAssignableFrom(f.getType()))
+						return ((Enum<?>)f.get(this)).ordinal();
 					else if (f.getType() == boolean.class)
 						return f.getBoolean(this) ? 1 : 0;
 					else if (f.getType() == ProcID.class) {
@@ -1259,21 +1264,7 @@ public class Data {
 			}
 
 			public Field[] getAllFields() { //Revive talent bug
-				Field[] dfs = getDeclaredFields();
-				for (int i = 0; i < dfs.length; i++)
-					if (IntType.class.isAssignableFrom(dfs[i].getType())) {
-						int postl = dfs.length - i - 1;
-						Field[] nf = dfs[i].getType().getDeclaredFields();
-						dfs = Arrays.copyOf(dfs, dfs.length + nf.length - 1);
-						dfs[i] = dfs[i].getType().getDeclaredFields()[0];
-						for (int j = 1; j < nf.length; j++) {
-							if (j < postl)
-								dfs[i + j + nf.length] = dfs[i + j];
-							dfs[i + j] = nf[j];
-						}
-						break;
-					}
-				return dfs;
+                return getDeclaredFields();
 			}
 
 			public boolean perform(CopRand r) {
@@ -1304,24 +1295,16 @@ public class Data {
 			@Deprecated
 			public void set(int i, int v) {
 				try {
-					Field[] fs = getDeclaredFields();
-					int loc = 0;
-					for (int j = 0; j < i; j++)
-						if (IntType.class.isAssignableFrom(fs[j].getType())) {
-							int len = ((IntType) fs[j].get(this)).getDeclaredFields().length - 1;
-							loc = Math.min(i - j, len);
-							break;
-						}
-					Field f = fs[i - loc];
-					if (IntType.class.isAssignableFrom(f.getType()))
-						((IntType)f.get(this)).set(loc, v);
-					else if (f.getType() == boolean.class)
+					Field f = getDeclaredFields()[i];
+					if (f.getType() == boolean.class)
 						f.set(this, v != 0);
 					else if (f.getType() == ProcID.class) {
 						ProcID pid = (ProcID)f.get(this);
 						if (v != 0 || !pid.isEmpty())
 							pid.l.add(v);
-					} else
+					} else if (Enum.class.isAssignableFrom(f.getType()))
+						f.set(this, f.getType().getEnumConstants()[i]);
+					else
 						f.set(this, v);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -1333,16 +1316,7 @@ public class Data {
 			@Deprecated
 			public void set(int i, Identifier<?> id) {
 				try {
-					Field[] fs = getDeclaredFields();
-					int loc = 0;
-					for (int j = 0; j < fs.length && loc < i; j++)
-						if (IntType.class.isAssignableFrom(fs[j].getType())) {
-							int len = ((IntType) fs[j].get(this)).getDeclaredFields().length - 1;
-							if (j + loc + len >= i)
-                                break;
-							loc += len;
-						}
-					Field f = fs[i - loc];
+					Field f = getDeclaredFields()[i];
 					f.set(this, id);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -1352,10 +1326,8 @@ public class Data {
 			public void set(ProcItem pi) {
 				try {
 					for (Field f : getDeclaredFields())
-						if (f.getType().isPrimitive())
+						if (f.getType().isPrimitive() || Enum.class.isAssignableFrom(f.getType()))
 							f.set(this, f.get(pi));
-						else if (IntType.class.isAssignableFrom(f.getType()))
-							f.set(this, ((IntType) f.get(pi)).clone());
 						else if (f.getType() == Identifier.class) {
 							Identifier<?> id = (Identifier<?>) f.get(pi);
 							f.set(this, id == null ? null : id.clone());
@@ -1387,9 +1359,9 @@ public class Data {
 							f.set(this, (double)f.get(this) + (double)f.get(pi));
 						else if (f.getType() == boolean.class)
 							f.set(this, (boolean)f.get(this) || (boolean)f.get(pi));
-						else if (IntType.class.isAssignableFrom(f.getType())) {
-							((IntType)f.get(this)).add((IntType)f.get(pi));
-						} else if (f.getType() == Identifier.class) {
+						else if (Enum.class.isAssignableFrom(f.getType()))
+							f.set(this, f.get(pi));
+						else if (f.getType() == Identifier.class) {
 							Identifier<?> id = (Identifier<?>)f.get(pi);
 							if (id != null)
 								f.set(this, id.clone());

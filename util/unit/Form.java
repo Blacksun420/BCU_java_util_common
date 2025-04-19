@@ -199,9 +199,9 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 								if (atk.getProc().SUMMON.form <= 0) {
 									atk.getProc().SUMMON.form = 1;
 									atk.getProc().SUMMON.mult = 1;
-									atk.getProc().SUMMON.type.fix_buff = true;
+									atk.getProc().SUMMON.fix_buff = true;
 								} else if (atk.getProc().SUMMON.id != null && !Unit.class.isAssignableFrom(atk.getProc().SUMMON.id.cls))
-									atk.getProc().SUMMON.type.fix_buff = true;
+									atk.getProc().SUMMON.fix_buff = true;
 							}
 						if (form.getPCoin() != null)
 							for (int[] dat : form.pcoin.info)
@@ -209,7 +209,7 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 									dat[13] = 60;
 						if (form.getProc().SPIRIT.id != null) {
 							form.getProc().SPIRIT.animType = 5;
-							form.getProc().SPIRIT.type.inv = true;
+							form.getProc().SPIRIT.inv = true;
 						}
 					} //Finish FORK_VERSION 1 checks
 					if (form.getPCoin() != null) {

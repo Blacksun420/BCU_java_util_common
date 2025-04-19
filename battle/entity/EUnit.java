@@ -156,7 +156,7 @@ public class EUnit extends Entity {
 				ans *= basis.b.t().getEKDef(basis.elu.getInc(C_EKILL));
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_BARON)) && (e.getAbi() & AB_BAKILL) > 0)
 				ans = (float)(ans * 0.7);
-			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_BEAST)) && matk.getProc().BSTHUNT.type.active)
+			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_BEAST)) && matk.getProc().BSTHUNT.active)
 				ans = (float)(ans * 0.6);
 		}
 		return ans;
@@ -229,7 +229,7 @@ public class EUnit extends Entity {
 							ans = (int)(ans * Orb.EFFECT.get(ORB_BAKILL).get((byte)orb[ORB_GRADE])[1] / 100.0);
 				}
 			}
-			if (atk.trait.contains(UserProfile.getBCData().traits.get(Data.TRAIT_BEAST)) && getProc().BSTHUNT.type.active)
+			if (atk.trait.contains(UserProfile.getBCData().traits.get(Data.TRAIT_BEAST)) && getProc().BSTHUNT.active)
 				ans = (int)(ans * 0.6); //Not sure
 			if (atk.trait.contains(UserProfile.getBCData().traits.get(Data.TRAIT_SAGE)) && (getAbi() & AB_SKILL) > 0)
 				ans = (int) (ans * SUPER_SAGE_HUNTER_HP);

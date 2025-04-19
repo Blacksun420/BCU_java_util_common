@@ -314,7 +314,7 @@ public class PCoin extends Data {
 						} else if (modifs[j] != 0)
 							tar.set(j+offset, tar.get(j+offset) + modifs[j]);
 				if (type[1] == P_BSTHUNT)
-					ans.getProc().BSTHUNT.type.active |= modifs[0] > 0;
+					ans.getProc().BSTHUNT.active |= modifs[0] > 0;
 
 				if (du instanceof DataUnit) {
 					if (type[1] == P_STRONG && modifs[0] != 0)

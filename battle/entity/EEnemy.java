@@ -73,7 +73,7 @@ public class EEnemy extends Entity {
 				ans *= basis.b.t().getEKAtk(basis.elu.getInc(C_EKILL));
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_BARON)) && (e.getAbi() & AB_BAKILL) > 0)
 				ans *= 1.6;
-			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_BEAST)) && matk.getProc().BSTHUNT.type.active)
+			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_BEAST)) && matk.getProc().BSTHUNT.active)
 				ans *= 2.5;
 		}
 		return ans;
@@ -122,7 +122,7 @@ public class EEnemy extends Entity {
 							ans = (int)(ans * Orb.get(ORB_BAKILL,(byte)orb[ORB_GRADE])[0] / 100.0);
 				}
 			}
-			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_BEAST)) && atk.getProc().BSTHUNT.type.active)
+			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_BEAST)) && atk.getProc().BSTHUNT.active)
 				ans *= 2.5;
 			if (traits.contains(BCTraits.get(TRAIT_SAGE)) && (atk.abi & AB_SKILL) > 0)
 				ans = (int) (ans * SUPER_SAGE_HUNTER_ATTACK);

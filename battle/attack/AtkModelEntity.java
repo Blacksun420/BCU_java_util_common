@@ -295,12 +295,9 @@ public abstract class AtkModelEntity extends AtkModelAb {
 	@Override
 	public void invokeLater(AttackAb atk, Entity e) {
 		SUMMON proc = atk.getProc().SUMMON;
-		if (proc.exists()) {
-			SUMMON.TYPE conf = proc.type;
-			if (conf.on_hit || (conf.on_kill && e.health <= 0)) {
-				double rst = e.getProc().IMUSUMMON.mult;
-				summon(proc, e, atk, rst);
-			}
+		if (proc.exists() && (proc.on_hit || (proc.on_kill && e.health <= 0))) {
+			double rst = e.getProc().IMUSUMMON.mult;
+			summon(proc, e, atk, rst);
 		}
 	}
 
@@ -312,7 +309,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		float d0, d1;
 		d0 = d1 = dire == e.dire ? e.pos : e.pos + (data.getWidth() * dire);
 		d0 += data.getRange() * dire;
-		if (data.isLD() && e.getProc().AI.type.calcblindspot)
+		if (data.isLD() && e.getProc().AI.calcblindspot)
 			d1 += getBlindSpot() * dire;
 		else
 			d1 -= data.getWidth() * dire;
@@ -374,8 +371,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		for (int b : BCShareable) proc.getArr(b).set(p.getArr(b));
 		if (p.SUMMON.perform(b.r)) {
 			SUMMON sprc = p.SUMMON;
-			SUMMON.TYPE conf = sprc.type;
-			if (!conf.on_hit && !conf.on_kill)
+			if (!sprc.on_hit && !sprc.on_kill)
 				summon(sprc, e, matk, 0);
 			else
 				proc.SUMMON.set(sprc);
@@ -417,8 +413,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 
 	protected void summon(SUMMON proc, Entity ent, Object acs, double resist) {
 		if (resist < 100) {
-			SUMMON.TYPE conf = proc.type;
-			if (conf.same_health && ent.health <= 0)
+			if (proc.same_health && ent.health <= 0)
 				return;
 			int time = proc.time;
 			int minlayer = proc.min_layer, maxlayer = proc.max_layer;
@@ -427,9 +422,9 @@ public abstract class AtkModelEntity extends AtkModelAb {
 
 			if ((proc.id == null && e instanceof EUnit) || (proc.id != null && AbUnit.class.isAssignableFrom(proc.id.cls))) {
 				AbUnit u = Identifier.getOr(proc.id, AbUnit.class);
-				if (conf.ignore_limit || !b.cantDeploy(u.getRarity(), u.getForms()[proc.form - 1].du.getWill())) {
+				if (proc.ignore_limit || !b.cantDeploy(u.getRarity(), u.getForms()[proc.form - 1].du.getWill())) {
 					int lvl = proc.mult;
-					if (!conf.fix_buff)
+					if (!proc.fix_buff)
 						lvl = (int) e.buff(lvl);
 					lvl = (int) (lvl * (100.0 - resist) / 100);
 					lvl = MathUtil.clip(lvl, 1, u.getCap());
@@ -440,26 +435,26 @@ public abstract class AtkModelEntity extends AtkModelAb {
 						Form f = u.getForms()[Math.max(proc.form - 1, 0)];
 						IForm ef = IForm.newIns(u instanceof Unit ? f : (AbForm)u, lvl);
 						EUnit eu = ef.invokeEntity(b, lvl, minlayer, maxlayer);
-						if (conf.same_health)
+						if (proc.same_health)
 							eu.health = e.health;
 
 						eu.added(-1, (int) up);
 						b.tempe.add(new EntCont(eu, time));
-						eu.setSummon(conf.anim_type, conf.bond_hp ? e : null);
+						eu.setSummon(proc.anim_type.ordinal(), proc.bond_hp ? e : null);
 
-						if ((proc.type.pass_proc & 1) > 0)
+						if ((proc.pass_proc & 1) > 0)
 							eu.status.pass(e.status);
-						if (e != ent && (proc.type.pass_proc & 2) > 0)
+						if (e != ent && (proc.pass_proc & 2) > 0)
 							eu.status.pass(ent.status);
 					}
 				}
 			} else {
 				AbEnemy ene = Identifier.getOr(proc.id, AbEnemy.class);
 				int allow = b.st.data.allow(b, ene);
-				if (allow >= 0 || conf.ignore_limit) {
+				if (allow >= 0 || proc.ignore_limit) {
 					float mula = proc.mult * 0.01f;
 					float mult = proc.mult * 0.01f;
-					if (!conf.fix_buff) {
+					if (!proc.fix_buff) {
 						if (e instanceof EUnit) {
 							mula = (float) (mula + ((((EUnit) e).lvl - 1) * 0.2));
 							mult = (float) (mult + ((((EUnit) e).lvl - 1) * 0.2));
@@ -484,13 +479,13 @@ public abstract class AtkModelEntity extends AtkModelAb {
 
 						ee.added(1, (int) up);
 						b.tempe.add(new EntCont(ee, time));
-						if (conf.same_health)
+						if (proc.same_health)
 							ee.health = e.health;
-						ee.setSummon(conf.anim_type, conf.bond_hp ? e : null);
+						ee.setSummon(proc.anim_type.ordinal(), proc.bond_hp ? e : null);
 
-						if ((proc.type.pass_proc & 1) > 0)
+						if ((proc.pass_proc & 1) > 0)
 							ee.status.pass(e.status);
-						if (e != ent && (proc.type.pass_proc & 2) > 0)
+						if (e != ent && (proc.pass_proc & 2) > 0)
 							ee.status.pass(ent.status);
 					}
 				}

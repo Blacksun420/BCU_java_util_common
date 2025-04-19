@@ -162,8 +162,8 @@ public class Enemy extends Character implements AbEnemy {
 						if (UserProfile.isOlderPack(pack, "0.5.4.0"))
 							enemy.limit = CommonStatic.customEnemyMinPos(anim.loader.getMM());
 						//Finish 0.5.4.0 check
-						proc.DMGCUT.type.traitIgnore = true;
-						proc.DMGCAP.type.traitIgnore = true;
+						proc.DMGCUT.traitIgnore = true;
+						proc.DMGCAP.traitIgnore = true;
 					} //Finish 0.6.1.0 check
 					names.put(jobj.get("name").getAsString());
 					if (jobj.has("desc"))
@@ -172,7 +172,7 @@ public class Enemy extends Character implements AbEnemy {
 				for (AtkDataModel ma : atks)
 					if (ma.getProc().SUMMON.prob > 0) {
 						if (ma.getProc().SUMMON.id != null && !AbEnemy.class.isAssignableFrom(ma.getProc().SUMMON.id.cls))
-							ma.getProc().SUMMON.type.fix_buff = true;
+							ma.getProc().SUMMON.fix_buff = true;
 						if (ma.getProc().SUMMON.id == null || !AbEnemy.class.isAssignableFrom(ma.getProc().SUMMON.id.cls))
 							ma.getProc().SUMMON.form = 1; //There for imports
 					}

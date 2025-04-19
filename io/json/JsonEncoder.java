@@ -242,8 +242,10 @@ public class JsonEncoder {
 	private boolean defVal(Object val, String str) {
 		if (str.contains("||"))
 			return defVal(val, str.substring(0, str.indexOf("||"))) || defVal(val, str.substring(str.indexOf("||")+2));
+		if (val == null)
+			return str.equals("null");
 		if (str.equals("null"))
-			return val == null;
+			return false;
 		if (val instanceof Byte)
 			return (byte)val == Byte.parseByte(str);
 		if (val instanceof Integer)
@@ -258,6 +260,8 @@ public class JsonEncoder {
 			return (boolean)val == Boolean.parseBoolean(str);
 		if (val instanceof String && !str.equals("isEmpty"))
 			return val.equals(str);
+		if (val instanceof Enum)
+			return val.toString().equals(str);
 		if (val instanceof Object[] && str.equals("isEmpty"))
 			return ((Object[])val).length == 0;
 		try {

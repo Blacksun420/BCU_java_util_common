@@ -135,8 +135,10 @@ public class JsonDecoder {
 	}
 
 	private static boolean getBoolean(JsonElement elem) throws JsonException {
-		if (!elem.isJsonPrimitive() || !((JsonPrimitive) elem).isBoolean())
+		if (!elem.isJsonPrimitive() || !(((JsonPrimitive) elem).isBoolean() || ((JsonPrimitive)elem).isNumber()))
 			throw new JsonException(true, elem, "this element is not boolean");
+		if (((JsonPrimitive)elem).isNumber())
+			return elem.getAsInt() != 0;//For behemoth slayer
 		return elem.getAsBoolean();
 	}
 

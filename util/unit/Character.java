@@ -121,7 +121,7 @@ public abstract class Character extends Animable<AnimU<?>, AnimU.UType> implemen
                                                 proc.DMGCUT.reduction = 100;
                                                 for (AtkDataModel atk : atks)
                                                     if (atk.getProc().POISON.prob > 0)
-                                                        atk.getProc().POISON.type.ignoreMetal = true;
+                                                        atk.getProc().POISON.ignoreMetal = true;
                                             } //Finish 0.6.1.0 check
                                             boolean bounty = (ent.abi & 16) > 0;
                                             boolean atkbase = (ent.abi & 32) > 0;

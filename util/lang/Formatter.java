@@ -148,6 +148,9 @@ public class Formatter {
 		public String toString(Object obj) {
 			return obj.toString();
 		}
+		public boolean strEqual(Object obj, String str) {
+			return String.valueOf(obj).equals(str);
+		}
 	}
 
 	private class BoolElem extends Comp {
@@ -268,7 +271,7 @@ public class Formatter {
 				return false;
 
 			try {
-				return new RefField(i, j).test(obj);
+				return new RefField(i, j).test(obj) instanceof Integer;
 			} catch (Exception ignored) {
 				return false;
 			}
@@ -499,9 +502,10 @@ public class Formatter {
 					parent = ctx;
 				else
 					parent = obj;
-			int ind = str.charAt(p0) == '_' ? p0 + 1 : p0;
+			int ind = str.charAt(p0) == '_' || str.charAt(p0) == '`' ? p0 + 1 : p0;
 			String name = str.substring(ind, p1);
-
+			if (str.charAt(p0) == '`')
+				return name;
 			try {
 				Field f = parent.getClass().getField(name);
 				return f.get(parent);
@@ -512,23 +516,21 @@ public class Formatter {
 			}
 		}
 
-		public boolean test(Object parent) {
+		public Object test(Object parent) {
 			if (parent == null)
 				if (str.charAt(p0) == '_')
 					parent = ctx;
 				else
 					parent = obj;
 
-			int ind = str.charAt(p0) == '_' ? p0 + 1 : p0;
-
+			int ind = str.charAt(p0) == '_' || str.charAt(p0) == '`' ? p0 + 1 : p0;
 			String name = str.substring(ind, p1);
-
+			if (str.charAt(p0) == '`')
+				return name;
 			try {
-				parent.getClass().getField(name).get(parent);
-
-				return true;
+				return parent.getClass().getField(name).get(parent);
 			} catch (NoSuchFieldException | IllegalAccessException nse) {
-				return false;
+				return null;
 			}
 		}
 	}
@@ -571,10 +573,6 @@ public class Formatter {
 			int pre = p0, i = p0;
 			while (i < p1) {
 				char ch = str.charAt(i++);
-				if (ch == '.') {
-					list.add(new RefField(pre, i - 1));
-					pre = i;
-				}
 				if (ch == '(') {
 					RefFunc func = new RefFunc(pre, i - 1);
 					pre = i;

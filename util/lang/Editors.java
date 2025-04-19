@@ -4,6 +4,8 @@ import common.pack.Identifier;
 import common.pack.UserProfile;
 import common.util.Data;
 import common.util.Data.Proc;
+import common.util.Data.Proc.SUMMON;
+import common.util.Data.Proc.REVIVE;
 import common.util.Data.Proc.ProcItem;
 import common.util.unit.Unit;
 import org.jcodec.common.tools.MathUtil;
@@ -327,7 +329,7 @@ public class Editors {
 			t.lv = MathUtil.clip(t.lv, 1, 125);
 			if (t.prob == 0) {
 				t.lv = 0;
-				t.type.hitless = false;
+				t.hitless = false;
 				t.pid.clear();
 			}
 		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
@@ -345,9 +347,9 @@ public class Editors {
 			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0) {
 				t.mult = t.time = 0;
-				t.stackable = false;
+				t.stackable = t.percentage = false;
 			} else {
-				if (t.type.percentage)
+				if (t.percentage)
 					t.prob = Math.max(t.prob, -100);
 				t.time = Math.max(t.time, 1);
 			}
@@ -399,25 +401,23 @@ public class Editors {
 			if (t.count == 0) {
 				t.health = 0;
 				t.time = 0;
-				t.type.imu_zkill = false;
-				t.type.revive_others = false;
+				t.imu_zkill = false;
+				t.revive_others = false;
 				t.dis_0 = t.dis_1 = 0;
-				t.type.range_type = 0;
-				t.type.revive_non_zombie = false;
+				t.range_type = REVIVE.RANGE.ACTIVE;
+				t.revive_non_zombie = false;
 			} else {
 				t.health = Math.max(t.health, 1);
 				t.time = Math.max(t.time, 1);
-				if (!t.type.revive_others) {
+				if (!t.revive_others) {
 					t.dis_0 = t.dis_1 = 0;
-					t.type.range_type = 0;
-					t.type.revive_non_zombie = false;
-				} else {
-					t.type.range_type = MathUtil.clip(t.type.range_type, 0, 3);
+					t.range_type = REVIVE.RANGE.ACTIVE;
+					t.revive_non_zombie = false;
 				}
 			}
 		}, eg -> t -> {
 			setComponentVisibility(eg, t.exists(), 1);
-			setComponentVisibility(eg, t.type.revive_others, 3, 4, 5, 7);
+			setComponentVisibility(eg, t.revive_others, 3, 4, 5, 7);
 		}));
 
 		map().put("SNIPER", prob);
@@ -442,11 +442,11 @@ public class Editors {
 			if (t.prob == 0) {
 				t.dis = t.max_dis = 0;
 				t.id = null;
-				t.mult = t.time = t.form = t.amount = t.type.pass_proc = 0;
-				t.type.anim_type = 0;
-				t.type.fix_buff = t.type.ignore_limit = t.type.on_hit = t.type.on_kill = false;
+				t.mult = t.time = t.form = t.amount = t.pass_proc = 0;
+				t.anim_type = SUMMON.ANIM.NONE;
+				t.fix_buff = t.ignore_limit = t.on_hit = t.on_kill = false;
 				t.min_layer = t.max_layer = 0;
-				t.type.same_health = false;
+				t.same_health = false;
 			} else {
 				t.time = Math.max(0, t.time);
 
@@ -457,13 +457,13 @@ public class Editors {
 				t.min_layer = Math.min(temp, t.max_layer);
 				t.max_layer = Math.max(temp, t.max_layer);
 				t.amount = Math.max(t.amount, 1);
-				t.type.pass_proc = MathUtil.clip(t.type.pass_proc, 0, 3);
+				t.pass_proc = MathUtil.clip(t.pass_proc, 0, 3);
 
 				EditorSupplier edi = UserProfile.getStatic("Editor_Supplier", () -> null);
 				if ((!edi.isEnemy() && t.id == null) || (t.id != null && t.id.cls == Unit.class)) {
 					Unit u = Identifier.getOr(t.id, Unit.class);
 					t.form = MathUtil.clip(t.form, 1, u.forms.length);
-					if (!t.type.fix_buff)
+					if (!t.fix_buff)
 						t.mult = MathUtil.clip(t.mult, -u.max - u.maxp, u.max + u.maxp);
 					else
 						t.mult = MathUtil.clip(t.mult, 1, u.max + u.maxp);
@@ -471,7 +471,6 @@ public class Editors {
 					t.form = 1;
 					t.mult = Math.max(1, t.mult);
 				}
-				t.type.anim_type = MathUtil.clip(t.type.anim_type, 0, 6);
 			}
 		}, eg -> t -> {
 			EditorSupplier edi = UserProfile.getStatic("Editor_Supplier", () -> null);
@@ -497,19 +496,19 @@ public class Editors {
 				t.time = 0;
 				t.id = null;
 				t.mus = null;
-				t.type.kill = false;
+				t.kill = false;
 			}
 		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("POISON", new EditControl<>(Proc.POISON.class, (t) -> {
 			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0) {
-				t.damage = t.itv = t.time = t.type.damage_type = 0;
-				t.type.unstackable = t.type.ignoreMetal = t.type.modifAffected = false;
+				t.damage = t.itv = t.time = t.damage_type = 0;
+				t.unstackable = t.ignoreMetal = t.modifAffected = false;
 			} else {
 				t.time = Math.max(1, t.time);
 				t.itv = Math.max(1, t.itv);
-				t.type.damage_type = MathUtil.clip(t.type.damage_type, 0, 3);
+				t.damage_type = MathUtil.clip(t.damage_type, 0, 3);
 			}
 		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
@@ -526,20 +525,20 @@ public class Editors {
 		map().put("COUNTER", new EditControl<>(Proc.COUNTER.class, (t) -> {
 			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob > 0) {
-				t.type.procType = MathUtil.clip(t.type.procType,0,3);
-				t.type.counterWave = MathUtil.clip(t.type.counterWave, 0, 2);
+				t.procType = MathUtil.clip(t.procType,0,3);
+				t.counterWave = MathUtil.clip(t.counterWave, 0, 2);
 				int min = t.minRange;
 				t.minRange = Math.min(min, t.maxRange);
 				t.maxRange = Math.max(min, t.maxRange);
-				if (t.type.useOwnDamage)
+				if (t.useOwnDamage)
 					t.maxDamage = MathUtil.clip(t.maxDamage,-1,0);
 			} else {
-				t.damage = t.minRange = t.maxRange = t.type.procType = t.type.counterWave = t.maxDamage = 0;
-				t.type.useOwnDamage = t.type.outRange = t.type.areaAttack = false;
+				t.damage = t.minRange = t.maxRange = t.procType = t.counterWave = t.maxDamage = 0;
+				t.useOwnDamage = t.outRange = t.areaAttack = false;
 			}
 		}, eg -> t -> {
 			setComponentVisibility(eg, t.exists(), 1);
-			setComponentVisibility(eg, t.exists() && (t.type.areaAttack || !t.type.outRange), 2, 4);
+			setComponentVisibility(eg, t.exists() && (t.areaAttack || !t.outRange), 2, 4);
 		}));
 
 		map().put("IMUATK", new EditControl<>(Proc.IMUATK.class, (t) -> {
@@ -557,7 +556,7 @@ public class Editors {
 			if (t.prob == 0) {
 				t.dmg = 0;
 				t.reduction = 0;
-				t.type.traitIgnore = t.type.procs = t.type.magnif = false;
+				t.traitIgnore = t.procs = t.magnif = false;
 			} else
 				t.dmg = Math.max(t.dmg,0);
 		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
@@ -566,7 +565,7 @@ public class Editors {
 			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0) {
 				t.dmg = 0;
-				t.type.traitIgnore = t.type.nullify = t.type.procs = t.type.magnif = false;
+				t.traitIgnore = t.nullify = t.procs = t.magnif = false;
 			} else
 				t.dmg = Math.max(t.dmg,0);
 		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
@@ -581,7 +580,7 @@ public class Editors {
 			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0) {
 				t.dis_0 = t.dis_1 = t.time = 0;
-				t.type.hitless = false;
+				t.hitless = false;
 				t.pid.clear();
 			} else
 				t.time = Math.max(1, t.time / Data.VOLC_ITV) * Data.VOLC_ITV;
@@ -594,7 +593,7 @@ public class Editors {
 			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0) {
 				t.dis_0 = t.dis_1 = t.time = t.mult = 0;
-				t.type.hitless = false;
+				t.hitless = false;
 				t.pid.clear();
 			} else {
 				t.time = Math.max(1, t.time / Data.VOLC_ITV) * Data.VOLC_ITV;
@@ -632,7 +631,7 @@ public class Editors {
 
 			if (t.prob == 0) {
 				t.lv = t.multi = 0;
-				t.type.hitless = false;
+				t.hitless = false;
 				t.pid.clear();
 			} else {
 				t.lv = MathUtil.clip(t.lv, 1, 125);
@@ -697,7 +696,7 @@ public class Editors {
 				t.timeout = Math.max(0, t.timeout);
 			} else {
 				t.regentime = t.timeout = 0;
-				t.type.magnif = false;
+				t.magnif = false;
 			}
 		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
@@ -784,7 +783,7 @@ public class Editors {
 		map().put("WEAKAURA", new EditControl<>(Proc.AURA.class, (t) -> {
 			if (t.amult == 0 && t.dmult == 0 && t.smult == 0 && t.tmult == 0) {
 				t.min_dis = t.max_dis = 0;
-				t.type.trait = false;
+				t.trait = false;
 			} else {
 				t.tmult = Math.max(t.tmult, -100);
 				int min = t.min_dis;
@@ -799,7 +798,7 @@ public class Editors {
 		map().put("STRONGAURA", new EditControl<>(Proc.AURA.class, (t) -> {
 			if (t.amult == 0 && t.dmult == 0 && t.smult == 0 && t.tmult == 0) {
 				t.min_dis = t.max_dis = 0;
-				t.type.trait = t.skip_self = false;
+				t.trait = t.skip_self = false;
 			} else {
 				t.tmult = Math.max(t.tmult, 0);
 				int min = t.min_dis;
@@ -815,7 +814,7 @@ public class Editors {
 		map().put("REMOTESHIELD", new EditControl<>(Proc.REMOTESHIELD.class, (t) -> {
 			if (t.prob == 0) {
 				t.minrange = t.maxrange = t.reduction = t.block = 0;
-				t.type.traitCon = t.type.procs = t.type.waves = false;
+				t.traitCon = t.procs = t.waves = false;
 			} else {
 				int min = t.minrange;
 				t.minrange = Math.min(min, t.maxrange);
@@ -824,7 +823,7 @@ public class Editors {
 		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
 
 		map().put("BSTHUNT", new EditControl<>(Proc.BSTHUNT.class, (t) -> {
-			if (t.type.active) {
+			if (t.active) {
 				t.prob = Math.max(0, Math.min(t.prob, 100));
 				if (t.prob == 0)
 					t.time = 0;
@@ -834,7 +833,7 @@ public class Editors {
 				t.prob = t.time = 0;
 			}
 		}, eg -> t -> {
-			setComponentVisibility(eg, t.type.active, 1);
+			setComponentVisibility(eg, t.active, 1);
 			setComponentVisibility(eg, t.prob != 0, 2);
 		}));
 
@@ -866,7 +865,7 @@ public class Editors {
 			t.prob = Math.max(0, Math.min(t.prob, 100));
 			if (t.prob == 0) {
 				t.mult = 0;
-				t.type.range = false;
+				t.range = false;
 			} else if (t.mult == 0)
 				t.mult = 1;
 		}, eg -> t -> setComponentVisibility(eg, t.exists(), 1)));
@@ -874,7 +873,7 @@ public class Editors {
 		map().put("SPIRIT", new EditControl<>(Proc.SPIRIT.class, (t) -> {
 			if (t.id == null) {
 				t.cd0 = t.cd1 = t.amount = t.summonerCd = t.moneyCost = t.form = t.animType = 0;
-				t.type.inv = false;
+				t.inv = false;
 			} else {
 				t.amount = Math.max(t.amount, 1);
 				t.cd0 = Math.max(t.cd0, 15);
@@ -884,7 +883,7 @@ public class Editors {
 				t.form = MathUtil.clip(t.form, 1, u.forms.length);
 				if (u.forms[t.form - 1].anim.getAtkCount() == 0) { //BC spirit
 					t.animType = 0;
-					t.type.inv = true;
+					t.inv = true;
 				} else {
 					t.animType = MathUtil.clip(t.animType, 0, 6);
 				}

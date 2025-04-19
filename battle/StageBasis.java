@@ -81,7 +81,7 @@ public class StageBasis extends BattleObj {
 	public float themeTime;
 	private Identifier<Background> theme = null;
 	public Identifier<Music> mus = null;
-	private THEME.TYPE themeType;
+	private THEME themeType;
 	private boolean bgEffectInitialized = false;
 	public int baseBarrier = 0, rem_spawns;
 
@@ -198,7 +198,7 @@ public class StageBasis extends BattleObj {
 		theme = th.id;
 		mus = th.mus;
 		themeTime = th.time;
-		themeType = th.type;
+		themeType = th;
 	}
 
 	public void changeWorkerLv(int lv) {
