@@ -295,7 +295,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 	@Override
 	public void invokeLater(AttackAb atk, Entity e) {
 		SUMMON proc = atk.getProc().SUMMON;
-		if (proc.exists() && (proc.on_hit || (proc.on_kill && e.health <= 0))) {
+		if (proc.prob > 0 && (proc.on_hit || (proc.on_kill && e.health <= 0))) {
 			double rst = e.getProc().IMUSUMMON.mult;
 			summon(proc, e, atk, rst);
 		}
@@ -386,15 +386,17 @@ public abstract class AtkModelEntity extends AtkModelAb {
 				b.changeUnitsCooldown(c.amount, c.type);
 		}
 
-		if (proc.CRIT.exists() && proc.CRIT.mult == 0)
+		if (proc.CRIT.prob > 0 && proc.CRIT.mult == 0)
 			proc.CRIT.mult = 200;
-		if (proc.KB.exists() && proc.KB.dis == 0)
-			proc.KB.dis = KB_DIS[INT_KB];
-		if (proc.KB.exists() && proc.KB.time == 0)
-			proc.KB.time = KB_TIME[INT_KB];
-		if (proc.MINIWAVE.exists() && proc.MINIWAVE.multi == 0)
+		if (proc.KB.prob > 0) {
+			if (proc.KB.dis == 0)
+				proc.KB.dis = KB_DIS[INT_KB];
+			if (proc.KB.time == 0)
+				proc.KB.time = KB_TIME[INT_KB];
+		}
+		if (proc.MINIWAVE.prob > 0 && proc.MINIWAVE.multi == 0)
 			proc.MINIWAVE.multi = 20;
-		if (proc.MINIVOLC.exists() && proc.MINIVOLC.mult == 0)
+		if (proc.MINIVOLC.prob > 0 && proc.MINIVOLC.mult == 0)
 			proc.MINIVOLC.mult = 20;
 	}
 
@@ -440,11 +442,11 @@ public abstract class AtkModelEntity extends AtkModelAb {
 
 						eu.added(-1, (int) up);
 						b.tempe.add(new EntCont(eu, time));
-						eu.setSummon(proc.anim_type.ordinal(), proc.bond_hp ? e : null);
+						eu.setSummon(proc.anim_type, proc.bond_hp ? e : null);
 
-						if ((proc.pass_proc & 1) > 0)
+						if (proc.pass_proc % 2 == 1)
 							eu.status.pass(e.status);
-						if (e != ent && (proc.pass_proc & 2) > 0)
+						if (e != ent && proc.pass_proc >= 2)
 							eu.status.pass(ent.status);
 					}
 				}
@@ -481,11 +483,11 @@ public abstract class AtkModelEntity extends AtkModelAb {
 						b.tempe.add(new EntCont(ee, time));
 						if (proc.same_health)
 							ee.health = e.health;
-						ee.setSummon(proc.anim_type.ordinal(), proc.bond_hp ? e : null);
+						ee.setSummon(proc.anim_type, proc.bond_hp ? e : null);
 
-						if ((proc.pass_proc & 1) > 0)
+						if (proc.pass_proc % 2 == 1)
 							ee.status.pass(e.status);
-						if (e != ent && (proc.pass_proc & 2) > 0)
+						if (e != ent && proc.pass_proc >= 2)
 							ee.status.pass(ent.status);
 					}
 				}

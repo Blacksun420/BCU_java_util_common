@@ -120,11 +120,11 @@ public class AttackSimple extends AttackAb {
 	public void excuse() {
 		process();
 		int layer = model.getLayer();
-		if (proc.BOSS.exists()) {
+		if (proc.BOSS.prob > 0) {
 			model.b.lea.add(new EAnimCont(model.getPos(), model.getLayer(), effas().A_SHOCKWAVE.getEAnim(EffAnim.DefEff.DEF)));
 			CommonStatic.setSE(SE_BOSS);
 		}
-		if (proc.MOVEWAVE.exists()) {
+		if (proc.MOVEWAVE.prob > 0) {
 			MOVEWAVE mw = proc.MOVEWAVE;
 			int dire = model.getDire();
 			float p0 = model.getPos() + dire * mw.dis;
@@ -141,7 +141,7 @@ public class AttackSimple extends AttackAb {
 			if (sfx != null)
 				CommonStatic.setSE(sfx);
 		}
-		if (proc.WAVE.exists() && (!capt.isEmpty() || proc.WAVE.hitless)) {
+		if (proc.WAVE.prob > 0 && (!capt.isEmpty() || proc.WAVE.hitless)) {
 			int dire = model.getDire();
 			int wid = dire == 1 ? W_E_WID : W_U_WID;
 			float addp = (dire == 1 ? W_E_INI : W_U_INI) + wid / 2f;
@@ -154,7 +154,7 @@ public class AttackSimple extends AttackAb {
 			if(attacker != null)
 				attacker.summoned.add(wave);
 		}
-		if(proc.MINIWAVE.exists() && (!capt.isEmpty() || proc.MINIWAVE.hitless)) {
+		if(proc.MINIWAVE.prob > 0 && (!capt.isEmpty() || proc.MINIWAVE.hitless)) {
 			int dire = model.getDire();
 			int wid = dire == 1 ? W_E_WID : W_U_WID;
 			float addp = (dire == 1 ? W_E_INI : W_U_INI) + wid / 2f;
@@ -167,7 +167,7 @@ public class AttackSimple extends AttackAb {
 			if(attacker != null)
 				attacker.summoned.add(wave);
 		}
-		if (proc.VOLC.exists() && (!capt.isEmpty() || proc.VOLC.hitless)) {
+		if (proc.VOLC.prob > 0 && (!capt.isEmpty() || proc.VOLC.hitless)) {
 			int dire = model.getDire();
 			VOLC volc = proc.VOLC;
 			int addp = volc.dis_0 == volc.dis_1 ? volc.dis_0 : volc.dis_0 + (int) (model.b.r.nextFloat() * (volc.dis_1 - volc.dis_0));
@@ -178,7 +178,7 @@ public class AttackSimple extends AttackAb {
 			if(attacker != null)
 				attacker.summoned.add(volcano);
 		}
-		if (proc.MINIVOLC.exists() && (!capt.isEmpty() || proc.MINIVOLC.hitless)) {
+		if (proc.MINIVOLC.prob > 0 && (!capt.isEmpty() || proc.MINIVOLC.hitless)) {
 			int dire = model.getDire();
 			Proc.MINIVOLC volc = proc.MINIVOLC;
 			int addp = volc.dis_0 == volc.dis_1 ? volc.dis_0 : volc.dis_0 + (int) (model.b.r.nextDouble() * (volc.dis_1 - volc.dis_0));
@@ -192,7 +192,7 @@ public class AttackSimple extends AttackAb {
 			if(attacker != null)
 				attacker.summoned.add(volcano);
 		}
-		if (!capt.isEmpty() && proc.BLAST.exists()) {
+		if (!capt.isEmpty() && proc.BLAST.prob > 0) {
 			int dire = model.getDire();
 			Proc.BLAST blast = proc.BLAST;
 			int addp = blast.dis_0 == blast.dis_1 ? blast.dis_0 : blast.dis_0 + (int) (model.b.r.nextFloat() * (blast.dis_1 - blast.dis_0));

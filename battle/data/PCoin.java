@@ -97,7 +97,7 @@ public class PCoin extends Data {
 				int[] trueArr;
 				switch (corres[0]) {
 					case PC_P:
-						trueArr = Arrays.copyOf(data, 3 + (du.getProc().getArr(corres[1]).getAllFields().length - (corres.length >= 3 ? corres[2] : 0)) * 2); //The Math.min is for testing
+						trueArr = Arrays.copyOf(data, 3 + (du.getProc().getArr(corres[1]).getDeclaredFields().length - (corres.length >= 3 ? corres[2] : 0)) * 2); //The Math.min is for testing
 						break;
 					case PC_BASE:
 						trueArr = Arrays.copyOf(data, 5);
@@ -260,7 +260,7 @@ public class PCoin extends Data {
 			int offset = type.length >= 3 && type[0] == PC_P ? type[2] : 0;
 			int fieldTOT = -offset;
 			if (type[0] == PC_P)
-				fieldTOT += ans.getProc().getArr(type[1]).getAllFields().length;
+				fieldTOT += ans.getProc().getArr(type[1]).getDeclaredFields().length;
 			else if (type[0] == PC_BASE)
 				fieldTOT = 1;
 			if (du instanceof DataUnit)
@@ -307,7 +307,7 @@ public class PCoin extends Data {
 					}
 				} else if (du instanceof DataUnit || ((CustomEntity)du).common || procSharable[type[1]])
 					for (int j = 0; j < fieldTOT; j++)
-						if (tar.getAllFields()[j].getType() == Identifier.class) {
+						if (tar.getDeclaredFields()[j].getType() == Identifier.class) {
 							if (modifs[j] == 0)
 								continue;
 							tar.set(j, (modifs[j] > 0 ? UserProfile.getBCData() : du.getPack().getPack()).units.get(Math.abs(modifs[j])-1).getID());
@@ -409,7 +409,7 @@ public class PCoin extends Data {
 			if (old && !procSharable[type[1]])
 				atks.add(new int[0][]);
 
-			int fieldTOT = (type.length >= 3 ? -type[2] : 0) + du.getProc().getArr(type[1]).getAllFields().length * 2;
+			int fieldTOT = (type.length >= 3 ? -type[2] : 0) + du.getProc().getArr(type[1]).getDeclaredFields().length * 2;
 			if (info.get(i).length - 3 == fieldTOT)
 				continue;
 			int[] modifs = Arrays.copyOf(info.get(i), fieldTOT + 3);

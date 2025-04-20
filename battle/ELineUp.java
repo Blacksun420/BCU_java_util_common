@@ -54,7 +54,7 @@ public class ELineUp extends BattleObj {
 					price[i][j] = price[i][j] * lim.stageLimit.costMultiplier[r] / 100;
 					maxC[i][j] = maxC[i][j] * lim.stageLimit.cooldownMultiplier[r] / 100;
 				}
-				spData[i][j] = lu.efs[i][j] instanceof EForm && ((EForm) lu.efs[i][j]).du.getProc().SPIRIT.exists() ? ((EForm)lu.efs[i][j]).du.getProc().SPIRIT : null;
+				spData[i][j] = lu.efs[i][j] instanceof EForm && ((EForm) lu.efs[i][j]).du.getProc().SPIRIT.id != null ? ((EForm)lu.efs[i][j]).du.getProc().SPIRIT : null;
 				scount[i][j] = spData[i][j] == null ? -1 : 0;
 			}
 	}
@@ -73,7 +73,7 @@ public class ELineUp extends BattleObj {
 	/**
 	 * reset recharge time of a spirit and spawn it
 	 */
-	protected final void deploySpirit(int i, int j, StageBasis sb, EUnit spi) {//spi will always be an EUnit I just don't want to import it
+	protected final void deploySpirit(int i, int j, StageBasis sb, EUnit spi) {
 		boolean firstDeploy = true;
 		for (EUnit u : sb.getAllOf(i, j)) {
 			EUnit rit = firstDeploy ? spi : ((EForm)sb.b.lu.efs[i][j]).invokeSpirit(sb, spi.index);

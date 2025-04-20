@@ -73,7 +73,7 @@ public abstract class DataEntity extends Data implements MaskEntity {
 
 		if (getProc().IMUWAVE.block == 100)
 			nabi |= 1 << 5;
-		if (getProc().DEMONVOLC.exists())
+		if (getProc().DEMONVOLC.prob > 0)
 			nabi |= 1 << 19;
 		return nabi;
 	}

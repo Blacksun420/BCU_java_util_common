@@ -9,6 +9,7 @@ import common.pack.SortedPackSet;
 import common.util.BattleObj;
 import common.util.stage.Music;
 import common.util.unit.Trait;
+import common.util.Data.Proc.SPEED;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -128,7 +129,7 @@ public abstract class AttackAb extends BattleObj {
 					} else
 						proc.STOP.time = (int)(proc.STOP.time * (100 - imus.IMUSTOP.block) / 100.0);
 				}
-				if (proc.WEAK.time > 0 && checkAIImmunity(proc.WEAK.mult - 100,imus.IMUWEAK.smartImu, imus.IMUWEAK.block > 0)) {
+				if (proc.WEAK.time > 0 && Entity.checkAIImmunity(proc.WEAK.mult - 100,imus.IMUWEAK.focus, imus.IMUWEAK.block > 0)) {
 					if (imus.IMUWEAK.block > 0)
 						blocked = true;
 					if (imus.IMUWEAK.block == 100) {
@@ -138,7 +139,7 @@ public abstract class AttackAb extends BattleObj {
 					} else
 						proc.WEAK.time = (int)(proc.WEAK.time * (100 - imus.IMUWEAK.block) / 100.0);
 				}
-				if (proc.LETHARGY.time > 0 && checkAIImmunity(proc.LETHARGY.mult,imus.IMULETHARGY.smartImu, imus.IMULETHARGY.block > 0)) {
+				if (proc.LETHARGY.time > 0 && Entity.checkAIImmunity(proc.LETHARGY.mult,imus.IMULETHARGY.focus, imus.IMULETHARGY.block > 0)) {
 					if (imus.IMULETHARGY.block > 0)
 						blocked = true;
 					if (imus.IMULETHARGY.block == 100) {
@@ -168,7 +169,7 @@ public abstract class AttackAb extends BattleObj {
 					} else
 						proc.CURSE.time = (int)(proc.CURSE.time * (100 - imus.IMUCURSE.block) / 100.0);
 				}
-				if (proc.POISON.damage != 0 && imus.IMUPOI.block != 0 && checkAIImmunity(proc.POISON.damage, imus.IMUPOI.smartImu, imus.IMUPOI.block < 0)) {
+				if (proc.POISON.damage != 0 && imus.IMUPOI.block != 0 && Entity.checkAIImmunity(proc.POISON.damage, imus.IMUPOI.focus, imus.IMUPOI.block < 0)) {
 					if (imus.IMUPOI.block > 0)
 						blocked = true;
 					if (imus.IMUPOI.block == 100) {
@@ -208,7 +209,7 @@ public abstract class AttackAb extends BattleObj {
 					} else
 						proc.HYPNO.time = (int)(proc.HYPNO.time * (100 - imus.IMUHYPNO.block) / 100.0);
 				}
-				if (proc.ARMOR.time > 0 && imus.IMUARMOR.block != 0 && checkAIImmunity(proc.ARMOR.mult, imus.IMUARMOR.smartImu, imus.IMUARMOR.block < 0)) {
+				if (proc.ARMOR.time > 0 && imus.IMUARMOR.block != 0 && Entity.checkAIImmunity(proc.ARMOR.mult, imus.IMUARMOR.focus, imus.IMUARMOR.block < 0)) {
 					if (imus.IMUARMOR.block > 0)
 						blocked = true;
 					if (imus.IMUARMOR.block == 100) {
@@ -220,12 +221,12 @@ public abstract class AttackAb extends BattleObj {
 				}
 				if (proc.SPEED.time > 0 && imus.IMUSPEED.block != 0) {
 					boolean b;
-					if (proc.SPEED.type != 2)
+					if (proc.SPEED.type != SPEED.TYPE.SET)
 						b = imus.IMUSPEED.block < 0;
 					else
 						b = (e.data.getSpeed() > proc.SPEED.speed && imus.IMUSPEED.block > 0) || (e.data.getSpeed() < proc.SPEED.speed && imus.IMUSPEED.block < 0);
 
-					if (checkAIImmunity(proc.SPEED.speed, imus.IMUSPEED.smartImu, b)) {
+					if (Entity.checkAIImmunity(proc.SPEED.speed, imus.IMUSPEED.focus, b)) {
 						if (imus.IMUSPEED.block > 0)
 							blocked = true;
 						if (imus.IMUSPEED.block == 100) {
@@ -294,23 +295,6 @@ public abstract class AttackAb extends BattleObj {
 				imus.CRITI.mult -= 100;
 		}
 		return atkd != 0;
-	}
-
-	/**
-	 * Used to obtain whether controlled immunity will have effect or not
-	 * @param val The effect of the proc
-	 * @param side The side used by the smartImu
-	 * @param invert Inverts the >,< signs depending on the proc
-	 * @return idk
-	 */
-	private boolean checkAIImmunity(double val, int side, boolean invert) {
-		if (side == 0)
-			return true;
-		if (invert) {
-			return val * side < 0;
-		} else {
-			return val * side > 0;
-		}
 	}
 
 	/**

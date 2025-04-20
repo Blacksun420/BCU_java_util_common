@@ -205,10 +205,10 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 							}
 						if (form.getPCoin() != null)
 							for (int[] dat : form.pcoin.info)
-								if (dat.length == 14 && dat[13] == 1)
+								if (dat[dat.length - 1] == 1)
 									dat[13] = 60;
 						if (form.getProc().SPIRIT.id != null) {
-							form.getProc().SPIRIT.animType = 5;
+							form.getProc().SPIRIT.animType = Proc.SUMMON_ANIM.ATTACK;
 							form.getProc().SPIRIT.inv = true;
 						}
 					} //Finish FORK_VERSION 1 checks
@@ -218,7 +218,7 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 							int[] trueArr;
 							switch (corres[0]) {
 								case Data.PC_P:
-									trueArr = Arrays.copyOf(data, 3 + (form.getProc().getArr(corres[1]).getAllFields().length - (corres.length >= 3 ? corres[2] : 0)) * 2);
+									trueArr = Arrays.copyOf(data, 3 + (form.getProc().getArr(corres[1]).getDeclaredFields().length - (corres.length >= 3 ? corres[2] : 0)) * 2);
 									if (corres[1] == Data.P_BLAST) {
 										trueArr[8] = trueArr[9] = 3;
 										trueArr[10] = trueArr[11] = 30;
