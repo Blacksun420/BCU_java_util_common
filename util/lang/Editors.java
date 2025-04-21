@@ -231,7 +231,8 @@ public class Editors {
 		public void setData(ProcItem obj) {
 			this.obj = obj;
 			for (Editor e : list)
-				e.setData();
+				if (e != null)
+					e.setData();
 			updateVisibility();
 		}
 
@@ -1013,13 +1014,15 @@ public class Editors {
 
 	private static void setComponentVisibility(EditorGroup egg, boolean boo, int... fields) {
 		EditorSupplier edi = UserProfile.getStatic("Editor_Supplier", () -> null);
-		if (fields.length > 2)
+		if (fields.length > 2) {
 			for (int field : fields)
-				edi.setEditorVisibility(egg.list[field], boo);
-		else {
+				if (egg.list[field] != null)
+					edi.setEditorVisibility(egg.list[field], boo);
+		} else {
 			int l1 = fields.length == 2 ? fields[1] : egg.list.length;
 			for (int i = fields[0]; i < l1; i++)
-				edi.setEditorVisibility(egg.list[i], boo);
+				if (egg.list[i] != null)
+					edi.setEditorVisibility(egg.list[i], boo);
 		}
 	}
 
