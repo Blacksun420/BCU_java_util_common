@@ -15,11 +15,9 @@ import common.pack.SortedPackSet;
 import common.util.pack.Background;
 import common.util.pack.EffAnim;
 import common.util.stage.Music;
-import common.util.unit.AbUnit;
 import common.util.unit.Trait;
 import common.util.unit.Unit;
 
-import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Field;
@@ -330,6 +328,14 @@ public class Data {
 			public void inject(JsonObject jobj) {
 				if (jobj.has("type"))
 					hitless = jobj.getAsJsonObject("type").get("hitless").getAsBoolean();
+			}
+
+			@Override
+			public boolean exists() {
+				spawns--;
+				boolean b = super.exists();
+				spawns++;
+				return b;
 			}
 		}
 
@@ -1172,6 +1178,20 @@ public class Data {
 			@JsonField(generic = Trait.class, alias = Identifier.class, defval = "isEmpty")
 			public SortedPackSet<Trait> traits = new SortedPackSet<>();
 		}
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class STATINC extends MULT { //It has no params, it just dictates behavior for strong v bless
+			@Override
+			public void add(ProcItem pi) {
+				double m = ((MULT)pi).mult;
+				if (m == 0)
+					return;
+				if (mult == 0)
+					mult += 100;
+				if (mult + m == 0)
+					m -= m > 0 ? 0.01 : -0.01; //Negligible difference but doesn't reset the markiplier
+				mult += m;
+			}
+		}
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class ProcID implements Cloneable, BattleStatic {
@@ -1638,9 +1658,9 @@ public class Data {
 		@Order(68)
 		public final PM DEMONVOLC = new PM();
 		@Order(69)
-		public final MULT DMGINC = new MULT(); //Merges Strong against, Massive Damage, and Insane Damage
+		public final STATINC DMGINC = new STATINC(); //Merges Strong against, Massive Damage, and Insane Damage
 		@Order(70)
-		public final MULT DEFINC = new MULT(); //Merges Strong against, Resistant, and Insane Resist
+		public final STATINC DEFINC = new STATINC(); //Merges Strong against, Resistant, and Insane Resist
 		@Order(71)
 		public final RANGESHIELD RANGESHIELD = new RANGESHIELD();
 		@Order(72)

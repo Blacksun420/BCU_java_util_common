@@ -97,7 +97,7 @@ public class Formatter {
 		}
 
 		public String summonMagnification(boolean fix_buff, int buff, Identifier<?> id) {
-			boolean isEnemy = Identifier.get(id) instanceof AbEnemy;
+			boolean isEnemy = id == null ? this.isEnemy : id.get() instanceof AbEnemy;
 			if (!isEnemy) {
 				if (fix_buff)
 					return "Lv " + buff;
