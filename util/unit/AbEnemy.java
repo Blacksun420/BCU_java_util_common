@@ -6,7 +6,6 @@ import common.pack.Identifier;
 import common.pack.IndexContainer.IndexCont;
 import common.pack.IndexContainer.Indexable;
 import common.pack.PackData;
-import common.system.VImg;
 
 import java.util.Set;
 

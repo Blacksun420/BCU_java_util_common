@@ -13,7 +13,6 @@ import common.util.Data;
 import common.util.pack.EffAnim;
 import common.util.pack.Soul;
 import common.util.unit.AbEnemy;
-import common.util.unit.Enemy;
 
 @JsonClass(noTag = JsonClass.NoTag.LOAD)
 public class Revival extends Data {

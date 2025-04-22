@@ -2,7 +2,6 @@ package common.util.unit;
 
 import common.io.json.JsonClass;
 import common.pack.Identifier;
-import common.system.VImg;
 
 import javax.annotation.Nullable;
 
