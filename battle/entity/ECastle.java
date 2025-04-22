@@ -9,7 +9,6 @@ import common.battle.data.MaskAtk;
 import common.util.anim.EAnimD;
 import common.util.pack.EffAnim.DefEff;
 import common.util.pack.EffAnim.GuardEff;
-import common.util.unit.Enemy;
 
 import java.util.Arrays;
 
