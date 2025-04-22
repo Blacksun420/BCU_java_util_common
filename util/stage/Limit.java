@@ -15,7 +15,7 @@ import common.util.unit.Form;
 
 import java.util.LinkedList;
 
-@JsonClass
+@JsonClass(noTag = JsonClass.NoTag.LOAD)
 public class Limit extends Data implements BattleStatic {
 
 	public static class DefLimit extends Limit {
@@ -42,12 +42,10 @@ public class Limit extends Data implements BattleStatic {
 
 	}
 
-	@JsonClass
+	@JsonClass(noTag = JsonClass.NoTag.LOAD)
 	public static class PackLimit extends Limit {
 
-		@JsonField(defval = "isEmpty")
 		public String name = "";
-
 		public PackLimit() {
 		}
 
@@ -77,13 +75,12 @@ public class Limit extends Data implements BattleStatic {
 		}
 	}
 
-	@JsonField(defval = "0")
 	public int rare, num, line, min, max;
-	@JsonField(backCompat = JsonField.CompatType.FORK, defval = "0")
+	@JsonField(backCompat = JsonField.CompatType.FORK)
 	public int star = 0, fa; //last var could be named forceAmount, but that'd take too much json space
-	@JsonField(alias = Identifier.class, defval = "null")
+	@JsonField(alias = Identifier.class)
 	public CharaGroup group;
-	@JsonField(alias = Identifier.class, defval = "null")
+	@JsonField(alias = Identifier.class)
 	public LvRestrict lvr;
 	@JsonField(defval = "null||isBlank")
 	public StageLimit stageLimit;

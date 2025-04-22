@@ -354,8 +354,8 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		Proc p = matk.getProc().clone();
 		for (common.util.Data.Proc.BLESSING b : e.status.blessings.keySet())
 			if (b.procs != null)
-				for (int i = 0; i < PROC_TOT; i++)
-					p.getArr(i).add(b.procs.getArr(i));
+				for (String str : par)
+					p.get(str).add(b.procs.get(str));
 		return p;
 	}
 

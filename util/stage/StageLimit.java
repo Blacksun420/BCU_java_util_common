@@ -11,7 +11,6 @@ import java.util.HashSet;
 @JsonClass(noTag = JsonClass.NoTag.LOAD)
 public class StageLimit extends Data implements BattleStatic {
 
-    @JsonField(defval = "0")
     public int maxMoney = 0, globalCooldown = 0, globalCost = 0, maxUnitSpawn = 0;
     @JsonField(defval = "this.defCD")
     public int[] cooldownMultiplier = { 100, 100, 100, 100, 100, 100 };
@@ -25,7 +24,6 @@ public class StageLimit extends Data implements BattleStatic {
     @JsonField(defval = "this.defDupe")
     public int[] deployDuplicationDelay = { 0, 0, 0, 0, 0, 0 }; // unit is frame
 
-    @JsonField(defval = "false")
     public boolean coolStart = false;
     @JsonField(generic = Integer.class, defval = "isEmpty")
     public HashSet<Integer> bannedCatCombo = new HashSet<>();

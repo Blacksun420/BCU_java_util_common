@@ -39,7 +39,6 @@ public class LvRestrict extends Data implements Indexable<PackData, LvRestrict> 
 
 	@JCIdentifier
 	public Identifier<LvRestrict> id;
-	@JsonField(defval = "isEmpty")
 	public String name = "";
 
 	@JsonClass.JCConstructor

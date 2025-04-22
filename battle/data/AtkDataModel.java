@@ -20,9 +20,8 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 
 	@JsonField(block = true)
 	public final CustomEntity ce;
-	@JsonField(backCompat = JsonField.CompatType.FORK, defval = "isEmpty")
+	@JsonField(backCompat = JsonField.CompatType.FORK)
 	public String str = "";
-	@JsonField(defval = "0")
 	public int atk, ld0, ld1, move;
 	@JsonField(defval = "1")
 	public int targ = TCH_N, dire = 1;
@@ -32,7 +31,7 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 	public int pre = 1;
 	@JsonField(defval = "true")
 	public boolean range = true;
-	@JsonField(backCompat = JsonField.CompatType.FORK, defval = "0")
+	@JsonField(backCompat = JsonField.CompatType.FORK)
 	public int alt;
 	@JsonField(generic = Trait.class, alias = Identifier.class, backCompat = JsonField.CompatType.FORK, defval = "isEmpty")
 	public SortedPackSet<Trait> traits = new SortedPackSet<>();//Gives attacks their own typings

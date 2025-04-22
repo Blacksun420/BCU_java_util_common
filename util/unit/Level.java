@@ -15,12 +15,10 @@ import java.util.Arrays;
 public class Level implements BattleStatic, LevelInterface {
 	@JsonField(defval = "50")
 	private int level = 50;
-	@JsonField(defval = "0")
 	private int plusLevel;
 	@Nonnull
 	@JsonField(defval = "this.noTalent")
 	private int[] talents = new int[0];
-	@JsonField(defval = "null")
 	private int[][] orbs = null;
 
 	public boolean noTalent() {

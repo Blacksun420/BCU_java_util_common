@@ -457,7 +457,7 @@ public class Editors {
 					t.intensity = 100;
 			} else {
 				t.time = 0;
-				t.intensity = 0;
+				t.intensity = 100;
 			}
 		}, eg -> t -> setComponentVisibility(eg, t.prob > 0, 1)));
 
@@ -468,11 +468,13 @@ public class Editors {
 			if (def && t.prob == 0) {
 				t.dis = t.max_dis = 0;
 				t.id = null;
-				t.mult = t.time = t.form = t.amount = 0;
+				t.time = 0;
+				t.mult = t.form = t.amount = 1;
 				t.anim_type = Proc.SUMMON_ANIM.NONE;
 				t.pass_proc = 0;
 				t.fix_buff = t.ignore_limit = t.on_hit = t.on_kill = false;
-				t.min_layer = t.max_layer = 0;
+				t.min_layer = 0;
+				t.max_layer = 9;
 				t.same_health = false;
 			} else {
 				if (def) {
@@ -526,7 +528,8 @@ public class Editors {
 				t.id = null;
 				t.mus = null;
 				t.kill = false;
-			}
+			} else
+				t.time = Math.max(-1, t.time);
 		}, eg -> t -> setComponentVisibility(eg, t.prob > 0, 1)));
 
 		map().put("POISON", new EditControl<>(POISON.class, (t) -> {
@@ -632,7 +635,8 @@ public class Editors {
 			if (!def)
 				t.time = (t.time / Data.VOLC_ITV) * Data.VOLC_ITV;
 			else if (t.prob == 0) {
-				t.dis_0 = t.dis_1 = t.time = t.mult = 0;
+				t.dis_0 = t.dis_1 = t.time = 0;
+				t.mult = 20;
 				t.hitless = false;
 				t.pid.clear();
 			} else {
@@ -670,7 +674,8 @@ public class Editors {
 		map().put("MINIWAVE", new EditControl<>(Proc.MINIWAVE.class, (t) -> {
 			t.prob = Math.max(def ? 0 : -100, Math.min(t.prob, 100));
 			if (def && t.prob == 0) {
-				t.lv = t.multi = 0;
+				t.lv = 0;
+				t.multi = 20;
 				t.hitless = false;
 				t.pid.clear();
 			} else {
@@ -758,9 +763,11 @@ public class Editors {
 			t.prob = Math.max(def ? 0 : -100, Math.min(t.prob, 100));
 			if (!def)
 				t.time = (t.time / Data.VOLC_ITV) * Data.VOLC_ITV;
-			if (t.prob == 0)
+			else if (t.prob == 0) {
 				t.dis_0 = t.dis_1 = t.time = 0;
-			else {
+				t.spawns = 1;
+				t.pid.clear();
+			} else {
 				t.time = Math.max(1, t.time / Data.VOLC_ITV) * Data.VOLC_ITV;
 				t.spawns = Math.max(1, t.spawns);
 			}
@@ -774,9 +781,12 @@ public class Editors {
 			t.prob = Math.max(def ? 0 : -100, Math.min(t.prob, 100));
 			if (!def)
 				t.time = (t.time / Data.VOLC_ITV) * Data.VOLC_ITV;
-			if (t.prob == 0)
-				t.dis_0 = t.dis_1 = t.time = t.mult = 0;
-			else {
+			else if (t.prob == 0) {
+				t.dis_0 = t.dis_1 = t.time = 0;
+				t.spawns = 1;
+				t.mult = 20;
+				t.pid.clear();
+			} else {
 				t.time = Math.max(1, t.time / Data.VOLC_ITV) * Data.VOLC_ITV;
 				t.spawns = Math.max(1, t.spawns);
 				if (t.mult == 0)
@@ -794,8 +804,8 @@ public class Editors {
 				return;
 			if (t.prob == 0) {
 				t.mult = 0;
-				t.count = 0;
-			} else if (t.count == 0) {
+				t.count = 1;
+			} else if (t.mult == 0) {
 				t.count = 2;
 				t.mult = 50;
 			} else
@@ -985,8 +995,9 @@ public class Editors {
 					t.lv = Math.max(1, t.lv);
 				t.reduction = Math.min(t.reduction, 100f / t.lv);
 			} else if (def) {
-				t.dis_0 = t.dis_1 = t.lv = 0;
-				t.reduction = 0;
+				t.dis_0 = t.dis_1 = 0;
+				t.lv = 3;
+				t.reduction = 30;
 			}
 		}, eg -> t -> {
 			setComponentVisibility(eg, !def || t.prob > 0, 1);

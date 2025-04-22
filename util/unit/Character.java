@@ -23,7 +23,6 @@ public abstract class Character extends Animable<AnimU<?>, AnimU.UType> implemen
     public final MultiLangData names = new MultiLangData();
     @JsonField(generic = MultiLangData.class, gen = JsonField.GenType.FILL, defval = "empty")
     public final MultiLangData description = new MultiLangData();
-    @JsonField(defval = "false")
     public boolean rev = false;
 
     @Override

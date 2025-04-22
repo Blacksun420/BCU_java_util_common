@@ -12,7 +12,6 @@ import common.util.unit.Trait;
 @JsonClass(noTag = NoTag.LOAD)
 public abstract class DataEntity extends Data implements MaskEntity {
 
-	@JsonField(defval = "0")
 	public int hp, range, will;
 	@JsonField(defval = "1")
 	public int hb = 1;
@@ -22,7 +21,7 @@ public abstract class DataEntity extends Data implements MaskEntity {
 	public int width = 320;
 	@JsonField(defval = "-1")
 	public int loop = -1;
-	@JsonField(backCompat = JsonField.CompatType.FORK, defval = "0")
+	@JsonField(backCompat = JsonField.CompatType.FORK)
 	public int tba, abi;
 
 	@JsonField(defval = "this.defSoul")

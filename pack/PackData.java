@@ -276,14 +276,11 @@ public abstract class PackData implements IndexContainer {
 		public final MultiLangData info = new MultiLangData();
 
 		public String creationDate;
-		@JsonField(defval = "null")
 		public String exportDate;
 		@JsonField(defval = "1")
 		public double version = 1.0;
 
-		@JsonField(defval = "false")
 		public boolean allowAnim = false;
-		@JsonField(defval = "null")
 		public byte[] parentPassword;
 		@JsonField(generic = String.class, defval = "isEmpty")
 		public SortedPackSet<String> dependency = new SortedPackSet<>();

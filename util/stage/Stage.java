@@ -56,7 +56,6 @@ public class Stage extends Data
 	@JsonField(generic = MultiLangData.class, gen = JsonField.GenType.FILL, defval = "empty")
 	public final MultiLangData names = new MultiLangData();
 
-	@JsonField(defval = "false")
 	public boolean non_con, trail, bossGuard;
 	@JsonField(defval = "3000")
 	public int len = 3000;
@@ -64,17 +63,16 @@ public class Stage extends Data
 	public int health = 60000;
 	@JsonField(defval = "8")
 	public int max = 8;
-	@JsonField(defval = "0")
 	public int mush, bgh;
-	@JsonField(backCompat = JsonField.CompatType.FORK, defval = "0")
+	@JsonField(backCompat = JsonField.CompatType.FORK)
 	public int timeLimit = 0;
 	@JsonField(defval = "1")
 	public int minUSpawn = 1, maxUSpawn = 1, minSpawn = 1, maxSpawn = 1;
-	@JsonField(defval = "null")
+	@JsonField
 	public Identifier<CastleImg> castle;
-	@JsonField(defval = "null")
+	@JsonField
 	public Identifier<Background> bg, bg1;
-	@JsonField(defval = "null")
+	@JsonField
 	public Identifier<Music> mus0, mus1;
 	@JsonField(defval = "empty")
 	public SCDef data = new SCDef(0);

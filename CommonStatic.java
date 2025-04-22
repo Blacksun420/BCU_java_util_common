@@ -113,17 +113,14 @@ public class CommonStatic {
 		public int[] ints = new int[] { 1, 1, 1, 2 };
 		@JsonField(defval = "true")
 		public boolean ref = true, twoRow = true;
-		@JsonField(defval = "false")
 		public boolean battle = false, icon = false;
 		/**
 		 * Use this variable to unlock plus level for aku outbreak
 		 */
-		@JsonField(defval = "false")
 		public boolean plus = false;
 		/**
 		 * Use this variable to adjust level limit for aku outbreak
 		 */
-		@JsonField(defval = "0")
 		public int levelLimit = 0;
 		@JsonField(defval = "this.defaultLangOrder")
 		public Lang.Locale[] langs = Lang.Locale.values();
@@ -170,13 +167,11 @@ public class CommonStatic {
 		/**
 		 * Make BCU show ex stage continuation pop-up if true
 		 */
-		@JsonField(defval = "false")
 		public boolean exContinuation = false;
 
 		/**
 		 * Make EX stage pop-up shown considering real chance
 		 */
-		@JsonField(defval = "false")
 		public boolean realEx = false;
 
 		/**
@@ -200,7 +195,6 @@ public class CommonStatic {
 		/**
 		 * Perform BC levelings
 		 */
-		@JsonField(defval = "false")
 		public boolean realLevel = false;
 
 		/**
@@ -218,19 +212,16 @@ public class CommonStatic {
 		/**setLvs
 		 * Use progression mode to store save data
 		 */
-		@JsonField(defval = "false")
 		public boolean prog = false;
 
 		/**
 		 * 60 fps mode
 		 */
-		@JsonField(defval = "false")
 		public boolean fps60 = false;
 
 		/**
 		 * Stat
 		 */
-		@JsonField(defval = "false")
 		public boolean stat = false;
 	}
 

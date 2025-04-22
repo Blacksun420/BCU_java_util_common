@@ -205,7 +205,7 @@ public class JsonEncoder {
 				f.setAccessible(true);
 				curjfld = jf;
 				Object val = f.get(obj);
-				if (!backCompat && !jf.defval().isEmpty() && defVal(val, jf.defval()))
+				if (!backCompat && defVal(val, jf.defval()))
 					continue;
 				JsonElement elem = encode(val, getInvoker());
 				if (elem.isJsonObject() && curjfld.alias().length == 0 && val != null && val.getClass() != f.getType())
@@ -243,27 +243,30 @@ public class JsonEncoder {
 		if (str.contains("||"))
 			return defVal(val, str.substring(0, str.indexOf("||"))) || defVal(val, str.substring(str.indexOf("||")+2));
 		if (val == null)
-			return str.equals("null");
+			return str.isEmpty() || str.equals("null");
 		if (str.equals("null"))
 			return false;
 		if (val instanceof Byte)
-			return (byte)val == Byte.parseByte(str);
+			return (byte)val == (str.isEmpty() ? 0 : Byte.parseByte(str));
 		if (val instanceof Integer)
-			return (int)val == Integer.parseInt(str);
+			return (int)val == (str.isEmpty() ? 0 : Integer.parseInt(str));
 		if (val instanceof Long)
-			return (long)val == Long.parseLong(str);
+			return (long)val == (str.isEmpty() ? 0 : Long.parseLong(str));
 		if (val instanceof Float)
-			return (float)val == Float.parseFloat(str);
+			return (float)val == (str.isEmpty() ? 0 : Float.parseFloat(str));
 		if (val instanceof Double)
-			return (double)val == Double.parseDouble(str);
+			return (double)val == (str.isEmpty() ? 0 : Double.parseDouble(str));
 		if (val instanceof Boolean)
-			return (boolean)val == Boolean.parseBoolean(str);
-		if (val instanceof String && !str.equals("isEmpty"))
+			return (boolean)val == (!str.isEmpty() && Boolean.parseBoolean(str));
+		if (val instanceof String)
 			return val.equals(str);
 		if (val instanceof Enum)
 			return val.toString().equals(str);
 		if (val instanceof Object[] && str.equals("isEmpty"))
 			return ((Object[])val).length == 0;
+
+		if (str.isEmpty())
+			return false;
 		try {
 			if (str.startsWith("this."))
 				return defVal(obj, str.substring(5));
@@ -273,10 +276,7 @@ public class JsonEncoder {
 			}
 			return (boolean) val.getClass().getMethod(str).invoke(val);
 		} catch (Exception e) {
-			if (val != null)
-				System.out.println("Failed checking def for " + val.getClass() + ": " + val + " on " + obj.getClass());
-			else
-				System.out.println("Failed checking def for " + str + " on " + obj.getClass());
+			System.out.println("Failed checking def for " + val.getClass() + ": " + val + " on " + obj.getClass());
 			e.printStackTrace();//Return false without jsonException because this doesn't interfere with json encoding
 		}
 		return false;

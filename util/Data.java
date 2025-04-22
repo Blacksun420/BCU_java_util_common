@@ -33,7 +33,6 @@ public class Data {
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class PROB extends ProcItem {
 			@Order(0)
-			@JsonField(defval = "0")
 			public float prob;
 
 			@Override
@@ -51,12 +50,16 @@ public class Data {
 				nps[3] = Math.min(nps[3], (int)(100-prob));
 				return super.setTalent(nps);
 			}
+
+			@Override
+			public boolean exists() {
+				return prob > 0;
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class MULT extends ProcItem {
 			@Order(0)
-			@JsonField(defval = "0")
 			public double mult;
 
 			@Override
@@ -69,12 +72,16 @@ public class Data {
 				}
 				return super.setTalent(nps);
 			}
+
+			@Override
+			public boolean exists() {
+				return mult != 0;
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class PM extends PROB {
 			@Order(1)
-			@JsonField(defval = "0")
 			public double mult;
 
 			@Override
@@ -92,7 +99,6 @@ public class Data {
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class PT extends PROB {
 			@Order(1)
-			@JsonField(defval = "0")
 			public int time;
 
 			@Override
@@ -108,7 +114,7 @@ public class Data {
 
 			@Override
 			public boolean perform(CopRand r) {
-				if (time <= 0)
+				if (time == 0)
 					return false;
 				return super.perform(r);
 			}
@@ -117,7 +123,6 @@ public class Data {
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class PTD extends PT {
 			@Order(2)
-			@JsonField(defval = "0")
 			public int dis;
 
 			@Override
@@ -135,7 +140,6 @@ public class Data {
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class PTM extends PT {
 			@Order(2)
-			@JsonField(defval = "0")
 			public double mult;
 
 			@Override
@@ -153,14 +157,12 @@ public class Data {
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class PTMS extends PTM {
 			@Order(3)
-			@JsonField(defval = "false")
 			public boolean stackable;
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class IMU extends MULT {
 			@Order(1)
-			@JsonField(defval = "0")
 			public float block;
 
 			@Override
@@ -170,6 +172,11 @@ public class Data {
 				nps[4] = Math.min(nps[4], (int)(100-block));
 				nps[5] = Math.min(nps[5], (int)(100-block));
 				return super.setTalent(nps);
+			}
+
+			@Override
+			public boolean exists() {
+				return mult != 0 || block != 0;
 			}
 		}
 
@@ -235,7 +242,7 @@ public class Data {
 		public static class REFUND extends PM {
 			@Order(2)
 			@JsonField(defval = "1")
-			public int count;
+			public int count = 1;
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -243,10 +250,8 @@ public class Data {
 			@Order(1)
 			public int lv;
 			@Order(3)
-			@JsonField(defval = "false")
 			public boolean hitless;
 			@Order(4)
-			@JsonField(defval = "false")
 			public boolean inverted;
 			@Order(5)
 			@JsonField(defval = "isEmpty")
@@ -277,7 +282,7 @@ public class Data {
 		public static class MINIWAVE extends WAVE {
 			@Order(2)
 			@JsonField(defval = "20")
-			public int multi;
+			public int multi = 20;
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -296,7 +301,6 @@ public class Data {
 			@Order(3)
 			public int time;
 			@Order(5)
-			@JsonField(defval = "false")
 			public boolean hitless;
 			@Order(6)
 			@JsonField(defval = "isEmpty")
@@ -329,21 +333,13 @@ public class Data {
 				if (jobj.has("type"))
 					hitless = jobj.getAsJsonObject("type").get("hitless").getAsBoolean();
 			}
-
-			@Override
-			public boolean exists() {
-				spawns--;
-				boolean b = super.exists();
-				spawns++;
-				return b;
-			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class MINIVOLC extends VOLC {
 			@Order(4)
 			@JsonField(defval = "20")
-			public int mult;
+			public int mult = 20;
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -354,10 +350,10 @@ public class Data {
 			public int dis_1;
 			@Order(3)
 			@JsonField(defval = "3")
-			public int lv;
+			public int lv = 3;
 			@Order(4)
 			@JsonField(defval = "30")
-			public float reduction;
+			public float reduction = 30;
 			@Order(5)
 			@JsonField(defval = "isEmpty")
 			public ProcID pid = new ProcID();
@@ -394,7 +390,6 @@ public class Data {
 			@Order(1)
 			public int mult;
 			@Order(2)
-			@JsonField(defval = "false")
 			public boolean incremental;
 
 			@Override
@@ -404,12 +399,16 @@ public class Data {
 					nps[i] = Math.max(min, nps[i]);
 				return super.setTalent(nps);
 			}
+
+			@Override
+			public boolean exists() {
+				return health > 0;
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class IMUATK extends PT {
 			@Order(2)
-			@JsonField(defval = "0")
 			public int cd;
 
 			@Override
@@ -433,6 +432,11 @@ public class Data {
 					nps[i] = Math.max(min, nps[i]);
 				return super.setTalent(nps);
 			}
+
+			@Override
+			public boolean exists() {
+				return count != 0;
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -450,22 +454,17 @@ public class Data {
 			@Order(2)
 			public int health;
 			@Order(3)
-			@JsonField(defval = "0")
 			public int dis_0;
 			@Order(4)
-			@JsonField(defval = "0")
 			public int dis_1;
 			@Order(5)
 			@JsonField(defval = "ACTIVE")
 			public RANGE range_type = RANGE.ACTIVE;
 			@Order(6)
-			@JsonField(defval = "false")
 			public boolean imu_zkill;
 			@Order(7)
-			@JsonField(defval = "false")
 			public boolean revive_non_zombie;
 			@Order(8)
-			@JsonField(defval = "false")
 			public boolean revive_others;
 
 			@Override
@@ -495,6 +494,11 @@ public class Data {
 						revive_others = type.get("revive_others").getAsBoolean();
 				}
 			}
+
+			@Override
+			public boolean exists() {
+				return count != 0;
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD) // Starred Barrier
@@ -502,13 +506,10 @@ public class Data {
 			@Order(0)
 			public int health;
 			@Order(1)
-			@JsonField(defval = "0")
 			public int regentime;
 			@Order(2)
-			@JsonField(defval = "0")
 			public int timeout;
 			@Order(3)
-			@JsonField(defval = "false")
 			public boolean magnif;
 
 			@Override
@@ -523,6 +524,11 @@ public class Data {
 			public void inject(JsonObject jobj) {
 				if (jobj.has("type"))
 					magnif = jobj.getAsJsonObject("type").get("magnif").getAsBoolean();
+			}
+
+			@Override
+			public boolean exists() {
+				return health > 0;
 			}
 		}
 
@@ -548,10 +554,8 @@ public class Data {
 			@JsonField(defval = "dodges")
 			public boolean active;
 			@Order(1)
-			@JsonField(defval = "0")
 			public float prob;
 			@Order(2)
-			@JsonField(defval = "0")
 			public int time;
 
 			@Override
@@ -572,6 +576,10 @@ public class Data {
 			}
 
 			@Override
+			public boolean exists() {
+				return active || prob > 0;
+			}
+			@Override
 			public boolean perform(CopRand r) {
 				return time > 0 && prob > 0 && (prob >= 100 || r.nextDouble() * 100 < prob);
 			}
@@ -590,26 +598,20 @@ public class Data {
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class AURA extends ProcItem {
 			@Order(0)
-			@JsonField(defval = "0")
 			public int amult; //Modifies Damage
 			@Order(1)
-			@JsonField(defval = "0")
 			public int dmult; //Modifies Defense
 			@Order(2)
-			@JsonField(defval = "0")
 			public int smult; //Modifies Speed
 			@Order(3)
-			@JsonField(defval = "0")
 			public int tmult; //Modifies TBA
 			@Order(4)
 			public int min_dis;
 			@Order(5)
 			public int max_dis;
 			@Order(6)
-			@JsonField(defval = "false")
 			public boolean trait;
 			@Order(7)
-			@JsonField(defval = "false")
 			public boolean skip_self;
 
 			@Override
@@ -636,12 +638,16 @@ public class Data {
 				if (jobj.has("type"))
 					trait = jobj.getAsJsonObject("type").get("trait").getAsBoolean();
 			}
+
+			@Override
+			public boolean exists() {
+				return amult != 0 || dmult != 0 || smult != 0 || tmult != 0;
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class LETHARGY extends PTMS {
 			@Order(3)
-			@JsonField(defval = "false")
 			public boolean percentage;
 
 			@JsonDecoder.OnInjected
@@ -684,13 +690,10 @@ public class Data {
 			@JsonField(defval = "BURN")
 			public TYPE damage_type = TYPE.BURN;
 			@Order(5)
-			@JsonField(defval = "false")
 			public boolean unstackable;
 			@Order(6)
-			@JsonField(defval = "false")
 			public boolean ignoreMetal;
 			@Order(7)
-			@JsonField(defval = "false")
 			public boolean modifAffected;
 
 			@JsonDecoder.OnInjected
@@ -725,13 +728,18 @@ public class Data {
 				nps[9] = Math.max(d1, nps[9]);
 				return super.setTalent(nps);
 			}
+
+			@Override
+			public boolean perform(CopRand r) {
+				return prob > 0 && (prob >= 100 || r.nextDouble() * 100 < prob);
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class TIME extends PT {
 			@Order(2)
 			@JsonField(defval = "100")
-			public float intensity;
+			public float intensity = 100;
 
 			@Override
 			public int[] setTalent(int[] nps) {
@@ -755,7 +763,6 @@ public class Data {
 			@JsonField(defval = "FIXED")
 			public TYPE type = TYPE.FIXED;
 			@Order(4)
-			@JsonField(defval = "false")
 			public boolean stackable;
 		}
 
@@ -771,57 +778,45 @@ public class Data {
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class SUMMON extends PROB {
 			@Order(1)
-			@JsonField(defval = "null")
 			public Identifier<?> id;
 			@Order(2)
-			@JsonField(defval = "0")
 			public int dis;
 			@Order(3)
-			@JsonField(defval = "0")
 			public int max_dis;
 			@Order(4)
 			@JsonField(defval = "1")
-			public int mult;
+			public int mult = 1;
 			@Order(5)
-			@JsonField(defval = "0")
 			public int min_layer;
 			@Order(6)
 			@JsonField(defval = "9")
-			public int max_layer;
+			public int max_layer = 9;
 			@Order(7)
 			@JsonField(defval = "NONE")
-			public SUMMON_ANIM anim_type;
+			public SUMMON_ANIM anim_type = SUMMON_ANIM.NONE;
 			@Order(8)
-			@JsonField(defval = "false")
 			public boolean ignore_limit;
 			@Order(9)
-			@JsonField(defval = "false")
 			public boolean fix_buff;
 			@Order(10)
-			@JsonField(defval = "false")
 			public boolean same_health;
 			@Order(11)
-			@JsonField(defval = "false")
 			public boolean bond_hp;
 			@Order(12)
-			@JsonField(defval = "false")
 			public boolean on_hit;
 			@Order(13)
-			@JsonField(defval = "false")
 			public boolean on_kill;
 			@Order(14)
-			@JsonField(defval = "0")
 			@BitMasked
 			public int pass_proc;
 			@Order(15)
-			@JsonField(defval = "0")
 			public int time;
 			@Order(16)
 			@JsonField(defval = "1")
-			public int amount;
+			public int amount = 1;
 			@Order(17)
 			@JsonField(defval = "1")
-			public int form;
+			public int form = 1;
 
 			@JsonDecoder.OnInjected
 			public void inject(JsonObject jobj) {
@@ -858,13 +853,10 @@ public class Data {
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class THEME extends PT {
 			@Order(2)
-			@JsonField(defval = "null")
 			public Identifier<Background> id;
 			@Order(3)
-			@JsonField(defval = "null")
 			public Identifier<Music> mus;
 			@Order(4)
-			@JsonField(defval = "false")
 			public boolean kill;
 
 			@JsonDecoder.OnInjected
@@ -891,20 +883,15 @@ public class Data {
 			@JsonField(defval = "NONE")
 			public CWAVE counterWave = CWAVE.NONE;
 			@Order(5)
-			@JsonField(defval = "0")
 			@BitMasked
 			public int procType;
 			@Order(6)
-			@JsonField(defval = "false")
 			public boolean useOwnDamage;
 			@Order(7)
-			@JsonField(defval = "false")
 			public boolean outRange;
 			@Order(8)
-			@JsonField(defval = "false")
 			public boolean areaAttack;
 			@Order(9)
-			@JsonField(defval = "0")
 			public int maxDamage;
 
 			@JsonDecoder.OnInjected
@@ -932,13 +919,10 @@ public class Data {
 			@Order(2)
 			public int reduction;
 			@Order(3)
-			@JsonField(defval = "false")
 			public boolean traitIgnore;
 			@Order(4)
-			@JsonField(defval = "false")
 			public boolean procs;
 			@Order(5)
-			@JsonField(defval = "false")
 			public boolean magnif;
 
 			@Override
@@ -968,16 +952,12 @@ public class Data {
 			@Order(1)
 			public int dmg;
 			@Order(2)
-			@JsonField(defval = "false")
 			public boolean traitIgnore;
 			@Order(3)
-			@JsonField(defval = "false")
 			public boolean nullify;
 			@Order(4)
-			@JsonField(defval = "false")
 			public boolean procs;
 			@Order(5)
-			@JsonField(defval = "false")
 			public boolean magnif;
 
 			@JsonDecoder.OnInjected
@@ -1003,19 +983,14 @@ public class Data {
 			@Order(2)
 			public int maxrange;
 			@Order(3)
-			@JsonField(defval = "0")
 			public int reduction;
 			@Order(4)
-			@JsonField(defval = "0")
 			public int block;
 			@Order(5)
-			@JsonField(defval = "false")
 			public boolean traitCon;
 			@Order(6)
-			@JsonField(defval = "false")
 			public boolean procs;
 			@Order(7)
-			@JsonField(defval = "false")
 			public boolean waves;
 
 			@Override
@@ -1050,25 +1025,18 @@ public class Data {
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class AI extends ProcItem {
 			@Order(0)
-			@JsonField(defval = "0")
 			public int retreatDist;
 			@Order(1)
-			@JsonField(defval = "0")
 			public int retreatSpeed;
 			@Order(2)
-			@JsonField(defval = "false")
 			public boolean calcstrongest;
 			@Order(3)
-			@JsonField(defval = "false")
 			public boolean calcblindspot;
 			@Order(4)
-			@JsonField(defval = "false")
 			public boolean danger;
 			@Order(5)
-			@JsonField(defval = "false")
 			public boolean ignHypno;
 			//@Order(6)
-			//@JsonField(defval = "false")
 			//public boolean manualcontrol; //The player controls the unit manually; Arrow keys to move, spacebar to attack
 
 			@JsonDecoder.OnInjected
@@ -1086,7 +1054,6 @@ public class Data {
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class RANGESHIELD extends PM {
 			@Order(2)
-			@JsonField(defval = "false")
 			public boolean range;
 
 			@JsonDecoder.OnInjected
@@ -1102,27 +1069,24 @@ public class Data {
 			public Identifier<?> id;
 			@Order(1)
 			@JsonField(defval = "15")
-			public int cd0;
+			public int cd0 = 15;
 			@Order(2)
 			@JsonField(defval = "15")
-			public int cd1;
+			public int cd1 = 15;
 			@Order(3)
 			@JsonField(defval = "1")
-			public int amount;
+			public int amount = 1;
 			@Order(4)
-			@JsonField(defval = "0")
 			public int summonerCd;
 			@Order(5)
-			@JsonField(defval = "0")
 			public int moneyCost;
 			@Order(6)
 			@JsonField(defval = "NONE")
 			public SUMMON_ANIM animType = SUMMON_ANIM.NONE;
 			@Order(7)
 			@JsonField(defval = "1")
-			public int form;
+			public int form = 1;
 			@Order(8)
-			@JsonField(defval = "false")
 			public boolean inv;
 
 			public int[] setTalent(int[] nps) {
@@ -1152,7 +1116,7 @@ public class Data {
 			}
 
 			@Override
-			public boolean exists() {
+			public boolean def_exists() {
 				return id != null;
 			}
 
@@ -1166,10 +1130,8 @@ public class Data {
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class BLESSING extends PT {
 			@Order(2)
-			@JsonField(defval = "false")
 			public boolean stackable;
 			@Order(3)
-			@JsonField(defval = "0")
 			public int abis;
 			@Order(4)
 			@JsonField(defval = "null||isBlank")
@@ -1268,7 +1230,7 @@ public class Data {
 						else
 							throw new Exception("unknown field " + f.getType() + " " + f.getName());
 				} catch (Exception e) {
-					e.printStackTrace();
+					CommonStatic.ctx.noticeErr(e, ErrType.DEBUG, "Error clearing Proc of type " + getClass().getName());
 				}
 				return this;
 			}
@@ -1292,20 +1254,20 @@ public class Data {
 						}
 					return ans;
 				} catch (Exception e) {
-					e.printStackTrace();
+					CommonStatic.ctx.noticeErr(e, ErrType.DEBUG, "Error cloning Proc of type " + getClass().getName());
 					return null;
 				}
 			}
 
-			public boolean exists() {
+			public boolean def_exists() {
 				try {
 					Field[] fs = getDeclaredFields();
 					for (Field f : fs)
 						if (f.getType() == double.class || f.getType() == float.class) {
-							if (f.getDouble(this) != 0)
+							if (f.getDouble(this) != (f.getAnnotation(JsonField.class) != null ? Double.parseDouble(f.getAnnotation(JsonField.class).defval()) : 0))
 								return true;
 						} else if (f.getType() == int.class) {
-							if (f.getInt(this) != 0)
+							if (f.getInt(this) != (f.getAnnotation(JsonField.class) != null ? Integer.parseInt(f.getAnnotation(JsonField.class).defval()) : 0))
 								return true;
 						} else if (f.getType() == Identifier.class) {
 							if (f.get(this) != null)
@@ -1316,13 +1278,16 @@ public class Data {
 						} else if (f.getType() == ProcID.class) {
 							if (!((ProcID)f.get(this)).isEmpty())
 								return true;
-						} else if (Enum.class.isAssignableFrom(f.getType()) && f.getAnnotation(JsonField.class) != null)
+						} else if (Enum.class.isAssignableFrom(f.getType()))
 							if (!f.get(this).toString().equals(f.getAnnotation(JsonField.class).defval()))
 								return true;
 				} catch (Exception e) {
-					e.printStackTrace();
+					CommonStatic.ctx.noticeErr(e, ErrType.DEBUG, "Error checking if Proc of type " + getClass().getName() + " exists");
 				}
 				return false;
+			}
+			public boolean exists() {
+				return def_exists();
 			}
 
 			public int get(int i) { //Only used for talents
@@ -1340,18 +1305,16 @@ public class Data {
 					}
 					return f.getType() == int.class ? f.getInt(this) : (int)f.getDouble(this);
 				} catch (Exception e) {
-					e.printStackTrace();
+					CommonStatic.ctx.noticeErr(e, ErrType.DEBUG, "Error getting talent " + i + " for proc type " + getClass().getName());
 					return 0;
 				}
 			}
 
 			public String getFieldName(int i) {
 				try {
-					Field f = getDeclaredFields()[i];
-
-					return f.getName();
+					return getDeclaredFields()[i].getName();
 				} catch (Exception e) {
-					e.printStackTrace();
+					CommonStatic.ctx.noticeErr(e, ErrType.DEBUG, i < 0 ? "Negative Index" : getClass().getName() + " has less than " + i + " fields");
 					return null;
 				}
 			}
@@ -1360,22 +1323,8 @@ public class Data {
 				return FieldOrder.getFields(this.getClass());
 			}
 
-			public Field[] getAllFields() { //Revive talent bug
-                return getDeclaredFields();
-			}
-
 			public boolean perform(CopRand r) {
-				try {
-					Field f = get("prob");
-					int prob = f.getInt(this);
-					if (prob == 0)
-						return false;
-					if (prob == 100)
-						return true;
-					return r.nextFloat() * 100 < prob;
-				} catch (Exception e) {
-					return exists();
-				}
+				return exists();
 			}
 
 			public Field get(String name) {
@@ -1404,7 +1353,7 @@ public class Data {
 					else
 						f.set(this, v);
 				} catch (Exception e) {
-					e.printStackTrace();
+					CommonStatic.ctx.noticeErr(e, ErrType.DEBUG, "Error setting " + v + " for talent " + i + " for proc type " + getClass().getName());
 				}
 			}
 			/**
@@ -1416,7 +1365,7 @@ public class Data {
 					Field f = getDeclaredFields()[i];
 					f.set(this, id);
 				} catch (Exception e) {
-					e.printStackTrace();
+					CommonStatic.ctx.noticeErr(e, ErrType.DEBUG, "Error setting " + id + " for talent " + i + " for proc type " + getClass().getName());
 				}
 			}
 
@@ -1440,11 +1389,11 @@ public class Data {
 						} else
 							throw new Exception("unknown field " + f.getType() + " " + f.getName());
 				} catch (Exception e) {
-					e.printStackTrace();
+					CommonStatic.ctx.noticeErr(e, ErrType.DEBUG, "Error setting data for proc type " + getClass().getName());
 				}
 			}
 			public void add(ProcItem pi) {
-				if (!pi.exists())
+				if (!pi.def_exists())
 					return;
 				try {
 					for (Field f : getDeclaredFields()) {
@@ -1469,7 +1418,7 @@ public class Data {
 							if (p != null)
 								f.set(this, p.clone());
 						} else if (f.getType() == SortedPackSet.class) {
-							SortedPackSet<Comparable<? super Comparable>> l = (SortedPackSet<Comparable<? super Comparable>>) f.get(pi), m = (SortedPackSet<Comparable<? super Comparable>>) f.get(this);
+							SortedPackSet<? extends Comparable<?>> l = (SortedPackSet<? extends Comparable<?>>) f.get(pi), m = (SortedPackSet<? extends Comparable<?>>) f.get(this);
 							m.addAll(l);
 							f.set(this, m);
 						} else if (f.getType() == ProcID.class) {
@@ -1480,7 +1429,7 @@ public class Data {
 							throw new Exception("unknown field " + f.getType() + " " + f.getName());
 					}
 				} catch (Exception e) {
-					e.printStackTrace();
+					CommonStatic.ctx.noticeErr(e, ErrType.DEBUG, "Error adding bless effect for proc type " + getClass().getName());
 				}
 			}
 
@@ -1694,14 +1643,14 @@ public class Data {
 				}
 				return ans;
 			} catch (Exception e) {
-				e.printStackTrace();
+				CommonStatic.ctx.noticeErr(e, ErrType.DEBUG, "Error cloning proc");
 				return null;
 			}
 		}
 
 		public boolean isBlank() {
 			for (int i = 0; i < PROC_TOT; i++)
-				if (getArr(i).exists())
+				if (getArr(i).def_exists())
 					return false;
 			return true;
 		}
@@ -1710,7 +1659,7 @@ public class Data {
 			try {
 				return (ProcItem) Proc.class.getField(id).get(this);
 			} catch (Exception e) {
-				e.printStackTrace();
+				CommonStatic.ctx.noticeErr(e, ErrType.DEBUG, "Couldn't get proc " + id);
 				return null;
 			}
 		}
@@ -1719,18 +1668,16 @@ public class Data {
 			try {
 				return (ProcItem) getDeclaredFields()[i].get(this);
 			} catch (Exception e) {
-				e.printStackTrace();
+				CommonStatic.ctx.noticeErr(e, ErrType.DEBUG, "Couldn't get proc " + i);
 				return null;
 			}
 		}
 
-		public boolean sharable(int i) {
-			if(i >= procSharable.length) {
-				System.out.println("Warning : "+i+" is out of index of procSharable");
-				return false;
-			} else {
+		public static boolean sharable(int i) {
+			if(i < procSharable.length)
 				return procSharable[i];
-			}
+			System.out.println("Warning : "+i+" is out of index of procSharable");
+			return false;
 		}
 
 		@Override
@@ -1751,10 +1698,10 @@ public class Data {
 					String tag = f.getName();
 					ProcItem proc = (ProcItem) f.get(this);
 
-					if(proc.exists())
+					if(proc.def_exists())
 						obj.add(tag, JsonEncoder.encode(proc));
 				} catch (IllegalAccessException e) {
-					e.printStackTrace();
+					CommonStatic.ctx.noticeErr(e, ErrType.DEBUG, "Couldn't serializa proc " + f.getName());
 				}
 			}
 
@@ -1784,7 +1731,7 @@ public class Data {
 						f.set(proc, JsonDecoder.decode(obj.get(tag), f.getType()));
 					}
 				} catch (Exception e) {
-					e.printStackTrace();
+					CommonStatic.ctx.noticeErr(e, ErrType.DEBUG, "Couldn't generate proc " + f.getName());
 				}
 			}
 
@@ -2148,6 +2095,12 @@ public class Data {
 	 * Procs in here are shareable on any hit for BC entities, but not shareable for custom entities
 	 */
 	public static final int[] BCShareable = { P_BOUNTY, P_ATKBASE };
+	public static boolean bcShareable(int i) {
+		for (int bc : BCShareable)
+			if (bc == i)
+				return true;
+		return false;
+	}
 
 	public static final byte WT_WAVE = 1;
 	public static final byte WT_MOVE = 2;
@@ -2289,7 +2242,8 @@ public class Data {
 			{ PC_P, P_SPIRIT}, //41: Spirit summon
 			{ PC_P, P_DRAIN}, //42: Drain
 			{ PC_P, P_SPEEDUP}, //43: Adrenaline
-			{ PC_P, P_REFUND} //44: Refund
+			{ PC_P, P_REFUND}, //44: Refund
+			{ PC_P, P_MINIDEATHSURGE} //45: Mini-Deathsurge
 	};
 
 	public static int[] get_CORRES(int ind) {
@@ -2604,12 +2558,12 @@ public class Data {
 			return null;
 		}
 	}
-
+	//Same as ignore. but prints log
 	public static <T> T silent(SupExc<T> sup) {
 		try {
 			return sup.get();
 		} catch (Exception e) {
-			e.printStackTrace();
+			CommonStatic.ctx.noticeErr(e, ErrType.DEBUG, "Unexpected Error");
 			return null;
 		}
 	}

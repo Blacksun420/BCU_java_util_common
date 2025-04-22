@@ -136,7 +136,7 @@ public class Formatter {
 			StringBuilder str = new StringBuilder("[");
 			for(int i = 0; i < Data.PROC_TOT; i++) {
 				Proc.ProcItem item = p.getArr(i);
-				if(!item.exists())
+				if(!item.def_exists())
 					continue;
 				String format = ProcLang.get().get(i).format;
 				String formatted = format(format, item, this);

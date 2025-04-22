@@ -17,25 +17,23 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-@JsonClass
+@JsonClass(noTag = JsonClass.NoTag.LOAD)
 public class SCDef implements Copable<SCDef> {
 
-	@JsonClass
+	@JsonClass(noTag = JsonClass.NoTag.LOAD)
 	public static class Line implements Cloneable {
-		@JsonField(defval = "null")
 		public Identifier<AbEnemy> enemy;
 		@JsonField(defval = "1")
 		public int number = 1;
-		@JsonField(defval = "0")
 		public int boss, group, spawn_0, spawn_1, respawn_0, respawn_1, castle_1, layer_0, kill_count, doordis_0, doordis_1;
 		@JsonField(defval = "100")
 		public int multiple = 100, mult_atk = 100, castle_0 = 100;
 		@JsonField(defval = "9")
 		public int layer_1 = 9;
 
-		@JsonField(backCompat = JsonField.CompatType.FORK, defval = "0")
+		@JsonField(backCompat = JsonField.CompatType.FORK)
 		public byte doorchance;
-		@JsonField(backCompat = JsonField.CompatType.FORK, defval = "null")
+		@JsonField(backCompat = JsonField.CompatType.FORK)
 		public Revival rev;
 
 		@JCConstructor
@@ -80,7 +78,6 @@ public class SCDef implements Copable<SCDef> {
 	public final FixIndexList<SCGroup> sub = new FixIndexList<>(SCGroup.class);
 	@JsonField(generic = { Identifier.class, Integer.class }, defval = "isEmpty")
 	public final TreeMap<Identifier<AbEnemy>, Integer> smap = new TreeMap<>();
-	@JsonField(defval = "0")
 	public int sdef = 0;
 
 	@JCConstructor
