@@ -61,39 +61,40 @@ public abstract class PackData implements IndexContainer {
 		}
 
 		public void load(Consumer<String> progress, Consumer<Double> bar) {
-			progress.accept("loading basic images");
+			progress.accept("Loading basic Images");
 			Res.readData();
+			progress.accept("Loading traits");
 			Trait.addBCTraits();
-			progress.accept("loading cannon data");
+			progress.accept("Loading cannon Data");
 			Treasure.readCannonCurveData();
-			progress.accept("loading enemies");
+			progress.accept("Loading enemies");
 			loadEnemies(bar);
-			progress.accept("loading units");
+			progress.accept("Loading units");
 			loadUnits(bar);
-			progress.accept("loading auxiliary data");
+			progress.accept("Loading auxiliary data");
 			Combo.readFile();
 			PCoin.read();
-			progress.accept("loading effects");
+			progress.accept("Loading effects");
 			EffAnim.read();
-			progress.accept("loading backgrounds");
+			progress.accept("Loading backgrounds");
 			Background.read(bar);
 			BackgroundEffect.read();
-			progress.accept("loading cat castles");
+			progress.accept("Loading cat castles");
 			NyCastle.read();
-			progress.accept("loading souls");
+			progress.accept("Loading souls");
 			loadSoul();
-			progress.accept("loading stages");
-			DefMapColc.read();
+			progress.accept("Loading stages");
+			DefMapColc.read(bar);
 			Enemy.regType();
 			RandStage.read();
 			loadCharaGroup();
 			loadLimit();
 			CastleImg.loadBossSpawns();
-			progress.accept("loading orbs");
+			progress.accept("Loading orbs");
 			Orb.read();
-			progress.accept("loading musics");
+			progress.accept("Loading musics");
 			loadMusic();
-			progress.accept("process data");
+			progress.accept("Processing data");
 			this.traits.reset();
 			this.enemies.reset();
 			this.randEnemies.reset();
@@ -153,7 +154,7 @@ public abstract class PackData implements IndexContainer {
 					ints[j] = Integer.parseInt(strs[j]);
 
 				enemies.add(new Enemy(p, ints));
-				bar.accept(1.0 * (i++) / list.size());
+				bar.accept(1.0 * (++i) / list.size());
 			}
 		}
 
@@ -255,7 +256,7 @@ public abstract class PackData implements IndexContainer {
 				l.get(ind).units.add(u);
 
 				units.add(u);
-				bar.accept(1.0 * (x++) / list.size());
+				bar.accept(1.0 * (++x) / list.size());
 			}
 			CommonStatic.getBCAssets().defLv = l.get(2);
 		}

@@ -197,16 +197,13 @@ public abstract class CustomEntity extends DataEntity {
 
 	@Override
 	public int getPost(boolean sp, int atk) {
-		int ans;
 		if (sp) {
-			ans = 0;
-			for (AtkDataModel adm : getSpAtks(true, atk))
-				ans -= adm.pre;
-		} else {
-			ans = getAnimLen(atk);
-			for (AtkDataModel adm : hits.get(atk))
-				ans -= adm.pre;
+			AtkDataModel[] spa = getSpAtks(true, atk);
+			return spa[spa.length - 1].pre;
 		}
+		int ans = getAnimLen(atk);
+		for (AtkDataModel adm : hits.get(atk))
+			ans -= adm.pre;
 		return ans;
 	}
 

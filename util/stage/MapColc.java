@@ -21,6 +21,7 @@ import common.util.unit.Unit;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 @JsonClass(read = RType.FILL)
 public abstract class MapColc extends Data implements IndexContainer.SingleIC<StageMap> {
@@ -45,7 +46,7 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 					.get(Data.hex(UserProfile.getRegister(REG_IDMAP, int.class).get(id)));
 		}
 
-		public static void read() {
+		public static void read(Consumer<Double> bar) {
 			final Map<String, Integer> idmap = UserProfile.getRegister(REG_IDMAP);
 			idmap.put("CH", 3);
 			idmap.put("M", 12);
@@ -91,7 +92,9 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 				return vff.compareTo(vf);
 			});
 			new DefMapColc();
+			double load = 0.0;
 			for (VFile fi : sortedFiles) {
+				bar.accept(++load / idmap.size());
 				List<VFile> list = new ArrayList<>(fi.list());
 				VFile map = list.get(0);
 				List<VFile> stage = new ArrayList<>();
