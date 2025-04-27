@@ -468,7 +468,7 @@ public class Editors {
 			if (def && t.prob == 0) {
 				t.dis = t.max_dis = 0;
 				t.id = null;
-				t.time = 0;
+				t.time = t.interval = 0;
 				t.mult = t.form = t.amount = 1;
 				t.anim_type = Proc.SUMMON_ANIM.NONE;
 				t.pass_proc = 0;
@@ -480,6 +480,10 @@ public class Editors {
 				if (def) {
 					t.time = Math.max(0, t.time);
 					t.amount = Math.max(t.amount, 1);
+					if (t.amount >= 2)
+						t.interval = Math.max(0, t.interval);
+					else
+						t.interval = 0;
 				}
 				int temp = t.dis;
 				t.dis = Math.min(temp, t.max_dis);
@@ -504,7 +508,8 @@ public class Editors {
 		}, eg -> t -> {
 			EditorSupplier edi = UserProfile.getStatic("Editor_Supplier", () -> null);
 			setComponentVisibility(eg, !def || t.prob > 0, 1);
-			setComponentVisibility(eg, !def || (t.prob > 0 && ((!edi.isEnemy() && t.id == null) || (t.id != null && t.id.cls == Unit.class))), 17);
+			setComponentVisibility(eg, !def || (t.prob > 0 && ((!edi.isEnemy() && t.id == null) || (t.id != null && t.id.cls == Unit.class))), 17, 18);
+			setComponentVisibility(eg, !def || t.amount >= 2, 18);
 		}));
 
 		map().put("MOVEWAVE", new EditControl<>(Proc.MOVEWAVE.class, (t) -> {

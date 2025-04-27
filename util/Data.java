@@ -817,6 +817,8 @@ public class Data {
 			@Order(17)
 			@JsonField(defval = "1")
 			public int form = 1;
+			@Order(18)
+			public int interval;
 
 			@JsonDecoder.OnInjected
 			public void inject(JsonObject jobj) {
@@ -843,10 +845,11 @@ public class Data {
 
 			@Override
 			public void add(ProcItem itm) {
-				SUMMON_ANIM a = anim_type;
+				SUMMON_ANIM a = prob > 0 ? anim_type : ((SUMMON)itm).anim_type;
 				super.add(itm);
 				anim_type = a;
 				amount = Math.max(1, amount);
+				interval = Math.max(0, interval);
 			}
 		}
 

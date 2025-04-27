@@ -158,10 +158,9 @@ public class Limit extends Data implements BattleStatic {
 	public boolean valid(LineUp lu) {
 		if (group != null && group.type % 2 != 0) {
 			SortedPackSet<Form> fSet = getValid(lu);
-			if ((group.type == 1 && fSet.size() < fa) || (group.type == 3 && fSet.size() > fa))
-				return false;
+            return (group.type != 1 || fSet.size() >= fa) && (group.type != 3 || fSet.size() <= fa);
 		}
-		return lvr == null || lvr.isValid(lu);
+		return true;
 	}
 
 	public SortedPackSet<Form> getValid(LineUp lu) {
