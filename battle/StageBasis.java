@@ -592,11 +592,14 @@ public class StageBasis extends BattleObj {
 		}
 
 		tempe.removeIf(e -> {
-			if (e.t <= 0)
-				le.add(e.ent);
+			if (e.t <= 0) {
+				if (e.door == null)
+					le.add(e.ent);
+				else
+					doors.add(e.door);
+			}
 			return e.t <= 0;
 		});
-
 		if (timeFlow > 0 || (ebase.getAbi() & AB_TIMEI) != 0) {
 			ebase.preUpdate();
 			ebase.update();
@@ -840,6 +843,7 @@ public class StageBasis extends BattleObj {
 				tlw.clear();
 				lea.clear();
 				tempe.removeIf(e -> (e.ent.getAbi() & AB_THEMEI) == 0);
+				doors.removeIf(d -> (d.ent.getAbi() & AB_THEMEI) == 0);
 			}
 			theme = null;
 		}

@@ -441,9 +441,11 @@ public abstract class AtkModelEntity extends AtkModelAb {
 							eu.health = e.health;
 
 						eu.added(-1, (int) up);
-						b.tempe.add(new EntCont(eu, time + (proc.interval * i)));
 						eu.setSummon(proc.anim_type, proc.bond_hp ? e : null);
-
+						if (proc.anim_type == Proc.SUMMON_ANIM.EVERYWHERE_DOOR)
+							b.tempe.add(new EntCont(new DoorCont(b, eu), time + (proc.interval * i)));
+						else
+							b.tempe.add(new EntCont(eu, time + (proc.interval * i)));
 						if (proc.pass_proc % 2 == 1)
 							eu.status.pass(e.status);
 						if (e != ent && proc.pass_proc >= 2)
@@ -480,10 +482,13 @@ public abstract class AtkModelEntity extends AtkModelAb {
 							up = b.st.len - 800;
 
 						ee.added(1, (int) up);
-						b.tempe.add(new EntCont(ee, time + (proc.interval * i)));
 						if (proc.same_health)
 							ee.health = e.health;
 						ee.setSummon(proc.anim_type, proc.bond_hp ? e : null);
+						if (proc.anim_type == Proc.SUMMON_ANIM.EVERYWHERE_DOOR)
+							b.tempe.add(new EntCont(new DoorCont(b, ee), time + (proc.interval * i)));
+						else
+							b.tempe.add(new EntCont(ee, time + (proc.interval * i)));
 
 						if (proc.pass_proc % 2 == 1)
 							ee.status.pass(e.status);

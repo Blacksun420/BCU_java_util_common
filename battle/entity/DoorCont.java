@@ -10,7 +10,7 @@ import common.util.pack.EffAnim;
 public class DoorCont extends EAnimCont {
 
     private final StageBasis bas;
-    private final Entity ent;
+    public final Entity ent;
     private boolean entLeft;
     public boolean drawn;
 

@@ -2005,9 +2005,9 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					d *= (100 + status.getArmor()) / 100.0;
 			d *= auras.getDefAura();
 
-			e.damageGiven += Math.min(d, health);
+			e.damageGiven += Math.max(health - maxH, Math.min(d, health));
 			sumDamage(d, false);
-			basis.dmgStatistics.get(e.data.getPack())[0] += Math.min(d, health);
+			basis.dmgStatistics.get(e.data.getPack())[0] += Math.max(health - maxH, Math.min(d, health));
 		});
 		if (proc)
 			processProcs0(atk, FDmg);
@@ -2508,8 +2508,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		} else if (conf == Proc.SUMMON_ANIM.ATTACK)
 			atkm.setUp(); // conf 5 - Sets animation to attack animation. Used mainly for spirits
 		else if (conf == Proc.SUMMON_ANIM.EVERYWHERE_DOOR) {
-			basis.le.remove(this); // conf 6 - Sets animation to Everywhere Door animation
-			basis.doors.add(new DoorCont(basis, this));
+			if (basis.le.remove(this)) // conf 6 - Sets animation to Everywhere Door animation
+				basis.doors.add(new DoorCont(basis, this));
 		} else if (conf != Proc.SUMMON_ANIM.ENTRY)
 			anim.setAnim(AnimU.TYPEDEF[AnimU.WALK], true); // conf 0 - Sets animation to walk animation. conf 4 - sets the animation to entry, if unit has one
 
