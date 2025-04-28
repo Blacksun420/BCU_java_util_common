@@ -40,7 +40,7 @@ public class CustomStageInfo implements StageInfo {
     public Form ubase;
     @JsonField
     public Level lv;
-    @JsonField(generic = Form.class, alias = Form.AbFormJson.class, backCompat = JsonField.CompatType.FORK)
+    @JsonField(generic = Form.class, alias = Form.AbFormJson.class, backCompat = JsonField.CompatType.FORK, defval = "isEmpty")
     public final SortedPackSet<Form> rewards = new SortedPackSet<>();
 
     @JsonClass.JCConstructor
@@ -109,7 +109,7 @@ public class CustomStageInfo implements StageInfo {
      * @param checkFirst Verify if the StageInfo doesn't have anything that can contribute to the stage before destroying it
      */
     public void destroy(boolean checkFirst) {
-        if (checkFirst && (!stages.isEmpty() || ubase != null || !rewards.isEmpty()))
+        if (checkFirst && !useless())
             return;
         stages.clear();
         chances.clear();
@@ -120,6 +120,9 @@ public class CustomStageInfo implements StageInfo {
 
         if (!checkFirst && st.getMC().getSave(true).cSt.getOrDefault(st.getCont(), -1) > st.getCont().list.indexOf(st))
             st.getMC().getSave(true).resetUnlockedUnits();
+    }
+    public boolean useless() {
+        return stages.isEmpty() && ubase == null && rewards.isEmpty();
     }
 
     @JsonDecoder.OnInjected

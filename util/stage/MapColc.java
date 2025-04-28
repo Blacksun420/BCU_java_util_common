@@ -5,6 +5,7 @@ import common.CommonStatic;
 import common.io.assets.Admin.StaticPermitted;
 import common.io.json.JsonClass;
 import common.io.json.JsonClass.RType;
+import common.io.json.JsonDecoder;
 import common.io.json.JsonField;
 import common.pack.FixIndexList.FixIndexMap;
 import common.pack.IndexContainer;
@@ -1074,6 +1075,11 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 		@Override
 		public SaveData getSave(boolean force) {
 			return force ? pack.save : pack.getSave();
+		}
+
+		@JsonDecoder.OnInjected
+		public void onInjected() {//For useless leftovers from old packs
+			si.removeIf(ci -> ci.st == null || ci.st.info != ci || ci.useless());
 		}
 	}
 
