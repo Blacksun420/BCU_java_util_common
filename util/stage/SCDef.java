@@ -82,6 +82,7 @@ public class SCDef implements Copable<SCDef> {
 
 	@JCConstructor
 	public SCDef() {
+		datas = new Line[0];
 	}
 
 	public SCDef(int s) {

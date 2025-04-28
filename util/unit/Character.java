@@ -188,7 +188,7 @@ public abstract class Character extends Animable<AnimU<?>, AnimU.UType> implemen
                         ent.getProc().DEFINC.mult = 0;
                 } //Finish FORK_VERSION 9 checks
                 for (AtkDataModel atk : ent.getAllAtkModels())
-                    if (atk.getProc().TIME.intensity != 0)
+                    if (atk.getProc().TIME.intensity != 0 && atk.getProc().TIME.time != 0)
                         atk.getProc().TIME.intensity = (atk.getProc().TIME.intensity / atk.getProc().TIME.time) * 100;
             } //Finish FORK_VERSION 11 checks
             ent.getProc().AI.danger = ent.getProc().AI.retreatSpeed > 0;
