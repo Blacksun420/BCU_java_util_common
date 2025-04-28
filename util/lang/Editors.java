@@ -631,7 +631,7 @@ public class Editors {
 			} else
 				t.time = Math.max(1, t.time / Data.VOLC_ITV) * Data.VOLC_ITV;
 		}, eg -> t -> {
-			setComponentVisibility(eg, def || t.prob > 0, 1);
+			setComponentVisibility(eg, !def || t.prob > 0, 1);
 			setComponentVisibility(eg, false, 6);//count field which is only used for deathsurge
 		}));
 
@@ -650,7 +650,7 @@ public class Editors {
 					t.mult = 20;
 			}
 		}, eg -> t -> {
-			setComponentVisibility(eg, def || t.prob > 0, 1);
+			setComponentVisibility(eg, !def || t.prob > 0, 1);
 			setComponentVisibility(eg, false, 7);//count field which is only used for deathsurge
 		}));
 
@@ -1006,7 +1006,7 @@ public class Editors {
 			}
 		}, eg -> t -> {
 			setComponentVisibility(eg, !def || t.prob > 0, 1);
-			setComponentVisibility(eg, !def || t.lv > 1, 4);
+			setComponentVisibility(eg, !def || (t.prob > 0 && t.lv > 1), 4, 5);
 		}));
 
 		map().put("IMUBLAST", imui);
