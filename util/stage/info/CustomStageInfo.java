@@ -118,7 +118,7 @@ public class CustomStageInfo implements StageInfo {
         ((PackMapColc)st.getMC()).si.remove(this);
         st.info = null;
 
-        if (!checkFirst && st.getMC().getSave(true).cSt.getOrDefault(st.getCont(), -1) > st.getCont().list.indexOf(st))
+        if (!checkFirst && st.getMC().getSave(true).cSt.getOrDefault(st.getCont(), -1) > st.id())
             st.getMC().getSave(true).resetUnlockedUnits();
     }
     public boolean useless() {

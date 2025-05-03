@@ -1080,6 +1080,16 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 		@JsonDecoder.OnInjected
 		public void onInjected() {//For useless leftovers from old packs
 			si.removeIf(ci -> ci.st == null || ci.st.info != ci || ci.useless());
+			si.sort((sti, ssti) -> {
+				StageMap map = sti.st.getCont(), omap = ssti.st.getCont();
+				if (map == omap)
+					return sti.st.compareTo(ssti.st);
+				if (map.unlockReq.contains(omap))
+					return -1;
+				else if (omap.unlockReq.contains(map))
+					return 1;
+				return 0;
+			});
 		}
 	}
 

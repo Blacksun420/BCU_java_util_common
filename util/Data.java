@@ -672,6 +672,8 @@ public class Data {
 			@Order(6)
 			@JsonField(defval = "isEmpty")
 			public ProcID pid = new ProcID();
+			@Order(7)
+			public boolean hit_base;
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)

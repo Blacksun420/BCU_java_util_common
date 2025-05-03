@@ -38,7 +38,8 @@ public class AttackWave extends AttackAb {
 	@Override
 	public void capture() {
 		List<AbEntity> le = model.b.inRange(touch, attacker != null && attacker.status.rage > 0 ? 2 : dire, sta, end, excludeRightEdge);
-		le.remove(dire == 1 ? model.b.ubase : model.b.ebase);
+		if (waveType != WT_MOVE || !proc.MOVEWAVE.hit_base)
+			le.remove(dire == 1 ? model.b.ubase : model.b.ebase);
 		if (attacker != null && (attacker.status.rage > 0 || attacker.status.hypno > 0))
 			le.remove(attacker);
 		if (incl != null)

@@ -210,7 +210,7 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 	public int[][] overlay;
 
 	public int ic;
-	@JsonField
+	@JsonField(defval="true")
 	public boolean top;
 
 	public FakeImage[] parts = null;
@@ -370,12 +370,9 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 				g.gradRect(0, 0, (int) rect.x, fh + y, 0, y, cs[0], 0, y + fh, cs[1]);
 			}
 		}
-
 		for (int x = off; x < rect.x; x += fw)
-			if (x + fw > 0) {
-
+			if (x + fw > 0)
 				g.drawImage(parts[BG], x, h - fh, fw, fh);
-			}
 	}
 
 	@Override
@@ -461,6 +458,8 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 			if (effect >= 0)
 				bgEffect = UserProfile.getBCData().bgEffects.get(effect).getID();
 		}
+		if (top && img != null)
+			top = img.getImg().getHeight() >= 1024;
 	}
 
 	@Override
