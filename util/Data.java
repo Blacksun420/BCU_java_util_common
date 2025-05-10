@@ -37,7 +37,7 @@ public class Data {
 
 			@Override
 			public boolean perform(CopRand r) {
-				return prob > 0 && (prob >= 100 || r.nextDouble() * 100 < prob);
+				return prob > 0 && (prob >= 100 || r.nextInt(100) < prob);
 			}
 
 			@Override
@@ -134,6 +134,11 @@ public class Data {
 				} else
 					nps = super.setTalent(nps);
 				return nps;
+			}
+
+			@Override
+			public boolean perform(CopRand r) {
+				return prob > 0 && (prob >= 100 || r.nextInt(100) < prob);
 			}
 		}
 
@@ -581,7 +586,7 @@ public class Data {
 			}
 			@Override
 			public boolean perform(CopRand r) {
-				return time > 0 && prob > 0 && (prob >= 100 || r.nextDouble() * 100 < prob);
+				return time > 0 && prob > 0 && (prob >= 100 || r.nextInt(100) < prob);
 			}
 		}
 
@@ -715,9 +720,7 @@ public class Data {
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
-		public static class WARP extends PT {
-			@Order(2)
-			public int dis;
+		public static class WARP extends PTD {
 			@Order(3)
 			public int dis_1;
 
@@ -729,11 +732,6 @@ public class Data {
 				nps[8] = Math.max(d0, nps[8]);
 				nps[9] = Math.max(d1, nps[9]);
 				return super.setTalent(nps);
-			}
-
-			@Override
-			public boolean perform(CopRand r) {
-				return prob > 0 && (prob >= 100 || r.nextDouble() * 100 < prob);
 			}
 		}
 

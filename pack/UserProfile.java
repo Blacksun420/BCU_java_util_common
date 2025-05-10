@@ -166,7 +166,7 @@ public class UserProfile {
 							"failed to load external pack " + f, () -> setStatic(CURRENT_PACK, null));
 
 					if (pack != null) {
-						UserPack p = profile.pending.put(pack.desc.id, pack);
+						UserPack p = (CommonStatic.getConfig().skipLoad.contains(pack.desc.id) ? profile.skipped : profile.pending).put(pack.desc.id, pack);
 						if (p != null)
 							CommonStatic.ctx.printErr(ErrType.WARN, ((ZipSource) p.source).getPackFile().getName()
 									+ " has same ID with " + ((ZipSource) pack.source).getPackFile().getName());
@@ -201,14 +201,15 @@ public class UserProfile {
 					UserPack pack = CommonStatic.ctx.noticeErr(() -> readJsonPack(FF), ErrType.WARN,
 							"failed to load workspace pack " + f);
 					if (pack != null)
-						profile.pending.put(pack.desc.id, pack);
+						(CommonStatic.getConfig().skipLoad.contains(pack.desc.id) ? profile.skipped : profile.pending).put(pack.desc.id, pack);
 				}
 		Set<UserPack> queue = new HashSet<>(profile.pending.values());
 		while (queue.removeIf(profile::add));
 
 		profile.pending = null;
 		profile.packlist.addAll(profile.failed);
-		CommonStatic.getConfig().excludeCombo.removeIf(k -> !profile.packmap.containsKey(k) || profile.packmap.get(k).combos.isEmpty());
+		CommonStatic.getConfig().excludeCombo.removeIf(k -> !(profile.packmap.containsKey(k) || profile.skipped.containsKey(k)) || profile.packmap.get(k).combos.isEmpty());
+		CommonStatic.getConfig().skipLoad.removeIf(k -> !(profile.packmap.containsKey(k) || profile.skipped.containsKey(k)));
 
 		for (PackData.UserPack pk : queue)
 			checkMissingParents(pk);
@@ -246,6 +247,22 @@ public class UserProfile {
 			return null;
 		}
 		return pack;
+	}
+	public static void loadPacks(List<UserPack> packs) {
+		if (profile.pending == null)
+			profile.pending = new HashMap<>();
+		for (UserPack p : packs)
+			profile.pending.put(p.desc.id, p);
+		Set<UserPack> queue = new HashSet<>(profile.pending.values());
+		profile.df = 0;
+		while (queue.removeIf(profile::add));
+
+		packs.removeAll(queue);
+		profile.skipped.values().removeAll(packs);
+
+		profile.pending = null;
+		for (UserPack p : queue)
+			checkMissingParents(p);
 	}
 
 	public static UserPack initJsonPack(String id) throws Exception {
@@ -335,6 +352,7 @@ public class UserProfile {
 						loadData(f);
 					} catch (Exception e) {
 						CommonStatic.ctx.printErr(ErrType.ERROR, "Failed to load " + f.getName());
+						e.printStackTrace();
 					}
 		} else {
 			datas.mkdir();
@@ -347,7 +365,8 @@ public class UserProfile {
 		String id = elem.getAsJsonObject().get("pack").getAsString();
 		UserPack pk = UserProfile.getUserPack(id);
 		if (pk == null) {
-			CommonStatic.ctx.printErr(ErrType.WARN, "Save data found for " + id + ", but said pack isn't found. File: " + f.getName());
+			if (!profile.skipped.containsKey(id))
+				CommonStatic.ctx.printErr(ErrType.WARN, "Save data found for " + id + ", but said pack isn't found. File: " + f.getName());
 			isr.close();
 			return;
 		}
@@ -355,6 +374,7 @@ public class UserProfile {
 			pk.save = JsonDecoder.inject(elem, SaveData.class, pk.save);
 		} catch (Exception e) {
 			CommonStatic.ctx.printErr(ErrType.ERROR, "Failed to load data for " + pk.desc.names);
+			e.printStackTrace();
 		}
 
 		isr.close();
@@ -400,6 +420,8 @@ public class UserProfile {
 	private final Map<String, Map<String, ?>> registers = new HashMap<>();
 
 	public Map<String, UserPack> pending = new HashMap<>();
+	public Map<String, UserPack> skipped = new HashMap<>();
+	public float df = -1;
 
 	private UserProfile() {
 	}
@@ -413,8 +435,8 @@ public class UserProfile {
 		SortedPackSet<String> deps = pack.editable ? pack.desc.dependency : pack.preGetDependencies();
 		if (!canAdd(deps))
 			return false;
-
-		CommonStatic.ctx.loadProg(pending == null ? 0.5 : 1.0 * packmap.size() / pending.size(), "Reading " + (pack.desc.names.toString().isEmpty() ? pack.desc.id : pack.desc.names.toString()) + " data...");
+		double siz = pending == null ? 0.5 : (df == -1 ? 1f * packmap.size() / pending.size() : df++ / pending.size());
+		CommonStatic.ctx.loadProg(siz, "Reading " + (pack.desc.names.toString().isEmpty() ? pack.desc.id : pack.desc.names.toString()) + " data...");
 		if (CommonStatic.ctx.noticeErr(pack::load, ErrType.WARN, "failed to load pack " + pack.desc, () -> setStatic(CURRENT_PACK, null))) {
 			packmap.put(pack.desc.id, pack);
 		} else

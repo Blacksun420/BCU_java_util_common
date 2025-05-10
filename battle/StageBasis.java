@@ -222,7 +222,7 @@ public class StageBasis extends BattleObj {
 		while (b.lu.efs[totUni >= 5 ? 1 : 0][totUni % 5] != null && totUni < 10)
 			totUni++;
 		if (slot == -1 || b.lu.efs[Math.floorDiv(slot, 5)][slot % 5] == null)
-			slot = (int) (r.nextFloat() * totUni); //Pick random unit if chosen one isn't there
+			slot = r.nextInt(totUni); //Pick random unit if chosen one isn't there
 
 		if (CDChange(amount, slot / 5, slot % 5, type))
 			CommonStatic.setSE(amount < 0 ? SE_P_RESEARCHUP : SE_P_RESEARCHDOWN);
@@ -708,8 +708,8 @@ public class StageBasis extends BattleObj {
 						entity.kill(false);
 
 				if(ebaseSmoke.size() <= 7 && time % 2 == 0) {
-					int x = (int) (ebase.pos + 50 - 500 * r.irDouble());
-					int y = (int) (-288 * r.irDouble());
+					float x = ebase.pos + 50f - 500f * r.irFloat();
+					float y = r.irFloat() * -288;
 
 					ebaseSmoke.add(new EAnimCont(x, 0, EffAnim.effas().A_ATK_SMOKE.getEAnim(DefEff.DEF), y));
 				}
@@ -720,8 +720,8 @@ public class StageBasis extends BattleObj {
 						le.get(i).kill(false);
 
 				if(ubaseSmoke.size() <= 7 && time % 2 == 0) {
-					int x = (int) (ubase.pos - 50 + 500 * r.irDouble());
-					int y = (int) (-288 * r.irDouble());
+					float x = ubase.pos - 50f + 500f * r.irFloat();
+					float y = r.irFloat() * -288;
 
 					ubaseSmoke.add(new EAnimCont(x, 0, EffAnim.effas().A_ATK_SMOKE.getEAnim(DefEff.DEF), y));
 				}

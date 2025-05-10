@@ -53,7 +53,7 @@ public class EneRand extends Data implements AbEnemy {
 		for (EREnt e : list)
 			tot += e.share;
 		if (tot > 0) {
-			int r = (int) (sb.r.nextDouble() * tot);
+			int r = sb.r.nextInt(tot);
 			for (EREnt ent : list) {
 				r -= ent.share;
 				if (r < 0)

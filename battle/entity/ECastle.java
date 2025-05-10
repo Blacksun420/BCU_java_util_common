@@ -63,8 +63,8 @@ public class ECastle extends AbEntity {
 		else
 			smoke = effas().A_ATK_SMOKE.getEAnim(DefEff.DEF);
 
-		smokeLayer = (int) (atk.layer + 3 - sb.r.irFloat() * -6);
-		smokeX = (int) (pos + 25 - sb.r.irFloat() * -25);
+		smokeLayer = atk.layer + 3 + sb.r.irInt(6);
+		smokeX = (int) (pos + 25 + sb.r.irInt(25));
 
 		int ans = atk.atk;
 		ans *= 1 + atk.getProc().ATKBASE.mult / 100.0;

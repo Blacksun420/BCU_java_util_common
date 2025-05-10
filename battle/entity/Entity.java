@@ -1783,7 +1783,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		boolean proc = true;
 
 		Proc.DMGCUT dmgcut = getProc().DMGCUT;
-		if (dmgcut.prob > 0 && ((dmgcut.traitIgnore && status.curse == 0) || ctargetable(atk.trait, atk.attacker)) && dmg < status.dcut && dmg > 0 && (dmgcut.prob == 100 || basis.r.nextFloat() * 100 < dmgcut.prob)) {
+		if (dmgcut.prob > 0 && ((dmgcut.traitIgnore && status.curse == 0) || ctargetable(atk.trait, atk.attacker)) && dmg < status.dcut && dmg > 0 && (dmgcut.prob == 100 || basis.r.nextInt(100) < dmgcut.prob)) {
 			anim.getEff(P_DMGCUT);
 			if (dmgcut.procs)
 				proc = false;
@@ -1797,7 +1797,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		}
 
 		Proc.DMGCAP dmgcap = getProc().DMGCAP;
-		if (dmgcap.prob > 0 && ((dmgcap.traitIgnore && status.curse == 0) || ctargetable(atk.trait, atk.attacker)) && dmg > status.dcap && (dmgcap.prob == 100 || basis.r.nextFloat() * 100 < dmgcap.prob)) {
+		if (dmgcap.prob > 0 && ((dmgcap.traitIgnore && status.curse == 0) || ctargetable(atk.trait, atk.attacker)) && dmg > status.dcap && (dmgcap.prob == 100 || basis.r.nextInt(100) < dmgcap.prob)) {
 			anim.getEff(dmgcap.nullify ? DMGCAP_SUCCESS : DMGCAP_FAIL);
 			if (dmgcap.procs)
 				proc = false;
@@ -1814,7 +1814,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			Proc.REMOTESHIELD remote = getProc().REMOTESHIELD;
 			double stRange = Math.abs(atk.attacker.pos - pos);
 			if (remote.prob > 0 && remote.reduction + remote.block != 0 && ((!remote.traitCon && status.curse == 0) || ctargetable(atk.trait, atk.attacker)) &&
-					(remote.waves || atk instanceof AttackSimple) && stRange >= remote.minrange && stRange <= remote.maxrange && (remote.prob == 100 || basis.r.nextDouble() * 100 < remote.prob)) {
+					(remote.waves || atk instanceof AttackSimple) && stRange >= remote.minrange && stRange <= remote.maxrange && (remote.prob == 100 || basis.r.nextInt(100) < remote.prob)) {
 				if (remote.procs)
 					proc = false;
 
@@ -3035,7 +3035,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		if (s != null && s.audio != null)
 			CommonStatic.setSE(s.audio);
 		else
-			CommonStatic.setSE(basis.r.irDouble() < 0.5 ? SE_DEATH_0 : SE_DEATH_1);
+			CommonStatic.setSE(basis.r.irFloat() < 0.5f ? SE_DEATH_0 : SE_DEATH_1);
 
 		if (zx.prekill())
 			return;

@@ -204,6 +204,11 @@ public class CommonStatic {
 		public boolean rawDamage = true;
 
 		/**
+		 * Packs in this list will not be loaded when the app starts
+		 */
+		@JsonField(generic = { String.class }, defval = "isEmpty")
+		public HashSet<String> skipLoad = new HashSet<>();
+		/**
 		 * Store whether to apply the combos from a given pack or not
 		 */
 		@JsonField(generic = { String.class }, defval = "isEmpty")

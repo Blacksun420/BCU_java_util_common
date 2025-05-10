@@ -227,7 +227,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 				atk = (int)(atk * ((Proc.MINIVOLC) ds).mult / 100.0);
 			AttackSimple as = new AttackSimple(e, this, atk, e.traits, getAbi(), p, 0, 0, data.getAtkModel(data.firstAtk(), 0), 0, false);
 
-			int addp = ds.dis_0 == ds.dis_1 ? ds.dis_0 : ds.dis_0 + (int) (b.r.nextDouble() * (ds.dis_1 - ds.dis_0));
+			int addp = ds.dis_0 == ds.dis_1 ? ds.dis_0 : ds.dis_0 + (int) (b.r.nextFloat() * (ds.dis_1 - ds.dis_0));
 			float p0 = getPos() + getDire() * addp;
 			float sta = p0 + (getDire() == 1 ? W_VOLC_PIERCE : W_VOLC_INNER);
 			float end = p0 - (getDire() == 1 ? W_VOLC_INNER : W_VOLC_PIERCE);
@@ -432,7 +432,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 					lvl = MathUtil.clip(lvl, 1, u.getCap());
 
 					for (int i = 0; i < proc.amount; i++) {
-						int dis = proc.dis == proc.max_dis ? proc.dis : (int) (proc.dis + b.r.nextDouble() * (proc.max_dis - proc.dis + 1));
+						int dis = proc.dis == proc.max_dis ? proc.dis : (int) (proc.dis + b.r.nextFloat() * (proc.max_dis - proc.dis + 1));
 						double up = ent.pos + getDire() * dis;
 						Form f = u.getForms()[Math.max(proc.form - 1, 0)];
 						IForm ef = IForm.newIns(u instanceof Unit ? f : (AbForm)u, lvl);
@@ -471,7 +471,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 					mula = (float) (mula * (100.0 - resist) / 100);
 					mult = (float) (mult * (100.0 - resist) / 100);
 					for (int i = 0; i < proc.amount; i++) {
-						int dis = proc.dis == proc.max_dis ? proc.dis : (int) (proc.dis + b.r.nextDouble() * (proc.max_dis - proc.dis + 1));
+						int dis = proc.dis == proc.max_dis ? proc.dis : (int) (proc.dis + b.r.nextFloat() * (proc.max_dis - proc.dis + 1));
 						float up = ent.pos + getDire() * dis;
 						EEnemy ee = ene.getEntity(b, acs, mult, mula, minlayer, maxlayer, 0);
 

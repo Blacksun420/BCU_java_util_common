@@ -135,7 +135,7 @@ class Recorder extends BattleObj {
 	private int num, rep;
 
 	protected void add(int rec) {
-		if (rec == num)
+		if (rec == 0)
 			rep++;
 		else {
 			if (rep > 0) {
