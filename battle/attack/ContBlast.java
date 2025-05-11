@@ -15,7 +15,7 @@ public class ContBlast extends ContAb {
     private final AttackBlast blast;
     private final int maxl;
     protected final ArrayList<EAnimD<BlastEff>> anims;
-    private int t = 0;
+    private float t = 0;
 
     protected ContBlast(AttackBlast atkBlast, float p, int lay) {
         super(atkBlast.model.b, p, lay);
@@ -67,11 +67,11 @@ public class ContBlast extends ContAb {
     public void update() { // FIXME: update on same frame as attack
         t++;
         blast.attacked = false;
-        int rt = t - BLAST_PRE;
+        int rt = (int)t - BLAST_PRE;
         if (rt >= 0 && blast.lv < maxl) {
             if (rt == 0)
                 anims.get(0).changeAnim(maxl == 3 ? BlastEff.EXPLODE : BlastEff.SINGLE, true);
-            int qrt = (t - 1) % BLAST_ITV;
+            int qrt = (int)(t - 1) % BLAST_ITV;
             if (qrt == 0) {
                 if (rt > 0)
                     blast.next();
@@ -127,6 +127,6 @@ public class ContBlast extends ContAb {
 
     @Override
     public boolean IMUTime() {
-        return false;
+        return blast.attacker != null && (blast.attacker.getAbi() & AB_TIMEI) != 0;
     }
 }
