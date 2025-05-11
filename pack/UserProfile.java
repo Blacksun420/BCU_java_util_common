@@ -204,6 +204,7 @@ public class UserProfile {
 						(CommonStatic.getConfig().skipLoad.contains(pack.desc.id) ? profile.skipped : profile.pending).put(pack.desc.id, pack);
 				}
 		Set<UserPack> queue = new HashSet<>(profile.pending.values());
+		profile.df = 0;
 		while (queue.removeIf(profile::add));
 
 		profile.pending = null;
@@ -225,6 +226,7 @@ public class UserProfile {
 			}
 			return !p.editable;
 		});
+		profile.skipped.values().removeIf(p -> !p.editable);
 		profile.failed.removeIf(p -> !p.editable);
 		loadPacks(false);
 	}
@@ -421,7 +423,7 @@ public class UserProfile {
 
 	public Map<String, UserPack> pending = new HashMap<>();
 	public Map<String, UserPack> skipped = new HashMap<>();
-	public float df = -1;
+	public int df = 0;
 
 	private UserProfile() {
 	}
@@ -435,7 +437,7 @@ public class UserProfile {
 		SortedPackSet<String> deps = pack.editable ? pack.desc.dependency : pack.preGetDependencies();
 		if (!canAdd(deps))
 			return false;
-		double siz = pending == null ? 0.5 : (df == -1 ? 1f * packmap.size() / pending.size() : df++ / pending.size());
+		double siz = pending == null ? 0.5 : 1f * df++ / pending.size();
 		CommonStatic.ctx.loadProg(siz, "Reading " + (pack.desc.names.toString().isEmpty() ? pack.desc.id : pack.desc.names.toString()) + " data...");
 		if (CommonStatic.ctx.noticeErr(pack::load, ErrType.WARN, "failed to load pack " + pack.desc, () -> setStatic(CURRENT_PACK, null))) {
 			packmap.put(pack.desc.id, pack);
