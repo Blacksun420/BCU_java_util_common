@@ -19,7 +19,7 @@ public class MixedBGEffect extends BackgroundEffect {
 
     @JsonField
     public String name;
-    @JsonField(generic = BackgroundEffect.class, alias = Identifier.class)
+    @JsonField(generic = BackgroundEffect.class, alias = Identifier.class, defval = "isEmpty")
     public final ArrayList<BackgroundEffect> effects = new ArrayList<>();
 
     @JsonClass.JCConstructor

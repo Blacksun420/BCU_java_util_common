@@ -82,12 +82,6 @@ public class PCoin extends Data {
 					data[j] = strs[2 + i * 14 + j];
 				if (data[13] == 1) //Super Talent
 					data[13] = 60;
-				if (data[0] == 62) {//Miniwave
-					if (data[6] == 0 && data[7] == 0) {
-						data[6] = 20;
-						data[7] = 20;
-					}
-				}
 
 				int[] corres = get_CORRES(data[0]);
 				if (corres[0] == -1) {
