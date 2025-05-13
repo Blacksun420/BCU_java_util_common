@@ -1,6 +1,7 @@
 package common.io.json;
 
 import com.google.gson.*;
+import common.CommonStatic;
 import common.io.json.JsonClass.JCGeneric;
 import common.io.json.JsonClass.JCIdentifier;
 import common.util.Data;
@@ -24,8 +25,14 @@ public class JsonEncoder {
 			return JsonNull.INSTANCE;
 		if (obj instanceof JsonElement)
 			return (JsonElement) obj;
-		if (obj instanceof Number)
+		if (obj instanceof Number) {
+			if (obj instanceof Double || obj instanceof Float) {
+				double d = obj instanceof Double ? (double)obj : (float)obj;
+				if ((int)d == d)//.0
+					return new JsonPrimitive((int)d);
+			}
 			return new JsonPrimitive((Number) obj);
+		}
 		if (obj instanceof Boolean)
 			return new JsonPrimitive((Boolean) obj);
 		if (obj instanceof String)

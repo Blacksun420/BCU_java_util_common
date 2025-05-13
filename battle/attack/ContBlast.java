@@ -84,23 +84,22 @@ public class ContBlast extends ContAb {
                         anims.add(a);
                     }
                 }
-            } else if (qrt == 3) {
-                blast.capture();
-                for (AbEntity e : blast.capt)
-                    if (e instanceof Entity) {
-                        float blo = e.getProc().IMUBLAST.block;
-                        if (blo != 0) {
-                            if (blo > 0)
-                                ((Entity)e).anim.getEff(STPWAVE);
-                            if (blo == 100) {
-                                deactivate(e);
-                                return;
-                            } else
-                                blast.raw = (int) (blast.raw * (100 - blo) / 100);
-                        }
-                    }
-                blast.excuse();
             }
+            blast.capture();
+            for (AbEntity e : blast.capt)
+                if (e instanceof Entity) {
+                    float blo = e.getProc().IMUBLAST.block;
+                    if (blo != 0) {
+                        if (blo > 0)
+                            ((Entity)e).anim.getEff(STPWAVE);
+                        if (blo == 100) {
+                            deactivate(e);
+                            return;
+                        } else
+                            blast.raw = (int) (blast.raw * (100 - blo) / 100);
+                    }
+                }
+            sb.getAttack(blast);
         }
         if (anims.get(anims.size() - 1).done())
             activate = false;
