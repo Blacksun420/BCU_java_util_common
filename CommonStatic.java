@@ -479,7 +479,12 @@ public class CommonStatic {
 		}
 		int[] ans = new int[lstr.size()];
 		for (int i = 0; i < lstr.size(); i++)
-			ans[i] = safeParseInt(lstr.get(i));
+			try {
+				ans[i] = safeParseInt(lstr.get(i));
+			} catch (IllegalStateException e) {
+				CommonStatic.ctx.noticeErr(e, Context.ErrType.INFO, "Couldn't parse " + lstr.get(i) + " as int");
+				ans[i] = -1;
+			}
 		return ans;
 	}
 

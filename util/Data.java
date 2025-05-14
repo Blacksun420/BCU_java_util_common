@@ -212,7 +212,7 @@ public class Data {
 				}
 			}
 			@Order(2)
-			@JsonField(defval = "ALL")
+			@JsonField(defval = "null||ALL")
 			public FOCUS focus = FOCUS.ALL;
 
 			@JsonDecoder.OnInjected
@@ -463,7 +463,7 @@ public class Data {
 			@Order(4)
 			public int dis_1;
 			@Order(5)
-			@JsonField(defval = "ACTIVE")
+			@JsonField(defval = "null||ACTIVE")
 			public RANGE range_type = RANGE.ACTIVE;
 			@Order(6)
 			public boolean imu_zkill;
@@ -694,7 +694,7 @@ public class Data {
 			@Order(3)
 			public int itv;
 			@Order(4)
-			@JsonField(defval = "BURN")
+			@JsonField(defval = "null||BURN")
 			public TYPE damage_type = TYPE.BURN;
 			@Order(5)
 			public boolean unstackable;
@@ -760,7 +760,7 @@ public class Data {
 			@Order(2)
 			public int speed;
 			@Order(3)
-			@JsonField(defval = "FIXED")
+			@JsonField(defval = "null||FIXED")
 			public TYPE type = TYPE.FIXED;
 			@Order(4)
 			public boolean stackable;
@@ -792,7 +792,7 @@ public class Data {
 			@JsonField(defval = "9")
 			public int max_layer = 9;
 			@Order(7)
-			@JsonField(defval = "NONE")
+			@JsonField(defval = "null||NONE")
 			public SUMMON_ANIM anim_type = SUMMON_ANIM.NONE;
 			@Order(8)
 			public boolean ignore_limit;
@@ -883,7 +883,7 @@ public class Data {
 			@Order(3)
 			public int maxRange;
 			@Order(4)
-			@JsonField(defval = "NONE")
+			@JsonField(defval = "null||NONE")
 			public CWAVE counterWave = CWAVE.NONE;
 			@Order(5)
 			@BitMasked
@@ -1084,7 +1084,7 @@ public class Data {
 			@Order(5)
 			public int moneyCost;
 			@Order(6)
-			@JsonField(defval = "NONE")
+			@JsonField(defval = "null||NONE")
 			public SUMMON_ANIM animType = SUMMON_ANIM.NONE;
 			@Order(7)
 			@JsonField(defval = "1")

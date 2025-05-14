@@ -142,7 +142,7 @@ public class UserProfile {
 			return profile.pending.get(str);
 		if (profile.packmap.containsKey(str))
 			return profile.packmap.get(str);
-		return null;
+		return profile.skipped.get(str);
 	}
 
 	/**
@@ -366,7 +366,7 @@ public class UserProfile {
 		JsonElement elem = JsonParser.parseReader(isr);
 		String id = elem.getAsJsonObject().get("pack").getAsString();
 		UserPack pk = UserProfile.getUserPack(id);
-		if (pk == null) {
+		if (pk == null || profile.skipped.containsKey(id)) {
 			if (!profile.skipped.containsKey(id))
 				CommonStatic.ctx.printErr(ErrType.WARN, "Save data found for " + id + ", but said pack isn't found. File: " + f.getName());
 			isr.close();

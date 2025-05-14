@@ -3,7 +3,7 @@ package common.util.unit;
 import common.CommonStatic;
 import common.battle.data.CustomUnit;
 import common.battle.data.PCoin;
-import common.io.json.FieldOrder;
+import common.io.json.FieldOrder.Order;
 import common.io.json.JsonClass;
 import common.io.json.JsonClass.JCGeneric;
 import common.io.json.JsonClass.JCIdentifier;
@@ -78,16 +78,22 @@ public class Unit extends Data implements AbUnit {
 
 	@JsonField
 	@JCIdentifier
-	@FieldOrder.Order(0)
+	@Order(0)
 	public final Identifier<AbUnit> id;
+	@JsonField(defval = "2")
+	@Order(1)
+	public int rarity = 2;
+	@JsonField(defval = "50")
+	@Order(1)
+	public int max = 50;
 	@JsonField
-	@FieldOrder.Order(1)
-	public int rarity = 2, max = 50, maxp = 0;
+	@Order(1)
+	public int maxp = 0;
 	@JsonField(gen = GenType.GEN)
-	@FieldOrder.Order(2)
+	@Order(2)
 	public Form[] forms;
 	@JsonField(alias = Identifier.class)
-	@FieldOrder.Order(3)
+	@Order(3)
 	public UnitLevel lv;
 
 	public final UnitInfo info = new UnitInfo();
