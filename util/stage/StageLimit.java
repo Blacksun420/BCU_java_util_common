@@ -27,6 +27,11 @@ public class StageLimit extends Data implements BattleStatic {
     @JsonField(generic = Integer.class, defval = "isEmpty")
     public HashSet<Integer> bannedCatCombo = new HashSet<>();
 
+    @JsonField(defval = "100")
+    public int cannonMultiplier = 100; // percentage
+    @JsonField(defval = "-1")
+    public int unitSpeedLimit = -1, enemySpeedLimit = -1; // -1 for deactivated
+
     public boolean defCD() {
         for (int cd : cooldownMultiplier)
             if (cd != 100)
@@ -90,6 +95,7 @@ public class StageLimit extends Data implements BattleStatic {
     }
 
     public boolean isBlank() {
-        return maxMoney == 0 && globalCooldown == 0 && globalCost == 0 && maxUnitSpawn == 0 && defCD() && defMoney() && defDeploy() && !coolStart && bannedCatCombo.isEmpty() && defDupe();
+        return !coolStart && maxMoney == 0 && globalCooldown == 0 && globalCost == 0 && maxUnitSpawn == 0 && unitSpeedLimit == -1
+                && enemySpeedLimit == -1 && cannonMultiplier == 100 && defCD() && defMoney() && defDeploy() && bannedCatCombo.isEmpty() && defDupe();
     }
 }

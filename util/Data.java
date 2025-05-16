@@ -2461,6 +2461,9 @@ public class Data {
 	public static final short[] GATYA = { 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 160, 161, 164, 167,
 			168, 169, 170, 171, 179, 180, 181, 182, 183, 184};
 
+	public static final int ORB_DEATH_SURGE_SPAWN_MIN = 200;
+	public static final int ORB_DEATH_SURGE_SPAWN_MAX = 500;
+
 	public static final short MUSIC_DELAY = 2344; //Music change delay with milliseconds accuracy
 
 	public static final byte LINEUP_CHANGE_TIME = 6; //in frame

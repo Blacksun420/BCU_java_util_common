@@ -499,6 +499,43 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 									}
 								}
 								break;
+							case 9:
+								if (!parameter.isEmpty()) {
+									if (parameter.size() > 1) {
+										System.out.printf(
+												"W/MapColc::read - Unexpected parameter size for map %d : Size = %d\n",
+												mapID,
+												parameter.size()
+										);
+									}
+									int cannonMultiplier = parameter.get(0).getAsInt();
+
+									if (map.lim.isEmpty() || map.lim.get(map.lim.size() - 1).stageLimit == null)
+										map.lim.add(new Limit(new StageLimit()));
+									map.lim.get(map.lim.size() - 1).stageLimit.cannonMultiplier = cannonMultiplier;
+								}
+								break;
+							case 10:
+								if (!parameter.isEmpty()) {
+									if (parameter.size() < 4) {
+										System.out.printf(
+												"W/MapColc::read - Unexpected parameter size for map %d : Size = %d\n",
+												mapID,
+												parameter.size()
+										);
+									}
+									int unitActivate = parameter.get(0).getAsInt();
+									int enemyActivate = parameter.get(2).getAsInt();
+
+									if (map.lim.isEmpty() || map.lim.get(map.lim.size() - 1).stageLimit == null)
+										map.lim.add(new Limit(new StageLimit()));
+									StageLimit slim = map.lim.get(map.lim.size() - 1).stageLimit;
+									if (unitActivate > 0)
+										slim.unitSpeedLimit = parameter.get(1).getAsInt();
+									if (enemyActivate > 0)
+										slim.enemySpeedLimit = parameter.get(3).getAsInt();
+								}
+								break;
 						}
 					}
 				}
