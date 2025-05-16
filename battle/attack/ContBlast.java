@@ -121,7 +121,7 @@ public class ContBlast extends ContAb {
     @Override
     public void updateAnimation() {
         for (int i = anims.size() - 1; i >= Math.max(0, anims.size() - 4); i--)
-            anims.get(i).update(false);
+            anims.get(i).update(false, blast.attacker.getTimeFreeze());
     }
 
     @Override
