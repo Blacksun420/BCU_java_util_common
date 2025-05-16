@@ -2923,6 +2923,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			mov = AIMove(mov);
 
 		anim.negSpeed = mov < 0;
+		if (basis.speedLimit(dire == 1) != -1)
+			mov = Math.min(mov, basis.speedLimit(dire == 1) * 0.5f);
 		return mov * getTimeFreeze();
 	}
 
@@ -2943,8 +2945,6 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		}
 		mov += extmov;
 		mov *= auras.getSpdAura();
-		if (basis.speedLimit(dire == 1) != -1)
-			mov = Math.min(mov, basis.speedLimit(dire == 1) * 0.5f);
 		return mov;
 	}
 
