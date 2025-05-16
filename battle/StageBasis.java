@@ -910,6 +910,12 @@ public class StageBasis extends BattleObj {
 		return new int[]{est.lim.stageLimit.deployDuplicationTimes[rarity], est.lim.stageLimit.deployDuplicationDelay[rarity]};
 	}
 
+	public float speedLimit(boolean isEnemy) {
+		if (est.lim.stageLimit == null)
+			return -1;
+		return isEnemy ? est.lim.stageLimit.enemySpeedLimit : est.lim.stageLimit.unitSpeedLimit;
+	}
+
 	public BattleList<EUnit> getAllOf(int i, int j) {
 		BattleList<EUnit> es = new BattleList<>(le.size());
 		for (Entity e : le)
