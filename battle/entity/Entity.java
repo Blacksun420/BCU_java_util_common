@@ -1250,7 +1250,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	public static class ProcManager extends BattleObj {
 
 		public boolean lethal;
-		public int kb, strengthen, adrenaline = 100, money, dcut, dcap, poison;
+		public int kb, strengthen, adrenaline = 100, money, dcut, dcap, poison, regencount;
 		public double slow, curse, seal, wild, rage, hypno;
 		public final int[] shield = new int[2];
 		public final double[] stop = new double[2], inv = new double[2];
@@ -1672,7 +1672,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		status.dcap = proc.DMGCAP.magnif ? (int) (hpMagnif * proc.DMGCAP.dmg) : proc.DMGCAP.dmg;
 		status.shield[0] = status.shield[1] = (int)(proc.DEMONSHIELD.hp * hpMagnif);
 		regentimer = getProc().HPREGEN.interval;
-		if (((DataEntity)data).tba < 0)
+		status.regencount = getProc().HPREGEN.scaleWithBuff ? (int)(getProc().HPREGEN.amount * hpMagnif) : getProc().HPREGEN.amount;
+		if (data.getRealTBA() < 0)
 			waitTime = Math.max(data.getTBA(), 0);
 	}
 
@@ -2704,12 +2705,12 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	private boolean regenDisabled = false;
 
 	private void regenerate() {
-		int amount = status[P_HPREGEN][2];
+		int amount = status.regencount;
 		if (amount < 0 && !getProc().HPREGEN.noHB) { // I hope I did this right
 			damage -= amount;
-		} else {
+		} else
 			health += amount;
-		}
+
 		if (getProc().HPREGEN.removeProcs)
 			status.removeActive(false);
 		if (health <= 0) {
@@ -2722,17 +2723,15 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	private void regenUpdate() {
 		if (getProc().HPREGEN.prob > 0 && !regenDisabled) {
 			if (regentimer > 0) {
-				if (((getProc().HPREGEN.idleTrigger && anim.anim.type == AnimU.TYPEDEF[AnimU.IDLE] && !dead) || !getProc().HPREGEN.idleTrigger) && ((getProc().HPREGEN.freezeEff && status.stop[0] <= 0) || !getProc().HPREGEN.freezeEff)) {
+				if (((getProc().HPREGEN.idleTrigger && anim.anim.type == AnimU.TYPEDEF[AnimU.IDLE] && !dead) || !getProc().HPREGEN.idleTrigger) && ((getProc().HPREGEN.freezeEff && status.stop[0] <= 0) || !getProc().HPREGEN.freezeEff))
 					regentimer--;
-				}
+
 				if (regentimer < 1) {
-					if (getProc().HPREGEN.onlyOnce) {
+					if (getProc().HPREGEN.onlyOnce)
 						regenDisabled = true;
-					}
 					regentimer = getProc().HPREGEN.interval;
-					if (Math.random() < (getProc().HPREGEN.prob / 100f)) {
+					if (getProc().HPREGEN.perform(basis.r))
 						regenerate();
-					}
 				}
 			}
 		}

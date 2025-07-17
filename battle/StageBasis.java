@@ -267,7 +267,7 @@ public class StageBasis extends BattleObj {
 		return ans;
 	}
 	public boolean cantDeploy(int rare, int wp) {
-		if (rare != -1 && est.lim.stageLimit != null && est.lim.stageLimit.rarityDeployLimit[rare] > 0) {
+		if (rare != -1 && est.lim.stageLimit != null && est.lim.stageLimit.rarityDeployLimit[rare] >= 0) {
 			int ans = wp;
 			for (Entity ent : le)
 				if (ent.dire == -1 && !ent.dead && ((MaskUnit) ent.data).getPack().unit.rarity == rare)
