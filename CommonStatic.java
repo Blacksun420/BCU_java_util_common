@@ -70,9 +70,10 @@ public class CommonStatic {
 		public final Map<Byte, Integer> DATA = new HashMap<>();
 		public final SortedPackSet<DemonSoul> demonSouls = new SortedPackSet<>();
 
-		public FakeImage[] TYPES;
-		public FakeImage[] TRAITS;
-		public FakeImage[] GRADES;
+		// 0 = big size, 1 = small size
+		public FakeImage[][] TYPES = new FakeImage[2][];
+		public FakeImage[][] TRAITS = new FakeImage[2][];;
+		public FakeImage[][] GRADES = new FakeImage[2][];;
 
 		// NyCastle
 		public final VImg[][] main = new VImg[3][NyCastle.TOT];
@@ -82,6 +83,9 @@ public class CommonStatic {
 		public final EffAnimStore effas = new EffAnimStore();
 		public final int[][] values = new int[Data.C_TOT][5];
 		public int[][] filter;
+
+		public final VImg[] rarity = new VImg[6];
+		public final VImg[] maxcat = new VImg[12];
 
 		// Form cuts
 		public ImgCut unicut, udicut;

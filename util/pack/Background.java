@@ -43,7 +43,7 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 		String path = "./org/battle/bg/";
 		for (VFile vf : VFile.get("./org/battle/bg").list()) {
 			String name = vf.getName();
-			if (name.length() != 11 || !name.endsWith(".imgcut"))
+			if (!name.matches("bg\\d+\\.imgcut"))
 				continue;
 			aux.iclist.add(ImgCut.newIns(path + name));
 		}
@@ -259,12 +259,8 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 		}
 
 		img = image;
-		top = ints[14] == 1;
-		ic = ints[13];
-		if (id == 110) {
-			top = true;
-			ic = 1;
-		}
+		top = id == 110 || ints[14] == 1;
+		ic = id == 110 ? 1 : ints[13];
 
 		for (int i = 0; i < 4; i++)
 			cs[i] = new int[] { ints[i * 3 + 1], ints[i * 3 + 2], ints[i * 3 + 3] };

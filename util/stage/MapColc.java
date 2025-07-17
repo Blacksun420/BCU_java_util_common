@@ -7,6 +7,7 @@ import common.io.json.JsonClass;
 import common.io.json.JsonClass.RType;
 import common.io.json.JsonDecoder;
 import common.io.json.JsonField;
+import common.pack.Context;
 import common.pack.FixIndexList.FixIndexMap;
 import common.pack.IndexContainer;
 import common.pack.PackData.UserPack;
@@ -95,12 +96,16 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 			new DefMapColc();
 			double load = 0.0;
 			for (VFile fi : sortedFiles) {
+				if (!idmap.containsKey(fi.getName())) {
+					System.out.println("Unknown MapColc: " + fi.getName());
+					continue;
+				}
 				bar.accept(++load / idmap.size());
 				List<VFile> list = new ArrayList<>(fi.list());
 				VFile map = list.get(0);
 				List<VFile> stage = new ArrayList<>();
 				for (int i = 1; i < list.size(); i++) {
-					if(fi.getName().equals("N") && list.get(i).getName().contains("stageRN-1"))
+					if (fi.getName().equals("N") && list.get(i).getName().contains("stageRN-1"))
 						continue;
 
 					if (list.get(i).list() != null)
@@ -531,9 +536,9 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 										map.lim.add(new Limit(new StageLimit()));
 									StageLimit slim = map.lim.get(map.lim.size() - 1).stageLimit;
 									if (unitActivate > 0)
-										slim.unitSpeedLimit = parameter.get(1).getAsInt();
+										slim.unitSpeedOverride = parameter.get(1).getAsInt();
 									if (enemyActivate > 0)
-										slim.enemySpeedLimit = parameter.get(3).getAsInt();
+										slim.enemySpeedOverride = parameter.get(3).getAsInt();
 								}
 								break;
 						}

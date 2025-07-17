@@ -187,7 +187,7 @@ public class PCoin extends Data {
 			switch (data[0]) {
 				case 0:
 					break;
-				case 56: case 65:
+				case 56: case 65: // normalize surge chance
 					data[2] = MathUtil.clip(data[2], 0, 100 - proc.getArr(type).get(0));
 					data[3] = MathUtil.clip(data[3], data[2], 100 - proc.getArr(type).get(0));
 					data[8] = Math.max(1, data[8] / Data.VOLC_ITV) * Data.VOLC_ITV;

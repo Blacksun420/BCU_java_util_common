@@ -8,7 +8,7 @@ import common.battle.attack.AtkModelUnit;
 import common.battle.attack.AttackAb;
 import common.battle.data.MaskAtk;
 import common.battle.data.MaskUnit;
-import common.battle.data.Orb;
+import common.battle.data.OrbInfo;
 import common.battle.data.PCoin;
 import common.pack.SortedPackSet;
 import common.pack.UserProfile;
@@ -50,10 +50,17 @@ public class EUnit extends Entity {
 	public float lastPosition;
 
 	private static float getD(String sid, float d0, Level lv) {
-		if (lv.getOrbs() != null && (sid.equals("000000") || sid.equals("000013") || sid.equals("000034"))) //SoL, UL, ZL respectively, last ones may not be there
-			for (int[] orb : lv.getOrbs())
-				if (orb.length == ORB_TOT && orb[ORB_TYPE] == ORB_SOLBUFF)
-					return d0 * (100 + Orb.get(ORB_SOLBUFF,(byte)orb[ORB_GRADE])[1]) / 100;
+		if (lv.getOrbs() != null) {
+			if (sid.equals("000000")) //SoL
+				for (int[] orb : lv.getOrbs())
+					if (orb.length == ORB_TOT && orb[ORB_TYPE] == ORB_SOLBUFF)
+						return d0 * (100 + OrbInfo.get(ORB_SOLBUFF,(byte)orb[ORB_GRADE])[1]) / 100;
+			if (sid.equals("000013")) //UL
+				for (int[] orb : lv.getOrbs())
+					if (orb.length == ORB_TOT && orb[ORB_TYPE] == ORB_ULBUFF)
+						return d0 * (100 + OrbInfo.get(ORB_ULBUFF,(byte)orb[ORB_GRADE])[1]) / 100;
+			//ZL is 000034
+		}
 		return d0;
 	}
 
@@ -71,7 +78,7 @@ public class EUnit extends Entity {
 			int[][] levelOrbs = level.getOrbs();
 			for (int[] orb : levelOrbs)
 				if (orb.length == ORB_TOT && orb[ORB_TYPE] >= ORB_MINIDEATHSURGE) {
-					int eff = Orb.get((byte)orb[ORB_TYPE],(byte)orb[ORB_GRADE])[0];
+					int eff = OrbInfo.get((byte)orb[ORB_TYPE],(byte)orb[ORB_GRADE])[0];
 					switch (orb[ORB_TYPE]) {
 						case ORB_RESKB:
 							getProc().IMUKB.mult += eff;
@@ -80,11 +87,11 @@ public class EUnit extends Entity {
 							getProc().IMUWAVE.mult += eff;
 							break;
 						case ORB_REFUND:
-							if (getProc().REFUND.prob == 0) {
-								getProc().REFUND.prob = 100;
-								getProc().REFUND.count = 2;
+							if (getProc().MONEYBACK.prob == 0) {
+								getProc().MONEYBACK.prob = 100;
+								getProc().MONEYBACK.count = 2;
 							}
-							getProc().REFUND.mult += eff;
+							getProc().MONEYBACK.mult += eff;
 							break;
 						case ORB_MINIDEATHSURGE:
 							if (getProc().MINIDEATHSURGE.prob == 0) {
@@ -96,13 +103,33 @@ public class EUnit extends Entity {
 							}
 							getProc().MINIDEATHSURGE.mult += eff;
 							break;
+						case ORB_CANNON_CHARGE:
+							if (getProc().CANONCHARGE.prob == 0) {
+								getProc().CANONCHARGE.prob = 100;
+								getProc().CANONCHARGE.count = 2;
+							}
+							getProc().CANONCHARGE.mult += eff;
+							break;
+						case ORB_RESTOXIC:
+							getProc().IMUPOIATK.mult += eff;
+							break;
+						case ORB_DODGE:
+							if (getProc().IMUATK.prob == 0)
+								getProc().IMUATK.time = 30;
+							getProc().IMUATK.prob += eff;
+							break;
+						case ORB_RESSLOW:
+							getProc().IMUSLOW.mult += eff;
+							break;
+						case ORB_RESCURSE:
+							getProc().IMUCURSE.mult += eff;
+							break;
 					}
 				}
 		}
 		this.level = level;
 	}
 
-	//used for waterblast
 	public EUnit(StageBasis b, MaskUnit de, EAnimU ea, float d0) {
 		super(b, de, ea, d0, null, null);
 		layer = de.getFront() + (int) (b.r.nextFloat() * (de.getBack() - de.getFront() + 1));
@@ -128,8 +155,10 @@ public class EUnit extends Entity {
 		if (index != null)
 			basis.elu.smnd[index[0]][index[1]] = !basis.getAllOf(index[0],index[1]).isEmpty();
 
-		if (getProc().REFUND.perform(basis.r))
-			basis.money = (int)(basis.money+((getProc().REFUND.mult / 100.0) * (index != null ? basis.elu.price[index[0]][index[1]] : ((MaskUnit)data).getPrice() * basis.st.getCont().price * 100)));
+		if (getProc().MONEYBACK.perform(basis.r))
+			basis.money = (int)(basis.money+((getProc().MONEYBACK.mult / 100.0) * (index != null ? basis.elu.price[index[0]][index[1]] : ((MaskUnit)data).getPrice() * basis.st.getCont().price * 100)));
+		if (getProc().CANONCHARGE.perform(basis.r))
+			basis.cannon += (float)(basis.maxCannon * getProc().CANONCHARGE.mult / 100);
  	}
 
 	@Override
@@ -225,7 +254,7 @@ public class EUnit extends Entity {
 					int[][] levelOrbs = level.getOrbs();
 					for (int[] orb : levelOrbs)
 						if (orb.length == ORB_TOT && orb[ORB_TYPE] == ORB_BAKILL)
-							ans = (int)(ans * Orb.EFFECT.get(ORB_BAKILL).get((byte)orb[ORB_GRADE])[1] / 100.0);
+							ans = (int)(ans * OrbInfo.EFFECT.get(ORB_BAKILL).get((byte)orb[ORB_GRADE])[1] / 100.0);
 				}
 			}
 			if (atk.trait.contains(UserProfile.getBCData().traits.get(Data.TRAIT_BEAST)) && getProc().BSTHUNT.active)
@@ -269,7 +298,7 @@ public class EUnit extends Entity {
 	}
 
 	private int getOrb(SortedPackSet<Trait> trait, int matk, boolean atk) {
-		Orb orb = ((MaskUnit) data).getOrb();
+		OrbInfo orb = ((MaskUnit) data).getOrb();
 		if (orb == null || level.getOrbs() == null)
 			return atk ? 0 : matk;
 		int ans = atk ? 0 : matk;
@@ -296,7 +325,7 @@ public class EUnit extends Entity {
 
 	private float getOrb(double mult, SortedPackSet<Trait> eTraits, SortedPackSet<Trait> traits, Treasure t) {
 		final byte ORB_LV = mult < 500 && mult > 100 ? mult < 300 ? ORB_STRONG : ORB_MASSIVE : -1;
-		final Map<Byte,int[]> ORB_MULTIS = ORB_LV == -1 ? null : Orb.EFFECT.get(ORB_LV);
+		final Map<Byte,int[]> ORB_MULTIS = ORB_LV == -1 ? null : OrbInfo.EFFECT.get(ORB_LV);
 		final float div = ORB_LV == ORB_STRONG ? 1000 : 300;
 		float ini = 1;
 		if (!traits.isEmpty())

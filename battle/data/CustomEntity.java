@@ -254,6 +254,10 @@ public abstract class CustomEntity extends DataEntity {
 	public int getTBA() {
 		return Math.abs(tba);
 	}
+	@Override
+	public int getRealTBA() {
+		return tba;
+	}
 
 	@Override
 	public int getTouch() {

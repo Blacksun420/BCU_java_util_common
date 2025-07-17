@@ -803,7 +803,7 @@ public class Editors {
 			setComponentVisibility(eg, def && t.prob > 0, 7);
 		}));
 
-		map().put("REFUND", new EditControl<>(Proc.REFUND.class, t -> {
+		map().put("MONEYBACK", new EditControl<>(Proc.PMC.class, t -> {
 			t.prob = Math.max(def ? 0 : -100, Math.min(t.prob, 100));
 			if (!def)
 				return;
@@ -813,6 +813,23 @@ public class Editors {
 			} else if (t.mult == 0) {
 				t.count = 2;
 				t.mult = 50;
+			} else
+				t.count = Math.max(t.count, 1);
+		}, eg -> t -> {
+			setComponentVisibility(eg, !def || t.prob > 0, 1, 2);
+			setComponentVisibility(eg, def && t.prob > 0, 2);
+		}));
+
+		map().put("CANNONCHARGE", new EditControl<>(Proc.PMC.class, t -> {
+			t.prob = Math.max(def ? 0 : -100, Math.min(t.prob, 100));
+			if (!def)
+				return;
+			if (t.prob == 0) {
+				t.mult = 0;
+				t.count = 1;
+			} else if (t.mult == 0) {
+				t.count = 2;
+				t.mult = 3;
 			} else
 				t.count = Math.max(t.count, 1);
 		}, eg -> t -> {
@@ -1024,6 +1041,23 @@ public class Editors {
 				t.stackable = false;
 				t.procs = null;
 				t.traits.clear();
+			}
+		}, eg -> t -> setComponentVisibility(eg, t.prob > 0, 1)));
+
+		map().put("HPREGEN", new EditControl<>(Proc.HPREGEN.class, (t) -> {
+			t.prob = Math.max(0, Math.min(t.prob, 100));
+			if (t.prob > 0) {
+				t.interval = Math.max(t.interval,1);
+			} else {
+				t.interval = 1;
+				t.amount = 0;
+				t.freezeEff = true;
+				t.idleTrigger = false;
+				t.removeProcs = false;
+				t.onlyOnce = false;
+				t.scaleWithBuff = false;
+				t.resetWhenDamaged = false;
+				t.noHB = false;
 			}
 		}, eg -> t -> setComponentVisibility(eg, t.prob > 0, 1)));
 	}

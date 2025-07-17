@@ -1609,6 +1609,10 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 */
 	private final Proc proc;
 
+	/** cooldown timer for regeneration ability
+	 */
+	private int regentimer;
+
 	/**
 	 * EEnemy Constructor
 	 * @param b Stage Data
@@ -1617,6 +1621,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 * @param atkMagnif Atk Buff
 	 * @param hpMagnif Health Buff
 	 */
+
 	protected Entity(StageBasis b, MaskEntity de, EAnimU ea, float atkMagnif, float hpMagnif) {
 		super(Math.round(de.getHp() * hpMagnif));
 		basis = b;
@@ -1666,6 +1671,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		status.dcut = proc.DMGCUT.magnif ? (int) (hpMagnif * proc.DMGCUT.dmg) : proc.DMGCUT.dmg;
 		status.dcap = proc.DMGCAP.magnif ? (int) (hpMagnif * proc.DMGCAP.dmg) : proc.DMGCAP.dmg;
 		status.shield[0] = status.shield[1] = (int)(proc.DEMONSHIELD.hp * hpMagnif);
+		regentimer = getProc().HPREGEN.interval;
 		if (((DataEntity)data).tba < 0)
 			waitTime = Math.max(data.getTBA(), 0);
 	}
@@ -1847,6 +1853,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				}
 			}
 		}
+		if (getProc().HPREGEN.resetWhenDamaged && getProc().HPREGEN.prob > 0)
+			regentimer = getProc().HPREGEN.interval; // Reset if enabled
 
 		boolean barrierContinue = !hasBarrier();
 		boolean shieldContinue = status.shield[0] == 0;
@@ -2409,6 +2417,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 */
 	@Override
 	public void postUpdate() {
+		regenUpdate();
+
 		int hb = data.getHb();
 		long ext = health * hb % maxH;
 		if (ext == 0)
@@ -2691,9 +2701,46 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				}
 	}
 
+	private boolean regenDisabled = false;
+
+	private void regenerate() {
+		int amount = status[P_HPREGEN][2];
+		if (amount < 0 && !getProc().HPREGEN.noHB) { // I hope I did this right
+			damage -= amount;
+		} else {
+			health += amount;
+		}
+		if (getProc().HPREGEN.removeProcs)
+			status.removeActive(false);
+		if (health <= 0) {
+			regenDisabled = true;
+			if (getProc().HPREGEN.noHB)
+				preKill();
+		}
+	}
+
+	private void regenUpdate() {
+		if (getProc().HPREGEN.prob > 0 && !regenDisabled) {
+			if (regentimer > 0) {
+				if (((getProc().HPREGEN.idleTrigger && anim.anim.type == AnimU.TYPEDEF[AnimU.IDLE] && !dead) || !getProc().HPREGEN.idleTrigger) && ((getProc().HPREGEN.freezeEff && status.stop[0] <= 0) || !getProc().HPREGEN.freezeEff)) {
+					regentimer--;
+				}
+				if (regentimer < 1) {
+					if (getProc().HPREGEN.onlyOnce) {
+						regenDisabled = true;
+					}
+					regentimer = getProc().HPREGEN.interval;
+					if (Math.random() < (getProc().HPREGEN.prob / 100f)) {
+						regenerate();
+					}
+				}
+			}
+		}
+	}
+
 	/**
 	 * update the entity. order of update:
-	 *  1st iteration (movement) :   TBA, procs time tick -> move (KB, burrow, standard) -> revive
+	 *  1st iteration (movement) :   TBA  -> procs time tick -> move (KB, burrow, standard) -> revive
 	 *  2nd iteration (reactions):   validate walking OR go idle, start burrow, start attack -> update attack
 	 */
 	@Override
@@ -3199,8 +3246,10 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			getProc().DEATHSURGE.clear();
 		if (getProc().MINIDEATHSURGE.prob > 0 && spwn % getProc().MINIDEATHSURGE.spawns != 0)
 			getProc().MINIDEATHSURGE.clear();
-		if (getProc().REFUND.prob > 0 && spwn % getProc().REFUND.count != 0)
-			getProc().REFUND.clear();
+		if (getProc().MONEYBACK.prob > 0 && spwn % getProc().MONEYBACK.count != 0)
+			getProc().MONEYBACK.clear();
+		if (getProc().CANONCHARGE.prob > 0 && spwn % getProc().CANONCHARGE.count != 0)
+			getProc().CANONCHARGE.clear();
 	}
 	@Override
 	public int compareTo(@NotNull Entity ent) {

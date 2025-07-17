@@ -66,6 +66,12 @@ public class Res extends ImgCore {
 		return coor.draw(input);
 	}
 
+	public static void getRarity(int r, SymCoord coor) {
+		BCAuxAssets aux = CommonStatic.getBCAssets();
+		FakeImage rarity = aux.rarity[r].getImg();
+		coor.draw(rarity);
+	}
+
 	public static P getMoney(int mon, int max, SymCoord sym) {
 		BCAuxAssets aux = CommonStatic.getBCAssets();
 		int[] val0 = getLab(mon);
@@ -268,6 +274,7 @@ public class Res extends ImgCore {
 		aux.icon[1][P_DRAIN] = new VImg("./org/page/icons/Drain.png");
 		aux.icon[1][P_BLESS] = new VImg("./org/page/icons/Blessing.png");
 		aux.icon[1][P_SPEEDUP] = new VImg("./org/page/icons/Speed.png");
+		aux.icon[1][P_HPREGEN] = new VImg("./org/page/icons/Barrier.png");
 
 		langIcons();
 		//Trait icons that remain the same regardless of language
@@ -323,8 +330,8 @@ public class Res extends ImgCore {
 	private static void readBattle() {
 		BCAuxAssets aux = CommonStatic.getBCAssets();
 		aux.battle[0] = new VImg[4];
-		aux.battle[1] = new VImg[22];
-		aux.battle[2] = new VImg[12];
+		aux.battle[1] = new VImg[23];
+		aux.battle[2] = new VImg[9];
 		ImgCut ic001 = ImgCut.newIns("./org/page/img001.imgcut");
 		VImg img001 = new VImg("./org/page/img001.png");
 		FakeImage[] parts = ic001.cut(img001.getImg());
@@ -348,6 +355,10 @@ public class Res extends ImgCore {
 
 		for(int i = 0; i < aux.timer.length; i++)
 			aux.timer[i] = new VImg(parts[i + 83]);
+		for (int i = 0; i < aux.rarity.length; i++)
+			aux.rarity[i] = new VImg(parts[i + 135]);
+		for (int i = 0; i < aux.maxcat.length; i++)
+			aux.maxcat[i] = new VImg(parts[i + 141]);
 
 		ImgCut moneyCut = ImgCut.newIns("./org/page/moneySign.imgcut");
 		VImg moneyImg = new VImg("./org/page/moneySign.png");
@@ -369,6 +380,7 @@ public class Res extends ImgCore {
 		aux.battle[1][1] = new VImg(parts[7]);
 		for (int i = 0; i < 10; i++)
 			aux.battle[1][2 + i] = new VImg(parts[11 + i]);
+		aux.battle[1][22] = new VImg(parts[54]);
 
 		//jp fire
 		aux.battle[1][12] = new VImg(parts[9]);

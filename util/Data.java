@@ -244,7 +244,7 @@ public class Data {
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
-		public static class REFUND extends PM {
+		public static class PMC extends PM {
 			@Order(2)
 			@JsonField(defval = "1")
 			public int count = 1;
@@ -1159,6 +1159,28 @@ public class Data {
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
+		public static class HPREGEN extends PROB {
+			@Order(1)
+			public int interval;
+			@Order(2)
+			public int amount;
+			@Order(3)
+			public boolean scaleWithBuff;
+			@Order(4)
+			public boolean onlyOnce;
+			@Order(5)
+			public boolean resetWhenDamaged;
+			@Order(6)
+			public boolean freezeEff;
+			@Order(7)
+			public boolean removeProcs;
+			@Order(8)
+			public boolean idleTrigger;
+			@Order(9)
+			public boolean noHB;
+		}
+
+		@JsonClass(noTag = NoTag.LOAD)
 		public static class ProcID implements Cloneable, BattleStatic {
 			@Order(0)
 			@JsonField(generic = Integer.class)
@@ -1456,7 +1478,6 @@ public class Data {
 			public String toString() {
 				return JsonEncoder.encode(this).toString();
 			}
-
 		}
 
 		public static Proc blank() {
@@ -1632,7 +1653,11 @@ public class Data {
 		@Order(79)
 		public final MINIVOLC MINIDEATHSURGE = new MINIVOLC();
 		@Order(80)
-		public final REFUND REFUND = new REFUND();
+		public final PMC MONEYBACK = new PMC();
+		@Order(81)
+		public final HPREGEN HPREGEN = new HPREGEN();
+		@Order(82)
+		public final PMC CANONCHARGE = new PMC();
 
 		@Override
 		public Proc clone() {
@@ -2008,7 +2033,9 @@ public class Data {
 	public static final byte P_SPEEDUP = 78;
 	public static final byte P_MINIDEATHSURGE = 79;
 	public static final byte P_REFUND = 80;
-	public static final byte PROC_TOT = 81;
+	public static final byte P_HPREGEN = 81;
+	public static final byte P_CANNONCHARGE = 82;
+	public static final byte PROC_TOT = 83;
 
 	public static final boolean[] procSharable = {
 			false, //kb
@@ -2084,14 +2111,8 @@ public class Data {
 			true,  //Resistant but good
 			true,  //Range Shield
 			true,  //spirit summon
-			false, //TOTAL METALHEAD DEATH
-			false, //BAJA BLAST
-			true,  //imu.blast
-			false, //Drain/ABsorb
-			false, //Bless
-			true,  //adrenaline
-			true,  //Mini Death Surge
-			true   //Refund
+			true,  //hp regen
+			true   //cannon charge
 	};
 
 	/**
@@ -2198,7 +2219,7 @@ public class Data {
 			{ PC_P, P_BSTHUNT, 1 }, //64 : behemoth slayer
 			{ PC_P, P_MINIVOLC }, //65 : MiniSurge
 			{ PC_AB, AB_SKILL }, //66 : super sage hunter
-			{ PC_P, P_BLAST } //67 : Blast
+			{ PC_P, P_BLAST } //67 : Baja Blast
 	};
 	public static final int[][] PC_CUSTOM = new int[][] { //Use negative ints to handle (it would be so awesome, it would be so cool)
 			{ -1, 0 }, // 0:
@@ -2246,7 +2267,8 @@ public class Data {
 			{ PC_P, P_DRAIN}, //42: Drain
 			{ PC_P, P_SPEEDUP}, //43: Adrenaline
 			{ PC_P, P_REFUND}, //44: Refund
-			{ PC_P, P_MINIDEATHSURGE} //45: Mini-Deathsurge
+			{ PC_P, P_MINIDEATHSURGE}, //45: Mini-Deathsurge
+			{ PC_P, P_CANNONCHARGE} //46: Cannon Charge
 	};
 
 	public static int[] get_CORRES(int ind) {
@@ -2455,7 +2477,13 @@ public class Data {
 	public static final byte ORB_RESKB = 8;
 	public static final byte ORB_SOLBUFF = 9;
 	public static final byte ORB_BAKILL = 10;
-	public static final byte ORB_TYPE_TOTAL = 11;
+	public static final byte ORB_CANNON_CHARGE = 11;
+	public static final byte ORB_RESTOXIC = 12;
+	public static final byte ORB_DODGE = 13;
+	public static final byte ORB_RESSLOW = 14;
+	public static final byte ORB_RESCURSE = 15;
+	public static final byte ORB_ULBUFF = 16;
+	public static final byte ORB_TYPE_TOTAL = 17;
 	public static final byte ORB_TYPE = 0, ORB_TRAIT = 1, ORB_GRADE = 2, ORB_TOT = 3;
 
 	public static final short[] GATYA = { 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 160, 161, 164, 167,

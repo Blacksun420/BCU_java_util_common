@@ -62,7 +62,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 	 */
 	protected final int[][] act;
 
-	protected AtkModelEntity(Entity ent, float d0, float d1) {
+	protected AtkModelEntity(Entity ent, float d0, float d1) { // enemy
 		super(ent.basis);
 		e = ent;
 		data = e.data;
@@ -75,7 +75,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		setAtks(matks, satks);
 	}
 
-	protected AtkModelEntity(Entity ent, float d0, float d1, PCoin pc, Level lv) {
+	protected AtkModelEntity(Entity ent, float d0, float d1, PCoin pc, Level lv) { // cat
 		super(ent.basis);
 		e = ent;
 		data = e.data;

@@ -309,7 +309,7 @@ public class StageBasis extends BattleObj {
 	/**
 	 * list of entities in the range d0 ~ d1 that can be touched by entity with given direction and touch mode
 	 * entity is picked if d0 <= pos <= d1 when excludeRightEdge is false
-	 *                  if d0 <= pos <  d1 when excludeRightEdge is true (currently only used by bblast, TODO: waves should use it)
+	 *                  if d0 <= pos <  d1 when excludeRightEdge is true (used by breakerblast and blast ability), TODO: waves should use it)
 	 */
 	public List<AbEntity> inRange(int touch, int dire, float d0, float d1, boolean excludeRightEdge) {
 		float start = Math.min(d0, d1);
@@ -913,7 +913,7 @@ public class StageBasis extends BattleObj {
 	public float speedLimit(boolean isEnemy) {
 		if (est.lim.stageLimit == null)
 			return -1;
-		return isEnemy ? est.lim.stageLimit.enemySpeedLimit : est.lim.stageLimit.unitSpeedLimit;
+		return isEnemy ? est.lim.stageLimit.enemySpeedOverride : est.lim.stageLimit.unitSpeedOverride;
 	}
 
 	public BattleList<EUnit> getAllOf(int i, int j) {

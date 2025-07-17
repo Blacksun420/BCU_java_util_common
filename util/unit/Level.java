@@ -48,7 +48,6 @@ public class Level implements BattleStatic, LevelInterface {
 			int min = u.getMaxPLv() != 0 ? 2 : 1;
 			if(arr.length > min)
 				System.arraycopy(arr, min, talents, 0, Math.min(talents.length, arr.length - min));
-
 			lv.setTalents(talents);
 		}
 		lv.orbs = orbs;

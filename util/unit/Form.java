@@ -33,21 +33,18 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 	public final Identifier<AbUnit> uid;
 	@JsonField
 	public int fid;
-	public Orb orbs = null;
 
 	@JCConstructor
 	public Form(Unit u) {
 		du = null;
 		unit = u;
 		uid = unit.id;
-		orbs = new Orb(-1);
 	}
 	//Used solely to make placeholders
 	public Form(Unit u, MaskUnit d) {
 		du = d;
 		unit = u;
 		uid = unit.id;
-		orbs = new Orb(0);
 		anim = new AnimUD("./org/unit/000/f/", "000_f", "edi000_f.png", "uni000_f00.png");
 		anim.getUni().setCut(CommonStatic.getBCAssets().unicut);
 	}
@@ -60,7 +57,6 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 		anim = ac;
 		du = cu;
 		cu.pack = this;
-		orbs = new Orb(-1);
 	}
 
 	//Used for BC units
@@ -363,5 +359,21 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 		else if (hasZeroForm())
 			return unit.info.zeroEvo;
 		return null;
+	}
+
+	public boolean checkOrb(int level) {
+		for (int lim : unit.orbs.getLimits())
+			if (lim == 0 && fid >= 2 || lim <= level)
+				return true;
+		return false;
+	}
+	public boolean checkOrb(int level, int index) {
+		if (index >= unit.orbs.getLimits().length)
+			return false;
+
+		int limit = unit.orbs.getLimits()[index];
+		if (limit == 0 && fid >= 2)
+			return true;
+		else return limit <= level;
 	}
 }

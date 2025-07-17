@@ -66,7 +66,7 @@ public class ContBlast extends ContAb {
     }
 
     @Override
-    public void update() { // FIXME: update on same frame as attack
+    public void update() {
         t++;
         blast.attacked = false;
         int rt = (int)t - BLAST_PRE;

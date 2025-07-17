@@ -365,6 +365,12 @@ public class Stage extends Data
 		if (jobj.has("name"))
 			names.put(jobj.get("name").getAsString());
 		recd.removeIf(Objects::isNull);
+		if (lim.stageLimit != null && UserProfile.isOlderPack(((MapColc.PackMapColc)getMC()).pack, "0.7.12.1")) {
+			if (lim.stageLimit.maxUnitSpawn == 0)
+				lim.stageLimit.maxUnitSpawn = -1;
+			if (lim.stageLimit.globalCost == 0)
+				lim.stageLimit.globalCost = -1;
+		}
 	}
 
 	@JsonDecoder.PostLoad

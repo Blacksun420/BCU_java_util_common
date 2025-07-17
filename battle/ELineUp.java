@@ -10,6 +10,8 @@ import common.util.unit.EForm;
 import common.util.stage.Limit;
 import common.util.unit.Form;
 
+import java.util.Arrays;
+
 public class ELineUp extends BattleObj {
 
 	public final int[][] price = new int[2][5], maxC = new int[2][5];

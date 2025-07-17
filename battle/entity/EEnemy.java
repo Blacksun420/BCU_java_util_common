@@ -7,7 +7,7 @@ import common.battle.attack.AttackAb;
 import common.battle.data.MaskAtk;
 import common.battle.data.MaskEnemy;
 import common.battle.data.MaskUnit;
-import common.battle.data.Orb;
+import common.battle.data.OrbInfo;
 import common.pack.SortedPackSet;
 import common.pack.UserProfile;
 import common.util.anim.AnimU;
@@ -119,7 +119,7 @@ public class EEnemy extends Entity {
 					int[][] levelOrbs = ((EUnit)atk.attacker).level.getOrbs();
 					for (int[] orb : levelOrbs)
 						if (orb.length == ORB_TOT && orb[ORB_TYPE] == ORB_BAKILL)
-							ans = (int)(ans * Orb.get(ORB_BAKILL,(byte)orb[ORB_GRADE])[0] / 100.0);
+							ans = (int)(ans * OrbInfo.get(ORB_BAKILL,(byte)orb[ORB_GRADE])[0] / 100.0);
 				}
 			}
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_BEAST)) && atk.getProc().BSTHUNT.active)
