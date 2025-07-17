@@ -875,7 +875,7 @@ public class StageBasis extends BattleObj {
 			if (newBg.bgEffect == null)
 				bgEffect = null;
 			else
-				bgEffect = newBg.bgEffect.get();
+				bgEffect = newBg.getEffect();
 		}
 		bg = newBg;
 	}

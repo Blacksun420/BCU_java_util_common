@@ -92,7 +92,7 @@ public class Identifier<T extends IndexContainer.Indexable<?, T>> implements Com
 		IndexContainer.IndexCont cont = null;
 		Queue<Class<?>> q = new ArrayDeque<>();
 		q.add(cls);
-		while (q.size() > 0) {
+		while (!q.isEmpty()) {
 			Class<?> ci = q.poll();
 			if ((cont = ci.getAnnotation(IndexContainer.IndexCont.class)) != null)
 				break;

@@ -64,8 +64,8 @@ public class EUnit extends Entity {
 		lvl = level.getTotalLv();
 		this.index = index;
 		this.isBase = isBase;
-		if (isBase && !b.isBanned(C_BASE))
-			maxH = maxH * (100 + b.elu.getInc(C_BASE)) / 100;
+		if (isBase)
+			maxH = health = maxH * b.b.t().getBaseHealth(b.elu.getInc(C_BASE)) / 1000;
 
 		if(((MaskUnit)data).getOrb() != null && level.getOrbs() != null) {
 			int[][] levelOrbs = level.getOrbs();
@@ -99,7 +99,6 @@ public class EUnit extends Entity {
 					}
 				}
 		}
-		health = maxH;
 		this.level = level;
 	}
 

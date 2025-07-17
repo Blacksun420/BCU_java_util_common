@@ -815,11 +815,8 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 	}
 
 	public EffAnim(String st, VImg vi, ImgCut ic, MaModel model, T[] anims) {
-		super(st);
-		vimg = vi;
-		imgcut = ic;
+		this(st, vi, ic, anims);
 		mamodel = model;
-		types = anims;
 	}
 
 	@Override

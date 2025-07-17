@@ -200,7 +200,7 @@ public class StageMap extends Data implements BasedCopable<StageMap, MapColc>,
 	}
 
 	@JsonDecoder.OnInjected
-	public void onInjected(JsonObject jobj) {
+	public void onInjected(JsonObject jobj) throws Exception {
 		PostLoad();
 		if (jobj.has("name"))
 			names.put(jobj.get("name").getAsString());
@@ -227,6 +227,12 @@ public class StageMap extends Data implements BasedCopable<StageMap, MapColc>,
 		}
 
 		MapColc.PackMapColc mc = (MapColc.PackMapColc)getCont();
+		if (mc == null) {
+			System.out.println(UserProfile.profile().pending.values());
+			System.out.println(id.cls.getAnnotation(IndexContainer.IndexCont.class));
+			System.out.println(get(id.pack));
+			throw new Exception("Map is null: " + id.pack);
+		}
 		if (mc.pack.desc.FORK_VERSION < 11) {
 			if (UserProfile.isOlderPack(mc.pack, "0.7.8.2"))
 				for (Limit l : lim) {

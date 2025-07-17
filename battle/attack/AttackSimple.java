@@ -52,7 +52,7 @@ public class AttackSimple extends AttackAb {
 			return;
 		}
 		List<AbEntity> le = model.b.inRange(touch, attacker != null && attacker.status.rage > 0 ? 2 : dire, sta, end, excludeRightEdge);
-		if (attacker != null && (attacker.status.rage > 0 || attacker.status.hypno > 0))
+		if (attacker != null && ((matk != null && matk.getName().contains("noself")) || attacker.status.rage > 0 || attacker.status.hypno > 0))
 			le.remove(attacker);
 
 		if(attacker != null && isLongAtk && !le.contains(model.b.getBase(attacker.dire))) {
@@ -78,7 +78,7 @@ public class AttackSimple extends AttackAb {
 			List<AbEntity> ents = new ArrayList<>();
 			ents.add(capt.get(0));
 
-			if (dire == 1) {
+			if (dire >= 1) {
 				double leftMost = ents.get(0).pos;
 				for (AbEntity e: capt) {
 					if (e.pos < leftMost) {

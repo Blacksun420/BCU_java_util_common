@@ -1282,7 +1282,7 @@ public class Data {
 							if (!((ProcID)f.get(this)).isEmpty())
 								return true;
 						} else if (Enum.class.isAssignableFrom(f.getType()))
-							if (!f.get(this).toString().equals(f.getAnnotation(JsonField.class).defval()))
+							if (!f.getAnnotation(JsonField.class).defval().contains(f.get(this).toString()))
 								return true;
 				} catch (Exception e) {
 					CommonStatic.ctx.noticeErr(e, ErrType.DEBUG, "Error checking if Proc of type " + getClass().getName() + " exists");

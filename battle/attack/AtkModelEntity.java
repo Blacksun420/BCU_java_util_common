@@ -120,7 +120,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		int ans = 0, temp = 0, c = 1;
 		MaskAtk[] atks = data.getAtks(atkType);
 		for (int i = 0; i < atks.length; i++)
-			if (atks[i].getPre() > 0 || atks[i].getName().toLowerCase().startsWith("combo")) {
+			if (atks[i].getPre() > 0 || atks[i].getName().startsWith("combo")) {
 				ans += temp / c;
 				temp = atks[i].getDire() > 0 ? getEffAtk(i) : 0;
 				c = 1;
@@ -437,9 +437,11 @@ public abstract class AtkModelEntity extends AtkModelAb {
 						Form f = u.getForms()[Math.max(proc.form - 1, 0)];
 						IForm ef = IForm.newIns(u instanceof Unit ? f : (AbForm)u, lvl);
 						EUnit eu = ef.invokeEntity(b, lvl, minlayer, maxlayer);
-						if (proc.same_health)
+						if (proc.same_health) {
 							eu.health = e.health;
-
+							eu.strengthen();
+							eu.adrenaline();
+						}
 						eu.added(-1, (int) up);
 						eu.setSummon(proc.anim_type, proc.bond_hp ? e : null);
 						if (proc.anim_type == Proc.SUMMON_ANIM.EVERYWHERE_DOOR)
@@ -482,8 +484,11 @@ public abstract class AtkModelEntity extends AtkModelAb {
 							up = b.st.len - 800;
 
 						ee.added(1, (int) up);
-						if (proc.same_health)
+						if (proc.same_health) {
 							ee.health = e.health;
+							ee.strengthen();
+							ee.adrenaline();
+						}
 						ee.setSummon(proc.anim_type, proc.bond_hp ? e : null);
 						if (proc.anim_type == Proc.SUMMON_ANIM.EVERYWHERE_DOOR)
 							b.tempe.add(new EntCont(new DoorCont(b, ee), time + (proc.interval * i)));

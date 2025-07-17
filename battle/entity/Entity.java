@@ -673,12 +673,12 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					for (int i = 0; i < e.data.getAtkTypeCount(); i++)
 						if (e.aam.isUsable(i))
 							totShare += e.data.getShare(i);
-					int r = (int) (e.basis.r.nextFloat() * totShare);
+					int r = e.basis.r.nextInt(totShare);
 					for (int i = 0; i < e.data.getAtkTypeCount(); i++) {
 						if (!e.aam.isUsable(i))
 							continue;
 						r -= e.data.getShare(i);
-						if (r <= 0) {
+						if (r < 0) {
 							e.aam.atkType = i;
 							break;
 						}
@@ -716,7 +716,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				if (preTime == 0) {
 					int atk0 = preID;
 					while (++preID < multi && pres[preID] == 0)
-						if (e.data.getAtkModel(e.aam.atkType, preID).getName().toLowerCase().startsWith("combo"))
+						if (e.data.getAtkModel(e.aam.atkType, preID).getName().startsWith("combo"))
 							e.basis.getAttack(e.aam.getAttack(atk0++));
 
 					tempAtk = preID - 1 > atk0 ? (int) (atk0 + e.basis.r.nextFloat() * (preID - atk0)) : atk0;
@@ -2154,12 +2154,12 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				else
 					curw[0] = val;
 
-				if (atk.getProc().WEAK.mult > 100)
-					curw[1] = Math.max(curw[1], atk.getProc().WEAK.mult / 100.0);
-				else if (val < 0)
-					curw[1] = Math.min(curw[1], atk.getProc().WEAK.mult / 100.0);
-				else
+				if (val >= 0)
 					curw[1] = atk.getProc().WEAK.mult / 100.0;
+				else if (atk.getProc().WEAK.mult > 100)
+					curw[1] = Math.max(curw[1], atk.getProc().WEAK.mult / 100.0);
+				else
+					curw[1] = Math.min(curw[1], atk.getProc().WEAK.mult / 100.0);
 				status.weaks.add(curw);
 			}
 			anim.getEff(P_WEAK);
@@ -2181,12 +2181,12 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				else
 					curw[0] = val;
 
-				if (atk.getProc().LETHARGY.mult > 0)
-					curw[1] = (int) Math.max(curw[1], atk.getProc().LETHARGY.mult);
-				else if (val < 0)
-					curw[1] = (int) Math.min(curw[1], atk.getProc().LETHARGY.mult);
-				else
+				if (val >= 0)
 					curw[1] = (int) atk.getProc().LETHARGY.mult;
+				else if (atk.getProc().LETHARGY.mult > 0)
+					curw[1] = (int) Math.max(curw[1], atk.getProc().LETHARGY.mult);
+				else
+					curw[1] = (int) Math.min(curw[1], atk.getProc().LETHARGY.mult);
 				status.lethargies.add(curw);
 			}
 			anim.getEff(P_LETHARGY);
@@ -2424,28 +2424,9 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			health = maxH;
 
 		// increase damage
-		float strong = getProc().STRONG.health;
-		if ((touchable() & TCH_CORPSE) == 0 && strong > 0 && damage != 0) {
-			boolean wz = status.strengthen == 0;
-			if (getProc().STRONG.incremental && health * 100 > maxH * strong) {
-				status.strengthen = (int)(getProc().STRONG.mult * (maxH - health) / (maxH * (100 - strong) / 100.0));
-			} else if (health * 100 <= maxH * strong)
-				status.strengthen = getProc().STRONG.mult;
-
-			if (wz && status.strengthen != 0)
-				anim.getEff(P_STRONG);
-		}
-		// adrenaline
-		float threshold = getProc().SPEEDUP.health;
-		if ((touchable() & TCH_CORPSE) == 0 && threshold > 0 && damage != 0) {
-			boolean wz = status.adrenaline == 100;
-			if (getProc().SPEEDUP.incremental && health * 100 > maxH * threshold) {
-				status.adrenaline = 100 + (int)((getProc().SPEEDUP.mult - 100) * (maxH - health) / (maxH * (100 - threshold) / 100.0));
-			} else if (health * 100 <= maxH * threshold)
-				status.adrenaline = getProc().SPEEDUP.mult;
-
-			if (wz && status.adrenaline != 100)
-				anim.getEff(P_SPEEDUP);
+		if ((touchable() & TCH_CORPSE) == 0 && getProc().STRONG.health > 0 && damage != 0) {
+			strengthen();
+			adrenaline();
 		}
 		damage = 0;
 		// lethal strike
@@ -2487,6 +2468,33 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			onLastBreathe();
 		if (health > 0)
 			status.money = 0;
+	}
+
+	public void strengthen() {
+		float strong = getProc().STRONG.health;
+		if ((touchable() & TCH_CORPSE) != 0 || strong == 0)
+			return;
+		boolean wz = status.strengthen == 0;
+		if (getProc().STRONG.incremental && health * 100 > maxH * strong) {
+			status.strengthen = (int)(getProc().STRONG.mult * (maxH - health) / (maxH * (100 - strong) / 100.0));
+		} else if (health * 100 <= maxH * strong)
+			status.strengthen = getProc().STRONG.mult;
+
+		if (wz && status.strengthen != 0)
+			anim.getEff(P_STRONG);
+	}
+	public void adrenaline() {
+		float threshold = getProc().SPEEDUP.health;
+		if ((touchable() & TCH_CORPSE) != 0 || threshold == 0)
+			return;
+		boolean wz = status.adrenaline == 100;
+		if (getProc().SPEEDUP.incremental && health * 100 > maxH * threshold) {
+			status.adrenaline = 100 + (int)((getProc().SPEEDUP.mult - 100) * (maxH - health) / (maxH * (100 - threshold) / 100.0));
+		} else if (health * 100 <= maxH * threshold)
+			status.adrenaline = getProc().SPEEDUP.mult;
+
+		if (wz && status.adrenaline != 100)
+			anim.getEff(P_SPEEDUP);
 	}
 
 	/**
@@ -2997,6 +3005,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		int h = (int) (640 * rat * siz);
 		gra.setColor(FakeGraphics.RED);
 		for (int i = 0; i < data.getAtkCount(aam.atkType); i++) {
+			if (aam.getMAtk(i).getDire() == 0 || aam.getMAtk(i).getDire() == -2)
+				continue;
 			float[] ds = aam.inRange(i);
 			float d0 = Math.min(ds[0], ds[1]);
 			float ra = Math.abs(ds[0] - ds[1]);

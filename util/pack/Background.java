@@ -259,9 +259,12 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 		}
 
 		img = image;
-
-		top = ints[14] == 1 || ints[13] == 8;
-		ic = ints[13] == 8 ? 1 : ints[13];
+		top = ints[14] == 1;
+		ic = ints[13];
+		if (id == 110) {
+			top = true;
+			ic = 1;
+		}
 
 		for (int i = 0; i < 4; i++)
 			cs[i] = new int[] { ints[i * 3 + 1], ints[i * 3 + 2], ints[i * 3 + 3] };
@@ -388,6 +391,12 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 	@Override
 	public Identifier<Background> getID() {
 		return id;
+	}
+
+	public BackgroundEffect getEffect() {
+		if (bgEffect == null)
+			return null;
+		return UserProfile.getPack(bgEffect.pack).bgEffects.getFromID(bgEffect.id);
 	}
 
 	@Override
