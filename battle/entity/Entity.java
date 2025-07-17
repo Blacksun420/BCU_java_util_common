@@ -2972,13 +2972,11 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 * @return Unit speed altered by battle factors
 	 */
 	protected float getMov(float extmov) {
-		float mov = getSpeed(data.getSpeed(), extmov);
+		float mov = getSpeed(data.getSpeed() >= 1 && basis.speedLimit(dire == 1) != -1 ? basis.speedLimit(dire == 1) : data.getSpeed(), extmov);
 		if (mov > 0 && (getProc().AI.danger || getProc().AI.retreatDist > 0))
 			mov = AIMove(mov);
 
 		anim.negSpeed = mov < 0;
-		if (basis.speedLimit(dire == 1) != -1)
-			mov = Math.min(mov, basis.speedLimit(dire == 1) * 0.5f);
 		return mov * getTimeFreeze();
 	}
 

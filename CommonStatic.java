@@ -73,7 +73,7 @@ public class CommonStatic {
 		// 0 = big size, 1 = small size
 		public FakeImage[][] TYPES = new FakeImage[2][];
 		public FakeImage[][] TRAITS = new FakeImage[2][];;
-		public FakeImage[][] GRADES = new FakeImage[2][];;
+		public FakeImage[] GRADES;
 
 		// NyCastle
 		public final VImg[][] main = new VImg[3][NyCastle.TOT];

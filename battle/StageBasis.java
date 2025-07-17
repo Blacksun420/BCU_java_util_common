@@ -910,7 +910,7 @@ public class StageBasis extends BattleObj {
 		return new int[]{est.lim.stageLimit.deployDuplicationTimes[rarity], est.lim.stageLimit.deployDuplicationDelay[rarity]};
 	}
 
-	public float speedLimit(boolean isEnemy) {
+	public int speedLimit(boolean isEnemy) {
 		if (est.lim.stageLimit == null)
 			return -1;
 		return isEnemy ? est.lim.stageLimit.enemySpeedOverride : est.lim.stageLimit.unitSpeedOverride;

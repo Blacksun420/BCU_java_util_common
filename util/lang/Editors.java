@@ -820,7 +820,7 @@ public class Editors {
 			setComponentVisibility(eg, def && t.prob > 0, 2);
 		}));
 
-		map().put("CANNONCHARGE", new EditControl<>(Proc.PMC.class, t -> {
+		map().put("CANONCHARGE", new EditControl<>(Proc.PMC.class, t -> {
 			t.prob = Math.max(def ? 0 : -100, Math.min(t.prob, 100));
 			if (!def)
 				return;

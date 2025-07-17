@@ -2034,7 +2034,7 @@ public class Data {
 	public static final byte P_MINIDEATHSURGE = 79;
 	public static final byte P_REFUND = 80;
 	public static final byte P_HPREGEN = 81;
-	public static final byte P_CANNONCHARGE = 82;
+	public static final byte P_CANONCHARGE = 82;
 	public static final byte PROC_TOT = 83;
 
 	public static final boolean[] procSharable = {
@@ -2111,6 +2111,14 @@ public class Data {
 			true,  //Resistant but good
 			true,  //Range Shield
 			true,  //spirit summon
+			false, //TOTAL METALHEAD DEATH
+			false, //BAJA BLAST
+			true,  //imu.blast
+			false, //Drain/ABsorb
+			false, //Bless
+			true,  //adrenaline
+			true,  //Mini Death Surge
+			true,  //Refund
 			true,  //hp regen
 			true   //cannon charge
 	};
@@ -2268,7 +2276,7 @@ public class Data {
 			{ PC_P, P_SPEEDUP}, //43: Adrenaline
 			{ PC_P, P_REFUND}, //44: Refund
 			{ PC_P, P_MINIDEATHSURGE}, //45: Mini-Deathsurge
-			{ PC_P, P_CANNONCHARGE} //46: Cannon Charge
+			{ PC_P, P_CANONCHARGE} //46: Cannon Charge
 	};
 
 	public static int[] get_CORRES(int ind) {

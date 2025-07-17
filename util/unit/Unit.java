@@ -103,6 +103,7 @@ public class Unit extends Data implements AbUnit {
 	@JsonClass.JCConstructor
 	public Unit() {
 		id = null;
+		orbs = new OrbInfo(-1);
 	}
 
 	public Unit(Identifier<AbUnit> identifier) {
@@ -141,7 +142,6 @@ public class Unit extends Data implements AbUnit {
 			} else
 				forms[i] = new Form(this, i, m[i], "./org/img/m/" + Data.trio(m[i]) + "/", qs.poll());
 		}
-		orbs = new OrbInfo(-1);
 	}
 
 	protected Unit(Identifier<AbUnit> id, Unit u) {

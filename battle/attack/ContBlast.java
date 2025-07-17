@@ -31,7 +31,6 @@ public class ContBlast extends ContAb {
     public void draw(FakeGraphics gra, P p, float psiz) {
         FakeTransform at = gra.getTransform();
         for (int i = anims.size() - 1; i >= Math.max(0, anims.size() - 4); i--) {
-            anims.get(i).ent[0].alter(6, -30);
             if (i > 0) {
                 int mul = i % 2 == 0 ? -1 : 1;
                 anims.get(i).ent[3].alter(53, 400 + (100 - (blast.lv * blast.reduction)) * 6);

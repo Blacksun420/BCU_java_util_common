@@ -28,6 +28,11 @@ import java.util.function.Consumer;
 @JsonClass(read = RType.FILL)
 public abstract class MapColc extends Data implements IndexContainer.SingleIC<StageMap> {
 
+	private static void printWarn(String text, Object... args) {
+		System.out.printf(text, args);
+		System.out.println();
+	}
+
 	public static class DefMapColc extends MapColc {
 
 		private static final String REG_IDMAP = "DefMapColc_idmap";
@@ -356,12 +361,12 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 							case 0:
 								if (!parameter.isEmpty()) {
 									if (parameter.size() != 1)
-										System.out.printf("W/MapColc::read - Unknown parameter data found for rule type %d : %s%n", ruleID, parameter);
+										printWarn("W/MapColc::read - Unknown parameter data found for rule type %d : %s%n", ruleID, parameter);
 
 									int maxMoney = parameter.get(0).getAsInt();
 									List<Integer> bannedCombo = bannedComboData.compute(ruleID, (k, v) -> {
 										if (v == null) {
-											System.out.printf("W/MapColc::read - Unknown banned cat combo data found for rule type %d%n", ruleID);
+											printWarn("W/MapColc::read - Unknown banned cat combo data found for rule type %d%n", ruleID);
 											return new ArrayList<>();
 										} else
 											return v;
@@ -379,12 +384,12 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 							case 1:
 								if (!parameter.isEmpty()) {
 									if (parameter.size() != 1)
-										System.out.printf("W/MapColc::read - Unknown parameter data found for rule type %d : %s%n", ruleID, parameter);
+										printWarn("W/MapColc::read - Unknown parameter data found for rule type %d : %s%n", ruleID, parameter);
 
 									int globalCooldown = parameter.get(0).getAsInt();
 									List<Integer> bannedCombo = bannedComboData.compute(ruleID, (k, v) -> {
 										if (v == null) {
-											System.out.printf("W/MapColc::read - Unknown banned cat combo data found for rule type %d%n", ruleID);
+											printWarn("W/MapColc::read - Unknown banned cat combo data found for rule type %d%n", ruleID);
 
 											return new ArrayList<>();
 										} else
@@ -405,7 +410,7 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 									for (int i = 0; i < parameter.size(); i++) {
 										deployLimit[i] = parameter.get(i).getAsInt();
 										if (deployLimit[i] <= 0)
-											System.out.printf("W/MapColc::read - Unexpected deploy limit value for map %d : Index = %d, Value = %d", mapID, i, deployLimit[i]);
+											printWarn("W/MapColc::read - Unexpected deploy limit value for map %d : Index = %d, Value = %d", mapID, i, deployLimit[i]);
 									}
 									if (map.lim.isEmpty() || map.lim.get(map.lim.size() - 1).stageLimit == null)
 										map.lim.add(new Limit(new StageLimit()));
@@ -417,7 +422,7 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 							case 4:
 								if (!parameter.isEmpty()) {
 									if (parameter.size() != 1)
-										System.out.printf("W/MapColc::read - Unknown parameter data found for rule type %d : %s%n", ruleID, parameter);
+										printWarn("W/MapColc::read - Unknown parameter data found for rule type %d : %s%n", ruleID, parameter);
 
 									int globalCost = parameter.get(0).getAsInt();
 									if (map.lim.isEmpty() || map.lim.get(map.lim.size() - 1).stageLimit == null)
@@ -436,7 +441,7 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 									StageLimit slim = map.lim.get(map.lim.size() - 1).stageLimit;
 
 									if (slim.costMultiplier.length != multiplier.length)
-										System.out.printf(
+										printWarn(
 												"W/MapColc::read - Desynced cost multiplier data -> Original = %d, Obtained = %d, Data = [ %s ]%n",
 												slim.costMultiplier.length, multiplier.length, Arrays.toString(multiplier)
 										);
@@ -454,7 +459,7 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 									StageLimit slim = map.lim.get(map.lim.size() - 1).stageLimit;
 
 									if (slim.cooldownMultiplier.length != multiplier.length)
-										System.out.printf(
+										printWarn(
 												"W/MapColc::read - Desynced cost multiplier data -> Original = %d, Obtained = %d, Data = [ %s ]%n",
 												slim.cooldownMultiplier.length, multiplier.length, Arrays.toString(multiplier)
 										);
@@ -465,7 +470,7 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 							case 7:
 								if (!parameter.isEmpty()) {
 									if (parameter.size() > 1) {
-										System.out.printf(
+										printWarn(
 												"W/MapColc::read - Unexpected parameter size for map %d : Size = %d\n",
 												mapID, parameter.size()
 										);
@@ -480,7 +485,7 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 							case 8:
 								if (!parameter.isEmpty()) {
 									if (parameter.size() > 3) {
-										System.out.printf(
+										printWarn(
 												"W/MapColc::read - Unexpected parameter size for map %d : Size = %d\n",
 												mapID, parameter.size()
 										);
@@ -507,7 +512,7 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 							case 9:
 								if (!parameter.isEmpty()) {
 									if (parameter.size() > 1) {
-										System.out.printf(
+										printWarn(
 												"W/MapColc::read - Unexpected parameter size for map %d : Size = %d\n",
 												mapID,
 												parameter.size()
@@ -523,7 +528,7 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 							case 10:
 								if (!parameter.isEmpty()) {
 									if (parameter.size() < 4) {
-										System.out.printf(
+										printWarn(
 												"W/MapColc::read - Unexpected parameter size for map %d : Size = %d\n",
 												mapID,
 												parameter.size()
@@ -583,7 +588,7 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 						!presetObject.has("cannon") ||
 						!presetObject.has("treasure")
 					) {
-						System.out.printf("W/MapColc::read - Invalid preset found : Map ID = %d, Stage ID = %d, Preset File Name = %s\n", mapID, stageID, presetFileName);
+						printWarn("W/MapColc::read - Invalid preset found : Map ID = %d, Stage ID = %d, Preset File Name = %s\n", mapID, stageID, presetFileName);
 						continue;
 					}
 					Map<Unit, BattlePreset.LevelObject> levelObjects = new HashMap<>();
@@ -638,7 +643,7 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 
 						BattlePreset.LevelObject levelData = levelObjects.get(u);
 						if (levelData == null) {
-							System.out.printf("W/MapColc::read - No LevelObject found for unit : %d\n", u.id.id);
+							printWarn("W/MapColc::read - No LevelObject found for unit : %d\n", u.id.id);
 
 							continue;
 						}
@@ -688,7 +693,7 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 								break;
 							default:
 								if (abilityIndex != 9) {
-									System.out.printf("W/MapColc::read - Undefined ability index %d found\n", abilityIndex);
+									printWarn("W/MapColc::read - Undefined ability index %d found\n", abilityIndex);
 								}
 								continue;
 						}
@@ -700,7 +705,7 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 							level += upgradeData.get("plus").getAsInt();
 						}
 						if (level > MLV[realIndex]) {
-							System.out.printf("W/MapColc::read - Provided level for ability index %d is out of range : %d > %d", realIndex, level, MLV[realIndex]);
+							printWarn("W/MapColc::read - Provided level for ability index %d is out of range : %d > %d", realIndex, level, MLV[realIndex]);
 							level = MLV[realIndex];
 						}
 						targetStage.preset.tech[realIndex] = level;
@@ -737,7 +742,7 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 								realIndex = BASE_CURSE;
 								break;
 							default:
-								System.out.printf("W/MapColc::read - Unknown cannon ID %d\n", id);
+								printWarn("W/MapColc::read - Unknown cannon ID %d\n", id);
 								continue;
 						}
 						targetStage.preset.bslv[realIndex] = cannonData.getAsJsonObject(key).get("level").getAsInt();
@@ -754,7 +759,7 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 
 						for (int j = 0; j < countData.size(); j++) {
 							if (j >= count.length) {
-								System.out.printf("W/MapColc::read - Treasure data index out of bound : Treasure ID = %d, Size = %d\n", id, countData.size());
+								printWarn("W/MapColc::read - Treasure data index out of bound : Treasure ID = %d, Size = %d\n", id, countData.size());
 
 								break;
 							}
@@ -796,7 +801,7 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 								activatedTreasure = BattlePreset.ActivatedTreasure.COTC3;
 								break;
 							default:
-								System.out.printf("W/MapColc::read - Unknown Treasure ID %d found\n", id);
+								printWarn("W/MapColc::read - Unknown Treasure ID %d found\n", id);
 								continue;
 						}
 
@@ -808,7 +813,7 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 							activated = true;
 						} else {
 							if (count[2] != 0)
-								System.out.printf("W/MapColc::read - Unexpected treasure count number %d : [ %d, %d, %d ]\n", count[2], count[0], count[1], count[2]);
+								printWarn("W/MapColc::read - Unexpected treasure count number %d : [ %d, %d, %d ]\n", count[2], count[0], count[1], count[2]);
 
 							activated = false;
 						}
@@ -826,27 +831,27 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 					//validation
 					for (int j = 0; j < MT.length; j++) {
 						if (targetStage.preset.trea[j] > MT[j]) {
-							System.out.printf("W/MapColc::read - Treasure value out of range : %d, %d\n", j, targetStage.preset.trea[j]);
+							printWarn("W/MapColc::read - Treasure value out of range : %d, %d\n", j, targetStage.preset.trea[j]);
 
 							targetStage.preset.trea[j] = MT[j];
 						}
 					}
 
 					if (targetStage.preset.alien > 600) {
-						System.out.printf("W/MapColc::read - ItF crystal value out of range : %d\n", targetStage.preset.alien);
+						printWarn("W/MapColc::read - ItF crystal value out of range : %d\n", targetStage.preset.alien);
 
 						targetStage.preset.alien = 600;
 					}
 
 					if (targetStage.preset.star > 1500) {
-						System.out.printf("W/MapColc::read - CotC crystal value out of range : %d\n", targetStage.preset.star);
+						printWarn("W/MapColc::read - CotC crystal value out of range : %d\n", targetStage.preset.star);
 
 						targetStage.preset.star = 1500;
 					}
 
 					for (int j = 0; j < targetStage.preset.fruit.length; j++) {
 						if (targetStage.preset.fruit[j] > 300) {
-							System.out.printf("W/MapColc::read - Fruit treasure value out of range : %d, %d\n", j, targetStage.preset.fruit[j]);
+							printWarn("W/MapColc::read - Fruit treasure value out of range : %d, %d\n", j, targetStage.preset.fruit[j]);
 
 							targetStage.preset.fruit[j] = 300;
 						}
@@ -854,7 +859,7 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 
 					for (int j = 0; j < targetStage.preset.gods.length; j++) {
 						if (targetStage.preset.gods[j] > 100) {
-							System.out.printf("W/MapColc::read - God mask treasure value out of range : %d, %d\n", j, targetStage.preset.fruit[j]);
+							printWarn("W/MapColc::read - God mask treasure value out of range : %d, %d\n", j, targetStage.preset.fruit[j]);
 
 							targetStage.preset.gods[j] = 100;
 						}
@@ -1076,7 +1081,7 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 					preset.gods[treasure.ordinal() - BattlePreset.ActivatedTreasure.COTC1.ordinal()] += 100;
 					break;
 				default:
-					System.out.printf("W/MapColc::read - Unknown Treasure ID %s found\n", treasure);
+					printWarn("W/MapColc::read - Unknown Treasure ID %s found\n", treasure);
 			}
 
 			if (treasure != BattlePreset.ActivatedTreasure.BASE) {

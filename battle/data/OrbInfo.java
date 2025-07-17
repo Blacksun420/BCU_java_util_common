@@ -117,7 +117,7 @@ public class OrbInfo extends Data {
 			aux.TRAITS[1] = ImgCut.newIns(pre + "attribute_s.imgcut").cut(traitS.getImg());
 
 			VImg grade = new VImg(pre + "grade.png");
-			aux.GRADES[0] = ImgCut.newIns(pre + "grade.imgcut").cut(grade.getImg());
+			aux.GRADES = ImgCut.newIns(pre + "grade.imgcut").cut(grade.getImg());
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

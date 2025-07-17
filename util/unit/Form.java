@@ -361,6 +361,12 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 		return null;
 	}
 
+	public OrbInfo getOrbs() {
+		if (uid.pack.equals(Identifier.DEF) && fid < 2)
+			return null;
+		return unit.orbs;
+	}
+
 	public boolean checkOrb(int level) {
 		for (int lim : unit.orbs.getLimits())
 			if (lim == 0 && fid >= 2 || lim <= level)
