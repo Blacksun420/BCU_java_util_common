@@ -248,6 +248,13 @@ public class Data {
 			@Order(2)
 			@JsonField(defval = "1")
 			public int count = 1;
+
+			@Override
+			public int[] setTalent(int[] nps) {
+				nps[6] = Math.max(nps[4], 1 - count);
+				nps[7] = Math.max(nps[5], 1 - count);
+				return super.setTalent(nps);
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -374,8 +381,8 @@ public class Data {
 				int min = lv == 0 ? 1 : 0;
 				nps[8] = Math.max(min, nps[8]);
 				nps[9] = Math.max(min, nps[9]);
-				nps[10] = (int)Math.min(reduction + nps[10], 100f / (lv + nps[8]));
-				nps[11] = (int)Math.min(reduction + nps[11], 100f / (lv + nps[9]));
+				nps[10] = (int)Math.min(nps[10], (100f - reduction) / (lv + nps[8]));
+				nps[11] = (int)Math.min(nps[11], (100f - reduction) / (lv + nps[9]));
 
 				return super.setTalent(nps);
 			}
