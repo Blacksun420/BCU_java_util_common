@@ -123,8 +123,7 @@ public class StageBasis extends BattleObj {
 			if (st.getCont().id.id < 3)
 				sttime = st.getCont().id.id;
 		}
-		int max = est.lim != null ? est.lim.num : 50;
-		max_num = max <= 0 ? 50 : max;
+		max_num = est.lim.num <= 0 ? 50 : est.lim.num;
 		maxCannon = bas.t().CanonTime(sttime, elu.getInc(C_C_SPE));
 		le.initCapacity(max_num + st.max);
 
@@ -139,7 +138,7 @@ public class StageBasis extends BattleObj {
 		cannon = maxCannon * elu.getInc(C_C_INI) / 100;
 		canon = new Cannon(this, nyc);
 		conf = cnf;
-		if (est.lim != null && est.lim.stageLimit != null && est.lim.stageLimit.coolStart)
+		if (est.lim.stageLimit != null && est.lim.stageLimit.coolStart)
 			for (int i = 0; i < 2; i++)
 				for (int j = 0; j < 5; j++)
 					elu.resetCD(i, j);
@@ -170,7 +169,7 @@ public class StageBasis extends BattleObj {
 
 		isOneLineup = oneLine;
 		this.buttonDelayOn = buttonDelayOn;
-		rem_spawns = est.lim != null && est.lim.stageLimit != null && est.lim.stageLimit.maxUnitSpawn > 0 ? est.lim.stageLimit.maxUnitSpawn : -1;
+		rem_spawns = est.lim.stageLimit != null && est.lim.stageLimit.maxUnitSpawn > 0 ? est.lim.stageLimit.maxUnitSpawn : -1;
 	}
 
 	/**

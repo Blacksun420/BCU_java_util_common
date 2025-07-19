@@ -71,8 +71,14 @@ public class EUnit extends Entity {
 		lvl = level.getTotalLv();
 		this.index = index;
 		this.isBase = isBase;
-		if (isBase)
+		if (isBase) {
 			maxH = health = maxH * b.b.t().getBaseHealth(b.elu.getInc(C_BASE)) / 1000;
+			((AtkModelUnit)aam).d2 = b.b.t().getCanonAtk(b.elu.getInc(C_C_ATK)) / 100.0;
+			if (b.est.lim.stageLimit != null) {
+				((AtkModelUnit) aam).d2 *= b.est.lim.stageLimit.cannonMultiplier / 100.0;
+				maxH = health = maxH * b.est.lim.stageLimit.cannonMultiplier / 100;
+			}
+		}
 
 		if(((MaskUnit)data).getOrb() != null && level.getOrbs() != null) {
 			int[][] levelOrbs = level.getOrbs();

@@ -9,6 +9,7 @@ import common.util.unit.Level;
 public class AtkModelUnit extends AtkModelEntity {
 
 	private final ELineUp elu;
+	public double d2 = 1;
 
 	protected AtkModelUnit(Entity ent, float d0, float d1, PCoin pcoin, Level lv) {
 		super(ent, d0, d1, pcoin, lv);
@@ -17,7 +18,7 @@ public class AtkModelUnit extends AtkModelEntity {
 
 	@Override
 	public int getDefAtk(MaskAtk matk) {
-		return (int)(Math.round(matk.getAtk() * d1) * d0);
+		return (int)(Math.round(matk.getAtk() * d1) * d0 * d2);
 	}
 	@Override
 	public int getEffMult(int dmg) {
