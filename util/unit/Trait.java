@@ -126,9 +126,6 @@ public class Trait extends Data implements Indexable<PackData, Trait>, Comparabl
         others.removeIf(f -> f == null || f.uid.pack.equals(id.pack) || f.maxu().getTraits().isEmpty() || (targetType && Entity.targetTraited(f.maxu().getTraits())));
     }
 
-    @JsonClass.JCGetter
-    public static Trait getter(Identifier<?> id) { return (Trait) Identifier.get(id); }
-
     @Override
     public int compareTo(@NotNull Trait t) {
         return id.compareTo(t.id);

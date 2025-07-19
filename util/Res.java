@@ -332,7 +332,7 @@ public class Res extends ImgCore {
 		BCAuxAssets aux = CommonStatic.getBCAssets();
 		aux.battle[0] = new VImg[4];
 		aux.battle[1] = new VImg[23];
-		aux.battle[2] = new VImg[9];
+		aux.battle[2] = new VImg[12];
 		ImgCut ic001 = ImgCut.newIns("./org/page/img001.imgcut");
 		VImg img001 = new VImg("./org/page/img001.png");
 		FakeImage[] parts = ic001.cut(img001.getImg());
