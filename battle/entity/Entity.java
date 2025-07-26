@@ -1772,8 +1772,11 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				anim.getEff(P_WAVE);
 			if (getProc().IMUVOLC.mult == 100) {
 				AttackVolcano volc = (AttackVolcano)atk;
-				if (!hasBarrier() && status.shield[0] == 0 && volc.handler != null && !volc.handler.reflected && !volc.handler.surgeSummoned.contains(this) && getProc().DEMONVOLC.perform(basis.r))
-					new DemonCont(this, volc);
+				if (!hasBarrier() && status.shield[0] == 0 && volc.handler != null && !volc.handler.reflected && !volc.handler.surgeSummoned.contains(this)) {
+					volc.handler.surgeSummoned.add(this);
+					if (getProc().DEMONVOLC.perform(basis.r))
+						new DemonCont(this, volc);
+				}
 				return;
 			} else
 				dmg = (int) (dmg * (100 - getProc().IMUVOLC.mult) / 100);
@@ -1918,8 +1921,11 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 		if ((atk.waveType & (WT_VOLC | WT_MIVC)) > 0) {
 			AttackVolcano volc = (AttackVolcano)atk;
-			if (volc.handler != null && !volc.handler.reflected && !volc.handler.surgeSummoned.contains(this) && getProc().DEMONVOLC.perform(basis.r))
-				new DemonCont(this, volc);
+			if (volc.handler != null && !volc.handler.reflected && !volc.handler.surgeSummoned.contains(this)) {
+				volc.handler.surgeSummoned.add(this);
+				if (getProc().DEMONVOLC.perform(basis.r))
+					new DemonCont(this, volc);
+			}
 		}
 
 		tokens.add(atk);
