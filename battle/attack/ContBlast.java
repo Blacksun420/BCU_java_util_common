@@ -23,7 +23,7 @@ public class ContBlast extends ContAb {
         maxl = blast.getProc().BLAST.lv;
         EAnimD<BlastEff> anim = (blast.dire == 1 ? effas().A_E_BLAST : effas().A_BLAST).getEAnim(BlastEff.START);
         anim.setTime(1);
-        anims = new ArrayList<>(maxl * 2 - 1);
+        anims = new ArrayList<>(maxl == 3 ? 1 : maxl * 2 - 1);//Level 3 uses default animation
         anims.add(anim);
     }
 
