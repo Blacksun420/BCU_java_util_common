@@ -9,13 +9,13 @@ import common.io.json.JsonClass;
 import common.io.json.JsonDecoder;
 import common.io.json.JsonField;
 import common.pack.Identifier;
-import common.util.Data;
+import common.util.BattleObj;
 import common.util.pack.EffAnim;
 import common.util.pack.Soul;
 import common.util.unit.AbEnemy;
 
 @JsonClass(noTag = JsonClass.NoTag.LOAD)
-public class Revival extends Data {
+public class Revival extends BattleObj {
     public Identifier<AbEnemy> enemy;
     public Identifier<Music> bgm;
     public Identifier<Soul> soul;
