@@ -592,6 +592,11 @@ public class Data {
 				return active || prob > 0;
 			}
 			@Override
+			public boolean def_exists() {
+				return active || prob != 0 || time != 0;
+			}
+
+			@Override
 			public boolean perform(CopRand r) {
 				return time > 0 && prob > 0 && (prob >= 100 || r.nextInt(100) < prob);
 			}
@@ -1168,7 +1173,8 @@ public class Data {
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class HPREGEN extends PROB {
 			@Order(1)
-			public int interval;
+			@JsonField(defval = "1")
+			public int interval = 1;
 			@Order(2)
 			public int amount;
 			@Order(3)
@@ -1178,7 +1184,8 @@ public class Data {
 			@Order(5)
 			public boolean resetWhenDamaged;
 			@Order(6)
-			public boolean freezeEff;
+			@JsonField(defval = "true")
+			public boolean freezeEff = true;
 			@Order(7)
 			public boolean removeProcs;
 			@Order(8)
@@ -1305,7 +1312,7 @@ public class Data {
 							if (f.get(this) != null)
 								return true;
 						} else if (f.getType() == boolean.class) {
-							if (f.getBoolean(this))
+							if (f.getBoolean(this) == (f.getAnnotation(JsonField.class) == null || !Boolean.parseBoolean(f.getAnnotation(JsonField.class).defval())))
 								return true;
 						} else if (f.getType() == ProcID.class) {
 							if (!((ProcID)f.get(this)).isEmpty())

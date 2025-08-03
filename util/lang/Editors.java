@@ -1045,10 +1045,13 @@ public class Editors {
 		}, eg -> t -> setComponentVisibility(eg, t.prob > 0, 1)));
 
 		map().put("HPREGEN", new EditControl<>(Proc.HPREGEN.class, (t) -> {
-			t.prob = Math.max(0, Math.min(t.prob, 100));
-			if (t.prob > 0) {
+			t.prob = Math.max(def ? 0 : -100, Math.min(t.prob, 100));
+			if (!def)
+				return;
+
+			if (t.prob > 0)
 				t.interval = Math.max(t.interval,1);
-			} else {
+			else {
 				t.interval = 1;
 				t.amount = 0;
 				t.freezeEff = true;
@@ -1059,7 +1062,7 @@ public class Editors {
 				t.resetWhenDamaged = false;
 				t.noHB = false;
 			}
-		}, eg -> t -> setComponentVisibility(eg, t.prob > 0, 1)));
+		}, eg -> t -> setComponentVisibility(eg, !def || t.prob > 0, 1)));
 	}
 
 	private static void setComponentVisibility(EditorGroup egg, boolean boo, int... fields) {
