@@ -1,6 +1,7 @@
 package common.battle;
 
 import common.CommonStatic;
+import common.battle.entity.DoorCont;
 import common.battle.entity.ESpirit;
 import common.battle.entity.EUnit;
 import common.pack.SortedPackSet;
@@ -81,9 +82,12 @@ public class ELineUp extends BattleObj {
 			EUnit rit = firstDeploy ? spi : ((EForm)sb.b.lu.efs[i][j]).invokeSpirit(sb, spi.index);
 			rit.added(-1, Math.min(Math.max(sb.ebase.pos + rit.data.getRange(), u.lastPosition + SPIRIT_SUMMON_RANGE), sb.ubase.pos));
 			rit.group = -1;//for the getAllOf function
-			sb.le.add(rit);
 			if (!(rit instanceof ESpirit))
 				rit.setSummon(spData[i][j].animType, null);
+			if (spData[i][j].animType == Proc.SUMMON_ANIM.EVERYWHERE_DOOR)
+				sb.doors.add(new DoorCont(sb, rit));
+			else
+				sb.le.add(rit);
 			firstDeploy = false;
 		}
 

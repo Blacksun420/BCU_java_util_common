@@ -388,11 +388,17 @@ public class Stage extends Data
 					l.doordis_1 = (len - 500 - basepos) * l.doordis_1 / 100;
 				}
 		}
-		if (lim.stageLimit != null && UserProfile.isOlderPack(mc.pack, "0.7.12.1")) {
-			if (lim.stageLimit.maxUnitSpawn == 0)
-				lim.stageLimit.maxUnitSpawn = -1;
-			if (lim.stageLimit.globalCost == 0)
-				lim.stageLimit.globalCost = -1;
+
+		if (lim.stageLimit != null) {
+			if (UserProfile.isOlderPack(mc.pack, "0.7.12.1")) {
+				for (int i = 0; i < lim.stageLimit.rarityDeployLimit.length; i++)
+					if (lim.stageLimit.rarityDeployLimit[i] == 0)
+						lim.stageLimit.rarityDeployLimit[i] = -1;
+				if (lim.stageLimit.maxUnitSpawn == 0)
+					lim.stageLimit.maxUnitSpawn = -1;
+				if (lim.stageLimit.globalCost == 0)
+					lim.stageLimit.globalCost = -1;
+			}
 		}
 	}
 

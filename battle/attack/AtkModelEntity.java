@@ -178,6 +178,8 @@ public abstract class AtkModelEntity extends AtkModelAb {
 	}
 
 	public boolean isUsable(int ind) {
+		if (act[ind] == null)
+			return false;
 		for (int act : act[ind])
 			if (act != 0)
 				return true;

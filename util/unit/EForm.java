@@ -61,6 +61,7 @@ public class EForm extends Data implements IForm {
 		EAnimU anim = spirit.getEAnim(AnimU.TYPEDEF[AnimU.ENTRY]);
 		if (anim.unusable())
 			anim = spirit.getEAnim(AnimU.TYPEDEF[AnimU.WALK]);
+		anim.setTime(0);
 		EUnit esp = new EUnit(b, spirit.du, anim, d, du.getFront(), du.getBack(), level, spirit.du.getPCoin(), index, false);
 		if (du.getProc().SPIRIT.inv)
 			esp.status.inv[0] = -1;

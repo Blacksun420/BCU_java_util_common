@@ -2532,10 +2532,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			bdist = -1;
 		} else if (conf == Proc.SUMMON_ANIM.ATTACK)
 			atkm.setUp(); // conf 5 - Sets animation to attack animation. Used mainly for spirits
-		else if (conf == Proc.SUMMON_ANIM.EVERYWHERE_DOOR) {
-			if (basis.le.remove(this)) // conf 6 - Sets animation to Everywhere Door animation
-				basis.doors.add(new DoorCont(basis, this));
-		} else if (conf != Proc.SUMMON_ANIM.ENTRY)
+		else if (conf != Proc.SUMMON_ANIM.EVERYWHERE_DOOR && conf != Proc.SUMMON_ANIM.ENTRY)
 			anim.setAnim(AnimU.TYPEDEF[AnimU.WALK], true); // conf 0 - Sets animation to walk animation. conf 4 - sets the animation to entry, if unit has one
 
 		if (bond != null) {

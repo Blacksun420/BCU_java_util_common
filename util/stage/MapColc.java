@@ -7,7 +7,6 @@ import common.io.json.JsonClass;
 import common.io.json.JsonClass.RType;
 import common.io.json.JsonDecoder;
 import common.io.json.JsonField;
-import common.pack.Context;
 import common.pack.FixIndexList.FixIndexMap;
 import common.pack.IndexContainer;
 import common.pack.PackData.UserPack;
@@ -411,6 +410,8 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 										deployLimit[i] = parameter.get(i).getAsInt();
 										if (deployLimit[i] <= 0)
 											printWarn("W/MapColc::read - Unexpected deploy limit value for map %d : Index = %d, Value = %d", mapID, i, deployLimit[i]);
+										else if (deployLimit[i] == 0)
+											deployLimit[i]--;
 									}
 									if (map.lim.isEmpty() || map.lim.get(map.lim.size() - 1).stageLimit == null)
 										map.lim.add(new Limit(new StageLimit()));
