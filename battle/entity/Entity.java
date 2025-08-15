@@ -1793,7 +1793,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		boolean proc = true;
 
 		Proc.DMGCUT dmgcut = getProc().DMGCUT;
-		if (dmgcut.prob > 0 && ((dmgcut.traitIgnore && status.curse == 0) || ctargetable(atk.trait, atk.attacker)) && dmg < status.dcut && dmg > 0 && (dmgcut.prob == 100 || basis.r.nextInt(100) < dmgcut.prob)) {
+		if (dmgcut.prob > 0 && dmg < status.dcut && dmg > 0 && (dmgcut.traitIgnore || (status.curse == 0 && ctargetable(atk.trait, atk.attacker))) && (dmgcut.prob == 100 || basis.r.nextInt(100) < dmgcut.prob)) {
 			anim.getEff(P_DMGCUT);
 			if (dmgcut.procs)
 				proc = false;
@@ -1807,7 +1807,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		}
 
 		Proc.DMGCAP dmgcap = getProc().DMGCAP;
-		if (dmgcap.prob > 0 && ((dmgcap.traitIgnore && status.curse == 0) || ctargetable(atk.trait, atk.attacker)) && dmg > status.dcap && (dmgcap.prob == 100 || basis.r.nextInt(100) < dmgcap.prob)) {
+		if (dmgcap.prob > 0 && dmg > status.dcap && (dmgcap.traitIgnore || (status.curse == 0 && ctargetable(atk.trait, atk.attacker))) && (dmgcap.prob == 100 || basis.r.nextInt(100) < dmgcap.prob)) {
 			anim.getEff(dmgcap.nullify ? DMGCAP_SUCCESS : DMGCAP_FAIL);
 			if (dmgcap.procs)
 				proc = false;
@@ -2060,7 +2060,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				}
 			}
 		}
-		if (atk.attacker != null && atk.attacker.health > 0 && atk.getProc().DRAIN.mult > 0 && btargetable(atk)) {
+		if (atk.getProc().DRAIN.mult > 0 && atk.attacker != null && atk.attacker.health > 0 &&
+				(atk.getProc().DRAIN.traits.isEmpty() || (status.curse <= 0 && ctargetable(atk.getProc().DRAIN.traits, atk.attacker)))) {
 			atk.attacker.health = Math.min(atk.attacker.health + (long) (dmg * atk.getProc().DRAIN.mult / 100), atk.attacker.maxH);
 			atk.attacker.anim.getEff(P_DRAIN);
 		}

@@ -1195,6 +1195,13 @@ public class Data {
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
+		public static class DRAIN extends PM {
+			@Order(2)
+			@JsonField(generic = Trait.class, alias = Identifier.class, defval = "isEmpty")
+			public SortedPackSet<Trait> traits = new SortedPackSet<>();
+		}
+
+		@JsonClass(noTag = NoTag.LOAD)
 		public static class ProcID implements Cloneable, BattleStatic {
 			@Order(0)
 			@JsonField(generic = Integer.class)
@@ -1659,7 +1666,7 @@ public class Data {
 		@Order(75)
 		public final IMUI IMUBLAST = new IMUI();
 		@Order(76)
-		public final PM DRAIN = new PM();
+		public final DRAIN DRAIN = new DRAIN();
 		@Order(77)
 		public final BLESSING BLESSING = new BLESSING();
 		@Order(78)

@@ -1028,10 +1028,12 @@ public class Editors {
 
 		map().put("IMUBLAST", imui);
 
-		map().put("DRAIN", new EditControl<>(Proc.PM.class, (t) -> {
+		map().put("DRAIN", new EditControl<>(Proc.DRAIN.class, (t) -> {
 			t.prob = Math.max(def ? 0 : -100, Math.min(t.prob, 100));
-			if (def && t.prob == 0)
+			if (def && t.prob == 0) {
 				t.mult = 0;
+				t.traits.clear();
+			}
 		}, eg -> t -> setComponentVisibility(eg, !def || t.prob > 0, 1)));
 
 		map().put("BLESSING", new EditControl<>(Proc.BLESSING.class, (t) -> {
