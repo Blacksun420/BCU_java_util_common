@@ -2566,20 +2566,9 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 */
 	public boolean targetable(Entity ent) {
 		if (isBase) return true;
-		boolean antiTrait = targetTraited(ent.traits);
-
-		for (int j = 0; j < traits.size(); j++) {
-			Trait tr = traits.get(j);
-			if (ent.traits.contains(tr) || (antiTrait && tr.targetType) || (ent.dire == -1 && tr.targetForms.contains(((MaskUnit)ent.data).getPack())))
+		for (int j = 0; j < traits.size(); j++)
+			if (ent.traits.contains(traits.get(j)))
 				return true;
-		}
-		antiTrait = targetTraited(traits);
-		if (dire == -1)
-			for (int j = 0; j < ent.traits.size(); j++) {
-				Trait tr = ent.traits.get(j);
-				if ((antiTrait && tr.targetType) || tr.targetForms.contains(((MaskUnit)data).getPack()))
-					return true;
-			}
 		return false;
 	}
 	/**
@@ -2605,46 +2594,10 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 */
 	@Override
 	public boolean ctargetable(SortedPackSet<Trait> t, Entity attacker) {
-		if (attacker != null) {
-			if (attacker.dire == -1 && !attacker.traits.isEmpty()) {
-				for (int i = 0; i < traits.size(); i++) {
-					if (traits.get(i).BCTrait())
-						continue;
-					if (traits.get(i).targetForms.contains(((MaskUnit) attacker.data).getPack()))
-						return true;
-				}
-			} else if (dire == -1 && !traits.isEmpty()) {
-				for (int i = 0; i < attacker.traits.size(); i++) {
-					if (attacker.traits.get(i).BCTrait())
-						continue;
-					if (attacker.traits.get(i).targetForms.contains(((MaskUnit) data).getPack()))
-						return true;
-				}
-			}
-		}
-		if (targetTraited(t))
-			for (int i = 0; i < traits.size(); i++)
-				if (traits.get(i).targetType)
-					return true;
-		if (targetTraited(traits))
-			for (int i = 0; i < t.size(); i++)
-				if (t.get(i).targetType)
-					return true;
 		for (int j = 0; j < t.size(); j++)
 			if (traits.contains(t.get(j)))
 				return true;
 		return t.contains(UserProfile.getBCData().traits.get(TRAIT_TOT));
-	}
-
-	/**
-	 * Check if the unit can be considered an anti-traited
-	 * @param targets The list of traits the unit targets
-	 * @return true if the unit is anti-traited
-	 */
-	public static boolean targetTraited(SortedPackSet<Trait> targets) {
-		SortedPackSet<Trait> temp = new SortedPackSet<>(BCTraits.subList(TRAIT_RED,TRAIT_WHITE));
-		temp.remove(TRAIT_METAL);
-		return targets.containsAll(temp);
 	}
 
 	/**
@@ -2937,8 +2890,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 		if (dire != e.dire) {
 			SortedPackSet<Trait> sharedTraits = traits.inCommon(matk.getATKTraits());
-			boolean isAntiTraited = targetTraited(matk.getATKTraits());
-			sharedTraits.addIf(traits, t -> !t.BCTrait() && ((t.targetType && isAntiTraited) || t.targetForms.contains((e.dire == -1 ? e : this).data.getPack())));//Ignore the warning, condition dictates unit
+			sharedTraits.addIf(traits, t -> !t.BCTrait());
 
 			if (!sharedTraits.isEmpty()) {
 				if (e.status.curse == 0 && e.getProc().DMGINC.mult != 0)

@@ -4,7 +4,9 @@ import common.io.json.JsonClass;
 import common.io.json.JsonClass.NoTag;
 import common.io.json.JsonField;
 import common.pack.Identifier;
+import common.pack.PackData;
 import common.pack.SortedPackSet;
+import common.pack.UserProfile;
 import common.util.Data;
 import common.util.pack.Soul;
 import common.util.unit.Trait;
@@ -94,7 +96,14 @@ public abstract class DataEntity extends Data implements MaskEntity {
 
 	@Override
 	public SortedPackSet<Trait> getTraits(boolean raw) {
-		return traits;
+		if (raw || !Trait.targetTraited(traits))
+			return traits;
+		SortedPackSet<Trait> ts = new SortedPackSet<>(traits);
+		for (PackData.UserPack pk : UserProfile.getUserPacks())
+			for (Trait t : pk.traits)
+				if (t.targetType)
+					ts.add(t);
+		return ts;
 	}
 
 	@Override

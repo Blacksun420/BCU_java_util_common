@@ -276,8 +276,7 @@ public class EUnit extends Entity {
 		ans = super.getDamage(atk, ans);
 		if (atk.model instanceof AtkModelEnemy) {
 			SortedPackSet<Trait> sharedTraits = traits.inCommon(atk.trait);
-			boolean isAntiTraited = targetTraited(atk.trait);
-			sharedTraits.addIf(atk.trait, t -> !t.BCTrait() && ((t.targetType && isAntiTraited) || t.targetForms.contains(((MaskUnit)data).getPack())));
+			sharedTraits.addIf(atk.trait, t -> !t.BCTrait());
 			if (!sharedTraits.isEmpty()) {
 				if (status.curse == 0 && getProc().DEFINC.mult != 0)
 					ans = (int)(ans * basis.b.t().getDEF(getProc().DEFINC.mult, atk.trait, sharedTraits, ((MaskUnit) data).getOrb(), level, basis.elu.getInc(getProc().DEFINC.mult < 400 ? C_GOOD : C_RESIST)));

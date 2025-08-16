@@ -2,7 +2,6 @@ package common.util.unit;
 
 import com.google.gson.JsonObject;
 import common.battle.data.OrbInfo;
-import common.battle.entity.Entity;
 import common.io.json.JsonClass;
 import common.io.json.JsonDecoder;
 import common.io.json.LocalDecoder;
@@ -15,12 +14,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 @IndexContainer.IndexCont(PackData.class)
 @JsonClass.JCGeneric(Identifier.class)
 @JsonClass
 public class Trait extends Data implements Indexable<PackData, Trait>, Comparable<Trait> {
+
+    public static final SortedPackSet<Trait> AntiTraits = new SortedPackSet<>(Data.TRAIT_WHITE);//Used for targetType, more efficient than re-making the list every time
     public static void read() {
         //Reads traits from BC and implements it into the main pack
         PackData.DefPack data = UserProfile.getBCData();
@@ -29,6 +29,8 @@ public class Trait extends Data implements Indexable<PackData, Trait>, Comparabl
             Trait t = new Trait(data.getNextID(Trait.class));
             t.name = name;
             data.traits.add(t);
+            if (t.id.id != Data.TRAIT_METAL && t.id.id < Data.TRAIT_WHITE)
+                AntiTraits.add(t);
         }
     }
     // Convert Bitmask Type format to new format
@@ -69,8 +71,8 @@ public class Trait extends Data implements Indexable<PackData, Trait>, Comparabl
         return traits;
     }
 
-    public static List<Trait> convertOrb(int mask) {
-        List<Trait> ans = new ArrayList<>();
+    public static ArrayList<Trait> convertOrb(int mask) {
+        ArrayList<Trait> ans = new ArrayList<>();
         PackData.DefPack data = UserProfile.getBCData();
 
         for (int i = 0; i < OrbInfo.orbTrait.length; i++)
@@ -82,6 +84,15 @@ public class Trait extends Data implements Indexable<PackData, Trait>, Comparabl
 
     public static boolean isUsed(Trait t) {
         return t.isUsed();
+    }
+
+    /**
+     * Check if the unit can be considered an anti-traited
+     * @param targets The list of traits the unit targets
+     * @return true if the unit is anti-traited
+     */
+    public static boolean targetTraited(SortedPackSet<Trait> targets) {
+        return targets.containsAll(AntiTraits);
     }
 
     @JsonField(defval = "new trait")
@@ -149,7 +160,7 @@ public class Trait extends Data implements Indexable<PackData, Trait>, Comparabl
         icon = UserProfile.getUserPack(id.pack).source.readImage(Source.BasePath.TRAIT.toString(), id.id);
         if (jobj.has("others"))
             targetForms.addAll(new LocalDecoder(jobj.get("others"), SortedPackSet.class, this).setGeneric(Form.class).setAlias(AbForm.AbFormJson.class).decode());
-        targetForms.removeIf(f -> f == null || f.uid.pack.equals(id.pack) || f.maxu().getTraits(true).isEmpty() || (targetType && Entity.targetTraited(f.maxu().getTraits(true))));
+        targetForms.removeIf(f -> f == null || f.uid.pack.equals(id.pack) || f.maxu().getTraits(true).isEmpty() || (targetType && targetTraited(f.maxu().getTraits(true))));
     }
 
     @Override

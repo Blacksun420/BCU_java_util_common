@@ -281,9 +281,10 @@ public class DataUnit extends DefaultData implements MaskUnit, Cloneable {
 		if (raw)
 			return traits;
 		SortedPackSet<Trait> ts = new SortedPackSet<>(traits);
+		boolean antiTraited = Trait.targetTraited(ts);
 		for (PackData.UserPack pk : UserProfile.getUserPacks())
 			for (Trait t : pk.traits)
-				if (t.targetForms.contains(getPack()))
+				if ((antiTraited && t.targetType) || t.targetForms.contains(getPack()))
 					ts.add(t);
 		return ts;
 	}
