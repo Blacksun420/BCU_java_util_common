@@ -17,8 +17,8 @@ import java.util.*;
 
 public class OrbInfo extends Data {
 	public static final byte[] orbTrait = {
-			Data.TRAIT_RED, Data.TRAIT_FLOAT, Data.TRAIT_BLACK, Data.TRAIT_METAL, Data.TRAIT_ANGEL, Data.TRAIT_ALIEN,
-			Data.TRAIT_ZOMBIE, Data.TRAIT_RELIC, Data.TRAIT_WHITE, Data.TRAIT_EVA, Data.TRAIT_WITCH, Data.TRAIT_DEMON, -1//This one is no trait anyway
+			TRAIT_RED, TRAIT_FLOAT, TRAIT_BLACK, TRAIT_METAL, TRAIT_ANGEL, TRAIT_ALIEN,
+			TRAIT_ZOMBIE, TRAIT_RELIC, TRAIT_WHITE, TRAIT_EVA, TRAIT_WITCH, TRAIT_DEMON, -1//This one is no trait anyway
 	};
 	/** Gets trait magnification data from BC.
 	 * Format: Map< Type, Map< Grade, Effects > >*/
@@ -145,7 +145,8 @@ public class OrbInfo extends Data {
 		return EFFECT.get(type).get(grade);
 	}
 
-	private static final int[] oneOnly = { Data.ORB_MINIDEATHSURGE, Data.ORB_REFUND, Data.ORB_SOLBUFF, Data.ORB_BAKILL, Data.ORB_CANNON_CHARGE, Data.ORB_DODGE, Data.ORB_ULBUFF};
+	private static final int[] oneOnly = { ORB_MINIDEATHSURGE, ORB_REFUND, ORB_SOLBUFF, ORB_BAKILL,
+			ORB_CANNON_CHARGE, ORB_DODGE, ORB_ULBUFF, ORB_COUNTERSURGE, ORB_KILLSTRENGTHEN, ORB_LESSCD};
 	public static boolean onlyOne(int type) {
 		for (int one : oneOnly)
 			if (type == one)
