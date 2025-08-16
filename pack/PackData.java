@@ -64,7 +64,7 @@ public abstract class PackData implements IndexContainer {
 			progress.accept("Loading basic Images");
 			Res.readData();
 			progress.accept("Loading traits");
-			Trait.addBCTraits();
+			Trait.read();
 			progress.accept("Loading cannon Data");
 			Treasure.readCannonCurveData();
 			progress.accept("Loading enemies");

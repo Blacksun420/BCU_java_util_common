@@ -153,7 +153,7 @@ public class Level implements BattleStatic, LevelInterface {
 			}
 			if (data.length == 0)
 				continue;
-			if (data.length != 3) {
+			if (data.length != Data.ORB_TOT) {
 				valid = false;
 				break;
 			}

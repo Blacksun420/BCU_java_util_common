@@ -62,7 +62,7 @@ public interface MaskEntity extends BattleStatic {
 
 	Identifier<Soul> getDeathAnim();
 
-	SortedPackSet<Trait> getTraits();
+	SortedPackSet<Trait> getTraits(boolean raw);
 
 	int getHb();
 

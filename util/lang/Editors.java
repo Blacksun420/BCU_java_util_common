@@ -935,14 +935,17 @@ public class Editors {
 				t.retreatSpeed = 0;
 		}, eg -> t -> setComponentVisibility(eg, !def || t.retreatDist > 0 || t.danger, 1, 2)));
 
-		map().put("DEMONVOLC", new EditControl<>(Proc.PM.class, (t) -> {
+		map().put("DEMONVOLC", new EditControl<>(Proc.PMC.class, (t) -> {
 			t.prob = Math.max(def ? 0 : -100, Math.min(t.prob, 100));
 			if (!def)
 				return;
-			if (t.prob == 0)
+			if (t.prob == 0) {
 				t.mult = 0;
-			else if (t.mult == 0)
+				t.count = 1;
+			} else if (t.mult == 0) {
 				t.mult = 100;
+				t.count = Math.max(t.count, 1);
+			}
 		}, eg -> t -> setComponentVisibility(eg, !def || t.prob > 0, 1)));
 
 		map().put("DMGINC", new EditControl<>(Proc.STATINC.class, (t) -> {

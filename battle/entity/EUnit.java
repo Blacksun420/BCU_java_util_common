@@ -67,7 +67,7 @@ public class EUnit extends Entity {
 	public EUnit(StageBasis b, MaskUnit de, EAnimU ea, float d0, int layer0, int layer1, Level level, PCoin pc, int[] index, boolean isBase) {
 		super(b, de, ea, getD(b.st.getMC().getSID(), d0, level), pc, level);
 		layer = layer0 == layer1 ? layer0 : layer0 + (int) (b.r.nextFloat() * (layer1 - layer0 + 1));
-		traits = new SortedPackSet<>(de.getTraits());
+		traits = new SortedPackSet<>(de.getTraits(false));
 		lvl = level.getTotalLv();
 		this.index = index;
 		this.isBase = isBase;
@@ -120,9 +120,9 @@ public class EUnit extends Entity {
 							getProc().IMUPOIATK.mult += eff;
 							break;
 						case ORB_DODGE:
-							if (getProc().IMUATK.prob == 0)
-								getProc().IMUATK.time = 30;
-							getProc().IMUATK.prob += eff;
+							if (getProc().IMUATKANY.prob == 0)
+								getProc().IMUATKANY.time = 30;
+							getProc().IMUATKANY.prob += eff;
 							break;
 						case ORB_RESSLOW:
 							getProc().IMUSLOW.mult += eff;
@@ -130,16 +130,43 @@ public class EUnit extends Entity {
 						case ORB_RESCURSE:
 							getProc().IMUCURSE.mult += eff;
 							break;
+						case ORB_COUNTERSURGE:
+							if (getProc().DEMONVOLC.prob == 0) {
+								getProc().DEMONVOLC.count = 2;
+								getProc().DEMONVOLC.mult = 100;
+							}
+							getProc().DEMONVOLC.prob += eff;
+							break;
+						case ORB_KILLSTRENGTHEN:
+							if (getProc().KILLSTRENGTHEN.mult == 0)
+								getProc().KILLSTRENGTHEN.kill_count = 10;
+							getProc().KILLSTRENGTHEN.mult += eff;
+							break;
+						case ORB_LESSCD:
+							if (getProc().COMBOCOOLDOWN.prob == 0) {
+								getProc().COMBOCOOLDOWN.prob = 100;
+								getProc().COMBOCOOLDOWN.count = 2;
+							}
+							getProc().COMBOCOOLDOWN.mult += eff;
+							break;
+						case ORB_RESFREEZE:
+							getProc().IMUSTOP.mult += eff;
+							break;
+						case ORB_RESWEAKEN:
+							getProc().IMUWEAK.mult += eff;
+							break;
 					}
 				}
 		}
+		if (index != null && getProc().COMBOCOOLDOWN.perform(basis.r))
+			basis.elu.cool[index[0]][index[1]] *= getProc().COMBOCOOLDOWN.mult / 100;
 		this.level = level;
 	}
 
 	public EUnit(StageBasis b, MaskUnit de, EAnimU ea, float d0) {
 		super(b, de, ea, d0, null, null);
 		layer = de.getFront() + (int) (b.r.nextFloat() * (de.getBack() - de.getFront() + 1));
-		traits = new SortedPackSet<>(de.getTraits());
+		traits = new SortedPackSet<>(de.getTraits(false));
 		this.index = null;
 
 		lvl = 1;
@@ -151,6 +178,14 @@ public class EUnit extends Entity {
 	public void added(int d, float p) {
 		super.added(d,p);
 		lastPosition = p;
+
+		int spwn = basis.spawns.get(data.getPack());
+		if (getProc().COMBOCOOLDOWN.prob > 0 && spwn % getProc().COMBOCOOLDOWN.count != 0)
+			getProc().COMBOCOOLDOWN.clear();
+		if (getProc().MONEYBACK.prob > 0 && spwn % getProc().MONEYBACK.count != 0)
+			getProc().MONEYBACK.clear();
+		if (getProc().CANONCHARGE.prob > 0 && spwn % getProc().CANONCHARGE.count != 0)
+			getProc().CANONCHARGE.clear();
 	}
 
 	@Override
@@ -173,7 +208,7 @@ public class EUnit extends Entity {
 		if (status.curse > 0 || status.seal > 0)
 			traits.clear();
 		else if (traits.isEmpty())
-			traits.addAll(data.getTraits());
+			traits.addAll(data.getTraits(false));
 		if (kbTime == 0)
 			lastPosition = pos;
 	}
@@ -242,7 +277,7 @@ public class EUnit extends Entity {
 		if (atk.model instanceof AtkModelEnemy) {
 			SortedPackSet<Trait> sharedTraits = traits.inCommon(atk.trait);
 			boolean isAntiTraited = targetTraited(atk.trait);
-			sharedTraits.addIf(atk.trait, t -> !t.BCTrait() && ((t.targetType && isAntiTraited) || t.others.contains(((MaskUnit)data).getPack())));
+			sharedTraits.addIf(atk.trait, t -> !t.BCTrait() && ((t.targetType && isAntiTraited) || t.targetForms.contains(((MaskUnit)data).getPack())));
 			if (!sharedTraits.isEmpty()) {
 				if (status.curse == 0 && getProc().DEFINC.mult != 0)
 					ans = (int)(ans * basis.b.t().getDEF(getProc().DEFINC.mult, atk.trait, sharedTraits, ((MaskUnit) data).getOrb(), level, basis.elu.getInc(getProc().DEFINC.mult < 400 ? C_GOOD : C_RESIST)));

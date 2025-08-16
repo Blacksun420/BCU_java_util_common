@@ -6,7 +6,7 @@ import common.io.json.JsonClass;
 import common.io.json.JsonClass.JCConstructor;
 import common.io.json.JsonDecoder;
 import common.io.json.JsonField;
-import common.io.json.localDecoder;
+import common.io.json.LocalDecoder;
 import common.pack.FixIndexList.FixIndexMap;
 import common.pack.Identifier;
 import common.pack.IndexContainer;
@@ -218,7 +218,7 @@ public class StageMap extends Data implements BasedCopable<StageMap, MapColc>,
 			} else if (!(lim.get(i) instanceof Limit.PackLimit))
 				lim.set(i, new Limit.PackLimit(lim.get(i)));
 		if (jobj.has("stageLimit")) {
-			StageLimit lim = new localDecoder(jobj.get("stageLimit"), StageLimit.class, this).decode();
+			StageLimit lim = new LocalDecoder(jobj.get("stageLimit"), StageLimit.class, this).decode();
 			if (lim == null || lim.isBlank())
 				return;
 			Limit.PackLimit nlim = new Limit.PackLimit();

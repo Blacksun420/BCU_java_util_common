@@ -184,6 +184,10 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 			return;
 		Unit u = unit == null ? (Unit) uid.get() : unit;
 		PackData.UserPack pack = (PackData.UserPack) u.getCont();
+		if (UserProfile.isOlderPack(pack, "0.7.12.2") && du.getPCoin() != null) {
+			du.getPCoin().info.removeIf(d -> d[0] == 68);
+			du.getPCoin().update();
+		}
 		if (pack.desc.FORK_VERSION >= 13)
 			return;
 		inject(pack, jobj.getAsJsonObject("du"), form);

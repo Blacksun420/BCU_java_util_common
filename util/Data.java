@@ -1202,6 +1202,18 @@ public class Data {
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
+		public static class KILLSTRENGTHEN extends ProcItem {
+			@Order(0)
+			public float mult;
+			@Order(1)
+			@JsonField(defval = "1")
+			public int kill_count = 1;
+			@Order(2)
+			@JsonField(defval = "1")
+			public int max_stacks = 1;//0 for infinite
+		}
+
+		@JsonClass(noTag = NoTag.LOAD)
 		public static class ProcID implements Cloneable, BattleStatic {
 			@Order(0)
 			@JsonField(generic = Integer.class)
@@ -1650,7 +1662,7 @@ public class Data {
 		@Order(67)
 		public final MINIVOLC MINIVOLC = new MINIVOLC();
 		@Order(68)
-		public final PM DEMONVOLC = new PM();
+		public final PMC DEMONVOLC = new PMC();
 		@Order(69)
 		public final STATINC DMGINC = new STATINC(); //Merges Strong against, Massive Damage, and Insane Damage
 		@Order(70)
@@ -1679,6 +1691,12 @@ public class Data {
 		public final HPREGEN HPREGEN = new HPREGEN();
 		@Order(82)
 		public final PMC CANONCHARGE = new PMC();
+		@Order(83)
+		public final IMUATK IMUATKANY = new IMUATK();//This is just Dodge, but ignores traits. Not a toggle coz orbs
+		@Order(84)
+		public final KILLSTRENGTHEN KILLSTRENGTHEN = new KILLSTRENGTHEN(); //Kills,Mult
+		@Order(85)
+		public final PMC COMBOCOOLDOWN = new PMC(); //CD,Count
 
 		@Override
 		public Proc clone() {
@@ -2056,6 +2074,8 @@ public class Data {
 	public static final byte P_REFUND = 80;
 	public static final byte P_HPREGEN = 81;
 	public static final byte P_CANONCHARGE = 82;
+	public static final byte P_IMUALL = 83;
+	public static final byte P_KILLSTRENGTHEN = 84;
 	public static final byte PROC_TOT = 83;
 
 	public static final boolean[] procSharable = {
@@ -2141,7 +2161,10 @@ public class Data {
 			true,  //Mini Death Surge
 			true,  //Refund
 			true,  //hp regen
-			true   //cannon charge
+			true,  //cannon charge
+			true,  //Dodge all
+			true,  //Strengthen When Defeating
+			true   //ComboCooldown
 	};
 
 	/**
@@ -2163,6 +2186,7 @@ public class Data {
 	public static final byte WT_MIVC = 16;
 	public static final byte WT_MEGA = 64;
 	public static final byte WT_BLST = 32;
+	public static final byte WT_SOUL = 64; // for death surge check
 	public static final byte PC_P = 0, PC_AB = 1, PC_BASE = 2, PC_IMU = 3, PC_TRAIT = 4;
 	public static final byte PC2_HP = 0;
 	public static final byte PC2_ATK = 1;
@@ -2512,7 +2536,12 @@ public class Data {
 	public static final byte ORB_RESSLOW = 14;
 	public static final byte ORB_RESCURSE = 15;
 	public static final byte ORB_ULBUFF = 16;
-	public static final byte ORB_TYPE_TOTAL = 17;
+	public static final byte ORB_COUNTERSURGE = 17;
+	public static final byte ORB_KILLSTRENGTHEN = 18;
+	public static final byte ORB_LESSCD = 19;
+	public static final byte ORB_RESFREEZE = 20;
+	public static final byte ORB_RESWEAKEN = 21;
+	public static final byte ORB_TYPE_TOTAL = 22;
 	public static final byte ORB_TYPE = 0, ORB_TRAIT = 1, ORB_GRADE = 2, ORB_TOT = 3;
 
 	public static final short[] GATYA = { 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 160, 161, 164, 167,

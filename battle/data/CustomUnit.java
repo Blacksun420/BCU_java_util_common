@@ -2,9 +2,13 @@ package common.battle.data;
 
 import common.io.json.JsonClass;
 import common.io.json.JsonField;
+import common.pack.PackData;
+import common.pack.SortedPackSet;
+import common.pack.UserProfile;
 import common.util.Data;
 import common.util.anim.AnimU;
 import common.util.unit.Form;
+import common.util.unit.Trait;
 
 @JsonClass
 public class CustomUnit extends CustomEntity implements MaskUnit, Cloneable {
@@ -75,6 +79,18 @@ public class CustomUnit extends CustomEntity implements MaskUnit, Cloneable {
 
 	@Override
 	public PCoin getPCoin() { return pcoin; }
+
+	@Override
+	public SortedPackSet<Trait> getTraits(boolean raw) {
+		if (raw)
+			return traits;
+		SortedPackSet<Trait> ts = new SortedPackSet<>(traits);
+		for (PackData.UserPack pk : UserProfile.getUserPacks())
+			for (Trait t : pk.traits)
+				if (t.targetForms.contains(getPack()))
+					ts.add(t);
+		return ts;
+	}
 
 	@Override
 	public void improve(int[] type, int mod) {

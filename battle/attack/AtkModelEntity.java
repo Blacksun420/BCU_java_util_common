@@ -155,6 +155,8 @@ public abstract class AtkModelEntity extends AtkModelAb {
 			dmg = (int) (dmg * e.status.getWeaken());
 		if (e.status.strengthen != 0)
 			dmg += dmg * e.status.strengthen / 100;
+		if (e.status.kill_stacks > 0)
+			dmg += (int)((double)dmg * e.getProc().KILLSTRENGTHEN.mult * e.status.kill_stacks / 100);
 		dmg *= e.auras.getAtkAura();
 		return dmg;
 	}

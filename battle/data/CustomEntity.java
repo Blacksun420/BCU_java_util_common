@@ -272,7 +272,7 @@ public abstract class CustomEntity extends DataEntity {
 		abi = de.getAbi();
 		loop = de.getAtkLoop();
 		traits = new SortedPackSet<>();
-		traits.addIf(de.getTraits(), t -> t.BCTrait() || t.id.pack.equals(getPack().getID().pack) || ((UserPack)getPack().getPack()).desc.dependency.contains(t.id.pack));
+		traits.addIf(de.getTraits(true), t -> t.BCTrait() || t.id.pack.equals(getPack().getID().pack) || ((UserPack)getPack().getPack()).desc.dependency.contains(t.id.pack));
 		width = de.getWidth();
 		tba = de.getTBA();
 		touch = de.getTouch();

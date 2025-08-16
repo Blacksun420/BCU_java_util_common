@@ -490,7 +490,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			if (t != INT_WARP)
 				e.kbTime += 1;
 			// Z-kill icon
-			if (e.health <= 0 && e.zx.tempZK && e.traits.contains(BCTraits.get(TRAIT_ZOMBIE))) {
+			if (e.health <= 0 && e.zx.tempZK && e.traits.contains(UserProfile.getBCData().traits.get(TRAIT_ZOMBIE))) {
 				EAnimD<DefEff> eae = effas().A_Z_STRONG.getEAnim(DefEff.DEF);
 				e.basis.lea.add(new EAnimCont(e.pos, e.layer, eae));
 				CommonStatic.setSE(SE_ZKILL);
@@ -940,7 +940,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					list.replace(ws, list.get(ws) - e.getTime());
 					ws.prob -= e.getTime();// used as counter for itv
 					if (e.health > 0 && ws.prob <= 0) {
-						if (!ws.ignoreMetal && (e instanceof EEnemy && e.data.getTraits().contains(UserProfile.getBCData().traits.get(TRAIT_METAL)) || (e instanceof EUnit && (e.getAbi() & AB_METALIC) != 0)))
+						if (!ws.ignoreMetal && (e instanceof EEnemy && e.traits.contains(UserProfile.getBCData().traits.get(TRAIT_METAL)) || (e instanceof EUnit && (e.getAbi() & AB_METALIC) != 0)))
 							e.damage += 1;
 						else
 							damage(ws.damage, type(ws));
@@ -1250,10 +1250,10 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	public static class ProcManager extends BattleObj {
 
 		public boolean lethal;
-		public int kb, strengthen, adrenaline = 100, money, dcut, dcap, poison, regencount;
+		public int kb, strengthen, adrenaline = 100, money, dcut, dcap, poison, regencount, kill_stacks;
 		public double slow, curse, seal, wild, rage, hypno;
 		public final int[] shield = new int[2];
-		public final double[] stop = new double[2], inv = new double[2];
+		public final double[] stop = new double[2], inv = new double[3];
 		public final float[] warp = new float[3], burs = new float[2], revs = new float[2];
 		public final LinkedList<double[]> weaks = new LinkedList<>(), armors = new LinkedList<>(), speeds = new LinkedList<>(), lethargies = new LinkedList<>();
 		public final HashMap<Proc.BLESSING, Float> blessings = new HashMap<>();
@@ -1305,7 +1305,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				}
 				if (e.dire == 1 || curse + seal == 0) {
 					e.traits.clear();
-					e.traits.addAll(e.data.getTraits());
+					e.traits.addAll(e.data.getTraits(false));
 					for (Proc.BLESSING b : blessings.keySet())
 						e.traits.addAll(b.traits);
 				}
@@ -1425,7 +1425,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 			e.traits.clear();
 			if (e.dire == 1 || curse + seal == 0)
-				e.traits.addAll(e.data.getTraits());
+				e.traits.addAll(e.data.getTraits(false));
 		}
 		public int blessAbis() {
 			int a = 0;
@@ -1605,6 +1605,12 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	private int spInd = 0;
 
 	/**
+	 * Amount of enemies this entity has killed
+	 */
+	public int kill_count = 0;
+	private Entity lastAttacker = null;
+
+	/**
 	 * Procs
 	 */
 	private final Proc proc;
@@ -1710,6 +1716,15 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		}
 
 		int dmg = getDamage(atk, atk.atk);
+		if (getProc().IMUATKANY.exists() && dmg >= 0) { // todo: figure out if dodge orb is affected by treasure or by dodge ability
+			if (status.inv[0] + status.inv[2] == 0 && getProc().IMUATKANY.perform(basis.r)) {
+				status.inv[0] = getProc().IMUATKANY.time;
+				status.inv[2] = getProc().IMUATKANY.cd;
+				anim.getEff(P_IMUATK);
+			}
+			if (status.inv[0] > 0)
+				return;
+		}
 
 		Proc.CANNI cRes = getProc().IMUCANNON;
 		if (atk.canon > 0 && cRes.mult != 0)
@@ -1878,7 +1893,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 		boolean metalKillerActivate = atk.getProc().METALKILL.mult > 0;
 		if (dire == 1) {
-			metalKillerActivate &= data.getTraits().contains(UserProfile.getBCData().traits.get(TRAIT_METAL));
+			metalKillerActivate &= traits.contains(UserProfile.getBCData().traits.get(TRAIT_METAL));
 		} else if (dire == -1)
 			metalKillerActivate &= (data.getAbi() & AB_METALIC) != 0;
 		if (metalKillerActivate)
@@ -1933,6 +1948,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		hit = 2;
 		damage += dmg;
 		zx.damaged(atk);
+		lastAttacker = atk.attacker;
 		status.money = (int) atk.getProc().BOUNTY.mult;
 		if (dmg < 0)
 			anim.getEff(HEAL);
@@ -2484,8 +2500,10 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 		if(health <= 0 && zx.canRevive() == 0 && !killCounted)
 			onLastBreathe();
-		if (health > 0)
+		if (health > 0) {
 			status.money = 0;
+			lastAttacker = null;
+		}
 	}
 
 	public void strengthen() {
@@ -2552,14 +2570,14 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 		for (int j = 0; j < traits.size(); j++) {
 			Trait tr = traits.get(j);
-			if (ent.traits.contains(tr) || (antiTrait && tr.targetType) || (ent.dire == -1 && tr.others.contains(((MaskUnit)ent.data).getPack())))
+			if (ent.traits.contains(tr) || (antiTrait && tr.targetType) || (ent.dire == -1 && tr.targetForms.contains(((MaskUnit)ent.data).getPack())))
 				return true;
 		}
 		antiTrait = targetTraited(traits);
 		if (dire == -1)
 			for (int j = 0; j < ent.traits.size(); j++) {
 				Trait tr = ent.traits.get(j);
-				if ((antiTrait && tr.targetType) || tr.others.contains(((MaskUnit)data).getPack()))
+				if ((antiTrait && tr.targetType) || tr.targetForms.contains(((MaskUnit)data).getPack()))
 					return true;
 			}
 		return false;
@@ -2572,10 +2590,12 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	public boolean btargetable(AttackAb atk) {
 		if ((receive(1) || atk.dire == 1) && atk.matk.getATKTraits().isEmpty())
 			return true; //Ignore traits if: Enemy Attacks Enemy, Enemy Attacks Unit, Unit Attacks Unit, and no traits are set for the attack
-		else if (receive(1) && (status.curse > 0 || status.seal > 0))
+		else if (receive(1) && (status.curse > 0 || status.seal > 0)) {
+			SortedPackSet<Trait> ts = data.getTraits(false);
 			for (int j = 0; j < atk.trait.size(); j++)
-				if (data.getTraits().contains(atk.trait.get(j)) || (dire == -1 && atk.trait.get(j).others.contains(((MaskUnit)data).getPack())))
+				if (ts.contains(atk.trait.get(j)))
 					return true; //Cursed units lack traits, this "re-adds" them for enemies that consider traits debuff
+		}
 		return ctargetable(atk.trait, atk.attacker); //Go to normal if no specialties apply
 	}
 	/**
@@ -2590,14 +2610,14 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				for (int i = 0; i < traits.size(); i++) {
 					if (traits.get(i).BCTrait())
 						continue;
-					if (traits.get(i).others.contains(((MaskUnit) attacker.data).getPack()))
+					if (traits.get(i).targetForms.contains(((MaskUnit) attacker.data).getPack()))
 						return true;
 				}
 			} else if (dire == -1 && !traits.isEmpty()) {
 				for (int i = 0; i < attacker.traits.size(); i++) {
 					if (attacker.traits.get(i).BCTrait())
 						continue;
-					if (attacker.traits.get(i).others.contains(((MaskUnit) data).getPack()))
+					if (attacker.traits.get(i).targetForms.contains(((MaskUnit) data).getPack()))
 						return true;
 				}
 			}
@@ -2613,7 +2633,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		for (int j = 0; j < t.size(); j++)
 			if (traits.contains(t.get(j)))
 				return true;
-		return t.contains(BCTraits.get(TRAIT_TOT));
+		return t.contains(UserProfile.getBCData().traits.get(TRAIT_TOT));
 	}
 
 	/**
@@ -2918,7 +2938,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		if (dire != e.dire) {
 			SortedPackSet<Trait> sharedTraits = traits.inCommon(matk.getATKTraits());
 			boolean isAntiTraited = targetTraited(matk.getATKTraits());
-			sharedTraits.addIf(traits, t -> !t.BCTrait() && ((t.targetType && isAntiTraited) || t.others.contains((e.dire == -1 ? e : this).data.getPack())));//Ignore the warning, condition dictates unit
+			sharedTraits.addIf(traits, t -> !t.BCTrait() && ((t.targetType && isAntiTraited) || t.targetForms.contains((e.dire == -1 ? e : this).data.getPack())));//Ignore the warning, condition dictates unit
 
 			if (!sharedTraits.isEmpty()) {
 				if (e.status.curse == 0 && e.getProc().DMGINC.mult != 0)
@@ -2936,6 +2956,13 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 */
 	protected void onLastBreathe() {
 		killCounted = true;
+		if (lastAttacker != null) {
+			lastAttacker.kill_count++;
+			Proc.KILLSTRENGTHEN str = lastAttacker.getProc().KILLSTRENGTHEN;
+			if ((str.max_stacks == 0 || str.max_stacks > lastAttacker.status.kill_stacks) &&
+					lastAttacker.kill_count % str.kill_count == 0 && str.perform(basis.r))
+				lastAttacker.status.kill_stacks++;
+		}
 	}
 
 	/**
@@ -3247,10 +3274,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			getProc().DEATHSURGE.clear();
 		if (getProc().MINIDEATHSURGE.prob > 0 && spwn % getProc().MINIDEATHSURGE.spawns != 0)
 			getProc().MINIDEATHSURGE.clear();
-		if (getProc().MONEYBACK.prob > 0 && spwn % getProc().MONEYBACK.count != 0)
-			getProc().MONEYBACK.clear();
-		if (getProc().CANONCHARGE.prob > 0 && spwn % getProc().CANONCHARGE.count != 0)
-			getProc().CANONCHARGE.clear();
+		if (getProc().DEMONVOLC.prob > 0 && spwn % getProc().DEMONVOLC.count != 0)
+			getProc().DEMONVOLC.clear();
 	}
 	@Override
 	public int compareTo(@NotNull Entity ent) {

@@ -31,7 +31,7 @@ public class EEnemy extends Entity {
 		mark = m;
 		isBase = mark <= -1;
 		layer = d0 == d1 ? d0 : d0 + (int) (b.r.nextFloat() * (d1 - d0 + 1));
-		traits = new SortedPackSet<>(de.getTraits());
+		traits = new SortedPackSet<>(de.getTraits(false));
 
 		skipSpawnBurrow = mark >= 1;
 	}
@@ -100,7 +100,7 @@ public class EEnemy extends Entity {
 		if (atk.model instanceof AtkModelUnit) {
 			SortedPackSet<Trait> sharedTraits = traits.inCommon(atk.trait);
 			boolean isAntiTraited = targetTraited(atk.trait);
-			sharedTraits.addIf(traits, t -> !t.BCTrait() && ((t.targetType && isAntiTraited) || t.others.contains(((MaskUnit)atk.attacker.data).getPack())));
+			sharedTraits.addIf(traits, t -> !t.BCTrait() && ((t.targetType && isAntiTraited) || t.targetForms.contains(((MaskUnit)atk.attacker.data).getPack())));
 
 			if (!sharedTraits.isEmpty()) {
 				if (atk.attacker.status.curse == 0 && atk.attacker.getProc().DMGINC.mult != 0)
@@ -132,7 +132,7 @@ public class EEnemy extends Entity {
 				ans = (int) (maxH * basis.b.t().getCannonMagnification(5, BASE_HOLY_ATK_UNDERGROUND));
 			else
 				ans = (int) (maxH * basis.b.t().getCannonMagnification(5, BASE_HOLY_ATK_SURFACE));
-		ans = critCalc((getAbi() & AB_METALIC) != 0 || data.getTraits().contains(UserProfile.getBCData().traits.get(TRAIT_METAL)), ans, atk);
+		ans = critCalc((getAbi() & AB_METALIC) != 0 || traits.contains(UserProfile.getBCData().traits.get(TRAIT_METAL)), ans, atk);
 
 		// Perform Orb
 		ans += EUnit.OrbHandler.getOrbAtk(atk, this);
