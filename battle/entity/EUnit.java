@@ -104,7 +104,7 @@ public class EUnit extends Entity {
 								getProc().MINIDEATHSURGE.prob = 100;
 								getProc().MINIDEATHSURGE.dis_0 = 200;
 								getProc().MINIDEATHSURGE.dis_1 = 500;
-								getProc().MINIDEATHSURGE.time = 20;
+								getProc().MINIDEATHSURGE.time = getProc().MINIDEATHSURGE.maxtime = 20;
 								getProc().MINIDEATHSURGE.spawns = 2;
 							}
 							getProc().MINIDEATHSURGE.mult += eff;
@@ -132,6 +132,7 @@ public class EUnit extends Entity {
 							break;
 						case ORB_COUNTERSURGE:
 							if (getProc().DEMONVOLC.prob == 0) {
+								getProc().DEMONVOLC.max_times = 1;
 								getProc().DEMONVOLC.count = 2;
 								getProc().DEMONVOLC.mult = 100;
 							}
@@ -156,8 +157,6 @@ public class EUnit extends Entity {
 					}
 				}
 		}
-		if (index != null && getProc().COMBOCOOLDOWN.perform(basis.r))
-			basis.elu.cool[index[0]][index[1]] *= getProc().COMBOCOOLDOWN.mult / 100;
 		this.level = level;
 	}
 
@@ -178,8 +177,8 @@ public class EUnit extends Entity {
 		lastPosition = p;
 
 		int spwn = basis.spawns.get(data.getPack());
-		if (getProc().COMBOCOOLDOWN.prob > 0 && spwn % getProc().COMBOCOOLDOWN.count != 0)
-			getProc().COMBOCOOLDOWN.clear();
+		if (spwn % getProc().COMBOCOOLDOWN.count == 0 && getProc().COMBOCOOLDOWN.perform(basis.r))
+			basis.elu.cool[index[0]][index[1]] *= 1 - (getProc().COMBOCOOLDOWN.mult / 100);
 		if (getProc().MONEYBACK.prob > 0 && spwn % getProc().MONEYBACK.count != 0)
 			getProc().MONEYBACK.clear();
 		if (getProc().CANONCHARGE.prob > 0 && spwn % getProc().CANONCHARGE.count != 0)

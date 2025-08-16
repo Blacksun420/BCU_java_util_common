@@ -1250,7 +1250,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	public static class ProcManager extends BattleObj {
 
 		public boolean lethal;
-		public int kb, strengthen, adrenaline = 100, money, dcut, dcap, poison, regencount;
+		public int kb, strengthen, adrenaline = 100, money, dcut, dcap, poison, regencount, surgecountered;
 		public double slow, curse, seal, wild, rage, hypno;
 		public final int[] shield = new int[2];
 		public final double[] stop = new double[2], inv = new double[3];
@@ -1609,14 +1609,14 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 */
 	public int kill_count = 0;
 	private Entity lastAttacker = null;
-	public float getKillStrengthen() {
+	public double getKillStrengthen() {
 		Proc.KILLSTRENGTHEN ks = getProc().KILLSTRENGTHEN;
 		int stacks = kill_count / ks.kill_count;
 		if (ks.max_stacks > 0)
-			stacks = Math.min(kill_count / ks.kill_count, ks.max_stacks);
-		if (ks.mult * stacks > 0)
+			stacks = Math.min(stacks, ks.max_stacks);
+		if (anim.effs[A_UP] == null && (ks.mult * stacks) > 0)
 			anim.getEff(P_STRONG);
-		return ks.mult * stacks / 100;
+		return (ks.mult * stacks) / 100;
 	}
 
 	/**
@@ -1947,7 +1947,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			AttackVolcano volc = (AttackVolcano)atk;
 			if (volc.handler != null && !volc.handler.reflected && !volc.handler.surgeSummoned.contains(this)) {
 				volc.handler.surgeSummoned.add(this);
-				if (getProc().DEMONVOLC.perform(basis.r))
+				Proc.COUNTERSURGE cs = getProc().DEMONVOLC;
+				if ((cs.max_times <= 0 || status.surgecountered < cs.max_times) && cs.perform(basis.r))
 					new DemonCont(this, volc);
 			}
 		}

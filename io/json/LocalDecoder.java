@@ -77,6 +77,7 @@ public class LocalDecoder {
 
     private final LocalDecoder par;
     private final JsonObject jobj;
+    private final JsonArray jarr;
     private final Class<?> tarcls;
     private final JsonClass tarjcls;
     private final Object obj;
@@ -103,7 +104,8 @@ public class LocalDecoder {
      */
     public LocalDecoder(JsonElement json, Class<?> cls, Object obj, String name) {
         par = null;
-        jobj = json == null || json.isJsonNull() ? null : json.getAsJsonObject();
+        jobj = json == null || json.isJsonNull() || !json.isJsonObject() ? null : json.getAsJsonObject();
+        jarr = json == null || json.isJsonNull() || !json.isJsonArray() ? null : json.getAsJsonArray();
         tarcls = cls;
         tarjcls = null;
         this.name = name;
@@ -113,6 +115,7 @@ public class LocalDecoder {
     private LocalDecoder(LocalDecoder par, JsonObject json, Class<?> cls, Object obj, String name) throws Exception {
         this.par = par;
         jobj = json;
+        jarr = null;
         tarcls = cls;
         tarjcls = cls.getAnnotation(JsonClass.class);
         this.name = name;
@@ -147,7 +150,7 @@ public class LocalDecoder {
 
     @SuppressWarnings("unchecked")
     public <T> T decode() {
-        return (T) CommonStatic.ctx.noticeErr(() -> decode(jobj, tarcls), Context.ErrType.CORRUPT, "Error decoding " + name);
+        return (T) CommonStatic.ctx.noticeErr(() -> decode(jarr != null ? jarr : jobj, tarcls), Context.ErrType.CORRUPT, "Error decoding " + name);
     }
 
     private void decode(Class<?> cls) throws Exception {

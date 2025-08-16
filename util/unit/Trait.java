@@ -34,7 +34,7 @@ public class Trait extends Data implements Indexable<PackData, Trait>, Comparabl
         }
     }
     // Convert Bitmask Type format to new format
-    public static SortedPackSet<Trait> convertType(int type, boolean talent) {
+    public static SortedPackSet<Trait> convertBitmask(int type, boolean talent) {
         SortedPackSet<Trait> traits = new SortedPackSet<>();
         PackData.DefPack data = UserProfile.getBCData();
         if ((type & TB_RED) != 0)

@@ -8,6 +8,7 @@ import common.battle.entity.Entity;
 import common.battle.entity.Sniper;
 import common.pack.Identifier;
 import common.pack.SortedPackSet;
+import common.util.Data;
 import common.util.Data.Proc.MOVEWAVE;
 import common.util.Data.Proc.VOLC;
 import common.util.stage.Music;
@@ -146,11 +147,12 @@ public class AttackSimple extends AttackAb {
 			int wid = dire == 1 ? W_E_WID : W_U_WID;
 			float addp = (dire == 1 ? W_E_INI : W_U_INI) + wid / 2f;
 			float p0 = model.getPos() + dire * addp;
+			int lv = proc.WAVE.sameLv() ? proc.WAVE.lv : proc.WAVE.lv + model.b.r.nextInt(proc.WAVE.maxlv-proc.WAVE.lv);
 			if (proc.WAVE.inverted)
-				p0 = model.getPos() + (dire * addp) + ((200 * (proc.WAVE.lv - 1)) * dire);
+				p0 = model.getPos() + (dire * addp) + ((200 * (lv - 1)) * dire);
 
 			// generate a wave when hits somebody
-			ContWaveDef wave = new ContWaveDef(new AttackWave(attacker, this, p0, wid, WT_WAVE), p0, layer, -3);
+			ContWaveDef wave = new ContWaveDef(new AttackWave(attacker, this, p0, wid, WT_WAVE), p0, layer, -3, lv);
 			if(attacker != null)
 				attacker.summoned.add(wave);
 		}
@@ -159,10 +161,11 @@ public class AttackSimple extends AttackAb {
 			int wid = dire == 1 ? W_E_WID : W_U_WID;
 			float addp = (dire == 1 ? W_E_INI : W_U_INI) + wid / 2f;
 			float p0 = model.getPos() + dire * addp;
+			int lv = proc.MINIWAVE.sameLv() ? proc.MINIWAVE.lv : proc.MINIWAVE.lv + model.b.r.nextInt(proc.MINIWAVE.maxlv-proc.MINIWAVE.lv);
 			if (proc.MINIWAVE.inverted)
-				p0 = model.getPos() + (dire * addp) + ((200 * (proc.MINIWAVE.lv - 1)) * dire);
+				p0 = model.getPos() + (dire * addp) + ((200 * (lv - 1)) * dire);
 
-			ContWaveDef wave = new ContWaveDef(new AttackWave(attacker, this, p0, wid, proc.MINIWAVE.multi > 100 ? WT_MEGA : WT_MINI), p0, layer, proc.MINIWAVE.multi > 100 ? -6 : 0);
+			ContWaveDef wave = new ContWaveDef(new AttackWave(attacker, this, p0, wid, proc.MINIWAVE.multi > 100 ? WT_MEGA : WT_MINI), p0, layer, proc.MINIWAVE.multi > 100 ? -6 : 0, lv);
 			wave.atk.raw = (int)(wave.atk.raw * (proc.MINIWAVE.multi / 100.0));
 			if(attacker != null)
 				attacker.summoned.add(wave);
@@ -174,7 +177,8 @@ public class AttackSimple extends AttackAb {
 			float p0 = model.getPos() + dire * addp;
 			float sta = p0 + (dire == 1 ? W_VOLC_PIERCE : W_VOLC_INNER);
 			float end = p0 - (dire == 1 ? W_VOLC_INNER : W_VOLC_PIERCE);
-			ContVolcano volcano = new ContVolcano(new AttackVolcano(attacker, this, sta, end, WT_VOLC, volc.pid), p0, layer, volc.time, false);
+			int time = volc.sameTime() ? volc.time : volc.time + Math.round((float)model.b.r.nextInt(volc.maxtime - volc.time) / Data.VOLC_ITV) * Data.VOLC_ITV;
+			ContVolcano volcano = new ContVolcano(new AttackVolcano(attacker, this, sta, end, WT_VOLC, volc.pid), p0, layer, time, false);
 			if(attacker != null)
 				attacker.summoned.add(volcano);
 		}
@@ -185,8 +189,8 @@ public class AttackSimple extends AttackAb {
 			float p0 = model.getPos() + dire * addp;
 			float sta = p0 + (dire == 1 ? W_VOLC_PIERCE : W_VOLC_INNER);
 			float end = p0 - (dire == 1 ? W_VOLC_INNER : W_VOLC_PIERCE);
-
-			ContVolcano volcano = new ContVolcano(new AttackVolcano(attacker, this, sta, end, WT_MIVC, volc.pid), p0, layer, volc.time, false);
+			int time = volc.sameTime() ? volc.time : volc.time + Math.round((float)model.b.r.nextInt(volc.maxtime - volc.time) / Data.VOLC_ITV) * Data.VOLC_ITV;
+			ContVolcano volcano = new ContVolcano(new AttackVolcano(attacker, this, sta, end, WT_MIVC, volc.pid), p0, layer, time, false);
 			volcano.v.raw = (int)(volcano.v.raw * (proc.MINIVOLC.mult / 100.0));
 
 			if(attacker != null)

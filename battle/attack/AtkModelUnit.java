@@ -26,6 +26,7 @@ public class AtkModelUnit extends AtkModelEntity {
 			dmg = (int)(dmg * e.status.getWeaken());
 		if (e.status.strengthen != 0)
 			dmg += dmg * (e.status.strengthen + elu.getInc(C_STRONG)) / 100;
+		dmg += (int)(dmg * e.getKillStrengthen());
 		dmg *= e.auras.getAtkAura();
 		return dmg;
 	}

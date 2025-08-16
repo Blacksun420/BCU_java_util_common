@@ -155,7 +155,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 			dmg = (int) (dmg * e.status.getWeaken());
 		if (e.status.strengthen != 0)
 			dmg += dmg * e.status.strengthen / 100;
-		dmg += (int)((double)dmg * e.getKillStrengthen());
+		dmg += (int)(dmg * e.getKillStrengthen());
 		dmg *= e.auras.getAtkAura();
 		return dmg;
 	}
@@ -234,8 +234,9 @@ public abstract class AtkModelEntity extends AtkModelAb {
 			float p0 = getPos() + getDire() * addp;
 			float sta = p0 + (getDire() == 1 ? W_VOLC_PIERCE : W_VOLC_INNER);
 			float end = p0 - (getDire() == 1 ? W_VOLC_INNER : W_VOLC_PIERCE);
+			int time = ds.sameTime() ? ds.time : ds.time + Math.round((float)b.r.nextInt(ds.maxtime - ds.time) / Data.VOLC_ITV) * Data.VOLC_ITV;
 
-			e.summoned.add(new ContVolcano(new AttackVolcano(e, as, sta, end, i == 1 ? WT_VOLC : WT_MIVC, ds.pid), p0, e.layer, ds.time));
+			e.summoned.add(new ContVolcano(new AttackVolcano(e, as, sta, end, i == 1 ? WT_VOLC : WT_MIVC, ds.pid), p0, e.layer, time));
 		}
 	}
 
@@ -257,8 +258,9 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		float p0 = pos + getDire() * addp;
 		float sta = p0 + (getDire() == 1 ? W_VOLC_PIERCE : W_VOLC_INNER);
 		float end = p0 - (getDire() == 1 ? W_VOLC_INNER : W_VOLC_PIERCE);
+		int time = itm.sameTime() ? itm.time : itm.time + Math.round((float)b.r.nextInt(itm.maxtime - itm.time) / Data.VOLC_ITV) * Data.VOLC_ITV;
 
-		e.summoned.add(new ContVolcano(new AttackVolcano(e, as, sta, end, mult >= 100 ? WT_VOLC : WT_MIVC, itm.pid), p0, e.layer, itm.time, true));
+		e.summoned.add(new ContVolcano(new AttackVolcano(e, as, sta, end, mult >= 100 ? WT_VOLC : WT_MIVC, itm.pid), p0, e.layer, time, true));
 	}
 
 	@Override

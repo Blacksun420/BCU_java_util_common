@@ -74,7 +74,7 @@ public class PCoin extends Data {
 
 	private PCoin(int[] strs, MaskUnit du) {
 		this.du = du;
-		trait = Trait.convertType(strs[1], true);
+		trait = Trait.convertBitmask(strs[1], true);
 
 		for (int i = 0; i < 8; i++) {
 			if (2 + i * 14 >= strs.length)
@@ -222,8 +222,9 @@ public class PCoin extends Data {
 						tar.set(1, modifs[2] / 4);
 						tar.set(2, (modifs[2] + modifs[3]) / 4);
 						tar.set(3, modifs[1] * 20);
+						tar.set(4, modifs[1] * 20);
 						if (type[1] == P_MINIVOLC && tar.get(5) == 0)
-							tar.set(4, 20);
+							tar.set(5, 20);
 					} else {
 						tar.set(0, tar.get(0) + modifs[0]);
 						tar.set(1, tar.get(1) + Math.min(modifs[1], modifs[2]));
@@ -259,6 +260,8 @@ public class PCoin extends Data {
 						tar.set(0, 100);
 					else if (type[1] == P_ATKBASE)
 						tar.set(0, 300);
+					else if (type[1] == P_WAVE || type[1] == P_MINIWAVE)
+						tar.set(2, modifs[1]);
 				} else if (!((CustomEntity)du).common && !procSharable[type[1]]) {
 					AtkDataModel[] d = getAtks(ans, atki++);
 					if (d.length != 0)

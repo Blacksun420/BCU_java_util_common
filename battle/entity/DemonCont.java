@@ -17,6 +17,7 @@ public class DemonCont extends EAnimCont {
         else
             volc = atk.handler.ds ? atk.attacker.getProc().MINIDEATHSURGE : atk.getProc().MINIVOLC;
         ent = e;
+        e.status.surgecountered++;
         e.basis.lea.add(this);
     }
 

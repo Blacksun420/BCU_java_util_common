@@ -261,19 +261,28 @@ public class Data {
 		public static class WAVE extends PROB {
 			@Order(1)
 			public int lv;
-			@Order(3)
-			public boolean hitless;
+			@Order(2)
+			@JsonField(defval = "this.sameLv")
+			public int maxlv;
 			@Order(4)
-			public boolean inverted;
+			public boolean hitless;
 			@Order(5)
+			public boolean inverted;
+			@Order(6)
 			@JsonField(defval = "isEmpty")
 			public ProcID pid = new ProcID();
+
+			public boolean sameLv() {
+				return lv == maxlv;
+			}
 
 			@Override
 			public int[] setTalent(int[] nps) {
 				int min = lv == 0 ? 1 : 0;
 				nps[4] = Math.max(min, nps[4]);
 				nps[5] = Math.max(min, nps[5]);
+				nps[6] = Math.max(nps[6], nps[4]);
+				nps[7] = Math.max(nps[7], nps[5]);
 				return super.setTalent(nps);
 			}
 
@@ -281,20 +290,32 @@ public class Data {
 			public void add(ProcItem proc) {
 				super.add(proc);
 				lv = Math.max(1, lv);
+				maxlv = Math.max(lv, maxlv);
 			}
 
 			@JsonDecoder.OnInjected
 			public void inject(JsonObject jobj) {
 				if (jobj.has("type"))
 					hitless = jobj.getAsJsonObject("type").get("hitless").getAsBoolean();
+				maxlv = Math.max(lv, maxlv);
+			}
+
+			@Override
+			public boolean def_exists() {
+				return prob != 0 || lv != 0 || !sameLv() || hitless || !pid.isEmpty();
 			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class MINIWAVE extends WAVE {
-			@Order(2)
+			@Order(3)
 			@JsonField(defval = "20")
 			public int multi = 20;
+
+			@Override
+			public boolean def_exists() {
+				return super.def_exists() || multi != 20;
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -312,12 +333,15 @@ public class Data {
 			public int dis_1;
 			@Order(3)
 			public int time;
-			@Order(5)
-			public boolean hitless;
+			@Order(4)
+			@JsonField(defval = "this.sameTime")
+			public int maxtime;
 			@Order(6)
+			public boolean hitless;
+			@Order(7)
 			@JsonField(defval = "isEmpty")
 			public ProcID pid = new ProcID();
-			@Order(7)
+			@Order(8)
 			@JsonField(defval = "1")
 			public int spawns = 1;//Only for deathsurges
 
@@ -326,6 +350,8 @@ public class Data {
 				int min = time == 0 ? 1 : 0;
 				nps[8] = Math.max(min, nps[8] / VOLC_ITV) * VOLC_ITV;
 				nps[9] = Math.max(min, nps[9] / VOLC_ITV) * VOLC_ITV;
+				nps[10] = Math.max(nps[8] / VOLC_ITV, nps[10] / VOLC_ITV) * VOLC_ITV;
+				nps[11] = Math.max(nps[9] / VOLC_ITV, nps[11] / VOLC_ITV) * VOLC_ITV;
 				int d0 = nps[4], d1 = nps[5];
 				nps[4] = Math.min(d0, nps[6]);
 				nps[5] = Math.min(d1, nps[7]);
@@ -334,24 +360,46 @@ public class Data {
 				return super.setTalent(nps);
 			}
 
+			public boolean sameTime() {
+				return maxtime == time;
+			}
+
 			@Override
 			public void add(ProcItem proc) {
 				super.add(proc);
 				time = Math.max(VOLC_ITV, time);
+				maxtime = Math.max(time, maxtime);
 			}
 
 			@JsonDecoder.OnInjected
 			public void inject(JsonObject jobj) {
 				if (jobj.has("type"))
 					hitless = jobj.getAsJsonObject("type").get("hitless").getAsBoolean();
+				maxtime = Math.max(time, maxtime);
+			}
+
+			@Override
+			public boolean def_exists() {
+				return prob != 0 || dis_0 != 0 || dis_1 != 0 || time != 0 || !sameTime() || hitless || !pid.isEmpty() || spawns != 1;
 			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class MINIVOLC extends VOLC {
-			@Order(4)
+			@Order(5)
 			@JsonField(defval = "20")
 			public int mult = 20;
+
+			@Override
+			public boolean def_exists() {
+				return super.def_exists() || mult != 20;
+			}
+		}
+
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class COUNTERSURGE extends PMC {
+			@Order(3)
+			public int max_times = 0;
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -1683,7 +1731,7 @@ public class Data {
 		@Order(67)
 		public final MINIVOLC MINIVOLC = new MINIVOLC();
 		@Order(68)
-		public final PMC DEMONVOLC = new PMC();
+		public final COUNTERSURGE DEMONVOLC = new COUNTERSURGE();
 		@Order(69)
 		public final STATINC DMGINC = new STATINC(); //Merges Strong against, Massive Damage, and Insane Damage
 		@Order(70)

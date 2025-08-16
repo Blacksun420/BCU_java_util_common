@@ -348,9 +348,8 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 
 			if (fa != null) {
 				scaledPosition = fa.getSize().times(sizer).times(pos);
-			} else {
+			} else
 				scaledPosition = P.newP(sizer).times(pos);
-			}
 			g.translate(scaledPosition.x, scaledPosition.y);
 			g.scale(hf, vf);
 		} else if (fa != null && b.model.ints[2] == 255 && b.EWarp) {
@@ -367,19 +366,17 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 		} else {
 			if (b.model.confs.length > 0) {
 				int[] data = b.model.confs[0];
+				P p0 = getBaseSize(false);
 
-				P p0 = getBaseSize(false).times(data[2], data[3]).times(sizer).times(hf, vf);
-				g.translate(-p0.x, -p0.y);
-				P.delete(p0);
 				P shi = P.newP(data[2] * (b.pvt ? -1 : 1), data[3]).times(p0);
+				P.delete(p0);
 				P p3 = shi.times(sizer);
 				g.translate(-p3.x, -p3.y);
 
 				P.delete(shi);
 			}
-			P p0 = getSize().times(sizer).times(piv).times(hf, vf);
+			P p0 = getSize();
 			P p = P.newP(piv).times(p0).times(sizer);
-			g.translate(p0.x, p0.y);
 			g.scale(hf, vf);
 			P.delete(p0);
 			g.translate(p.x, p.y);
