@@ -420,7 +420,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				effs[A_SHIELD] = null;
 			if (effs[A_WAVE_INVALID] != null && effs[A_WAVE_INVALID].done())
 				effs[A_WAVE_INVALID] = null;
-			if (e.status.strengthen <= 0)
+			if (e.status.strengthen <= 0 && e.getKillStrengthen() == 0)
 				effs[A_UP] = null;
 			if (effs[A_B] != null && effs[A_B].done())
 				effs[A_B] = null;
@@ -1250,7 +1250,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	public static class ProcManager extends BattleObj {
 
 		public boolean lethal;
-		public int kb, strengthen, adrenaline = 100, money, dcut, dcap, poison, regencount, kill_stacks;
+		public int kb, strengthen, adrenaline = 100, money, dcut, dcap, poison, regencount;
 		public double slow, curse, seal, wild, rage, hypno;
 		public final int[] shield = new int[2];
 		public final double[] stop = new double[2], inv = new double[3];
@@ -1609,6 +1609,15 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 */
 	public int kill_count = 0;
 	private Entity lastAttacker = null;
+	public float getKillStrengthen() {
+		Proc.KILLSTRENGTHEN ks = getProc().KILLSTRENGTHEN;
+		int stacks = kill_count / ks.kill_count;
+		if (ks.max_stacks > 0)
+			stacks = Math.min(kill_count / ks.kill_count, ks.max_stacks);
+		if (ks.mult * stacks > 0)
+			anim.getEff(P_STRONG);
+		return ks.mult * stacks / 100;
+	}
 
 	/**
 	 * Procs
@@ -2908,13 +2917,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 */
 	protected void onLastBreathe() {
 		killCounted = true;
-		if (lastAttacker != null) {
+		if (lastAttacker != null)
 			lastAttacker.kill_count++;
-			Proc.KILLSTRENGTHEN str = lastAttacker.getProc().KILLSTRENGTHEN;
-			if ((str.max_stacks == 0 || str.max_stacks > lastAttacker.status.kill_stacks) &&
-					lastAttacker.kill_count % str.kill_count == 0 && str.perform(basis.r))
-				lastAttacker.status.kill_stacks++;
-		}
 	}
 
 	/**

@@ -1211,6 +1211,11 @@ public class Data {
 			@Order(2)
 			@JsonField(defval = "1")
 			public int max_stacks = 1;//0 for infinite
+
+			@Override
+			public boolean exists() {
+				return mult > 0;
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -2076,7 +2081,8 @@ public class Data {
 	public static final byte P_CANONCHARGE = 82;
 	public static final byte P_IMUALL = 83;
 	public static final byte P_KILLSTRENGTHEN = 84;
-	public static final byte PROC_TOT = 83;
+	public static final byte P_COMBOCOOLDOWN = 85;
+	public static final byte PROC_TOT = 86;
 
 	public static final boolean[] procSharable = {
 			false, //kb
