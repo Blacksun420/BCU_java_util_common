@@ -1202,12 +1202,10 @@ public class Data {
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
-		public static class KILLSTRENGTHEN extends ProcItem {
-			@Order(0)
-			public float mult;
+		public static class KILLSTRENGTHEN extends MULT {
 			@Order(1)
-			@JsonField(defval = "1")
-			public int kill_count = 1;
+			@JsonField(defval = "10")
+			public int kill_count = 10;
 			@Order(2)
 			@JsonField(defval = "1")
 			public int max_stacks = 1;//0 for infinite
@@ -1215,6 +1213,24 @@ public class Data {
 			@Override
 			public boolean exists() {
 				return mult > 0;
+			}
+
+			@Override
+			public int[] setTalent(int[] nps) {
+				nps[4] = Math.max(1-kill_count, nps[4]);
+				nps[5] = Math.max(nps[4], nps[5]);
+				nps[6] = Math.max(-max_stacks, nps[6]);
+				nps[7] = Math.max(nps[6], nps[7]);
+				return super.setTalent(nps);
+			}
+			@Override
+			public void add(ProcItem pi) {
+				super.add(pi);
+				KILLSTRENGTHEN m = (KILLSTRENGTHEN)pi;
+				if (m.mult == 0)
+					return;
+				kill_count = Math.max(1, kill_count+m.kill_count);
+				max_stacks = Math.max(0, max_stacks+m.max_stacks);
 			}
 		}
 

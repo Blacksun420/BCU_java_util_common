@@ -1068,6 +1068,36 @@ public class Editors {
 				t.noHB = false;
 			}
 		}, eg -> t -> setComponentVisibility(eg, !def || t.prob > 0, 1)));
+
+		map().put("KILLSTRENGTHEN", new EditControl<>(Proc.KILLSTRENGTHEN.class, (t) -> {
+			t.mult = Math.max(0, t.mult);
+			if (!def)
+				return;
+			if (t.mult == 0) {
+				t.max_stacks = 1;
+				t.kill_count = 10;
+			} else {
+				t.kill_count = Math.max(1, t.kill_count);
+				t.max_stacks = Math.max(0, t.max_stacks);
+			}
+		}, eg -> t -> setComponentVisibility(eg, !def || t.mult > 0, 1)));
+
+		map().put("COMBOCOOLDOWN", new EditControl<>(Proc.PMC.class, t -> {
+			t.prob = Math.max(def ? 0 : -100, Math.min(t.prob, 100));
+			if (!def)
+				return;
+			if (t.prob == 0) {
+				t.mult = 0;
+				t.count = 1;
+			} else if (t.mult == 0) {
+				t.count = 2;
+				t.mult = 2;
+			} else
+				t.count = Math.max(t.count, 1);
+		}, eg -> t -> {
+			setComponentVisibility(eg, !def || t.prob > 0, 1, 2);
+			setComponentVisibility(eg, def && t.prob > 0, 2);
+		}));
 	}
 
 	private static void setComponentVisibility(EditorGroup egg, boolean boo, int... fields) {

@@ -138,8 +138,6 @@ public class EUnit extends Entity {
 							getProc().DEMONVOLC.prob += eff;
 							break;
 						case ORB_KILLSTRENGTHEN:
-							if (getProc().KILLSTRENGTHEN.mult == 0)
-								getProc().KILLSTRENGTHEN.kill_count = 10;
 							getProc().KILLSTRENGTHEN.mult += eff;
 							break;
 						case ORB_LESSCD:
