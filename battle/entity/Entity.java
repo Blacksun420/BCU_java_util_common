@@ -2918,8 +2918,10 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 */
 	protected void onLastBreathe() {
 		killCounted = true;
-		if (lastAttacker != null)
+		if (lastAttacker != null) {
 			lastAttacker.kill_count++;
+			basis.dmgStatistics.get(lastAttacker.data.getPack())[2]++;
+		}
 	}
 
 	/**
@@ -3225,7 +3227,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		int spwn = basis.spawns.getOrDefault(data.getPack(), 0) + 1;
 		basis.spawns.put(data.getPack(), spwn);
 		if (spwn == 1)//first spawned
-			basis.dmgStatistics.put(data.getPack(), new long[2]);
+			basis.dmgStatistics.put(data.getPack(), new long[3]);
 
 		if (getProc().DEATHSURGE.prob > 0 && spwn % getProc().DEATHSURGE.spawns != 0)
 			getProc().DEATHSURGE.clear();
