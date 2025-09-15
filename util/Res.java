@@ -237,9 +237,9 @@ public class Res extends ImgCore {
 		aux.icon[1][P_REFUND] = new VImg("./org/page/icons/refund.png");
 		aux.icon[1][P_CANONCHARGE] = new VImg("./org/page/icons/cannoncharge.png");
 		aux.icon[1][P_IMUALL] = new VImg(parts[231]);
-		//aux.icon[1][P_KILLSTRENGTHEN] = new VImg(parts[231]);
-		//aux.icon[1][P_COMBOCOOLDOWN] = new VImg(parts[231]);
+		aux.icon[1][P_COMBOCOOLDOWN] = new VImg(parts[94]);
 
+		aux.icon[1][P_KILLSTRENGTHEN] = new VImg("./org/page/icons/strongkill.png");
 		aux.icon[1][P_IMUSUMMON] = new VImg("./org/page/icons/SummonX.png");
 		aux.icon[1][P_DMGCUT] = new VImg("./org/page/icons/DmgCut.png");
 		aux.icon[1][P_DMGCAP] = new VImg("./org/page/icons/DmgCap.png");
