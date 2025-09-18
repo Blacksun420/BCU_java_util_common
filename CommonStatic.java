@@ -117,6 +117,7 @@ public class CommonStatic {
 		public int[] ints = new int[] { 1, 1, 1, 2 };
 		@JsonField(defval = "true")
 		public boolean ref = true, twoRow = true;
+		@JsonField(block = true)
 		public boolean battle = false, icon = false;
 		/**
 		 * Use this variable to unlock plus level for aku outbreak
