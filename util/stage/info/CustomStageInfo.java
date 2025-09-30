@@ -51,7 +51,7 @@ public class CustomStageInfo implements StageInfo {
     public CustomStageInfo(Stage st) {
         this.st = st;
         st.info = this;
-        if (st.getMC() instanceof PackMapColc)
+        if (st.getCont() != Stage.CLIPSM && st.getMC() instanceof PackMapColc)
             ((PackMapColc)st.getMC()).si.add(this);
     }
 
