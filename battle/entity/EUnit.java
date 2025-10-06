@@ -154,6 +154,9 @@ public class EUnit extends Entity {
 						case ORB_RESWEAKEN:
 							getProc().IMUWEAK.mult += eff;
 							break;
+						case ORB_RESSURGE:
+							getProc().IMUVOLC.mult += eff;
+							break;
 					}
 				}
 		}

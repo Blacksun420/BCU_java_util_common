@@ -22,7 +22,7 @@ public class Limit extends Data implements BattleStatic {
 
 		public DefLimit(String[] strs) {
 			int mid = Integer.parseInt(strs[0]);
-			if(mid >= 22000 && mid < 22002)
+			if(mid >= 22000 && mid < 22003)//CotC data
 				mid -= 18985; //3015
 			StageMap map = DefMapColc.getMap(mid);
 

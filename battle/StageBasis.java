@@ -4,6 +4,7 @@ import common.CommonStatic;
 import common.battle.attack.AttackAb;
 import common.battle.attack.ContAb;
 import common.battle.data.MaskUnit;
+import common.battle.data.OrbInfo;
 import common.battle.entity.*;
 import common.pack.Identifier;
 import common.util.BattleObj;
@@ -494,7 +495,7 @@ public class StageBasis extends BattleObj {
 			}
 		}
 
-		if (elu.price[i][j] > money) {
+		if (getCost(i,j) > money) {
 			if (manual)
 				CommonStatic.setSE(SE_SPEND_FAIL);
 			return false;
@@ -520,10 +521,10 @@ public class StageBasis extends BattleObj {
 			elu.resetCD(i, j);
 			elu.smnd[i][j] = true;
 			rem_spawns--;
+			money -= getCost(i,j);
 			eu.added(-1, st.len - 700);
 
 			le.add(eu);
-			money -= elu.price[i][j];
 			if (st.minUSpawn == st.maxUSpawn)
 				unitRespawnTime = st.minUSpawn;
 			else
@@ -537,6 +538,18 @@ public class StageBasis extends BattleObj {
 			return true;
 		}
 		return false;
+	}
+
+	public int getCost(int i, int j) {
+		if (elu.price[i][j] == -1 || elu.price[i][j] == -2 || !(b.lu.fs[i][j] instanceof Form) ||spawns.getOrDefault((Form)b.lu.fs[i][j], 0) % 2 == 0
+			|| ((EForm)b.lu.efs[i][j]).getLevel().getOrbs() == null)
+			return elu.price[i][j];
+		int[][] orbes = ((EForm)b.lu.efs[i][j]).getLevel().getOrbs();
+		int mul = 100;
+		for (int[] orb : orbes)
+			if (orb.length == ORB_TOT && orb[ORB_TYPE] == ORB_LOWERCOST)
+				mul -= OrbInfo.get((byte)orb[ORB_TYPE],(byte)orb[ORB_GRADE])[0];
+		return elu.price[i][j] * mul / 100;
 	}
 
 	@Override

@@ -2611,7 +2611,9 @@ public class Data {
 	public static final byte ORB_LESSCD = 19;
 	public static final byte ORB_RESFREEZE = 20;
 	public static final byte ORB_RESWEAKEN = 21;
-	public static final byte ORB_TYPE_TOTAL = 22;
+	public static final byte ORB_LOWERCOST = 22;
+	public static final byte ORB_RESSURGE = 23;
+	public static final byte ORB_TYPE_TOTAL = 24;
 	public static final byte ORB_TYPE = 0, ORB_TRAIT = 1, ORB_GRADE = 2, ORB_TOT = 3;
 
 	public static final short[] GATYA = { 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 160, 161, 164, 167,
