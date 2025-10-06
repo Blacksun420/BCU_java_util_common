@@ -105,7 +105,6 @@ public abstract class DataEntity extends Data implements MaskEntity {
 					ts.add(t);
 		return ts;
 	}
-
 	@Override
 	public int getHb() {
 		return hb;
