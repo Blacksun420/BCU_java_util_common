@@ -83,7 +83,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 			this.d0 = d0 * pc.getStatMultiplication(PC2_ATK, lv.getTalents());
 		else
 			this.d0 = d0;
-		this.d1 = d1 * (1 + ent.basis.elu.getInc(Data.C_ATK) * 0.01);
+		this.d1 = d1 * (1 + ent.basis.elu.getInc(Data.C_ATK, (EUnit)ent) * 0.01);
 
 		MaskAtk[][] matks = data.getAllAtks();
 		MaskAtk[][] satks = data.getSpAtks(false);

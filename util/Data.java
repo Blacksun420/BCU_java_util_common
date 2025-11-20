@@ -1955,8 +1955,9 @@ public class Data {
 	public static final byte TRAIT_BARON = 12;
 	public static final byte TRAIT_BEAST = 13;
 	public static final byte TRAIT_SAGE = 14;
-	public static final byte TRAIT_INFH = 15;
-	public static final byte TRAIT_TOT = 16;
+	public static final byte TRAIT_VILLAIN = 15;
+	public static final byte TRAIT_INFH = 16;
+	public static final byte TRAIT_TOT = 17;
 
 	// treasure
 	public static final byte T_RED = 0;
@@ -2450,7 +2451,11 @@ public class Data {
 	public static final byte C_M_MAX = 9;
 	public static final byte C_RESP = 11;
 	public static final byte C_MEAR = 12;
-	public static final byte C_TOT = 25;
+	public static final byte C_XP = 13;
+	public static final byte C_VKILL = 25;
+	public static final byte C_IMUWAVE = 26;
+	public static final byte C_COST = 27;
+	public static final byte C_TOT = 28;
 
 	// Effects Anim index
 	public static final byte A_DOWN = 0;
@@ -2613,7 +2618,8 @@ public class Data {
 	public static final byte ORB_RESWEAKEN = 21;
 	public static final byte ORB_LOWERCOST = 22;
 	public static final byte ORB_RESSURGE = 23;
-	public static final byte ORB_TYPE_TOTAL = 24;
+	public static final byte ORB_BOUNTY = 24;
+	public static final byte ORB_TYPE_TOTAL = 25;
 	public static final byte ORB_TYPE = 0, ORB_TRAIT = 1, ORB_GRADE = 2, ORB_TOT = 3;
 
 	public static final short[] GATYA = { 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 160, 161, 164, 167,

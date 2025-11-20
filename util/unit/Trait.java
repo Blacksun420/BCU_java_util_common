@@ -24,7 +24,7 @@ public class Trait extends Data implements Indexable<PackData, Trait>, Comparabl
     public static void read() {
         //Reads traits from BC and implements it into the main pack
         PackData.DefPack data = UserProfile.getBCData();
-        String[] traitNames = {"Red", "Floating", "Black", "Metal", "Angel", "Alien", "Zombie", "Aku", "Relic", "White", "EVA", "Witch", "Baron", "Beast", "Sage", "base", "cannon"};
+        String[] traitNames = {"Red", "Floating", "Black", "Metal", "Angel", "Alien", "Zombie", "Aku", "Relic", "White", "EVA", "Witch", "Baron", "Beast", "Sage", "Villain", "base", "cannon"};
         for (String name : traitNames) {
             Trait t = new Trait(data.getNextID(Trait.class));
             t.name = name;

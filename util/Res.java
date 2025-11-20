@@ -289,6 +289,7 @@ public class Res extends ImgCore {
 		aux.icon[3][TRAIT_BEAST] = new VImg("./org/page/icons/Beast.png");
 		aux.icon[3][TRAIT_SAGE] = new VImg("./org/page/icons/SuperSage.png");
 		aux.icon[3][TRAIT_INFH] = new VImg("./org/page/icons/Base.png");
+		aux.icon[3][TRAIT_VILLAIN] = new VImg(parts[384]);
 
 		//These are used for talent edit page icons
 		aux.icon[4][PC2_HP] = new VImg(parts[120]);

@@ -12,6 +12,7 @@ import common.pack.UserProfile;
 import common.system.files.VFile;
 import common.util.Data;
 import common.util.lang.MultiLangCont;
+import common.util.stage.CharaGroup;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -44,10 +45,11 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 			String[] strs = qs.poll().trim().split("\t");
 			if (strs.length < 5)
 				continue;
-			for (int j = 0; j < 5; j++) {
+			for (int j = 0; j < 5; j++)
 				aux.values[i][j] = Integer.parseInt(strs[j]);
-			}
 		}
+		aux.values[C_IMUWAVE] = new int[]{10, 30, 60, 100,-50};
+		aux.values[C_COST][4] = -10;
 		qs = VFile.readLine("./org/data/NyancomboFilter.tsv");
 		aux.filter = new int[qs.size()][];
 		for (i = 0; i < aux.filter.length; i++) {
@@ -58,6 +60,10 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 		}
 	}
 
+	public static boolean unrestrictable(int type) {
+		return (type >= C_C_INI && type <= C_RESP && type != C_RESP);//No point in restricting money/base combos
+	}
+
 	@JsonClass.JCIdentifier
 	@JsonField
 	public Identifier<Combo> id;
@@ -65,8 +71,17 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 	@JsonField
 	public int lv, type;
 
+	@JsonField
+	public Identifier<CharaGroup> restriction;
+
 	@JsonField(alias = AbForm.AbFormJson.class)
 	public Form[] forms;
+
+	@JsonField(gen = JsonField.GenType.GEN, defval = "allForms")
+	public byte[] formRestriction;//0 = This form or higher only (Default), 1 = this form or lower only, 2 = exclusively this form
+
+	@JsonField(defval = "1")
+	public byte row = 1;//0 = Any row, 1 = 1st row only (Default), 2 = 2nd row only, 3 = Any but all must be on the same row
 
 	@JsonField(defval = "new combo")
 	public String name = "new combo";
@@ -79,17 +94,20 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 	protected Combo(Identifier<Combo> ID, String[] strs) {
 		id = ID;
 		name = strs[0];
+		if (Integer.parseInt(strs[2]) >= 0)
+			restriction = Identifier.parseInt(Integer.parseInt(strs[2]), CharaGroup.class);
 		int n;
 		for (n = 0; n < 5; n++)
-			if (Integer.parseInt(strs[2 + n * 2]) == -1)
+			if (Integer.parseInt(strs[3 + n * 2]) == -1)
 				break;
 		forms = new Form[n];
+		formRestriction = new byte[n];
 		for (int i = 0; i < n; i++) {
-			Identifier<AbUnit> u = Identifier.parseInt(Integer.parseInt(strs[2 + i * 2]), Unit.class);
-			forms[i] = u.get().getForms()[Integer.parseInt(strs[3 + i * 2])];
+			Identifier<AbUnit> u = Identifier.parseInt(Integer.parseInt(strs[3 + i * 2]), Unit.class);
+			forms[i] = u.get().getForms()[Integer.parseInt(strs[4 + i * 2])];
 		}
-		type = Integer.parseInt(strs[12]);
-		lv = Integer.parseInt(strs[13]);
+		type = Integer.parseInt(strs[13]);
+		lv = type == C_IMUWAVE || Integer.parseInt(strs[14]) >= 5 ? 3 : Integer.parseInt(strs[14]);
 	}
 
 	public Combo(Identifier<Combo> ID, Combo c) {
@@ -98,6 +116,9 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 		lv = c.lv;
 		type = c.type;
 		forms = new Form[c.forms.length];
+		formRestriction = c.formRestriction.clone();
+		restriction = c.restriction;
+		row = c.row;
 	}
 
 	public Combo(Identifier<Combo> ID, Form f) {
@@ -105,6 +126,7 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 		lv = 0;
 		type = 0;
 		forms = new Form[]{f};
+		formRestriction = new byte[1];
 	}
 
 	@Override
@@ -130,19 +152,32 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 	public void setType(int t) {
 		for (BasisLU blu : BasisLU.allLus())
 			if (blu.lu.coms.contains(this)) {
-				blu.lu.inc[type] -= CommonStatic.getBCAssets().values[type][lv];
-				blu.lu.inc[t] += CommonStatic.getBCAssets().values[t][lv];
+				blu.lu.getCombosFor(restriction, false).inc[type] -= CommonStatic.getBCAssets().values[type][lv];
+				blu.lu.getCombosFor(restriction, false).inc[t] += CommonStatic.getBCAssets().values[t][lv];
 			}
 		type = t;
+		if (restriction != null && unrestrictable(t))
+			setRestriction(null);
 	}
 
 	public void setLv(int l) {
 		for (BasisLU blu : BasisLU.allLus())
 			if (blu.lu.coms.contains(this)) {
-				blu.lu.inc[type] -= CommonStatic.getBCAssets().values[type][lv];
-				blu.lu.inc[type] += CommonStatic.getBCAssets().values[type][l];
+				blu.lu.getCombosFor(restriction, false).inc[type] -= CommonStatic.getBCAssets().values[type][lv];
+				blu.lu.getCombosFor(restriction, false).inc[type] += CommonStatic.getBCAssets().values[type][l];
 			}
 		lv = l;
+	}
+
+	public void setRestriction(Identifier<CharaGroup> ncg) {
+		Identifier<CharaGroup> old = restriction;
+		restriction = ncg;
+		for (BasisLU blu : BasisLU.allLus())
+			if (blu.lu.coms.contains(this)) {
+				blu.lu.getCombosFor(old, false).inc[type] -= CommonStatic.getBCAssets().values[type][lv];
+				blu.lu.getCombosFor(ncg, true).inc[type] += CommonStatic.getBCAssets().values[type][lv];
+				blu.lu.validateIncs();
+			}
 	}
 
 	public void addForm(Form f) {
@@ -162,21 +197,19 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 	}
 
 	public boolean containsForm(Form f) {
-		for (Form cf : forms)
-			if (f.unit == cf.unit && f.fid >= cf.fid)
+		for (byte i = 0; i < forms.length; i++)
+			if (f.unit == forms[i].unit && correctForm(i, f.fid))
 				return true;
 		return false;
 	}
+	public boolean correctForm(int ind, int fid) {
+		byte res = formRestriction[ind];
+		return fid == forms[ind].fid || (res == 0 && fid > forms[ind].fid) || (res == 1 && fid < forms[ind].fid);
+	}
 
 	public void unload() {
-		for (BasisLU blu : BasisLU.allLus()) {
-			blu.lu.coms.remove(this);
-			blu.lu.inc[type] -= CommonStatic.getBCAssets().values[type][lv];
-			for (Form frm : forms)
-				for (int i = 0; i < 5; i++)
-					if (blu.lu.fs[0][i] instanceof Form && blu.lu.fs[0][i].unit() == frm.unit && blu.lu.fs[0][i].getFid() >= frm.fid)
-						blu.lu.loc[i]--;
-		}
+		for (BasisLU blu : BasisLU.allLus())
+			blu.lu.removeCombo(this);
 	}
 
 	private void updateLUs() {
@@ -199,10 +232,28 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 					f.add(form);
 			forms = f.toArray(new Form[0]);
 		}
+		if (lv == 5)
+			lv = 3;
+		if (formRestriction == null || formRestriction.length != forms.length)
+			formRestriction = new byte[forms.length];
+	}
+
+	@JsonDecoder.PostLoad
+	public void postLoad() {
+		PackData.UserPack pk = UserProfile.getUserPack(id.pack);
+		if (pk.desc.FORK_VERSION < 13 && type == C_IMUWAVE)
+			lv = 3;
 	}
 
 	@Override
 	public int compareTo(@NotNull Combo c) {
 		return id.compareTo(c.id);
+	}
+
+	public boolean allForms() {
+		for (byte r : formRestriction)
+			if (r > 0)
+				return false;
+		return true;
 	}
 }

@@ -82,7 +82,7 @@ public class BasisLU extends Basis implements Copable<BasisLU>, BattleStatic {
 
 	@Override
 	public int getInc(int type) {
-		return lu.inc[type];
+		return lu.incs.getFirst().inc[type];
 	}
 
 	public BasisLU randomize(int n) {

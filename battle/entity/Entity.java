@@ -1250,8 +1250,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	public static class ProcManager extends BattleObj {
 
 		public boolean lethal;
-		public int kb, strengthen, adrenaline = 100, money, dcut, dcap, poison, regencount, surgecountered;
-		public double slow, curse, seal, wild, rage, hypno;
+		public int kb, strengthen, adrenaline = 100, dcut, dcap, poison, regencount, surgecountered;
+		public double money, slow, curse, seal, wild, rage, hypno;
 		public final int[] shield = new int[2];
 		public final double[] stop = new double[2], inv = new double[3];
 		public final float[] warp = new float[3], burs = new float[2], revs = new float[2];
@@ -1309,6 +1309,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					for (Proc.BLESSING b : blessings.keySet())
 						e.traits.addAll(b.traits);
 				}
+				if (e instanceof EUnit)
+					((EUnit)e).setOrbProcs();
 			}
 		}
 
@@ -1422,6 +1424,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			blessings.clear();
 			for (int i = 0; i < PROC_TOT; i++)
 				e.proc.getArr(i).set(e.data.getProc().getArr(i));
+			if (e instanceof EUnit)
+				((EUnit)e).setOrbProcs();
 
 			e.traits.clear();
 			if (e.dire == 1 || curse + seal == 0)
@@ -1661,8 +1665,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 */
 	protected Entity(StageBasis b, MaskEntity de, EAnimU ea, float lvMagnif, PCoin pc, Level lv) {
 		super((pc != null && lv != null && lv.getTalents().length == pc.max.length) ?
-				(int) ((1 + b.elu.getInc(Data.C_DEF) * 0.01) * (int) ((int) (Math.round(de.getHp() * lvMagnif) * b.b.t().getDefMulti()) * pc.getStatMultiplication(Data.PC2_HP, lv.getTalents()))) :
-				(int) ((1 + b.elu.getInc(Data.C_DEF) * 0.01) * (int) (Math.round(de.getHp() * lvMagnif) * b.b.t().getDefMulti()))
+				(int) ((1 + b.elu.getInc(Data.C_DEF,((MaskUnit)de).getPack()) * 0.01) * (int) ((int) (Math.round(de.getHp() * lvMagnif) * b.b.t().getDefMulti()) * pc.getStatMultiplication(Data.PC2_HP, lv.getTalents()))) :
+				(int) ((1 + b.elu.getInc(Data.C_DEF,((MaskUnit)de).getPack()) * 0.01) * (int) (Math.round(de.getHp() * lvMagnif) * b.b.t().getDefMulti()))
 		);
 		basis = b;
 		data = de;
@@ -1767,12 +1771,13 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		if (atk.waveType != 5 && (((WT_WAVE | WT_MINI | WT_MEGA) & atk.waveType) > 0) && atk.canon != 16) {
 			Proc.WAVE w = (WT_WAVE & atk.waveType) > 0 ? atk.getProc().WAVE : atk.getProc().MINIWAVE;
 			if (getProc().IMUWAVE.pid.match(w.pid)) {
-				if (getProc().IMUWAVE.mult > 0)
+				double imu = getProc().IMUWAVE.mult + (dire == -1 ? basis.elu.getInc(C_IMUWAVE, (EUnit)this) : 0);
+				if (imu > 0)
 					anim.getEff(P_WAVE);
-				if (getProc().IMUWAVE.mult == 100)
+				if (imu >= 100)
 					return;
 				else
-					dmg = (int) (dmg * (100 - getProc().IMUWAVE.mult) / 100);
+					dmg = (int) (dmg * (100 - imu) / 100);
 			}
 		}
 		if ((atk.waveType & WT_MOVE) > 0 && getProc().IMUMOVING.pid.match(atk.getProc().MOVEWAVE.pid)) {
@@ -1959,7 +1964,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		damage += dmg;
 		zx.damaged(atk);
 		lastAttacker = atk.attacker;
-		status.money = (int) atk.getProc().BOUNTY.mult;
+		status.money = atk.getProc().BOUNTY.mult;
 		if (dmg < 0)
 			anim.getEff(HEAL);
 

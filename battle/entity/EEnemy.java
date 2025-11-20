@@ -41,7 +41,7 @@ public class EEnemy extends Entity {
 		super.kill(glass);
 
 		if (!basis.st.trail && !glass && basis.maxBankLimit() <= 0) {
-			float mul = basis.b.t().getDropMulti(basis.elu.getInc(C_MEAR)) * (1 + (status.money / 100f));
+			double mul = basis.b.t().getDropMulti(basis.elu.getInc(C_MEAR)) * (1 + (status.money / 100));
 			basis.money = (int) (basis.money + mul * ((MaskEnemy) data).getDrop());
 		}
 		if (rev != null) {
@@ -68,13 +68,17 @@ public class EEnemy extends Entity {
 			return 0;
 		if (e instanceof EUnit) {
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_WITCH)) && (e.getAbi() & AB_WKILL) > 0)
-				ans *= basis.b.t().getWKAtk(basis.elu.getInc(C_WKILL));
+				ans *= basis.b.t().getWKAtk(basis.elu.getInc(C_WKILL, (EUnit)e));
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_EVA)) && (e.getAbi() & AB_EKILL) > 0)
-				ans *= basis.b.t().getEKAtk(basis.elu.getInc(C_EKILL));
+				ans *= basis.b.t().getEKAtk(basis.elu.getInc(C_EKILL, (EUnit)e));
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_BARON)) && (e.getAbi() & AB_BAKILL) > 0)
-				ans *= 1.6;
+				ans *= 1.6f;
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_BEAST)) && matk.getProc().BSTHUNT.active)
-				ans *= 2.5;
+				ans *= 2.5f;
+			if (traits.contains(BCTraits.get(TRAIT_SAGE)) && (e.getAbi() & AB_SKILL) > 0)
+				ans *= SUPER_SAGE_HUNTER_ATTACK;
+			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_VILLAIN)))
+				ans *= (float)(basis.elu.getInc(C_VKILL, (EUnit)e) / 1000);
 		}
 		return ans;
 	}
@@ -108,9 +112,9 @@ public class EEnemy extends Entity {
 					ans /= getProc().DEFINC.mult/100.0;
 			}
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_WITCH)) && (atk.abi & AB_WKILL) > 0)
-				ans *= basis.b.t().getWKAtk(basis.elu.getInc(C_WKILL));
+				ans *= basis.b.t().getWKAtk(basis.elu.getInc(C_WKILL, (EUnit)atk.attacker));
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_EVA)) && (atk.abi & AB_EKILL) > 0)
-				ans *= basis.b.t().getEKAtk(basis.elu.getInc(C_EKILL));
+				ans *= basis.b.t().getEKAtk(basis.elu.getInc(C_EKILL, (EUnit)atk.attacker));
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_BARON))) {
 				if ((atk.abi & AB_BAKILL) > 0)
 					ans = (int)(ans * 1.6);
@@ -125,6 +129,8 @@ public class EEnemy extends Entity {
 				ans *= 2.5;
 			if (traits.contains(BCTraits.get(TRAIT_SAGE)) && (atk.abi & AB_SKILL) > 0)
 				ans = (int) (ans * SUPER_SAGE_HUNTER_ATTACK);
+			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_VILLAIN)))
+				ans = (int)(ans * basis.elu.getInc(C_VKILL, (EUnit)atk.attacker) / 1000.0);
 		}
 		if (atk.canon == 16)
 			if ((touchable() & TCH_UG) > 0)

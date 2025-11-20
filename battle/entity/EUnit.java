@@ -72,14 +72,18 @@ public class EUnit extends Entity {
 		this.index = index;
 		this.isBase = isBase;
 		if (isBase) {
-			maxH = health = maxH * b.b.t().getBaseHealth(b.elu.getInc(C_BASE)) / 1000;
-			((AtkModelUnit)aam).d2 = b.b.t().getCanonAtk(b.elu.getInc(C_C_ATK)) / 100.0;
+			maxH = health = maxH * b.b.t().getBaseHealth(b.elu.getInc(C_BASE,this)) / 1000;
+			((AtkModelUnit)aam).d2 = b.b.t().getCanonAtk(b.elu.getInc(C_C_ATK,this)) / 100.0;
 			if (b.est.lim.stageLimit != null) {
 				((AtkModelUnit) aam).d2 *= b.est.lim.stageLimit.cannonMultiplier / 100.0;
 				maxH = health = maxH * b.est.lim.stageLimit.cannonMultiplier / 100;
 			}
 		}
+		this.level = level;
+		setOrbProcs();
+	}
 
+	public void setOrbProcs() {
 		if(((MaskUnit)data).getOrb() != null && level.getOrbs() != null) {
 			int[][] levelOrbs = level.getOrbs();
 			for (int[] orb : levelOrbs)
@@ -157,10 +161,11 @@ public class EUnit extends Entity {
 						case ORB_RESSURGE:
 							getProc().IMUVOLC.mult += eff;
 							break;
+						case ORB_BOUNTY:
+							getProc().BOUNTY.mult += eff;
 					}
 				}
 		}
-		this.level = level;
 	}
 
 	public EUnit(StageBasis b, MaskUnit de, EAnimU ea, float d0) {
@@ -192,7 +197,7 @@ public class EUnit extends Entity {
 	public void kill(boolean glass) {
 		super.kill(glass);
 		if (!glass && status.money != 0)
-			basis.money = (int)(basis.money-((status.money / 100.0) * (index != null ? basis.elu.price[index[0]][index[1]] : ((MaskUnit)data).getPrice() * basis.st.getCont().price * 100)));
+			basis.money = (int)(basis.money-((status.money / 100) * (index != null ? basis.elu.price[index[0]][index[1]] : ((MaskUnit)data).getPrice() * basis.st.getCont().price * 100)));
 		if (index != null)
 			basis.elu.smnd[index[0]][index[1]] = !basis.getAllOf(index[0],index[1]).isEmpty();
 
@@ -220,13 +225,19 @@ public class EUnit extends Entity {
 			return 0;
 		if (e instanceof EEnemy) {
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_WITCH)) && (e.getAbi() & AB_WKILL) > 0)
-				ans *= basis.b.t().getWKDef(basis.elu.getInc(C_WKILL));
+				ans *= basis.b.t().getWKDef(basis.elu.getInc(C_WKILL,this));
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_EVA)) && (e.getAbi() & AB_EKILL) > 0)
-				ans *= basis.b.t().getEKDef(basis.elu.getInc(C_EKILL));
+				ans *= basis.b.t().getEKDef(basis.elu.getInc(C_EKILL,this));
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_BARON)) && (e.getAbi() & AB_BAKILL) > 0)
 				ans = (float)(ans * 0.7);
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_BEAST)) && matk.getProc().BSTHUNT.active)
 				ans = (float)(ans * 0.6);
+			if (traits.contains(UserProfile.getBCData().traits.get(Data.TRAIT_SAGE)) && (e.getAbi() & AB_SKILL) > 0)
+				ans *= SUPER_SAGE_HUNTER_HP;
+			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_VILLAIN))) {
+				double re = basis.elu.getInc(C_VKILL,this) / 1000f;
+				ans = re == 0 ? ans : (int)(ans / re);
+			}
 		}
 		return ans;
 	}
@@ -279,14 +290,14 @@ public class EUnit extends Entity {
 			sharedTraits.addIf(atk.trait, t -> !t.BCTrait());
 			if (!sharedTraits.isEmpty()) {
 				if (status.curse == 0 && getProc().DEFINC.mult != 0)
-					ans = (int)(ans * basis.b.t().getDEF(getProc().DEFINC.mult, atk.trait, sharedTraits, ((MaskUnit) data).getOrb(), level, basis.elu.getInc(getProc().DEFINC.mult < 400 ? C_GOOD : C_RESIST)));
+					ans = (int)(ans * basis.b.t().getDEF(getProc().DEFINC.mult, atk.trait, sharedTraits, ((MaskUnit) data).getOrb(), level, basis.elu.getInc(getProc().DEFINC.mult < 400 ? C_GOOD : C_RESIST,this)));
 				if (atk.attacker.status.curse == 0 && atk.attacker.getProc().DMGINC.mult != 0)
 					ans = (int)(ans * atk.attacker.getProc().DMGINC.mult / 100.0);
 			}
 			if (atk.trait.contains(UserProfile.getBCData().traits.get(TRAIT_WITCH)) && (getAbi() & AB_WKILL) > 0)
-				ans = (int)(ans * basis.b.t().getWKDef(basis.elu.getInc(C_WKILL)));
+				ans = (int)(ans * basis.b.t().getWKDef(basis.elu.getInc(C_WKILL, this)));
 			if (atk.trait.contains(UserProfile.getBCData().traits.get(TRAIT_EVA)) && (getAbi() & AB_EKILL) > 0)
-				ans = (int)(ans * basis.b.t().getEKDef(basis.elu.getInc(C_EKILL)));
+				ans = (int)(ans * basis.b.t().getEKDef(basis.elu.getInc(C_EKILL, this)));
 			if (atk.trait.contains(UserProfile.getBCData().traits.get(TRAIT_BARON))) {
 				if ((getAbi() & AB_BAKILL) > 0)
 					ans = (int) (ans * 0.7);
@@ -301,6 +312,10 @@ public class EUnit extends Entity {
 				ans = (int)(ans * 0.6); //Not sure
 			if (atk.trait.contains(UserProfile.getBCData().traits.get(Data.TRAIT_SAGE)) && (getAbi() & AB_SKILL) > 0)
 				ans = (int) (ans * SUPER_SAGE_HUNTER_HP);
+			if (atk.trait.contains(UserProfile.getBCData().traits.get(TRAIT_VILLAIN))) {
+				double re = basis.elu.getInc(C_VKILL,this) / 1000f;
+				ans = re == 0 ? ans : (int)(ans / re);
+			}
 		}
 		// Perform orb
 		ans = getOrb(atk.trait, ans, false);
@@ -326,14 +341,14 @@ public class EUnit extends Entity {
 	@Override
 	protected float updateMove(float extmov) {
 		if (status.slow == 0)
-			extmov += (float)(data.getSpeed() * basis.elu.getInc(C_SPE) / 50) / 4f;
+			extmov += (float)(data.getSpeed() * basis.elu.getInc(C_SPE,this) / 50) / 4f;
 		return super.updateMove(extmov);
 	}
 
 	@Override
 	protected float getMov(float extmov) {
 		if (status.slow == 0)
-			extmov = extmov + (float)(data.getSpeed() * basis.elu.getInc(C_SPE) / 50) / 4f;
+			extmov = extmov + (float)(data.getSpeed() * basis.elu.getInc(C_SPE,this) / 50) / 4f;
 		return super.getMov(extmov);
 	}
 
@@ -385,7 +400,7 @@ public class EUnit extends Entity {
 		}
 		if (ini == 1 || ORB_LV == -1)
 			return ini;
-		float com = 1 + basis.elu.getInc(ORB_LV == ORB_STRONG ? C_GOOD : C_MASSIVE) * 0.01f;
+		float com = 1 + basis.elu.getInc(ORB_LV == ORB_STRONG ? C_GOOD : C_MASSIVE,this) * 0.01f;
 		return ini * com;
 	}
 
