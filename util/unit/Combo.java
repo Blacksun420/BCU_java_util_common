@@ -77,7 +77,7 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 	@JsonField(alias = AbForm.AbFormJson.class)
 	public Form[] forms;
 
-	@JsonField(gen = JsonField.GenType.GEN, defval = "allForms")
+	@JsonField(gen = JsonField.GenType.GEN, defval = "this.allForms")
 	public byte[] formRestriction;//0 = This form or higher only (Default), 1 = this form or lower only, 2 = exclusively this form
 
 	@JsonField(defval = "1")
@@ -182,17 +182,22 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 
 	public void addForm(Form f) {
 		forms = Arrays.copyOf(forms, forms.length + 1);
+		formRestriction = Arrays.copyOf(formRestriction, forms.length);
 		forms[forms.length - 1] = f;
 		updateLUs();
 	}
 
 	public void removeForm(int index) {
 		Form[] formSrc = new Form[forms.length - 1];
+		byte[] lims = new byte[formSrc.length];
 		for (int i = 0, j = 0; i < forms.length; i++) {
-			if (i != index)
-				formSrc[j++] = forms[i];
+			if (i == index)
+				continue;
+			lims[j] = formRestriction[i];
+			formSrc[j++] = forms[i];
 		}
 		forms = formSrc;
+		formRestriction = lims;
 		updateLUs();
 	}
 
