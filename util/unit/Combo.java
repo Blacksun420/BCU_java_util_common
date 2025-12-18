@@ -112,7 +112,7 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 			forms[i] = u.get().getForms()[Integer.parseInt(strs[4 + i * 2])];
 		}
 		type = Integer.parseInt(strs[13]);
-		lv = type == C_IMUWAVE || Integer.parseInt(strs[14]) >= 5 ? 3 : Integer.parseInt(strs[14]);
+		lv = Integer.parseInt(strs[14]);
 	}
 
 	public Combo(Identifier<Combo> ID, Combo c) {
