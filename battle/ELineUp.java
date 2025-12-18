@@ -49,9 +49,9 @@ public class ELineUp extends BattleObj {
 						for (int k = 0; k < coms.size(); k++) {
 							LineUp.ComboBuff bf = inc[0];
 							Combo c = coms.get(k); //1st check to not have negative due to banned combo
-							if (coms.get(k).restriction != null)
+							if (coms.get(k).group != null)
 								for (int l = 1; l < inc.length; l++)
-									if (inc[l].cg == c.restriction.get()) {
+									if (inc[l].cg == c.group) {
 										bf = inc[l];
 										break;
 									}
@@ -62,7 +62,7 @@ public class ELineUp extends BattleObj {
 						}
 					continue;
 				}
-				price[i][j] = sb.globalPrice() > 0 ? sb.globalPrice() : (int) (lu.efs[i][j].getPrice(sb.st.getCont().price) * (100 - getInc(C_COST, lu.fs[i][j])));
+				price[i][j] = sb.globalPrice() > 0 ? sb.globalPrice() : (int) (lu.efs[i][j].getPrice(sb.st.getCont().price) * (100 - getInc(C_DISCOUNT, lu.fs[i][j])));
 				maxC[i][j] = sb.globalCdLimit() > 0 ? sb.b.t().getFinResGlobal(sb.globalCdLimit(), getInc(C_RESP, lu.fs[i][j])) : sb.b.t().getFinRes(lu.efs[i][j].getRespawn(), getInc(C_RESP, lu.fs[i][j]));
 				if (lim != null && lim.stageLimit != null && lu.fs[i][j] instanceof Form) {
 					int r = ((Form)lu.fs[i][j]).unit.rarity;

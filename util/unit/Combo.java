@@ -76,8 +76,8 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 	@JsonField
 	public int lv, type;
 
-	@JsonField
-	public Identifier<CharaGroup> group;
+	@JsonField(alias = Identifier.class)
+	public CharaGroup group;
 
 	@JsonField(alias = AbForm.AbFormJson.class)
 	public Form[] forms;
@@ -100,7 +100,7 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 		id = ID;
 		name = strs[0];
 		if (Integer.parseInt(strs[2]) >= 0)
-			group = Identifier.parseInt(Integer.parseInt(strs[2]), CharaGroup.class);
+			group = Identifier.parseInt(Integer.parseInt(strs[2]), CharaGroup.class).get();
 		int n;
 		for (n = 0; n < 5; n++)
 			if (Integer.parseInt(strs[3 + n * 2]) == -1)
@@ -175,8 +175,8 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 		lv = l;
 	}
 
-	public void setGroup(Identifier<CharaGroup> ncg) {
-		Identifier<CharaGroup> old = group;
+	public void setGroup(CharaGroup ncg) {
+		CharaGroup old = group;
 		group = ncg;
 		for (BasisLU blu : BasisLU.allLus())
 			if (blu.lu.coms.contains(this)) {

@@ -363,17 +363,17 @@ public class LineUp extends Data {
 	 * @param addIfAbsent duh
 	 * @return Buffs acccounting restrictions
 	 */
-	public ComboBuff getCombosFor(Identifier<CharaGroup> cg, boolean addIfAbsent) {
+	public ComboBuff getCombosFor(CharaGroup cg, boolean addIfAbsent) {
 		if (cg == null)
 			return incs.getFirst();
 		ComboBuff buff = null;
 		for (ComboBuff cb : incs)
-			if (cb.cg == cg.get()) {
+			if (cb.cg == cg) {
 				buff = cb;
 				break;
 			}
 		if (buff == null && addIfAbsent)
-			incs.add(buff = new ComboBuff(cg.get()));
+			incs.add(buff = new ComboBuff(cg));
 		return buff;
 	}
 	public void validateIncs() {
@@ -381,7 +381,7 @@ public class LineUp extends Data {
 			if (inc.cg == null)
 				return false;
 			for (Combo c : coms)
-				if (c.restriction == inc.cg.id)
+				if (c.group == inc.cg)
 					return false;
 			return true;
 		});
@@ -420,7 +420,7 @@ public class LineUp extends Data {
 			b = false;
 			break;
 		}
-		ComboBuff buff = getCombosFor(c.restriction, b);
+		ComboBuff buff = getCombosFor(c.group, b);
 		if (b) {
 			coms.add(c);
 			buff.inc[c.type] += CommonStatic.getBCAssets().values[c.type][c.lv];
@@ -443,7 +443,7 @@ public class LineUp extends Data {
 		if (!coms.contains(c))
 			return;
 		coms.remove(c);
-		ComboBuff buff = getCombosFor(c.restriction, false);
+		ComboBuff buff = getCombosFor(c.group, false);
 		buff.inc[c.type] -= CommonStatic.getBCAssets().values[c.type][c.lv];
 		byte[] rows = c.row == 0 || c.row == 3 ? new byte[]{0,2} : new byte[]{(byte)(c.row-1), c.row};
 		for (int i = 0; i < c.forms.length; i++) {
