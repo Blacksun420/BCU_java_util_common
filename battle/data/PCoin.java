@@ -26,7 +26,9 @@ public class PCoin extends Data {
 	public static void read() {
 		Queue<String> qs = VFile.readLine("./org/data/SkillAcquisition.csv");
 
-		qs.poll();
+        if (qs == null)
+            return;
+        qs.poll();
 
 		for (String str : qs) {
 			String[] strs = str.trim().split(",");

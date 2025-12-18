@@ -47,18 +47,18 @@ import java.util.function.Consumer;
 @JsonClass(read = RType.FILL, noTag = NoTag.LOAD)
 public abstract class PackData implements IndexContainer {
 
-	public static class DefPack extends PackData {
+    public static class DefPack extends PackData {
 
-		public VFileRoot root = new VFileRoot(".");
+        public VFileRoot root = new VFileRoot(".");
 
-		protected DefPack() {
+        protected DefPack() {
 
-		}
+        }
 
-		@Override
-		public String getSID() {
-			return Identifier.DEF;
-		}
+        @Override
+        public String getSID() {
+            return Identifier.DEF;
+        }
 
 		public void load(Consumer<String> progress, Consumer<Double> bar) {
 			progress.accept("Loading basic Images");
@@ -116,10 +116,10 @@ public abstract class PackData implements IndexContainer {
 			}
 		}
 
-		@Override
-		public String toString() {
-			return "Default BC Data";
-		}
+        @Override
+        public String toString() {
+            return "Default BC Data";
+        }
 
 		private void loadCharaGroup() {
 			Queue<String> qs = VFile.readLine("./org/data/Charagroup.csv");

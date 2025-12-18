@@ -203,7 +203,7 @@ public class DataEnemy extends DefaultData implements MaskEnemy {
 			}
 			if (ints[109] != 0)
 				proc.IMUBLAST.mult = 100;
-			if (ints[110] == 1)
+			if (ints[110] != 0)
 				traits.add(BCTraits.get(TRAIT_VILLAIN));
 		} catch (IndexOutOfBoundsException ignored) {
 

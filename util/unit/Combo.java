@@ -29,6 +29,11 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 		CommonStatic.BCAuxAssets aux = CommonStatic.getBCAssets();
 		PackData.DefPack data = UserProfile.getBCData();
 		Queue<String> qs = VFile.readLine("./org/data/NyancomboData.csv");
+		if (qs == null) {
+			System.out.println("W/Combo::readFile - \"./org/data/NyancomboData.csv\" file hasn't been found");
+			return;
+		}
+
 		int i = 0;
 		for (String str : qs) {
 			if (str.length() < 20)
@@ -49,7 +54,7 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 				aux.values[i][j] = Integer.parseInt(strs[j]);
 		}
 		aux.values[C_IMUWAVE] = new int[]{10, 30, 60, 100,-50};
-		aux.values[C_COST][4] = -10;
+		aux.values[C_DISCOUNT][4] = -10;
 		qs = VFile.readLine("./org/data/NyancomboFilter.tsv");
 		aux.filter = new int[qs.size()][];
 		for (i = 0; i < aux.filter.length; i++) {
@@ -72,7 +77,7 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 	public int lv, type;
 
 	@JsonField
-	public Identifier<CharaGroup> restriction;
+	public Identifier<CharaGroup> group;
 
 	@JsonField(alias = AbForm.AbFormJson.class)
 	public Form[] forms;
@@ -95,7 +100,7 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 		id = ID;
 		name = strs[0];
 		if (Integer.parseInt(strs[2]) >= 0)
-			restriction = Identifier.parseInt(Integer.parseInt(strs[2]), CharaGroup.class);
+			group = Identifier.parseInt(Integer.parseInt(strs[2]), CharaGroup.class);
 		int n;
 		for (n = 0; n < 5; n++)
 			if (Integer.parseInt(strs[3 + n * 2]) == -1)
@@ -117,7 +122,7 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 		type = c.type;
 		forms = new Form[c.forms.length];
 		formRestriction = c.formRestriction.clone();
-		restriction = c.restriction;
+		group = c.group;
 		row = c.row;
 	}
 
@@ -149,29 +154,30 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 			return null;
 	}
 
+
 	public void setType(int t) {
 		for (BasisLU blu : BasisLU.allLus())
 			if (blu.lu.coms.contains(this)) {
-				blu.lu.getCombosFor(restriction, false).inc[type] -= CommonStatic.getBCAssets().values[type][lv];
-				blu.lu.getCombosFor(restriction, false).inc[t] += CommonStatic.getBCAssets().values[t][lv];
+				blu.lu.getCombosFor(group, false).inc[type] -= CommonStatic.getBCAssets().values[type][lv];
+				blu.lu.getCombosFor(group, false).inc[t] += CommonStatic.getBCAssets().values[t][lv];
 			}
 		type = t;
-		if (restriction != null && unrestrictable(t))
-			setRestriction(null);
+		if (group != null && unrestrictable(t))
+			setGroup(null);
 	}
 
 	public void setLv(int l) {
 		for (BasisLU blu : BasisLU.allLus())
 			if (blu.lu.coms.contains(this)) {
-				blu.lu.getCombosFor(restriction, false).inc[type] -= CommonStatic.getBCAssets().values[type][lv];
-				blu.lu.getCombosFor(restriction, false).inc[type] += CommonStatic.getBCAssets().values[type][l];
+				blu.lu.getCombosFor(group, false).inc[type] -= CommonStatic.getBCAssets().values[type][lv];
+				blu.lu.getCombosFor(group, false).inc[type] += CommonStatic.getBCAssets().values[type][l];
 			}
 		lv = l;
 	}
 
-	public void setRestriction(Identifier<CharaGroup> ncg) {
-		Identifier<CharaGroup> old = restriction;
-		restriction = ncg;
+	public void setGroup(Identifier<CharaGroup> ncg) {
+		Identifier<CharaGroup> old = group;
+		group = ncg;
 		for (BasisLU blu : BasisLU.allLus())
 			if (blu.lu.coms.contains(this)) {
 				blu.lu.getCombosFor(old, false).inc[type] -= CommonStatic.getBCAssets().values[type][lv];
