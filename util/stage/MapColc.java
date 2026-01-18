@@ -128,28 +128,26 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 				int len = Integer.parseInt(strs[1]);
 				sm.stars = new int[len];
 				for (int i = 0; i < len; i++)
-					sm.stars[i] = Integer.parseInt(strs[2 + i]);
-				sm.names.put(sm.names + strs[10]);
-				sm.starMask = Integer.parseInt(strs[12]);
+					sm.stars[i] = Integer.parseInt(strs[3 + i]);
+				sm.names.put(sm.names + strs[11]);
+				sm.starMask = Integer.parseInt(strs[13]);
 
 				if(sm.info != null) {
-					if(!strs[7].equals("0")) {
-						sm.info.resetMode = Integer.parseInt(strs[7]);
-
-						if(sm.info.resetMode > 3) {
-							System.out.println("W/MapColc | Unknown stage reward reset mode " + sm.info.resetMode);
-						}
-					}
+                    sm.info.hasAbyssChallenge = strs[2].equals("1");
 
 					if(!strs[8].equals("0")) {
-						sm.info.clearLimit = Integer.parseInt(strs[8]);
+						sm.info.resetMode = Integer.parseInt(strs[8]);
+
+						if(sm.info.resetMode > 3)
+							System.out.println("W/MapColc | Unknown stage reward reset mode " + sm.info.resetMode);
 					}
 
-					sm.info.hiddenUponClear = !strs[13].equals("0");
+					if(!strs[9].equals("0"))
+						sm.info.clearLimit = Integer.parseInt(strs[9]);
 
-					if(!strs[10].equals("0")) {
-						sm.info.waitTime = Integer.parseInt(strs[10]);
-					}
+					sm.info.hiddenUponClear = !strs[14].equals("0");
+					if(!strs[11].equals("0"))
+						sm.info.waitTime = Integer.parseInt(strs[11]);
 				}
 			}
 			qs = VFile.readLine("./org/data/EX_lottery.csv");
@@ -274,6 +272,82 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 					sm.info.injectMaterialDrop(dropData);
 				dropLine = qs.poll();
 			}
+
+            VFile countRewardFile = VFile.get("./org/data/MapStageDataClearCountReward.json");
+
+            String rewardJsonText = new String(countRewardFile.getData().getBytes());
+
+            JsonObject rewardElement = JsonParser.parseString(rewardJsonText).getAsJsonObject();
+            JsonObject rewardMapList = rewardElement.getAsJsonObject("MapID");
+
+            for (Map.Entry<String, JsonElement> e : rewardMapList.entrySet()) {
+                int mapID = CommonStatic.safeParseInt(e.getKey());
+                JsonObject rewardStageList = e.getValue().getAsJsonObject();
+
+                StageMap sm = getMap(mapID);
+
+                if (sm == null)
+                    continue;
+
+                for (Map.Entry<String, JsonElement> element : rewardStageList.entrySet()) {
+                    int stageID = CommonStatic.safeParseInt(element.getKey());
+
+                    Stage st = sm.list.get(stageID);
+
+                    if (st == null || st.info == null)
+                        continue;
+
+                    JsonArray rewardData = element.getValue().getAsJsonObject().getAsJsonArray("data");
+
+                    for (int i = 0; i < rewardData.size(); i++) {
+                        JsonObject reward = rewardData.get(i).getAsJsonObject();
+
+                        int dropID = reward.get("DropItemID").getAsInt();
+
+                        if (dropID == -1)
+                            continue;
+
+                        int quantity = reward.get("Quantity").getAsInt();
+
+                        ((DefStageInfo) st.info).challengeRewards.put(i + 1, new AbstractMap.SimpleEntry<>(dropID, quantity));
+                    }
+                }
+            }
+
+            qs = VFile.readLine("./org/data/difficulty_level.tsv");
+
+            String difficultyLine = qs.poll();
+
+            while(difficultyLine != null && !difficultyLine.isEmpty()) {
+                String[] difficultyData = difficultyLine.split("\t");
+
+                if (difficultyData.length < 2) {
+                    difficultyLine = qs.poll();
+
+                    continue;
+                }
+
+                int mapID = CommonStatic.safeParseInt(difficultyData[0]);
+
+                StageMap sm = getMap(mapID);
+
+                if (sm == null) {
+                    difficultyLine = qs.poll();
+
+                    continue;
+                }
+
+                for (int i = 1; i < difficultyData.length; i++) {
+                    Stage st = sm.list.get(i - 1);
+
+                    if (st == null || st.info == null)
+                        continue;
+
+                    ((DefStageInfo) st.info).diff = (int) CommonStatic.safeParseFloat(difficultyData[i]);
+                }
+
+                difficultyLine = qs.poll();
+            }
 
 			qs = VFile.readLine("./org/data/LockSkipData.csv");
 			String skipLine = qs.poll();
