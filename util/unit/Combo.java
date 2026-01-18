@@ -146,9 +146,9 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 
 	public String getName() {
 		String n = MultiLangCont.get(this);
-		if (n != null && n.length() > 0)
+		if (n != null && !n.isEmpty())
 			return n;
-		else if (name != null && name.length() > 0)
+		else if (name != null && !name.isEmpty())
 			return name;
 		else
 			return null;

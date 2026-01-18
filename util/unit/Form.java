@@ -115,6 +115,23 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 		return du;
 	}
 
+	public int[] simulateBCTalents(int lvl) {
+		if (du.getPCoin() == null)
+			return null;
+		int[] max = du.getPCoin().max.clone();
+		simulateBCTalents(du.getPCoin().max.clone(), lvl);
+		return max;
+	}
+
+	public void simulateBCTalents(int[] talents, int lvl) {
+		PCoin pc = du.getPCoin();
+		if (pc == null || !CommonStatic.getConfig().realLevel)
+			return;
+		for (int i = 0; i < talents.length; i++)
+			if (pc.getReqLv(i) > lvl)
+				talents[i] = 0;
+	}
+
 	@Override
 	public VImg getDeployIcon() {
 		return anim.getUni();

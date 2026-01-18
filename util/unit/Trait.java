@@ -1,6 +1,8 @@
 package common.util.unit;
 
 import com.google.gson.JsonObject;
+import common.battle.data.CustomEntity;
+import common.battle.data.AtkDataModel;
 import common.battle.data.OrbInfo;
 import common.io.json.JsonClass;
 import common.io.json.JsonDecoder;
@@ -82,10 +84,6 @@ public class Trait extends Data implements Indexable<PackData, Trait>, Comparabl
         return ans;
     }
 
-    public static boolean isUsed(Trait t) {
-        return t.isUsed();
-    }
-
     /**
      * Check if the unit can be considered an anti-traited
      * @param targets The list of traits the unit targets
@@ -143,14 +141,30 @@ public class Trait extends Data implements Indexable<PackData, Trait>, Comparabl
         PackData.UserPack pack = (PackData.UserPack) getCont();
         Collection<PackData.UserPack> pacs = UserProfile.getUserPacks();
         for (PackData.UserPack pacc : pacs)
-            if (pacc.desc.dependency.contains(pack.desc.id) || pacc.desc.id.equals(pack.desc.id)) {
-                for (Enemy en : pacc.enemies.getList())
-                    if (en.de.getTraits(false).contains(this))
+            if (pacc.desc.dependency.contains(pack.desc.id) || pacc == pack) {
+                for (Enemy en : pacc.enemies.getList()) {
+                    if (en.de.getTraits(true).contains(this))
                         return true;
+                    for (AtkDataModel[] atks : ((CustomEntity)en.de).hits) {
+                        if (atks == null)
+                            continue;
+                        for (AtkDataModel atk : atks)
+                            if (atk.getATKTraits().contains(this))
+                                return true;
+                    }
+                }
                 for (Unit un : pacc.units.getList())
-                    for (Form uf : un.forms)
-                        if (uf.du.getTraits(false).contains(this))
+                    for (Form uf : un.forms) {
+                        if (uf.du.getTraits(true).contains(this))
                             return true;
+                        for (AtkDataModel[] atks : ((CustomEntity)uf.du).hits) {
+                            if (atks == null)
+                                continue;
+                            for (AtkDataModel atk : atks)
+                                if (atk.getATKTraits().contains(this))
+                                    return true;
+                        }
+                    }
             }
         return false;
     }

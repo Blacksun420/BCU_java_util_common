@@ -343,9 +343,8 @@ public class LineUp extends Data {
 	 */
 	public void renewCombo() {
 		coms.clear();
-		ComboBuff def = incs.isEmpty() ? new ComboBuff() : incs.getFirst();
 		incs.clear();
-		incs.add(def);
+		incs.add(new ComboBuff());
 		loc = new int[2][5];
 		CommonStatic.Config cfg = CommonStatic.getConfig();
 		for (PackData p : UserProfile.getAllPacks()) {
@@ -422,7 +421,8 @@ public class LineUp extends Data {
 		}
 		ComboBuff buff = getCombosFor(c.group, b);
 		if (b) {
-			coms.add(c);
+			if (!coms.add(c))//It's a set so it prevents combo buffs from being applied twice
+				return;
 			buff.inc[c.type] += CommonStatic.getBCAssets().values[c.type][c.lv];
 			for (int i = 0; i < c.forms.length; i++) {
 				Form fu = c.forms[i];

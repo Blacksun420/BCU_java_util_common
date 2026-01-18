@@ -55,6 +55,8 @@ public class CustomBGEffect extends BackgroundEffect {
     }
     @Override
     public void preDraw(FakeGraphics g, P rect, float siz, float midH) {
+        if (!loaded)
+            return;
         int spaced = 0;
         FakeTransform at = g.getTransform();
         while (spaced <= sw) {
@@ -71,6 +73,8 @@ public class CustomBGEffect extends BackgroundEffect {
 
     @Override
     public void postDraw(FakeGraphics g, P rect, float siz, float midH) {
+        if (!loaded)
+            return;
         int spaced = 0;
         FakeTransform at = g.getTransform();
         while (spaced <= sw) {
@@ -120,7 +124,7 @@ public class CustomBGEffect extends BackgroundEffect {
 
     @Override
     public String toString() {
-        if (getName().length() == 0)
+        if (getName().isEmpty())
             return id.toString();
         return Data.trio(id.id) + " - " + getName();
     }

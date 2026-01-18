@@ -21,7 +21,7 @@ public class ELineUp extends BattleObj {
 	public final int[][] scount = new int[2][5], sGlow = new int[2][5];
 	public final boolean[][] smnd = new boolean[2][5];
 
-	public final LineUp.ComboBuff[] inc;
+	private final LineUp.ComboBuff[] inc;
 
 	protected ELineUp(LineUp lu, StageBasis sb, byte saveMode) {
 		inc = new LineUp.ComboBuff[lu.incs.size()];

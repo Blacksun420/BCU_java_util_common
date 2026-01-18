@@ -103,7 +103,6 @@ public class EEnemy extends Entity {
 		ans = super.getDamage(atk, ans);
 		if (atk.model instanceof AtkModelUnit) {
 			SortedPackSet<Trait> sharedTraits = traits.inCommon(atk.trait);
-			sharedTraits.addIf(traits, t -> !t.BCTrait());
 
 			if (!sharedTraits.isEmpty()) {
 				if (atk.attacker.status.curse == 0 && atk.attacker.getProc().DMGINC.mult != 0)

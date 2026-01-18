@@ -2055,6 +2055,10 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			sumDamage(d, false);
 			basis.dmgStatistics.get(e.data.getPack())[0] += Math.max(health - maxH, Math.min(d, health));
 		});
+		if (status.hypno > 0 && atk.attacker != null && atk.attacker.dire == dire && atk.attacker.getProc().AI.atkHypno != 0) {
+			int dh = atk.attacker.getProc().AI.atkHypno;
+			status.hypno = dh > 0 ? status.hypno * (100-dh) / 100 : Math.max(0, status.hypno + dh);
+		}
 		if (proc)
 			processProcs0(atk, FDmg);
 	}
@@ -2651,6 +2655,11 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					List<AbEntity> le = basis.inRange(getTouch(), dir, pos + (aura.min_dis * getDire()), pos + (aura.max_dis * getDire()), false);
 					if (getProc().AI.ignHypno)
 						le.removeIf(e -> e instanceof Entity && ((Entity)e).status.hypno > 0);
+					if (getProc().AI.atkHypno != 0) {
+						List<AbEntity> ule = basis.inRange(getTouch(), -dir, pos + (aura.min_dis * getDire()), pos + (aura.max_dis * getDire()), false);
+						ule.removeIf(e -> !(e instanceof Entity) || ((Entity)e).status.hypno <= 0);
+						le.addAll(ule);
+					}
 					if (aura.skip_self)
 						le.remove(this);
 					if (dir == 1 || basis.getBase(-1) instanceof ECastle)
@@ -3173,7 +3182,11 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			le.remove(this);
 		if (getProc().AI.ignHypno)
 			le.removeIf(e -> e instanceof Entity && ((Entity)e).status.hypno > 0);
-
+		if (getProc().AI.atkHypno != 0) {
+			List<AbEntity> ule = basis.inRange(getTouch(), -getDire(), ds[0], ds[1], false);
+			ule.removeIf(e -> !(e instanceof Entity) || ((Entity)e).status.hypno <= 0);
+			le.addAll(ule);
+		}
 		float bpos = basis.getBase(getDire()).pos;
 		float poss = status.hypno == 0 ? pos : pos + (data.getWidth() * -dire);
 		boolean blds = (bpos - poss) * getDire() > data.touchBase();

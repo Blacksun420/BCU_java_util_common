@@ -251,8 +251,8 @@ public class Data {
 
 			@Override
 			public int[] setTalent(int[] nps) {
-				nps[6] = Math.max(nps[4], 1 - count);
-				nps[7] = Math.max(nps[5], 1 - count);
+				nps[6] = Math.max(nps[6], 1 - count);
+				nps[7] = Math.max(nps[7], 1 - count);
 				return super.setTalent(nps);
 			}
 		}
@@ -1098,8 +1098,10 @@ public class Data {
 			@Order(4)
 			public boolean danger;
 			@Order(5)
-			public boolean ignHypno;
-			//@Order(6)
+			public boolean ignHypno;//Ignores hypnotized enemies when attacking
+			@Order(6)
+			public int atkHypno;//If at any number that isn't 0, unit will see hypnotized units as enemies and its attacks will lower hypnotization duration by the specified amount (fixed if negative, % if positive)
+			//@Order(7)
 			//public boolean manualcontrol; //The player controls the unit manually; Arrow keys to move, spacebar to attack
 
 			@JsonDecoder.OnInjected

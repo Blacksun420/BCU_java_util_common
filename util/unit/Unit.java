@@ -262,6 +262,10 @@ public class Unit extends Data implements AbUnit {
 		return Math.min(CommonStatic.getPrefLvs().rare[rarity].getPlusLv(), maxp);
 	}
 
+	public final int getTotalPreferredLevel() {
+		return getPreferredLevel() + getPreferredPlusLevel();
+	}
+
 	public boolean unused() {
 		for (Form f : forms)
 			if (!f.unused())
@@ -272,10 +276,10 @@ public class Unit extends Data implements AbUnit {
 	@Override
 	public String toString() {
 		String desp = MultiLangCont.get(forms == null ? null : forms[0]);
-		if (desp != null && desp.length() > 0)
+		if (desp != null && !desp.isEmpty())
 			return Data.trio(id.id) + " " + desp;
 		String name = forms[0].names.toString();
-		if (name.length() > 0)
+		if (!name.isEmpty())
 			return Data.trio(id.id) + " " + name;
 		return Data.trio(id.id);
 	}

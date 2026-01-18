@@ -52,17 +52,23 @@ public class AttackSimple extends AttackAb {
 			capt.add(attacker);
 			return;
 		}
-		List<AbEntity> le = model.b.inRange(touch, attacker != null && attacker.status.rage > 0 ? 2 : dire, sta, end, excludeRightEdge);
+		boolean a = attacker != null;
+		List<AbEntity> le = model.b.inRange(touch, a && attacker.status.rage > 0 ? 2 : dire, sta, end, excludeRightEdge);
 		if (attacker != null && ((matk != null && matk.getName().contains("noself")) || attacker.status.rage > 0 || attacker.status.hypno > 0))
 			le.remove(attacker);
 
-		if(attacker != null && isLongAtk && !le.contains(model.b.getBase(attacker.dire))) {
+		if(a && isLongAtk && !le.contains(model.b.getBase(attacker.dire))) {
 			if((attacker.dire == -1 && dire <= -1 && sta <= model.b.getBase(attacker.dire).pos) ||
 					(attacker.dire == 1 && dire >= 1 && sta >= model.b.getBase(attacker.dire).pos))
 				le.add(model.b.getBase(attacker.dire));
 		}
-		if (attacker != null && attacker.getProc().AI.ignHypno)
+		if (a && attacker.getProc().AI.ignHypno)
 			le.removeIf(e -> e instanceof Entity && ((Entity)e).status.hypno > 0);
+		if (a && Math.abs(dire) == 1 && attacker.status.rage <= 0 && getProc().AI.atkHypno != 0) {
+			List<AbEntity> ule = model.b.inRange(touch, -dire, sta, end, excludeRightEdge);
+			ule.removeIf(e -> !(e instanceof Entity) || ((Entity)e).status.hypno <= 0);
+			le.addAll(ule);
+		}
 		le.removeIf(attacked::contains);
 		if (canon > -2 || model instanceof Sniper)
 			le.remove(model.b.ebase);

@@ -944,6 +944,7 @@ public class Editors {
 			t.retreatDist = Math.max(0, t.retreatDist);
 			if (t.retreatDist == 0 && !t.danger)
 				t.retreatSpeed = 0;
+			t.atkHypno = Math.min(t.atkHypno, 100);
 		}, eg -> t -> setComponentVisibility(eg, !def || t.retreatDist > 0 || t.danger, 1, 2)));
 
 		map().put("DEMONVOLC", new EditControl<>(Proc.COUNTERSURGE.class, (t) -> {
@@ -1082,7 +1083,6 @@ public class Editors {
 		}, eg -> t -> setComponentVisibility(eg, !def || t.prob > 0, 1)));
 
 		map().put("KILLSTRENGTHEN", new EditControl<>(Proc.KILLSTRENGTHEN.class, (t) -> {
-			t.mult = Math.max(0, t.mult);
 			if (!def)
 				return;
 			if (t.mult == 0) {
@@ -1092,7 +1092,7 @@ public class Editors {
 				t.kill_count = Math.max(1, t.kill_count);
 				t.max_stacks = Math.max(0, t.max_stacks);
 			}
-		}, eg -> t -> setComponentVisibility(eg, !def || t.mult > 0, 1)));
+		}, eg -> t -> setComponentVisibility(eg, !def || t.mult != 0, 1)));
 
 		map().put("COMBOCOOLDOWN", new EditControl<>(Proc.PMC.class, t -> {
 			t.prob = Math.max(def ? 0 : -100, Math.min(t.prob, 100));

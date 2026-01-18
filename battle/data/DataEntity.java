@@ -96,14 +96,7 @@ public abstract class DataEntity extends Data implements MaskEntity {
 
 	@Override
 	public SortedPackSet<Trait> getTraits(boolean raw) {
-		if (raw || !Trait.targetTraited(traits))
-			return traits;
-		SortedPackSet<Trait> ts = new SortedPackSet<>(traits);
-		for (PackData.UserPack pk : UserProfile.getUserPacks())
-			for (Trait t : pk.traits)
-				if (t.targetType)
-					ts.add(t);
-		return ts;
+		return traits;
 	}
 	@Override
 	public int getHb() {

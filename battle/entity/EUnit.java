@@ -287,7 +287,6 @@ public class EUnit extends Entity {
 		ans = super.getDamage(atk, ans);
 		if (atk.model instanceof AtkModelEnemy) {
 			SortedPackSet<Trait> sharedTraits = traits.inCommon(atk.trait);
-			sharedTraits.addIf(atk.trait, t -> !t.BCTrait());
 			if (!sharedTraits.isEmpty()) {
 				if (status.curse == 0 && getProc().DEFINC.mult != 0)
 					ans = (int)(ans * basis.b.t().getDEF(getProc().DEFINC.mult, atk.trait, sharedTraits, ((MaskUnit) data).getOrb(), level, basis.elu.getInc(getProc().DEFINC.mult < 400 ? C_GOOD : C_RESIST,this)));
@@ -339,16 +338,9 @@ public class EUnit extends Entity {
 	}
 
 	@Override
-	protected float updateMove(float extmov) {
-		if (status.slow == 0)
-			extmov += (float)(data.getSpeed() * basis.elu.getInc(C_SPE,this) / 50) / 4f;
-		return super.updateMove(extmov);
-	}
-
-	@Override
 	protected float getMov(float extmov) {
 		if (status.slow == 0)
-			extmov = extmov + (float)(data.getSpeed() * basis.elu.getInc(C_SPE,this) / 50) / 4f;
+			extmov += (float)((basis.speedLimit(false) > -1 ? basis.speedLimit(false) : data.getSpeed()) * basis.elu.getInc(C_SPE,this) / 50) / 4f;
 		return super.getMov(extmov);
 	}
 
