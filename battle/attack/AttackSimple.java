@@ -64,7 +64,7 @@ public class AttackSimple extends AttackAb {
 		}
 		if (a && attacker.getProc().AI.ignHypno)
 			le.removeIf(e -> e instanceof Entity && ((Entity)e).status.hypno > 0);
-		if (a && Math.abs(dire) == 1 && attacker.status.rage <= 0 && getProc().AI.atkHypno != 0) {
+		if (a && Math.abs(dire) == 1 && attacker.status.rage <= 0 && attacker.getProc().AI.atkHypno != 0) {
 			List<AbEntity> ule = model.b.inRange(touch, -dire, sta, end, excludeRightEdge);
 			ule.removeIf(e -> !(e instanceof Entity) || ((Entity)e).status.hypno <= 0);
 			le.addAll(ule);
