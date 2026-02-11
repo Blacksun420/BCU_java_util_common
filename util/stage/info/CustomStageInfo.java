@@ -9,6 +9,7 @@ import common.pack.Identifier;
 import common.pack.SortedPackSet;
 import common.util.stage.MapColc.PackMapColc;
 import common.util.stage.Stage;
+import common.util.stage.StageMap;
 import common.util.unit.AbForm;
 import common.util.unit.Form;
 import common.util.unit.Level;
@@ -49,10 +50,14 @@ public class CustomStageInfo implements StageInfo {
     }
 
     public CustomStageInfo(Stage st) {
+        this(st, st.getCont());
+    }
+
+    public CustomStageInfo(Stage st, StageMap sm) {
         this.st = st;
         st.info = this;
-        if (st.getCont() != Stage.CLIPSM && st.getMC() instanceof PackMapColc)
-            ((PackMapColc)st.getMC()).si.add(this);
+        if (sm != null && sm != Stage.CLIPSM && sm.getCont() instanceof PackMapColc)
+            ((PackMapColc)sm.getCont()).si.add(this);
     }
 
     @Override

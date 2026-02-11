@@ -245,7 +245,7 @@ public class Stage extends Data
 		ans.bgh = bgh;
 		ans.mush = mush;
 		if (info != null) {
-			CustomStageInfo csi = new CustomStageInfo(ans);
+			CustomStageInfo csi = new CustomStageInfo(ans, sm);
 			csi.stages.addAll(Arrays.asList(ans.info.getExStages()));
 			if (!csi.stages.isEmpty()) {
 				float[] chances = ans.info.getExChances();
@@ -259,9 +259,13 @@ public class Stage extends Data
 						csi.totalChance += (short)chance;
 					}
 			}
-			if (info instanceof CustomStageInfo && ((CustomStageInfo)info).ubase != null) {
-				csi.ubase = ((CustomStageInfo)info).ubase;
-				csi.lv = ((CustomStageInfo)info).lv;
+			if (info instanceof CustomStageInfo) {
+				CustomStageInfo cinf = (CustomStageInfo)info;
+				if (cinf.ubase != null) {
+					csi.ubase = cinf.ubase;
+					csi.lv = cinf.lv;
+				}
+				csi.rewards.addAll(cinf.rewards);
 			}
 			ans.info = csi;
 		}

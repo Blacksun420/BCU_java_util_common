@@ -405,6 +405,7 @@ public abstract class PackData implements IndexContainer {
 			source = new Workspace(id);
 			castles = new PackCasList(this);
 			mc = new PackMapColc(this);
+			save = new SaveData(this);
 			editable = true;
 			loaded = true;
 		}
