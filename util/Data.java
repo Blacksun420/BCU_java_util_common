@@ -2345,7 +2345,8 @@ public class Data {
 			{ PC_P, P_BSTHUNT, 1 }, //64 : behemoth slayer
 			{ PC_P, P_MINIVOLC }, //65 : MiniSurge
 			{ PC_AB, AB_SKILL }, //66 : super sage hunter
-			{ PC_P, P_BLAST } //67 : Baja Blast
+			{ PC_P, P_BLAST }, //67 : Baja Blast
+			{ PC_P, P_DEMONVOLC } //68 : Counter-Surge
 	};
 	public static final int[][] PC_CUSTOM = new int[][] { //Use negative ints to handle (it would be so awesome, it would be so cool)
 			{ -1, 0 }, // 0:
@@ -2354,47 +2355,46 @@ public class Data {
 			{ PC_P, P_BARRIER}, //3: Barrier
 			{ PC_P, P_DEMONSHIELD}, //4: Aku Shield
 			{ PC_P, P_DEATHSURGE}, //5: Death Surge
-			{ PC_P, P_DEMONVOLC}, //6: Surge Counter
-			{ PC_P, P_SEAL}, // 7: Seal
-			{ PC_P, P_COUNTER}, // 8: Counter
-			{ PC_P, P_DMGCUT}, // 9: Super Armor
-			{ PC_P, P_DMGCAP}, // 10: Mystic Shield
-			{ PC_P, P_REMOTESHIELD}, // 11: Remote Shield
-			{ PC_P, P_ARMOR}, // 12: Armor break
-			{ PC_P, P_SPEED}, // 13: Haste
-			{ PC_P, P_RAGE}, // 14: Rage
-			{ PC_P, P_HYPNO}, // 15: Hypno
-			{ PC_P, P_CRITI}, // 16: Criti
-			{ PC_P, P_IMUSUMMON}, // 17: Summon immune
-			{ PC_P, P_IMUSEAL}, // 18: Seal immune
-			{ PC_P, P_IMUARMOR}, // 19: Armor Break immune
-			{ PC_P, P_IMUSPEED}, // 20: Haste immune
-			{ PC_P, P_IMULETHARGY}, // 21: Lethargy Immunity
-			{ PC_P, P_IMURAGE}, // 22: Rage Immunity
-			{ PC_P, P_IMUHYPNO}, // 23: Hypno Immunity
-			{ PC_BASE, PC2_RNG}, // 24: Range
-			{ PC_P, P_POIATK}, // 25: Toxic
-			{ PC_P, P_IMUPOI}, // 26: Imu. BCU Poison
-			{ PC_AB, AB_SNIPERI}, // 27: IMU.Sniper
-			{ PC_AB, AB_TIMEI}, // 28: IMU.TimeStop
-			{ PC_AB, AB_THEMEI}, // 29: IMU.Theme
-			{ PC_AB, AB_IMUSW}, // 30: IMU.BossWave
-			{ PC_P, P_LETHARGY}, // 31: Lethargy
-			{ PC_P, P_SNIPER}, // 32: Sniper KB
-			{ PC_P, P_BOSS}, // 33: Bosswave
-			{ PC_P, P_TIME}, // 34: Timestop
-			{ PC_P, P_IMUMOVING}, // 35: IMU.MoveATK
-			{ PC_P, P_WEAKAURA}, // 36: WeakenAura
-			{ PC_P, P_STRONGAURA}, // 37: StrengthAura
-			{ PC_P, P_DMGINC}, // 38: ExtraDmg
-			{ PC_P, P_DEFINC},  // 39: Resistance
-			{ PC_P, P_RANGESHIELD}, //40: Range Shield
-			{ PC_P, P_SPIRIT}, //41: Spirit summon
-			{ PC_P, P_DRAIN}, //42: Drain
-			{ PC_P, P_SPEEDUP}, //43: Adrenaline
-			{ PC_P, P_REFUND}, //44: Refund
-			{ PC_P, P_MINIDEATHSURGE}, //45: Mini-Deathsurge
-			{ PC_P, P_CANONCHARGE} //46: Cannon Charge
+			{ PC_P, P_SEAL}, // 6: Seal
+			{ PC_P, P_COUNTER}, // 7: Counter
+			{ PC_P, P_DMGCUT}, // 8: Super Armor
+			{ PC_P, P_DMGCAP}, // 9: Mystic Shield
+			{ PC_P, P_REMOTESHIELD}, // 10: Remote Shield
+			{ PC_P, P_ARMOR}, // 11: Armor break
+			{ PC_P, P_SPEED}, // 12: Haste
+			{ PC_P, P_RAGE}, // 13: Rage
+			{ PC_P, P_HYPNO}, // 14: Hypno
+			{ PC_P, P_CRITI}, // 15: Criti
+			{ PC_P, P_IMUSUMMON}, // 16: Summon immune
+			{ PC_P, P_IMUSEAL}, // 17: Seal immune
+			{ PC_P, P_IMUARMOR}, // 18: Armor Break immune
+			{ PC_P, P_IMUSPEED}, // 19: Haste immune
+			{ PC_P, P_IMULETHARGY}, // 20: Lethargy Immunity
+			{ PC_P, P_IMURAGE}, // 21: Rage Immunity
+			{ PC_P, P_IMUHYPNO}, // 22: Hypno Immunity
+			{ PC_BASE, PC2_RNG}, // 23: Range
+			{ PC_P, P_POIATK}, // 24: Toxic
+			{ PC_P, P_IMUPOI}, // 25: Imu. BCU Poison
+			{ PC_AB, AB_SNIPERI}, // 26: IMU.Sniper
+			{ PC_AB, AB_TIMEI}, // 27: IMU.TimeStop
+			{ PC_AB, AB_THEMEI}, // 28: IMU.Theme
+			{ PC_AB, AB_IMUSW}, // 29: IMU.BossWave
+			{ PC_P, P_LETHARGY}, // 30: Lethargy
+			{ PC_P, P_SNIPER}, // 31: Sniper KB
+			{ PC_P, P_BOSS}, // 32: Bosswave
+			{ PC_P, P_TIME}, // 33: Timestop
+			{ PC_P, P_IMUMOVING}, // 34: IMU.MoveATK
+			{ PC_P, P_WEAKAURA}, // 35: WeakenAura
+			{ PC_P, P_STRONGAURA}, // 36: StrengthAura
+			{ PC_P, P_DMGINC}, // 37: ExtraDmg
+			{ PC_P, P_DEFINC},  // 38: Resistance
+			{ PC_P, P_RANGESHIELD}, //39: Range Shield
+			{ PC_P, P_SPIRIT}, //40: Spirit summon
+			{ PC_P, P_DRAIN}, //41: Drain
+			{ PC_P, P_SPEEDUP}, //42: Adrenaline
+			{ PC_P, P_REFUND}, //43: Refund
+			{ PC_P, P_MINIDEATHSURGE}, //44: Mini-Deathsurge
+			{ PC_P, P_CANONCHARGE} //45: Cannon Charge
 	};
 
 	public static int[] get_CORRES(int ind) {

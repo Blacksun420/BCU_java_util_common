@@ -142,29 +142,9 @@ public class PCoin extends Data {
 
 	public void verify() { // TODO: lmao
 		if (du instanceof CustomUnit) {
-			for (int i = 0; i < info.size(); i++) {
-				if (info.get(i)[0] == PC_CORRES.length)
-					continue;
-				if (info.get(i)[0] == 23) {
+			for (int i = 0; i < info.size(); i++)
+				if (info.get(i)[0] == 23)
 					info.get(i)[0]--;
-				} else if (info.get(i)[0] == 5) {
-					info.set(i, Arrays.copyOf(info.get(i), 5));
-					info.get(i)[0] = -38;
-					info.get(i)[4] = info.get(i)[2];
-					info.get(i)[2] = info.get(i)[3] = 150;
-					info.add(new int[]{-39, 1, 200, 200, 0});
-				} else if (info.get(i)[0] == 6 || info.get(i)[0] == 7) {
-					boolean repl = false;
-					for (int[] iii : info)
-						if (info.get(i)[0] - iii[0] == -32) {
-							repl = true;
-							iii[0] *= info.get(i)[0] - 3;
-							break;
-						}
-					if (repl)
-						info.get(i)[0] = PC_CORRES.length;
-				}
-			}
 			info.removeIf(ii -> ii[0] == PC_CORRES.length);
 			onInjected();
 		}
@@ -242,6 +222,11 @@ public class PCoin extends Data {
 						du.getProc().BLAST.lv = 3;
 						du.getProc().BLAST.reduction = 30;
 					}
+					continue;
+				} else if (du instanceof DataUnit && type[1] == P_DEMONVOLC) {
+					du.getProc().DEMONVOLC.prob = 100;
+					du.getProc().DEMONVOLC.mult = 100;
+					continue;
 				} else if (du instanceof DataUnit || ((CustomEntity)du).common || procSharable[type[1]])
 					for (int j = 0; j < fieldTOT; j++)
 						if (tar.getDeclaredFields()[j].getType() == Identifier.class) {
@@ -340,6 +325,8 @@ public class PCoin extends Data {
 	@OnInjected
 	public void onInjected() {
 		max = info.stream().mapToInt(i -> Math.max(1, i[1])).toArray();
+		if (du.getPack() == null)
+			return;
 		boolean old = atks.isEmpty();
 		for (int i = 0; i < info.size(); i++) {
 			int[] type = get_CORRES(info.get(i)[0]);

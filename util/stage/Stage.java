@@ -2,6 +2,7 @@ package common.util.stage;
 
 import com.google.gson.JsonObject;
 import common.CommonStatic;
+import common.battle.BasisLU;
 import common.io.assets.Admin.StaticPermitted;
 import common.io.json.Dependency;
 import common.io.json.JsonClass;
@@ -68,11 +69,8 @@ public class Stage extends Data
 	public int timeLimit = 0;
 	@JsonField(defval = "1")
 	public int minUSpawn = 1, maxUSpawn = 1, minSpawn = 1, maxSpawn = 1;
-	@JsonField
 	public Identifier<CastleImg> castle;
-	@JsonField
 	public Identifier<Background> bg, bg1;
-	@JsonField
 	public Identifier<Music> mus0, mus1;
 	@JsonField(defval = "empty")
 	public SCDef data = new SCDef(0);
@@ -82,6 +80,7 @@ public class Stage extends Data
 	public BattlePreset preset;
 	@JsonField(generic = Replay.class, alias = ResourceLocation.class)
 	public ArrayList<Replay> recd = new ArrayList<>();
+	public BasisLU lastClear;
 
 	@JsonClass.JCConstructor
 	public Stage() {

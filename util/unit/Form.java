@@ -201,13 +201,23 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 			return;
 		Unit u = unit == null ? (Unit) uid.get() : unit;
 		PackData.UserPack pack = (PackData.UserPack) u.getCont();
-		if (UserProfile.isOlderPack(pack, "0.7.12.2") && du.getPCoin() != null) {
-			du.getPCoin().info.removeIf(d -> d[0] == 68);
-			du.getPCoin().update();
-		}
-		if (pack.desc.FORK_VERSION >= 13)
+		if (pack.desc.FORK_VERSION >= 14)
 			return;
 		inject(pack, jobj.getAsJsonObject("du"), form);
+		//pack.desc.FORK_VERSION < 14
+		if (du.getPCoin() != null) {
+			PCoin pc = du.getPCoin();
+			if (UserProfile.isOlderPack(pack, "0.7.12.2"))
+				pc.info.removeIf(d -> d[0] == 68);
+
+			for (int i = 0; i < pc.info.size(); i++) {
+				if (pc.info.get(i)[0] == -6)
+					pc.info.get(i)[0] = 68;//Countersurge got moved from custom to BC talents
+				else if (pc.info.get(i)[0] < -6)
+					pc.info.get(i)[0]++;
+			}
+		}
+
 		if (pack.desc.FORK_VERSION < 1) {
 			AtkDataModel[] atks = form.getAllAtkModels();
 			for (AtkDataModel atk : atks)
@@ -254,8 +264,8 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 					return trueArr;
 				});
 			}//Finish FORK_VERSION 7 checks
-		//if (pack.desc.FORK_VERSION >= 13)
-		//	return;//for future ver increases
+		if (pack.desc.FORK_VERSION >= 13)
+			return;
 		if (form.getPCoin() != null)
 			for (int[] dat : form.pcoin.info) {
 				if (dat[0] == 62) {//miniwave

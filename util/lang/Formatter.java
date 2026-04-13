@@ -55,8 +55,8 @@ public class Formatter {
 				fruitMag = 1 + BasisSet.current().t().getFruit(trs) * 0.2 / 3;
 		}
 
-		public String abs(double v) {
-			return "" + Math.abs(v);
+		public double abs(double v) {
+			return Math.abs(v);
 		}
 
 		public String id(Identifier<?> id) {

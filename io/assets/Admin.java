@@ -264,7 +264,7 @@ public class Admin {
 			System.out.println("version: " + zip.desc.BCU_VERSION);
 			System.out.println("description: " + zip.desc.info);
 			System.out.print("0% ");
-			zip.unzip(path -> new File("./output/" + path), prog);
+			zip.unzip(path -> new File("./output/" + zip.desc.id + "/" + path + "/"), prog);
 			System.out.println();
 			return;
 		}
