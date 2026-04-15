@@ -171,6 +171,15 @@ public class Level implements BattleStatic, LevelInterface {
 		return false;
 	}
 
+	public void revalidateOrb(Unit u) {
+		int slotCount = u.orbs.size();
+		if (orbs != null && slotCount != orbs.length) {
+			int[][] newOrbs = new int[slotCount][0];
+			System.arraycopy(orbs, 0, newOrbs, 0, Math.min(slotCount, orbs.length));
+			orbs = newOrbs;
+		}
+	}
+
 	@JsonField(tag = "lvs", io = JsonField.IOType.R, generic = Integer.class)
 	public void parseOldLevel(ArrayList<Integer> levels) {
 		if (!levels.isEmpty()) {

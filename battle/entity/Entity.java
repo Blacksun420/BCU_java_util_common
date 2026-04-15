@@ -25,6 +25,7 @@ import common.util.anim.EAnimU;
 import common.util.pack.EffAnim;
 import common.util.pack.EffAnim.*;
 import common.util.pack.Soul;
+import common.util.stage.StageLimit;
 import common.util.unit.Level;
 import common.util.unit.Trait;
 import org.jetbrains.annotations.NotNull;
@@ -522,6 +523,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			} else {
 				// converge souls layer: death on the same frame = same soul height
 				// still not sure how this precisely work in BC, it seems to have exceptions
+				e.currentLayer = 0;
 				Soul s = Identifier.get(e.data.getDeathAnim());
 				dead = s == null ? 0 : (soul = s.getEAnim(AnimU.SOUL[0])).len();
 			}
@@ -725,7 +727,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 						preTime = pres[preID];
 					else {
 						attacksLeft--;
-						e.waitTime = Math.max(e.data.getTBA(), 0);
+						e.waitTime = Math.max(e.applyLethargy(e.data.getTBA()), 0);
 					}
 				}
 			}
@@ -1496,6 +1498,22 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	public long damageTaken = 0;
 
 	/**
+	 * Total number of entities killed
+	 */
+	public int killCount = 0;
+
+	/**
+	 * Attacks it got hit by in the current frame.
+	 * This gets instantly cleared upon post update.
+	 */
+	public Set<AttackAb> lastHitBy = new HashSet<>();
+
+	/**
+	 * Attacks it got hit by on the frame of KB into death.
+	 */
+	public Set<AttackAb> lastKilledBy = new HashSet<>();
+
+	/**
 	 * The time that this entity has been alive
 	 */
 	public int livingTime = 0;
@@ -1505,7 +1523,12 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	/**
 	 * layer of display, constant field
 	 */
-	public int layer;
+	public int currentLayer;
+
+	/**
+	 * layer when spawned in
+	 */
+	public int spawnLayer;
 
 	/**
 	 * proc status, contains ability-specific status data
@@ -1542,7 +1565,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	protected float kbTime;
 
 	/**
-	 * wait FSM time
+	 * wait FSM time (TBA)
 	 */
 	private double waitTime;
 
@@ -1708,7 +1731,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 * Receive attack. Also processes shields
 	 */
 	@Override
-	public void damaged(AttackAb atk) {
+	public boolean damaged(AttackAb atk) {
 		damageTaken += atk.atk;
 		sumDamage(atk.atk, true);
 
@@ -1784,7 +1807,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			if (getProc().IMUMOVING.mult > 0)
 				anim.getEff(P_WAVE);
 			if (getProc().IMUMOVING.mult == 100)
-				return;
+				return false;
 			else
 				dmg = (int) (dmg * (100 - getProc().IMUMOVING.mult) / 100);
 		}
@@ -1792,7 +1815,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			if (getProc().IMUBLAST.mult > 0)
 				anim.getEff(P_WAVE);
 			if (getProc().IMUBLAST.mult == 100)
-				return;
+				return false;
 			else
 				dmg = (int) (dmg * (100 - getProc().IMUBLAST.mult) / 100);
 		}
@@ -1829,7 +1852,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 			if (dmgcut.reduction == 100) {
 				if (!proc)
-					return;
+					return false;
 				dmg = 0;
 			} else if (dmgcut.reduction != 0)
 				dmg = dmg * (100 - dmgcut.reduction) / 100;
@@ -1843,7 +1866,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 			if (dmgcap.nullify) {
 				if (!proc)
-					return;
+					return false;
 				dmg = 0;
 			} else
 				dmg = status.dcap;
@@ -1946,7 +1969,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			basis.lea.add(new EAnimCont(pos, layer, (dire == 1 ? effas().A_E_METAL_KILLER : effas().A_METAL_KILLER).getEAnim(DefEff.DEF), -75f));
 
 		if (!shieldContinue)
-			return;
+			return false;
 
 		if ((atk.waveType & (WT_VOLC | WT_MIVC)) > 0) {
 			AttackVolcano volc = (AttackVolcano)atk;
@@ -2127,7 +2150,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		if (atk.getProc().KB.dis != 0)
 			knockback(atk, f);
 
-		if (atk.getProc().SNIPER.prob > 0)
+		if (atkProc.SNIPER.prob > 0)
 			interrupt(INT_ASS, KB_DIS[INT_ASS]);
 		if (atk.getProc().BOSS.prob > 0)
 			interrupt(INT_SW, KB_DIS[INT_SW]);
@@ -2160,6 +2183,31 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			if (dire == 1 || (status.curse + status.seal <= 0))
 				traits.addAll(b.traits);
 		}
+
+		if (atkProc.LETHARGY.time > 0) {
+			int res = getProc().IMULETH.mult;
+			int tba = data.getTBA();
+
+			boolean isBuff; // Checking if the Lethargy TBA is < the getTBA TBA is how you determine if it's a buff or not for effs
+
+			if (atkProc.LETHARGY.type == 2)
+				isBuff = (tba > atkProc.LETHARGY.mult && res > 0) || (tba < atkProc.LETHARGY.mult && res < 0);
+			else
+				isBuff = res < 0;
+			if (Proc.checkSmartImu(atkProc.LETHARGY.mult, getProc().IMULETH.smartImu, !isBuff))
+				res = 0;
+
+			if (res < 100) {
+				int val = (int) (atkProc.LETHARGY.time * time);
+				status[P_LETHARGY][0] = val * (100 - res) / 100;
+				status[P_LETHARGY][1] = atkProc.LETHARGY.mult;
+				status[P_LETHARGY][2] = atkProc.LETHARGY.type;
+
+				anim.getEff(P_LETHARGY); // This is the thing where it does the thing
+			} else
+				anim.getEff(INV);
+		}
+		return true;
 	}
 	public void freeze(AttackAb atk, float time) {
 		float rst = getResistValue(atk, true, getProc().IMUSTOP.mult + (getProc().IMUSTOP.block == 100 ? 100 : 0));
@@ -2523,6 +2571,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			status.money = 0;
 			lastAttacker = null;
 		}
+
+		lastHitBy.clear();
 	}
 
 	public void strengthen() {

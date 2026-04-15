@@ -863,7 +863,7 @@ public class Editors {
 				t.mult = MathUtil.clip(t.mult, -7, 7);
 		}, eg -> t -> setComponentVisibility(eg, !def || t.prob > 0, 1)));
 
-		map().put("CDSETTER", new EditControl<>(Proc.CDSETTER.class, (t) -> {
+		map().put("CDSETTER", new EditControl<>(Proc.DELAY.class, (t) -> {
 			t.prob = Math.max(def ? 0 : -100, Math.min(t.prob, 100));
 			if (def && t.prob == 0) {
 				t.amount = t.slot = t.type = 0;
@@ -1082,14 +1082,14 @@ public class Editors {
 			}
 		}, eg -> t -> setComponentVisibility(eg, !def || t.prob > 0, 1)));
 
-		map().put("KILLSTRENGTHEN", new EditControl<>(Proc.KILLSTRENGTHEN.class, (t) -> {
+		map().put("BERSERK", new EditControl<>(Proc.BERSERK.class, (t) -> {
 			if (!def)
 				return;
 			if (t.mult == 0) {
 				t.max_stacks = 1;
-				t.kill_count = 10;
+				t.killCount = 10;
 			} else {
-				t.kill_count = Math.max(1, t.kill_count);
+				t.killCount = Math.max(1, t.killCount);
 				t.max_stacks = Math.max(0, t.max_stacks);
 			}
 		}, eg -> t -> setComponentVisibility(eg, !def || t.mult != 0, 1)));

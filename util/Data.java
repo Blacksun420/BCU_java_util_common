@@ -222,6 +222,24 @@ public class Data {
 					focus = FOCUS.values()[i == -1 ? 2 : i];
 				}
 			}
+
+			/**
+			 * Used to obtain whether controlled immunity will have effect or not
+			 *
+			 * @param val    The effect of the proc
+			 * @param side   The side used by the smartImu (0 = either or; 1 = )
+			 * @param invert Inverts the >,< signs depending on the proc
+			 * @return idk
+			 */
+			public static boolean checkSmartImu(int val, int side, boolean invert) { // strength = 50, imu = 0,
+				if (side == 0)
+					return true;
+				if (invert) {
+					return val * side < 0;
+				} else {
+					return val * side > 0;
+				}
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -651,16 +669,6 @@ public class Data {
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
-		public static class CDSETTER extends PROB {
-			@Order(1)
-			public int amount;
-			@Order(2)
-			public int slot;
-			@Order(3)
-			public int type; //0 - frames, 1 - %, 2 - set
-		}
-
-		@JsonClass(noTag = NoTag.LOAD)
 		public static class AURA extends ProcItem {
 			@Order(0)
 			public int amult; //Modifies Damage
@@ -712,13 +720,23 @@ public class Data {
 
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class LETHARGY extends PTMS {
-			@Order(3)
-			public boolean percentage;
+			public enum TYPE {
+				FIXED,
+				PERCENTAGE,
+				SET
+			}
+			@Order(4)
+			public TYPE type = TYPE.FIXED;
+			@Order(5)
+			public boolean oldAnim;//Purely visual, ain't letting that li'l stickman go
 
 			@JsonDecoder.OnInjected
 			public void inject(JsonObject jobj) {
-				if (jobj.has("type"))
+				boolean percentage = false;
+				if (jobj.has("type") && jobj.isJsonObject())
 					percentage = jobj.getAsJsonObject("type").get("percentage").getAsBoolean();
+				if (jobj.has("percentage"))
+					type = percentage ? TYPE.PERCENTAGE : TYPE.FIXED;
 			}
 		}
 
@@ -1252,10 +1270,10 @@ public class Data {
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
-		public static class KILLSTRENGTHEN extends MULT {
+		public static class BERSERK extends MULT {
 			@Order(1)
 			@JsonField(defval = "10")
-			public int kill_count = 10;
+			public int killCount = 10;
 			@Order(2)
 			@JsonField(defval = "1")
 			public int max_stacks = 1;//0 for infinite
@@ -1267,7 +1285,7 @@ public class Data {
 
 			@Override
 			public int[] setTalent(int[] nps) {
-				nps[4] = Math.max(1-kill_count, nps[4]);
+				nps[4] = Math.max(1- killCount, nps[4]);
 				nps[5] = Math.max(nps[4], nps[5]);
 				nps[6] = Math.max(-max_stacks, nps[6]);
 				nps[7] = Math.max(nps[6], nps[7]);
@@ -1276,10 +1294,10 @@ public class Data {
 			@Override
 			public void add(ProcItem pi) {
 				super.add(pi);
-				KILLSTRENGTHEN m = (KILLSTRENGTHEN)pi;
+				BERSERK m = (BERSERK)pi;
 				if (m.mult == 0)
 					return;
-				kill_count = Math.max(1, kill_count+m.kill_count);
+				killCount = Math.max(1, killCount +m.killCount);
 				max_stacks = Math.max(0, max_stacks+m.max_stacks);
 			}
 		}
@@ -1584,6 +1602,22 @@ public class Data {
 			}
 		}
 
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class DELAY extends PROB {
+
+			public enum TYPE {
+				CURRENT,
+				DIRECT,
+				MAX
+			}
+			@Order(1)
+			public int strength;
+			@Order(2)
+			public TYPE type = TYPE.CURRENT;
+			@Order(3)
+			public int slot;//Default is 0 (for attacked unit), non-zero operates like slot field for CD-Setter, and -1 is random
+		}
+
 		public static Proc blank() {
 			return new Proc();
 		}
@@ -1709,7 +1743,7 @@ public class Data {
 		@Order(55)
 		public final WORKLV WORKERLV = new WORKLV();
 		@Order(56)
-		public final CDSETTER CDSETTER = new CDSETTER();
+		public final DELAY DELAY = new DELAY();
 		@Order(57)
 		public final AURA WEAKAURA = new AURA();
 		@Order(58)
@@ -1765,9 +1799,11 @@ public class Data {
 		@Order(83)
 		public final IMUATK IMUATKANY = new IMUATK();//This is just Dodge, but ignores traits. Not a toggle coz orbs
 		@Order(84)
-		public final KILLSTRENGTHEN KILLSTRENGTHEN = new KILLSTRENGTHEN(); //Kills,Mult
+		public final BERSERK BERSERK = new BERSERK(); //Kills,Mult
 		@Order(85)
 		public final PMC COMBOCOOLDOWN = new PMC(); //CD,Count
+		@Order(86)
+		public final IMUAD IMUDELAY = new IMUAD(); //CD,Count
 
 		@Override
 		public Proc clone() {
@@ -1916,6 +1952,7 @@ public class Data {
 	public static final short SE_DEATH_SURGE = 143;
 	public static final short SE_COUNTER_SURGE = 159;
 	public static final short SE_SPIRIT_SUMMON = 162;
+	public static final short SE_DELAY_COOLDOWN = 188;
 
 	public static final byte[][] SE_CANNON = { { 25, 26 }, { 60 }, { 61 }, { 36, 37 }, { 65, 83 }, { 84, 85 }, { 86 },
 			{ 124 } };
@@ -2032,7 +2069,8 @@ public class Data {
 	public static final byte ABI_BAKILL = 11;
 	public static final byte ABI_CKILL = 12;
 	public static final byte ABI_SKILL = 13;
-	public static final byte ABI_TOT = 14;// 18 currently
+	public static final byte ABI_VKILL = 14;
+	public static final byte ABI_TOT = 15;
 
 	// proc index
 	public static final byte P_KB = 0;
@@ -2119,7 +2157,7 @@ public class Data {
 	public static final byte P_ATKBASE = 53;
 	public static final byte P_BSTHUNT = 54; //Beast Killer
 	public static final byte P_WORKERLV = 55;
-	public static final byte P_CDSETTER = 56;
+	public static final byte P_DELAY = 56;
 	public static final byte P_WEAKAURA = 57;
 	public static final byte P_STRONGAURA = 58;
 	public static final byte P_LETHARGY = 59;
@@ -2149,7 +2187,19 @@ public class Data {
 	public static final byte P_IMUALL = 83;
 	public static final byte P_KILLSTRENGTHEN = 84;
 	public static final byte P_COMBOCOOLDOWN = 85;
-	public static final byte PROC_TOT = 86;
+	public static final byte P_IMUDELAY = 86;
+	public static final byte PROC_TOT = 87;
+
+	public static final int SCORE_WEAK = 0;
+	public static final int SCORE_STOP = 1;
+	public static final int SCORE_SLOW = 2;
+	public static final int SCORE_KB = 3;
+	public static final int SCORE_GOOD = 4;
+	public static final int SCORE_RESIST = 5;
+	public static final int SCORE_MASSIVE = 6;
+	public static final int SCORE_RESISTS = 7;
+	public static final int SCORE_MASSIVES = 8;
+	public static final int SCORE_TOT = 9;
 
 	public static final boolean[] procSharable = {
 			false, //kb
@@ -2208,7 +2258,7 @@ public class Data {
 			false, //base destroyer
 			true,  //beast hunter
 			false, //Worker change
-			false, //Cooldown change
+			false, //Cooldown change (Delay)
 			true,  //Weaken Aura
 			true,  //Strengthen Aura
 			false, //Lethargy
@@ -2236,8 +2286,8 @@ public class Data {
 			true,  //hp regen
 			true,  //cannon charge
 			true,  //Dodge all
-			true,  //Strengthen When Defeating
-			true   //ComboCooldown
+			true,  //Strengthen When Defeating (Berserk)
+			true  //ComboCooldown
 	};
 
 	/**
@@ -2681,6 +2731,12 @@ public class Data {
 	public static final float SUPER_SAGE_HUNTER_ATTACK = 1.2f;
 	public static final float SUPER_SAGE_HUNTER_HP = 0.5f;
 	public static final float SUPER_SAGE_HUNTER_RESIST = 0.7f;
+	public static final float WITCH_KILLER_ATTACK = 5f;
+	public static final float WITCH_KILLER_RESIST = 20f;
+	public static final float EVA_KILLER_ATTACK = 5f;
+	public static final float EVA_KILLER_RESIST = 10f;
+	public static final float VILLAIN_KILLER_ATTACK = 2.5f;
+	public static final float VILLAIN_KILLER_RESIST = 0.4f;
 
 	public static final char[] SUFX = new char[] { 'f', 'c', 's', 'u' };
 

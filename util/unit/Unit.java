@@ -2,7 +2,7 @@ package common.util.unit;
 
 import common.CommonStatic;
 import common.battle.data.CustomUnit;
-import common.battle.data.OrbInfo;
+import common.battle.data.Orb;
 import common.battle.data.PCoin;
 import common.io.json.FieldOrder.Order;
 import common.io.json.JsonClass;
@@ -96,7 +96,9 @@ public class Unit extends Data implements AbUnit {
 	@JsonField(alias = Identifier.class)
 	@Order(3)
 	public UnitLevel lv;
-	public OrbInfo orbs = null;
+	@FieldOrder.Order(4)
+	@JsonField(generic = Orb.class)
+	public ArrayList<Orb> orbs = new ArrayList<>();
 
 	public final UnitInfo info = new UnitInfo();
 
@@ -121,7 +123,6 @@ public class Unit extends Data implements AbUnit {
 		forms = new Form[] { new Form(this, 0, "new unit", ce, cu) };
 		lv = CommonStatic.getBCAssets().defLv;
 		lv.units.add(this);
-		orbs = new OrbInfo(-1);
 	}
 
 	public Unit(VFile p, int[] m) {
@@ -161,7 +162,6 @@ public class Unit extends Data implements AbUnit {
 			cu.importData(u.forms[i].du);
 			forms[i] = new Form(this, i, str, ac, cu);
 		}
-		orbs = new OrbInfo(-1);
 	}
 
 	@Override

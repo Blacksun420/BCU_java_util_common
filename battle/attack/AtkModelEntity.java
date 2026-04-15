@@ -14,7 +14,7 @@ import java.util.List;
 
 public abstract class AtkModelEntity extends AtkModelAb {
 
-	public static final String[] par = { "SUMMON", "KB", "STOP", "SLOW", "WEAK", "WARP", "CURSE", "SNIPER", "SEAL", "POISON", "BOSS", "RAGE", "HYPNO", "POIATK",
+	public static final String[] par = { "SUMMON", "KB", "STOP", "SLOW", "WEAK", "WARP", "CURSE", "SNIPER", "SEAL", "POISON", "BOSS", "RAGE", "HYPNO", "POIATK", "DELAY",
 			"ARMOR", "SPEED", "LETHARGY", "BLESSING",//post-cursedProcs
 			"DRAIN", "ATKBASE", "CRIT", "WAVE", "BREAK", "SATK", "VOLC", "MINIVOLC", "MINIWAVE", "MOVEWAVE", "SHIELDBREAK", "WORKERLV", "CDSETTER", "METALKILL", "BLAST"};
 	/**
@@ -348,7 +348,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 
 	@Override
 	protected int getLayer() {
-		return e.layer;
+		return e.currentLayer;
 	}
 
 	public Proc getProc(MaskAtk matk) {
@@ -381,10 +381,10 @@ public abstract class AtkModelEntity extends AtkModelAb {
 			else
 				proc.SUMMON.set(sprc);
 		}
-		Proc.CDSETTER c = p.CDSETTER;
+		Proc.DELAY c = p.DELAY;
 		if (c.perform(b.r)) {
 			if (c.slot == 10)
-				proc.CDSETTER.set(c);
+				proc.DELAY.set(c);
 			else if (c.slot < 11)
 				b.changeUnitCooldown(c.amount, c.slot, c.type);
 			else

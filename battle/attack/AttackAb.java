@@ -245,7 +245,7 @@ public abstract class AttackAb extends BattleObj {
 					if (imus.IMUPOIATK.block == 100)
 						proc.POIATK.clear();
 					else
-						proc.POIATK.mult *= (100 - imus.IMUPOIATK.block) / 100.0;
+						proc.POIATK.mult *= (int) ((100 - imus.IMUPOIATK.block) / 100.0);
 				}
 				if (proc.SUMMON.mult > 0 && imus.IMUSUMMON.block != 0) {
 					if (imus.IMUSUMMON.block > 0)
@@ -261,7 +261,7 @@ public abstract class AttackAb extends BattleObj {
 					if (imus.CRITI.block == 100)
 						proc.CRIT.clear();
 					else
-						proc.CRIT.mult *= (100 - imus.CRITI.block) / 100.0;
+						proc.CRIT.mult *= (int) ((100 - imus.CRITI.block) / 100.0);
 				}
 
 				if (blocked)

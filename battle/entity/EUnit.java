@@ -8,15 +8,17 @@ import common.battle.attack.AtkModelUnit;
 import common.battle.attack.AttackAb;
 import common.battle.data.MaskAtk;
 import common.battle.data.MaskUnit;
-import common.battle.data.OrbInfo;
 import common.battle.data.PCoin;
 import common.pack.SortedPackSet;
 import common.pack.UserProfile;
 import common.util.BattleObj;
 import common.util.Data;
 import common.util.anim.EAnimU;
+import common.util.pack.EffAnim;
+import common.util.stage.StageLimit;
 import common.util.unit.Level;
 import common.util.unit.Trait;
+import common.util.unit.Unit;
 
 import java.util.List;
 import java.util.Map;
@@ -34,7 +36,6 @@ public class EUnit extends Entity {
 		protected static int getOrbAtk(AttackAb atk, EEnemy en) {
 			if (atk.matk == null || !(atk.origin.model instanceof AtkModelUnit))
 				return 0;
-			// Warning : Eunit.e became public now
 			EUnit unit = (EUnit)((AtkModelUnit) atk.origin.model).e;
 			return unit.getOrb(en.traits, atk.matk.getAtk(), true);
 		}
@@ -42,6 +43,7 @@ public class EUnit extends Entity {
 
 	public final int lvl;
 	public final int[] index;
+	public final int[] inc = new int[C_TOT];
 
 	protected final Level level;
 	/**
@@ -326,7 +328,7 @@ public class EUnit extends Entity {
 
 	@Override
 	protected void processProcs0(AttackAb atk, int dmg) {
-		Proc.CDSETTER cd = atk.getProc().CDSETTER;
+		Proc.DELAY cd = atk.getProc().DELAY;
 		if (cd.prob > 0 && cd.slot == 10 && index != null && index[1] < 5)
 			basis.changeUnitCooldown(cd.amount, index[0] * 5 + index[1], cd.type);
 		super.processProcs0(atk, dmg);

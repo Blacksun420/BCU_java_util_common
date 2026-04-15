@@ -24,7 +24,6 @@ public class Trait extends Data implements Indexable<PackData, Trait>, Comparabl
 
     public static final SortedPackSet<Trait> AntiTraits = new SortedPackSet<>(Data.TRAIT_WHITE);//Used for targetType, more efficient than re-making the list every time
     public static void read() {
-        //Reads traits from BC and implements it into the main pack
         PackData.DefPack data = UserProfile.getBCData();
         String[] traitNames = {"Red", "Floating", "Black", "Metal", "Angel", "Alien", "Zombie", "Aku", "Relic", "White", "EVA", "Witch", "Baron", "Beast", "Sage", "Villain", "base", "cannon"};
         for (String name : traitNames) {

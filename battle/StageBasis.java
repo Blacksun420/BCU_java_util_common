@@ -25,6 +25,8 @@ import java.util.*;
 
 public class StageBasis extends BattleObj {
 
+	public static final int[] DELAY_BASE = new int[] { 0, 0, 0, 0 };
+
 	public final BasisLU b;
 	public final Stage st;
 	public final EStage est;
@@ -557,6 +559,10 @@ public class StageBasis extends BattleObj {
 		super.performDeepCopy();
 	}
 
+	public boolean isActive() {
+		return ebase.health > 0 && ubase.health > 0;
+	}
+
 	/**
 	 * process actions and add enemies from stage first then update each entity
 	 * and receive attacks then excuse attacks and do post update then delete dead
@@ -937,5 +943,40 @@ public class StageBasis extends BattleObj {
 					es.add((EUnit) e);
 			}
 		return es;
+	}
+
+	public int getDelayStrength(int current, int max, int[] delay) {
+		int prog = max - current;
+		int inc = 0;
+		if (delay[0] != 0) { // increase by %
+			int add = Math.min(prog * Math.min(100, delay[0]) / 100, max);
+			if (add == 0)
+				add = delay[0] < 0 ? -1 : 1;
+			inc += add;
+		}
+		if (delay[1] != 0) { // increase direct value
+			inc += Math.min(delay[1], current);
+		}
+		if (delay[2] != 0) { // increase by % of max C
+			int add = Math.min(max * Math.min(100, delay[2]) / 100, max);
+			if (add == 0)
+				add = delay[2] < 0 ? -1 : 1;
+			inc += add;
+		}
+		return inc;
+	}
+
+	public boolean isDojoOvertime() {
+		return st.trail && st.timeLimit != 0 && st.timeLimit * 60 * 30 - time < 0;
+	}
+
+	public void scoreActivated(int proc, int dire, int traits) {
+		if (!st.trail)
+			return;
+
+		/*for (Stage.ScoreBonus bonus : st.scoreBonus) {
+			if (bonus.proc == proc && (bonus.dire == 0 || bonus.dire == dire))
+				score += bonus.score / Math.max(1, traits);
+		}*/
 	}
 }

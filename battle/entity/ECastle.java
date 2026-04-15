@@ -11,6 +11,7 @@ import common.util.pack.EffAnim.DefEff;
 import common.util.pack.EffAnim.GuardEff;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class ECastle extends AbEntity {
 
@@ -51,7 +52,7 @@ public class ECastle extends AbEntity {
 		if (dire == 1 && sb.baseBarrier > 0) {
 			guard = effas().A_E_GUARD.getEAnim(GuardEff.NONE);
 			CommonStatic.setSE(SE_BARRIER_NON);
-			return;
+			return false;
 		}
 		if (health <= 0)
 			return;
@@ -101,6 +102,8 @@ public class ECastle extends AbEntity {
 		} else if (dire == 1) {
 			sb.est.setBaseBarrier();
 		}
+
+		return true;
 	}
 
 	@Override

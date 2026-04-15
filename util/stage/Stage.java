@@ -37,6 +37,40 @@ import java.util.*;
 public class Stage extends Data
 		implements Comparable<Stage>, BasedCopable<Stage, StageMap>, BattleStatic, IndexContainer.Indexable<StageMap, Stage> {
 
+	@JsonClass(noTag = NoTag.LOAD)
+	public static class ScoreBonus implements Cloneable {
+		public int proc;
+		public int dire; // 1: deal proc, -1: take dmg while having proc, 0: both
+		public int score;
+
+		@JsonClass.JCConstructor
+		public ScoreBonus() {
+
+		}
+
+		public ScoreBonus(int p, int s, int d) {
+			proc = p;
+			score = s;
+			dire = d;
+		}
+
+		public ScoreBonus clone() {
+            ScoreBonus n;
+
+			try {
+				n = (ScoreBonus) super.clone();
+			} catch (CloneNotSupportedException e) {
+				n = new ScoreBonus();
+			}
+
+			n.proc = proc;
+			n.dire = dire;
+			n.score = score;
+
+			return n;
+		}
+	}
+
 	@StaticPermitted
 	public static final MapColc CLIPMC = new MapColc.ClipMapColc();
 	@StaticPermitted
@@ -48,8 +82,6 @@ public class Stage extends Data
 
 	@JsonField(block = true)
 	public StageInfo info;
-	@JsonField(block = true)
-	public boolean isBCstage = false;
 
 	@JsonClass.JCIdentifier
 	public final Identifier<Stage> id;
@@ -81,6 +113,8 @@ public class Stage extends Data
 	@JsonField(generic = Replay.class, alias = ResourceLocation.class)
 	public ArrayList<Replay> recd = new ArrayList<>();
 	public BasisLU lastClear;
+	@JsonField(generic = ScoreBonus.class)
+	public ArrayList<ScoreBonus> scoreBonus = new ArrayList<>();
 
 	@JsonClass.JCConstructor
 	public Stage() {
@@ -100,7 +134,6 @@ public class Stage extends Data
 
 	protected Stage(Identifier<Stage> id, VFile f, int type) {
 		this.id = id;
-		isBCstage = true;
 		StageMap sm = getCont();
 		if (sm.info != null)
 			sm.info.getData(this);
@@ -162,13 +195,11 @@ public class Stage extends Data
 						break;
 
 					String[] ss = temp.split(",");
-
 					for(int i = 0; i < ss.length; i++) {
 						ss[i] = ss[i].trim();
 					}
 
 					int[] data = new int[SCDef.SIZE];
-
 					for (int i = 0; i < intl; i++)
 						if(i < ss.length)
 							data[i] = Integer.parseInt(ss[i]);
@@ -271,6 +302,10 @@ public class Stage extends Data
 		ans.minSpawn = minSpawn;
 		ans.maxSpawn = maxSpawn;
 		ans.bossGuard = bossGuard;
+		ans.trail = trail;
+		ans.timeLimit = timeLimit;
+		for (ScoreBonus bonus : scoreBonus)
+			ans.scoreBonus.add(bonus.clone());
 		return ans;
 	}
 

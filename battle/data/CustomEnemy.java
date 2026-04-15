@@ -4,10 +4,12 @@ import common.battle.Basis;
 import common.io.json.JsonClass;
 import common.io.json.JsonField;
 import common.pack.Identifier;
+import common.pack.PackData;
 import common.pack.UserProfile;
 import common.util.anim.AnimU;
 import common.util.unit.AbEnemy;
 import common.util.unit.Enemy;
+import common.util.unit.Trait;
 
 import java.util.Set;
 import java.util.TreeSet;
@@ -81,6 +83,16 @@ public class CustomEnemy extends CustomEntity implements MaskEnemy {
 	@Override
 	public void importData(MaskEntity de) {
 		super.importData(de);
+		traits = new ArrayList<>();
+		for (Trait t : de.getTraits()) {
+			if (t.id.pack.equals(Identifier.DEF) && t.id.id != Data.TRAIT_EVA && t.id.id != Data.TRAIT_WITCH) {
+				traits.add(t);
+				continue;
+			}
+			PackData.UserPack p = UserProfile.getUserPack(pack.id.pack);
+			if (p != null && (p.desc.id.equals(t.id.pack) || p.desc.dependency.contains(t.id.pack)))
+				traits.add(t);
+		}
 		if (de instanceof MaskEnemy) {
 			MaskEnemy me = (MaskEnemy) de;
 			star = me.getStar();

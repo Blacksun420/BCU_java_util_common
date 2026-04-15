@@ -24,6 +24,8 @@ import common.util.anim.EAnimD;
 import common.util.anim.ImgCut;
 import common.util.pack.bgeffect.BackgroundEffect;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Queue;
 import java.util.function.Consumer;
 
@@ -32,11 +34,11 @@ import java.util.function.Consumer;
 @JsonClass
 public class Background extends AnimI<Background, Background.BGWvType> implements Indexable<PackData, Background> {
 
-	public enum BGWvType implements AnimI.AnimType<Background, BGWvType> {
-		ENEMY, UNIT
-	}
+    public enum BGWvType implements AnimI.AnimType<Background, BGWvType> {
+        ENEMY, UNIT
+    }
 
-	public static final int BG = 0, TOP = 20, shift = 65; // in pix
+    public static final int BG = 0, TOP = 20, shift = 65; // in pix
 
 	public static void read(Consumer<Double> prog) {
 		BCAuxAssets aux = CommonStatic.getBCAssets();
@@ -50,15 +52,15 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 		Queue<String> qs = VFile.readLine("./org/battle/bg/bg.csv");
 		qs.poll();
 
-		String q;
+        String q;
 
 		int loaded = 0, tot = qs.size();
 		while((q = qs.poll()) != null) {
 			int[] ints = CommonStatic.parseIntsN(q);
 
-			if((ints.length < 16 || ints[15] == -1) && VFile.get("./org/img/bg/bg" + Data.trio(ints[0]) + ".png") == null) {
-				continue;
-			}
+            if ((ints.length < 16 || ints[15] == -1) && VFile.get("./org/img/bg/bg" + Data.trio(ints[0]) + ".png") == null) {
+                continue;
+            }
 
 			Background bg = new Background(ints);
 			switch (bg.id.id) {
@@ -180,19 +182,19 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 			prog.accept(1.0 * ++loaded / tot);
 		}
 
-		for(int i = 0; i < UserProfile.getBCData().bgs.size(); i++) {
-			Background bg = UserProfile.getBCData().bgs.get(i);
+        for (int i = 0; i < UserProfile.getBCData().bgs.size(); i++) {
+            Background bg = UserProfile.getBCData().bgs.get(i);
 
 			if(bg.reference != null) {
 				Background ref = bg.reference.get();
 
-				if(ref.overlay != null) {
-					bg.overlay = ref.overlay.clone();
-					bg.overlayAlpha = ref.overlayAlpha;
-				}
-			}
-		}
-	}
+                if (ref.overlay != null) {
+                    bg.overlay = ref.overlay.clone();
+                    bg.overlayAlpha = ref.overlayAlpha;
+                }
+            }
+        }
+    }
 
 	@JsonClass.JCIdentifier
 	@JsonField
@@ -213,15 +215,15 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 	@JsonField(defval="true")
 	public boolean top;
 
-	public FakeImage[] parts = null;
+    public FakeImage[] parts = null;
 
-	private boolean loaded = false;
+    private boolean loaded = false;
 
-	@JsonClass.JCConstructor
-	public Background() {
-		ic = 1;
-		top = true;
-	}
+    @JsonClass.JCConstructor
+    public Background() {
+        ic = 1;
+        top = true;
+    }
 
 	public Background(Identifier<Background> id, VImg vimg) {
 		this.id = id;
@@ -238,11 +240,11 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 		top = vimg.getImg().getHeight() == 1024;
 	}
 
-	private Background(int[] ints) {
-		int id = ints[0];
-		this.id = Identifier.rawParseInt(id, Background.class);
+    private Background(int[] ints) {
+        int id = ints[0];
+        this.id = Identifier.rawParseInt(id, Background.class);
 
-		VImg image;
+        VImg image;
 
 		if(ints.length >= 16 && ints[15] != -1 && ints[15] != id) {
 			if(id == 185)
@@ -260,42 +262,42 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 		top = id == 110 || ints[14] == 1;
 		ic = id == 110 ? 1 : ints[13];
 
-		for (int i = 0; i < 4; i++)
-			cs[i] = new int[] { ints[i * 3 + 1], ints[i * 3 + 2], ints[i * 3 + 3] };
+        for (int i = 0; i < 4; i++)
+            cs[i] = new int[]{ints[i * 3 + 1], ints[i * 3 + 2], ints[i * 3 + 3]};
 
-		if(id == 185) {
-			ic = 11;
-			cs[1][2] = 46;
-		}
+        if (id == 185) {
+            ic = 11;
+            cs[1][2] = 46;
+        }
 
-		UserProfile.getBCData().bgs.set(id, this);
+        UserProfile.getBCData().bgs.set(id, this);
 
-		if(ints.length == 20) {
-			overlayAlpha = ints[19];
-			overlay = new int[][] {
-					{ints[16], ints[17], ints[18]},
-					{ints[16], ints[17], ints[18]}
-			};
-		} else if(ints.length == 24) {
-			if(ints[19] != ints[23]) {
-				System.out.println("W/Background | Different overlay alpha value found! : A0 = "+ints[18]+" / A1 = "+ints[22]);
-			}
+        if (ints.length == 20) {
+            overlayAlpha = ints[19];
+            overlay = new int[][]{
+                    {ints[16], ints[17], ints[18]},
+                    {ints[16], ints[17], ints[18]}
+            };
+        } else if (ints.length == 24) {
+            if (ints[19] != ints[23]) {
+                System.out.println("W/Background | Different overlay alpha value found! : A0 = " + ints[18] + " / A1 = " + ints[22]);
+            }
 
-			overlayAlpha = ints[19];
-			overlay = new int[][] {
-					{ints[16], ints[17], ints[18]},
-					{ints[20], ints[21], ints[22]}
-			};
-		}
-	}
+            overlayAlpha = ints[19];
+            overlay = new int[][]{
+                    {ints[16], ints[17], ints[18]},
+                    {ints[20], ints[21], ints[22]}
+            };
+        }
+    }
 
-	@Override
-	public void check() {
-		if (parts != null)
-			return;
-		load();
+    @Override
+    public void check() {
+        if (parts != null)
+            return;
+        load();
 
-	}
+    }
 
 	public Background copy(Identifier<Background> id) {
 		Background bg = new Background(id, new VImg(img.getImg()), reference == null ? this.id : reference);
@@ -344,22 +346,22 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 		int fw = (int) (parts[BG].getWidth() * siz);
 		int fh = (int) (parts[BG].getHeight() * siz);
 
-		final int off = (int) (pos + 200 * siz - fw);
+        final int off = (int) (pos + 200 * siz - fw);
 
-		g.gradRect(0, h, (int) rect.x, groundHeight, 0, h, cs[2], 0, h + groundHeight, cs[3]);
+        g.gradRect(0, h, (int) rect.x, groundHeight, 0, h, cs[2], 0, h + groundHeight, cs[3]);
 
-		if (h > fh) {
-			int y = h - fh * 2;
+        if (h > fh) {
+            int y = h - fh * 2;
 
-			if (top && parts.length > TOP) {
-				int tw = (int) (parts[TOP].getWidth() * siz);
-				int th = (int) (parts[TOP].getHeight() * siz);
+            if (top && parts.length > TOP) {
+                int tw = (int) (parts[TOP].getWidth() * siz);
+                int th = (int) (parts[TOP].getHeight() * siz);
 
-				y += fh - th;
+                y += fh - th;
 
-				for (int x = off; x < rect.x; x += tw)
-					if (x + tw > 0)
-						g.drawImage(parts[TOP], x, y, tw, th);
+                for (int x = off; x < rect.x; x += tw)
+                    if (x + tw > 0)
+                        g.drawImage(parts[TOP], x, y, tw, th);
 
 				if(y > 0)
 					g.gradRect(0, 0, (int) rect.x, y, 0, 0, cs[0], 0, y, cs[1]);
@@ -372,20 +374,20 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 				g.drawImage(parts[BG], x, h - fh, fw, fh);
 	}
 
-	@Override
-	public EAnimD<EffAnim.DefEff> getEAnim(BGWvType t) {
-		if (t == BGWvType.ENEMY)
-			return effas().A_E_WAVE.getEAnim(EffAnim.DefEff.DEF);
-		else if (t == BGWvType.UNIT)
-			return effas().A_WAVE.getEAnim(EffAnim.DefEff.DEF);
-		else
-			return null;
-	}
+    @Override
+    public EAnimD<EffAnim.DefEff> getEAnim(BGWvType t) {
+        if (t == BGWvType.ENEMY)
+            return effas().A_E_WAVE.getEAnim(EffAnim.DefEff.DEF);
+        else if (t == BGWvType.UNIT)
+            return effas().A_WAVE.getEAnim(EffAnim.DefEff.DEF);
+        else
+            return null;
+    }
 
-	@Override
-	public Identifier<Background> getID() {
-		return id;
-	}
+    @Override
+    public Identifier<Background> getID() {
+        return id;
+    }
 
 	public BackgroundEffect getEffect() {
 		if (bgEffect == null)
@@ -416,15 +418,15 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 			}
 		}
 
-		img.mark(Marker.BG);
-		BCAuxAssets aux = CommonStatic.getBCAssets();
-		parts = aux.iclist.get(ic).cut(img.getImg());
-		loaded = true;
-	}
+        img.mark(Marker.BG);
+        BCAuxAssets aux = CommonStatic.getBCAssets();
+        parts = aux.iclist.get(ic).cut(img.getImg());
+        loaded = true;
+    }
 
-	public void unload() {
-		if (!loaded)
-			return;
+    public void unload() {
+        if (!loaded)
+            return;
 
 		img.unload();
 		img = null;
@@ -436,12 +438,12 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 		loaded = false;
 	}
 
-	public void forceLoad() {
-		img.mark(Marker.BG);
-		BCAuxAssets aux = CommonStatic.getBCAssets();
-		parts = aux.iclist.get(ic).cut(img.getImg());
-		loaded = true;
-	}
+    public void forceLoad() {
+        img.mark(Marker.BG);
+        BCAuxAssets aux = CommonStatic.getBCAssets();
+        parts = aux.iclist.get(ic).cut(img.getImg());
+        loaded = true;
+    }
 
 	@Override
 	public final String[] names() {
@@ -463,22 +465,17 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 		}
 		if (top && img != null)
 			top = img.getImg().getHeight() >= 1024;
-	}
+    }
 
-	@Override
-	public FakeImage parts(int i) {
-		return parts[i];
-	}
+    @Override
+    public FakeImage parts(int i) {
+        return parts[i];
+    }
 
-	@Override
-	public String toString() {
-		return id.toString();
-	}
-
-	@Override
-	public BGWvType[] types() {
-		return BGWvType.values();
-	}
+    @Override
+    public String toString() {
+        return id.toString();
+    }
 
 	@JsonField(tag = "effect", io = JsonField.IOType.W, backCompat = JsonField.CompatType.UPST)
 	public int getBGEff() {

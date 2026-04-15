@@ -393,17 +393,13 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 
 				for (String key : ruleList.keySet()) {
 					JsonElement comboData = ruleList.get(key);
-
 					int ruleID = CommonStatic.parseIntN(key);
-
 					JsonArray comboArray = comboData.getAsJsonObject().getAsJsonArray("InvalidNyancomboID");
-
 					List<Integer> bannedCombo = new ArrayList<>();
 
 					for (JsonElement element : comboArray) {
 						if (!element.isJsonPrimitive())
 							continue;
-
 						bannedCombo.add(element.getAsInt());
 					}
 
@@ -415,18 +411,14 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 				for (String id : mapIDs.keySet()) {
 					JsonObject ruleData = mapIDs.getAsJsonObject(id);
 					int mapID = CommonStatic.safeParseInt(id);
-
 					StageMap map = getMap(mapID);
-
 					if (map == null)
 						continue;
 
 					JsonObject ruleTypes = ruleData.getAsJsonObject("RuleType");
-
 					for (String key : ruleTypes.keySet()) {
 						int ruleID = CommonStatic.parseIntN(key);
 						JsonObject parameterData = ruleTypes.getAsJsonObject(key);
-
 						JsonArray parameter = parameterData.getAsJsonArray("Parameters");
 
 						switch (ruleID) {

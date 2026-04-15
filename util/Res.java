@@ -118,7 +118,7 @@ public class Res extends ImgCore {
 		aux.ico[0][2] = new VImg("./org/page/soulFG.png");
 		aux.ico[0][3] = new VImg("./org/page/EFBG.png");
 		aux.ico[0][4] = new VImg("./org/page/TFBG.png");
-		aux.ico[0][5] = new VImg("./org/page/ZFBG.png");
+		aux.ico[0][5] = new VImg("./org/page/UFBG.png");
 		aux.ico[0][6] = new VImg("./org/page/glow.png");
 		aux.ico[0][7] = new VImg("./org/page/EFFG.png");
 		aux.ico[0][8] = new VImg("./org/page/glow2.png");
@@ -191,6 +191,7 @@ public class Res extends ImgCore {
 		aux.icon[0][ABI_GHOST] = new VImg("./org/page/icons/Ghost.png");
 		aux.icon[0][ABI_GLASS] = new VImg("./org/page/icons/Suicide.png");
 		aux.icon[0][ABI_SKILL] = new VImg(parts[319]);
+		aux.icon[0][ABI_VKILL] = new VImg("./org/page/icons/SupervillainSlayer.png");
 		//Icons for procs
 		aux.icon[1][P_IMUCURSE] = new VImg(parts[116]);
 		aux.icon[1][P_WEAK] = new VImg(parts[195]);
@@ -238,6 +239,8 @@ public class Res extends ImgCore {
 		aux.icon[1][P_CANONCHARGE] = new VImg("./org/page/icons/cannoncharge.png");
 		aux.icon[1][P_IMUALL] = new VImg(parts[231]);
 		aux.icon[1][P_COMBOCOOLDOWN] = new VImg(parts[94]);
+		aux.icon[1][P_DELAY] = new VImg(parts[389]);
+		aux.icon[1][P_IMUDELAY] = new VImg("./org/page/icons/ImuDelay.png");
 
 		aux.icon[1][P_KILLSTRENGTHEN] = new VImg("./org/page/icons/strongkill.png");
 		aux.icon[1][P_IMUSUMMON] = new VImg("./org/page/icons/SummonX.png");
@@ -245,6 +248,7 @@ public class Res extends ImgCore {
 		aux.icon[1][P_DMGCAP] = new VImg("./org/page/icons/DmgCap.png");
 		aux.icon[1][P_IMUARMOR] = new VImg("./org/page/icons/ArmorBreakX.png");
 		aux.icon[1][P_IMUSPEED] = new VImg("./org/page/icons/SpeedX.png");
+		aux.icon[1][P_IMULETH] = new VImg("./org/page/icons/LethargyX.png");
 		aux.icon[1][P_BARRIER] = new VImg(parts[330]);
 		aux.icon[1][P_COUNTER] = new VImg("./org/page/icons/Counter.png");
 		aux.icon[1][P_IMUCANNON] = new VImg("./org/page/icons/CannonX.png");

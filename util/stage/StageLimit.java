@@ -26,6 +26,8 @@ public class StageLimit extends Data implements BattleStatic {
     public boolean coolStart = false;
     @JsonField(generic = Integer.class, defval = "isEmpty")
     public HashSet<Integer> bannedCatCombo = new HashSet<>();
+    @JsonField(generic = Integer.class)
+    public HashSet<Integer> bannedOrb = new HashSet<>();
 
     @JsonField(defval = "100")
     public int cannonMultiplier = 100; // percentage
@@ -80,10 +82,12 @@ public class StageLimit extends Data implements BattleStatic {
         sl.deployDuplicationDelay = deployDuplicationDelay.clone();
 
         sl.bannedCatCombo.addAll(bannedCatCombo);
+        sl.bannedOrb.addAll(bannedOrb);
         sl.coolStart = coolStart;
         sl.cannonMultiplier = cannonMultiplier;
 
         sl.unitSpeedOverride = unitSpeedOverride;
+        //sl.unitSpeedOverrideMode = unitSpeedOverrideMode;
         sl.enemySpeedOverride = enemySpeedOverride;
         return sl;
     }

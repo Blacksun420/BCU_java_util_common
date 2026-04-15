@@ -20,15 +20,17 @@ public class EEnemy extends Entity {
 
 	public final int mark;
 	public final double mult, mula;
+	public final int line;
 
 	public Revival rev;
 	public float door;
 
-	public EEnemy(StageBasis b, MaskEnemy de, EAnimU ea, float magnif, float atkMagnif, int d0, int d1, int m) {
+	public EEnemy(StageBasis b, MaskEnemy de, EAnimU ea, float magnif, float atkMagnif, int d0, int d1, int m, int l) {
 		super(b, de, ea, atkMagnif, magnif);
 		mult = magnif;
 		mula = atkMagnif;
 		mark = m;
+		line = l;
 		isBase = mark <= -1;
 		layer = d0 == d1 ? d0 : d0 + (int) (b.r.nextFloat() * (d1 - d0 + 1));
 		traits = new SortedPackSet<>(de.getTraits(false));
@@ -163,6 +165,37 @@ public class EEnemy extends Entity {
 		if (SageRes && (atk.abi & AB_SKILL) == 0 && traits.contains(BCTraits.get(TRAIT_SAGE)))
 			ans *= SUPER_SAGE_RESIST;
 		return ans;
+	}
+
+	@Override
+	public boolean processProcs(AttackAb atk) {
+		boolean doCheck = super.processProcs(atk);
+		if (!doCheck)
+			return false;
+		Proc atkProc = atk.getProc();
+
+		if (atkProc.DELAY.exists() && line != -1 && basis.est.num[line] > 0 && basis.est.rem[line] > 0) {
+			Proc.DELAY d = atkProc.DELAY;
+			Proc.IMUAD imu = getProc().IMUDELAY;
+			float res;
+			if (Proc.checkSmartImu(d.strength, imu.smartImu, imu.mult < 0))
+				res = getResistValue(atk, "IMUDELAY", imu.mult);
+			else
+				res = 0;
+			if (res < 100) {
+				int strength = (int) (d.strength * res);
+				if (strength != 0) {
+					status[P_DELAY][d.type] += strength;
+					basis.lea.add(new EAnimCont(pos, currentLayer, effas().A_E_DELAY.getEAnim(EffAnim.DefEff.DEF), -50f));
+					basis.leaSort = true;
+				}
+				basis.scoreActivated(P_DELAY, 1, atk.trait.size());
+			} else {
+				anim.getEff(INV);
+			}
+		}
+
+		return true;
 	}
 
 	@Override

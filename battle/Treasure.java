@@ -249,7 +249,7 @@ public class Treasure extends Data {
 	 */
 	public int getFinRes(int ori, int comboInc) {
 		float research = (tech[LV_RES] - 1) * 6 + trea[T_RES] * 0.3f;
-		float deduction = research + (float) Math.floor(research * comboInc / 100);
+		float deduction = research + (float) Math.floor(research * comboInc / 100f);
 		return (int) Math.max(60, ori - deduction);
 	}
 
@@ -261,7 +261,7 @@ public class Treasure extends Data {
 		if (ori <= 60)
 			return ori;
 		float research = (tech[LV_RES] - 1) * 6 + trea[T_RES] * 0.3f;
-		float deduction = (float) Math.floor(research * comboInc / 100.0);
+		float deduction = (float) Math.floor(research * comboInc / 100f);
 		return (int) Math.max(60, ori - deduction);
 	}
 
@@ -270,8 +270,7 @@ public class Treasure extends Data {
 	 */
 	public int getRevRes(int res) {
 		float research = (tech[LV_RES] - 1) * 6 + trea[T_RES] * 0.3f;
-		float addition = research + (float) Math.floor(research * b.getInc(C_RESP) / 100);
-		return (int) Math.max(60, res + addition);
+		return (int) Math.max(60, res + research);
 
 	}
 
@@ -337,7 +336,7 @@ public class Treasure extends Data {
 		}
 		if (ini == 1 || ORB_LV == -1)
 			return ini;
-		float com = 1 - (comboInc * 0.01f);
+		float com = 1 - comboInc * 0.01f;
 		return ini * com;
 	}
 

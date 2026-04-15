@@ -139,8 +139,10 @@ public class AttackSimple extends AttackAb {
 			return;
 		}
 		for (AbEntity e : capt) {
-			e.damaged(this);
+			boolean damaged = e.damaged(this);
 			attacked.add(e);
+			if (e instanceof Entity && damaged)
+				((Entity) e).lastHitBy.add(this);
 		}
 		r.clear();
 		if (dire == 0) {

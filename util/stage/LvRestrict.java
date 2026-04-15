@@ -27,6 +27,27 @@ import java.util.TreeMap;
 @JsonClass.JCGeneric(Identifier.class)
 public class LvRestrict extends Data implements Indexable<PackData, LvRestrict> {
 
+	@JsonClass(noTag = NoTag.LOAD)
+	public static class GroupRestrict {
+		public int[] lv;
+		public int orb;
+
+		@JsonClass.JCConstructor
+		public GroupRestrict() {
+
+		}
+
+		public GroupRestrict(GroupRestrict gr) {
+			lv = gr.lv;
+			orb = gr.orb;
+		}
+
+		public GroupRestrict(int[] maxlv, int maxorb) {
+			lv = maxlv;
+			this.orb = maxorb;
+		}
+	}
+
 	@StaticPermitted
 	public static final Level MAX = new Level(200, 200, new int[0]);
 
@@ -39,7 +60,7 @@ public class LvRestrict extends Data implements Indexable<PackData, LvRestrict> 
 
 	@JCIdentifier
 	public Identifier<LvRestrict> id;
-	public String name = "";
+	public String name = "new level restrict";
 
 	@JsonClass.JCConstructor
 	public LvRestrict() {
@@ -109,14 +130,14 @@ public class LvRestrict extends Data implements Indexable<PackData, LvRestrict> 
 		for (AbForm[] fs : lu.fs)
 			for (AbForm f : fs)
 				if (f != null) {
-					Level mlv = valid(f);
-					Level flv = lu.map.get(f.getID());
+					Level maxLv = valid(f);
+					Level curLv = lu.map.get(f.getID());
 
-					if (mlv.getLv() < flv.getLv() || mlv.getPlusLv() < flv.getPlusLv())
+					if (maxLv.getLv() < curLv.getLv() || maxLv.getPlusLv() < curLv.getPlusLv())
 						return false;
 
-					int[] mt = mlv.getTalents();
-					int[] ft = flv.getTalents();
+					int[] mt = maxLv.getTalents();
+					int[] ft = curLv.getTalents();
 
 					for (int i = 0; i < Math.min(mt.length, ft.length); i++)
 						if (mt[i] < ft[i])
@@ -218,6 +239,13 @@ public class LvRestrict extends Data implements Indexable<PackData, LvRestrict> 
 				JsonObject job = jarr.get(i).getAsJsonObject();
 				CharaGroup ch = new LocalDecoder(job.get("key"), CharaGroup.class, this).setAlias(Identifier.class).decode();
 				cgl.put(ch, toNewFormat(JsonDecoder.decode(job.get("val"), int[].class)));
+			}
+		}
+
+		if (!res.isEmpty()) {
+			for (CharaGroup g : res.keySet()) {
+				int[] lv = res.get(g);
+				groups.put(g, new GroupRestrict(lv, -1));
 			}
 		}
 	}
