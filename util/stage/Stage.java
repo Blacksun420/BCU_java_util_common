@@ -40,7 +40,12 @@ public class Stage extends Data
 	@JsonClass(noTag = NoTag.LOAD)
 	public static class ScoreBonus implements Cloneable {
 		public int proc;
-		public int dire; // 1: deal proc, -1: take dmg while having proc, 0: both
+		/**
+		 * 1: inflicted onto enemy
+		 * -1: inflicted onto cat
+		 * 0: both ways
+		 */
+		public int dire;
 		public int score;
 
 		@JsonClass.JCConstructor

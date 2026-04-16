@@ -76,7 +76,7 @@ public class Limit extends Data implements BattleStatic {
 	}
 
 	public boolean rich, sniper;
-	public int rare, num, line, min, max;
+	public int rare, num, line, min, max, score;
 	@JsonField(backCompat = JsonField.CompatType.FORK)
 	public int star = 0, fa; //last var could be named forceAmount, but that'd take too much json space
 	@JsonField(alias = Identifier.class)
@@ -115,6 +115,7 @@ public class Limit extends Data implements BattleStatic {
 		l.rich = rich;
 		l.sniper = sniper;
 		l.stageLimit = stageLimit != null ? stageLimit.clone() : null;
+		l.score = score;
 		return l;
 	}
 
@@ -146,6 +147,7 @@ public class Limit extends Data implements BattleStatic {
 		sniper |= l.sniper;
 		if (l.stageLimit != null)
 			stageLimit = stageLimit != null ? stageLimit.combine(l.stageLimit) : l.stageLimit;
+		score = score > 0 && l.score > 0 ? Math.min(score, l.score) : (score + l.score);
 	}
 
 	public boolean unusable(MaskUnit du, int price, byte row) {

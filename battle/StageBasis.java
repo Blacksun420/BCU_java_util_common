@@ -560,7 +560,7 @@ public class StageBasis extends BattleObj {
 	}
 
 	public boolean isActive() {
-		return ebase.health > 0 && ubase.health > 0;
+		return ebase.health > 0 && ubase.health > 0 && !isDojoOvertime();
 	}
 
 	protected void processSingleProcs() {
@@ -664,6 +664,8 @@ public class StageBasis extends BattleObj {
 		}
 
 		if (timeFlow > 0) {
+			if (isDojoOvertime() && st.lim.score < score)
+				ubase.health = 0;
 			if(bgEffect != null)
 				bgEffect.update(st.len, battleHeight, midH, timeFlow);
 
