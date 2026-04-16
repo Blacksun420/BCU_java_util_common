@@ -95,8 +95,8 @@ public class EneRand extends Data implements AbEnemy {
 	}
 
 	@Override
-	public EEnemy getEntity(StageBasis sb, Object obj, float mul, float mul2, int d0, int d1, int m) {
-		return get(getSelection(sb, obj), sb, obj, mul, mul2, d0, d1, m);
+	public EEnemy getEntity(StageBasis sb, Object obj, float mul, float mul2, int d0, int d1, int m, int line) {
+		return get(getSelection(sb, obj), sb, obj, mul, mul2, d0, d1, m, line);
 	}
 
 	@Override
@@ -124,9 +124,9 @@ public class EneRand extends Data implements AbEnemy {
 	}
 
 	private EEnemy get(EREnt x, StageBasis sb, Object obj, float mul, float mul2, int d0, int d1,
-			int m) {
+			int m, int l) {
 		return Identifier.getOr(x.ent, AbEnemy.class).getEntity(sb, obj, x.multi * mul / 100, x.multi * mul2 / 100, d0,
-				d1, m);
+				d1, m, l);
 	}
 
 	public boolean contains(Identifier<AbEnemy> e, Identifier<AbEnemy> origin) {

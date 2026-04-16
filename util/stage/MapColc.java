@@ -442,6 +442,8 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 									slim.maxMoney = maxMoney;
 									slim.bannedCatCombo.addAll(bannedCombo);
 									slim.coolStart = true;
+									for (Stage st : map.list)
+										st.drop = false;
 								}
 
 								break;
@@ -617,6 +619,66 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 					}
 				}
 			}
+			// dojos with score bonuses
+			VFile scoreBonus = VFile.get("./org/data/ScoreBonusMap.json");
+			String specialScore = new String(scoreBonus.getData().getBytes());
+			JsonElement scoreElement = JsonParser.parseString(specialScore);
+
+			if (scoreElement.isJsonObject()) {
+				JsonObject scoreObj = scoreElement.getAsJsonObject();
+				JsonObject mapIDs = scoreObj.getAsJsonObject("MapID");
+				for (String id : mapIDs.keySet()) {
+					JsonObject scoreData = mapIDs.getAsJsonObject(id);
+					int mapID = CommonStatic.safeParseInt(id);
+					StageMap map = getMap(mapID);
+					if (map == null)
+						continue;
+
+					JsonObject scoreType = scoreData.getAsJsonObject("BonusType");
+					for (String key : scoreType.keySet()) {
+						int ruleID = CommonStatic.parseIntN(key);
+						JsonArray parameter = scoreType.getAsJsonObject(key).getAsJsonArray("Parameters");
+						int score = parameter.getAsInt();
+						int proc = -1, dire = 1;
+
+						switch (ruleID) {
+							case 0:
+								proc = SCORE_WEAK;
+								break;
+							case 1:
+								proc = SCORE_STOP;
+								break;
+							case 2:
+								proc = SCORE_SLOW;
+								break;
+							case 3:
+								proc = SCORE_KB;
+								break;
+							case 13:
+								proc = SCORE_GOOD;
+								break;
+							case 14:
+								proc = SCORE_MASSIVE;
+								break;
+							case 16:
+								proc = SCORE_GOOD;
+								dire = -1;
+								break;
+						}
+
+						if (proc == -1)
+							System.out.printf("W/MapColc::read - Unexpected score bonus rule type for map %d : Rule = %d\n",
+									mapID,
+									ruleID);
+						else {
+							for (Stage st : map.list) {
+								st.scoreBonus.add(new Stage.ScoreBonus(proc, score, dire));
+							}
+						}
+					}
+				}
+			}
+
 			// Battle preset
 			qs = VFile.readLine("./org/data/fixed_formation.csv");
 			if (qs != null) {

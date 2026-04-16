@@ -9,6 +9,8 @@ import common.util.Data.Proc.POISON;
 import common.util.Data.Proc.COUNTER;
 import common.util.Data.Proc.REVIVE;
 import common.util.Data.Proc.SPEED;
+import common.util.Data.Proc.LETHARGY;
+import common.util.Data.Proc.DELAY;
 import common.util.Data.Proc.ProcItem;
 import common.util.unit.Unit;
 import org.jcodec.common.tools.MathUtil;
@@ -370,9 +372,10 @@ public class Editors {
 				return;
 			if (t.prob == 0) {
 				t.mult = t.time = 0;
-				t.stackable = t.percentage = false;
+				t.stackable = false;
+				t.type = LETHARGY.TYPE.FIXED;
 			} else {
-				if (t.percentage)
+				if (t.type == LETHARGY.TYPE.FIXED)
 					t.mult = Math.max(t.mult, -100);
 				t.time = Math.max(t.time, 1);
 			}
@@ -509,8 +512,8 @@ public class Editors {
 		}, eg -> t -> {
 			EditorSupplier edi = UserProfile.getStatic("Editor_Supplier", () -> null);
 			setComponentVisibility(eg, !def || t.prob > 0, 1);
-			setComponentVisibility(eg, !def || (t.prob > 0 && ((!edi.isEnemy() && t.id == null) || (t.id != null && t.id.cls == Unit.class))), 17, 18);
-			setComponentVisibility(eg, !def || t.amount >= 2, 18);
+			setComponentVisibility(eg, !def || (t.prob > 0 && ((!edi.isEnemy() && t.id == null) || (t.id != null && t.id.cls == Unit.class))), 2, 3);
+			setComponentVisibility(eg, !def || t.amount >= 2, 9, 10);
 		}));
 
 		map().put("MOVEWAVE", new EditControl<>(Proc.MOVEWAVE.class, (t) -> {
@@ -707,7 +710,7 @@ public class Editors {
 
 		map().put("IMUWEAK", imuad);
 
-		map().put("IMULETHARGY", imuad);
+		map().put("IMULETH", imuad);
 
 		map().put("IMUWARP", imu);
 
@@ -863,19 +866,15 @@ public class Editors {
 				t.mult = MathUtil.clip(t.mult, -7, 7);
 		}, eg -> t -> setComponentVisibility(eg, !def || t.prob > 0, 1)));
 
-		map().put("CDSETTER", new EditControl<>(Proc.DELAY.class, (t) -> {
+		map().put("DELAY", new EditControl<>(Proc.DELAY.class, (t) -> {
 			t.prob = Math.max(def ? 0 : -100, Math.min(t.prob, 100));
 			if (def && t.prob == 0) {
-				t.amount = t.slot = t.type = 0;
+				t.strength = t.slot = 0;
+				t.type = DELAY.TYPE.CURRENT;
 			} else {
 				t.slot = MathUtil.clip(t.slot, -1, 11);
-				t.type = MathUtil.clip(t.type, 0, 2);
-				if (t.type == 1)
-					t.amount = MathUtil.clip(t.amount, def ? 0 : -100, 100);
-				else if (def && t.type == 2)
-					t.amount = Math.max(t.amount, 0);
-				else if (def && t.amount == 0)
-					t.amount = 1;
+				if (t.type == DELAY.TYPE.CURRENT || t.type == DELAY.TYPE.MAX)
+					t.strength = MathUtil.clip(t.strength, def ? 0 : -100, 100);
 			}
 		}, eg -> t -> setComponentVisibility(eg, !def || t.prob > 0, 1)));
 

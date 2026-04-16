@@ -20,10 +20,13 @@ public class ELineUp extends BattleObj {
 	private final Proc.SPIRIT[][] spData = new Proc.SPIRIT[2][5];
 	public final int[][] scount = new int[2][5], sGlow = new int[2][5];
 	public final boolean[][] smnd = new boolean[2][5];
+	public final int[][][] cdDelay = new int[2][5][3], cdDelayVisual = new int[2][5][StageBasis.DELAY_BASE.length];
+	private final StageBasis b;
 
 	private final LineUp.ComboBuff[] inc;
 
 	protected ELineUp(LineUp lu, StageBasis sb, byte saveMode) {
+		b = sb;
 		inc = new LineUp.ComboBuff[lu.incs.size()];
 		int q = 0;
 		for (LineUp.ComboBuff buff : lu.incs) {
@@ -71,6 +74,7 @@ public class ELineUp extends BattleObj {
 				}
 				spData[i][j] = lu.efs[i][j] instanceof EForm && ((EForm) lu.efs[i][j]).du.getProc().SPIRIT.id != null ? ((EForm)lu.efs[i][j]).du.getProc().SPIRIT : null;
 				scount[i][j] = spData[i][j] == null ? -1 : 0;
+				cdDelay[i][j] = new int[] { 0, -1, 0 };
 			}
 	}
 
@@ -83,6 +87,33 @@ public class ELineUp extends BattleObj {
 			scd[i][j] = spData[i][j].cd0;
 			scount[i][j] = spData[i][j].amount;
 		}
+		cdDelay[i][j] = new int[] { 0, -1, 0 };
+	}
+
+	protected void delay(int i, int j, int[] delay) {
+		if (cool[i][j] == 0)
+			return;
+
+		int inc = b.getDelayStrength((int)cool[i][j], maxC[i][j], delay);
+		if (inc > 0) {
+			cdDelayVisual[i][j][0] = (int)Math.max(cdDelayVisual[i][j][0], cool[i][j]);
+		} else {
+			cdDelayVisual[i][j][2] += inc;
+		}
+		cool[i][j] += inc;
+		if (cool[i][j] > maxC[i][j])
+			cool[i][j] = maxC[i][j];
+		if (inc < 0) {
+			if (cool[i][j] <= 0) {
+				cool[i][j] = 0;
+				CommonStatic.setSE(SE_SPEND_REF);
+			} else
+				cdDelayVisual[i][j][3] = 10;
+			CommonStatic.setSE(SE_DELAY_COOLDOWN);
+		} else {
+			cdDelayVisual[i][j][1] = 10;
+			CommonStatic.setSE(SE_DELAY_COOLDOWN);
+		}
 	}
 
 	/**
@@ -92,10 +123,10 @@ public class ELineUp extends BattleObj {
 		boolean firstDeploy = true;
 		for (EUnit u : sb.getAllOf(i, j)) {
 			EUnit rit = firstDeploy ? spi : ((EForm)sb.b.lu.efs[i][j]).invokeSpirit(sb, spi.index);
-			rit.added(-1, Math.min(Math.max(sb.ebase.pos + rit.data.getRange(), u.lastPosition + SPIRIT_SUMMON_RANGE), sb.ubase.pos));
+			rit.added(-1, Math.min(Math.max(sb.ebase.pos + rit.data.getRange(), u.pos + SPIRIT_SUMMON_RANGE), sb.ubase.pos));
 			rit.group = -1;//for the getAllOf function
 			if (!(rit instanceof ESpirit))
-				rit.setSummon(spData[i][j].animType, null);
+				rit.setSummonAnim(spData[i][j].animType);
 			if (spData[i][j].animType == Proc.SUMMON_ANIM.EVERYWHERE_DOOR)
 				sb.doors.add(new DoorCont(sb, rit));
 			else
@@ -133,6 +164,8 @@ public class ELineUp extends BattleObj {
 
 				if (validSpirit(i,j) && scount[i][j] > 0 && scd[i][j] > 0 && (scd[i][j] -= flow) <= 0)
 					sGlow[i][j] = (int)time;
+				if (cdDelay[i][j][2] > 0)
+					cdDelay[i][j][2]--;
 			}
 		}
 	}

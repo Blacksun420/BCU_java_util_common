@@ -465,8 +465,11 @@ public class LineUp extends Data {
 			for (int j = 0; j < 5; j++)
 				if (fs[i][j] == null)
 					efs[i][j] = null;
-				else
+				else {
 					efs[i][j] = IForm.newIns(fs[i][j], getLv(fs[i][j]));
+					if (efs[i][j] instanceof EForm)
+						((EForm) efs[i][j]).getLevel().revalidateOrb((Unit)fs[i][j].unit());
+				}
 	}
 
 	private void validate() {

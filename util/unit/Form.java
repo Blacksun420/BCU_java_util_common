@@ -21,6 +21,7 @@ import common.util.anim.MaModel;
 import common.util.lang.MultiLangCont;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 @JCGeneric(AbForm.AbFormJson.class)
@@ -392,25 +393,9 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 		return null;
 	}
 
-	public OrbInfo getOrbs() {
+	public ArrayList<Orb> getOrbs() {
 		if (uid.pack.equals(Identifier.DEF) && fid < 2)
 			return null;
 		return unit.orbs;
-	}
-
-	public boolean checkOrb(int level) {
-		for (int lim : unit.orbs.getLimits())
-			if (lim == 0 && fid >= 2 || lim <= level)
-				return true;
-		return false;
-	}
-	public boolean checkOrb(int level, int index) {
-		if (index >= unit.orbs.getLimits().length)
-			return false;
-
-		int limit = unit.orbs.getLimits()[index];
-		if (limit == 0 && fid >= 2)
-			return true;
-		else return limit <= level;
 	}
 }

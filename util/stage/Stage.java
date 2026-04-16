@@ -89,7 +89,7 @@ public class Stage extends Data
 	@JsonField(generic = MultiLangData.class, gen = JsonField.GenType.FILL, defval = "empty")
 	public final MultiLangData names = new MultiLangData();
 
-	public boolean non_con, trail, bossGuard;
+	public boolean non_con, trail, bossGuard, drop = true;
 	@JsonField(defval = "3000")
 	public int len = 3000;
 	@JsonField(defval = "60000")
@@ -182,6 +182,7 @@ public class Stage extends Data
 			if (hasCastleData)
 				bossGuard = Integer.parseInt(strs[8]) == 1;
 			trail = timeLimit != 0;
+			drop = !trail;
 
 			int isBase = Integer.parseInt(strs[6]) - 2;
 
@@ -211,7 +212,7 @@ public class Stage extends Data
 					data[SCDef.R0] *= 2;
 					data[SCDef.R1] *= 2;
 
-					if (timeLimit == 0 && data[SCDef.C0] > 100) {
+					if (!trail && data[SCDef.C0] > 100) {
 						if (intl > 9 && data[SCDef.M] == 100)
 							data[SCDef.M] = data[SCDef.C0];
 						data[SCDef.C0] = 100;
@@ -438,6 +439,9 @@ public class Stage extends Data
 					lim.stageLimit.globalCost = -1;
 			}
 		}
+		if (UserProfile.isOlderPack(mc.pack, "0.7.17.0"))
+			if (trail || (lim.stageLimit != null && lim.stageLimit.maxMoney > 0))
+				drop = false;
 	}
 
 	@JsonField(tag = "timeLimit", io = JsonField.IOType.W, backCompat = JsonField.CompatType.UPST)

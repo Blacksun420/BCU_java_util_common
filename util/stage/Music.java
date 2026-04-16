@@ -11,6 +11,8 @@ import common.system.files.FileData;
 import common.util.Data;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+
 @JsonClass
 @IndexCont(PackData.class)
 @JsonClass.JCGeneric(Identifier.class)
@@ -79,5 +81,14 @@ public class Music implements Indexable<PackData, Music>, Comparable<Music> {
 
 	public static boolean isMusic(String str) {
 		return str.endsWith(".ogg");
+	}
+
+	public ArrayList<Stage> getStages() {
+		ArrayList<Stage> ans = new ArrayList<>();
+		for (Stage st : MapColc.getAllStage()) {
+			if (st != null && (st.mus0 != null && st.mus0.equals(id) || st.mus1 != null && st.mus1.equals(id)))
+				ans.add(st);
+		}
+		return ans;
 	}
 }

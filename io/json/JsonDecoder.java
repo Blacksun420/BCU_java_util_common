@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import common.pack.PackData;
 import common.io.assets.Admin.StaticPermitted;
 import common.io.json.JsonClass.JCGetter;
 import common.io.json.JsonField.GenType;
@@ -470,7 +471,13 @@ public class JsonDecoder {
 			try {
 				f.set(obj, decode(elem, f.getType(), getInvoker()));
 			} catch (Exception e) {
-				throw new JsonException(obj, e, f, elem);
+				StringBuilder err = new StringBuilder("error");
+				if (PackData.class.isAssignableFrom(tarcls))
+					err.append(" in pack ").append(((PackData) obj).getSID());
+				err.append(" at ").append(curcls);
+				err.append(" in field ").append(f);
+				err.append(" | Elem : ").append(elem);
+				throw new Exception(err.toString(), e);
 			}
 			curfld = null;
 		}

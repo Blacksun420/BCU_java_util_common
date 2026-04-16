@@ -223,22 +223,23 @@ public class Data {
 				}
 			}
 
+			public boolean checkImu(double val) {
+				return checkImu(val,mult < 0);
+			}
+
 			/**
 			 * Used to obtain whether controlled immunity will have effect or not
 			 *
 			 * @param val    The effect of the proc
-			 * @param side   The side used by the smartImu (0 = either or; 1 = )
 			 * @param invert Inverts the >,< signs depending on the proc
 			 * @return idk
 			 */
-			public static boolean checkSmartImu(int val, int side, boolean invert) { // strength = 50, imu = 0,
-				if (side == 0)
+			public boolean checkImu(double val, boolean invert) {
+				if (focus == Proc.IMUAD.FOCUS.ALL)
 					return true;
-				if (invert) {
-					return val * side < 0;
-				} else {
-					return val * side > 0;
-				}
+				if (invert)
+					return val * focus.effect < 0;
+				return val * focus.effect > 0;
 			}
 		}
 
@@ -858,45 +859,47 @@ public class Data {
 			@Order(1)
 			public Identifier<?> id;
 			@Order(2)
-			public int dis;
+			@JsonField(defval = "1")
+			public int form = 1;
 			@Order(3)
-			public int max_dis;
+			@JsonField(defval = "1")
+			public int amount = 1;
 			@Order(4)
 			@JsonField(defval = "1")
 			public int mult = 1;
 			@Order(5)
-			public int min_layer;
+			public int tba = 0;
 			@Order(6)
+			public int dis;
+			@Order(7)
+			public int max_dis;
+			@Order(8)
+			public int time;
+			@Order(9)
+			public int interval;
+			@Order(10)
+			public int min_layer;
+			@Order(11)
 			@JsonField(defval = "9")
 			public int max_layer = 9;
-			@Order(7)
-			@JsonField(defval = "null||NONE")
-			public SUMMON_ANIM anim_type = SUMMON_ANIM.NONE;
-			@Order(8)
-			public boolean ignore_limit;
-			@Order(9)
-			public boolean fix_buff;
-			@Order(10)
-			public boolean same_health;
-			@Order(11)
-			public boolean bond_hp;
 			@Order(12)
-			public boolean on_hit;
+			public boolean ignore_limit;
 			@Order(13)
-			public boolean on_kill;
+			public boolean fix_buff;
 			@Order(14)
+			public boolean same_health;
+			@Order(15)
+			public boolean bond_hp;
+			@Order(16)
+			public boolean on_hit;
+			@Order(17)
+			public boolean on_kill;
+			@Order(18)
 			@BitMasked
 			public int pass_proc;
-			@Order(15)
-			public int time;
-			@Order(16)
-			@JsonField(defval = "1")
-			public int amount = 1;
-			@Order(17)
-			@JsonField(defval = "1")
-			public int form = 1;
-			@Order(18)
-			public int interval;
+			@Order(19)
+			@JsonField(defval = "null||NONE")
+			public SUMMON_ANIM anim_type = SUMMON_ANIM.NONE;
 
 			@JsonDecoder.OnInjected
 			public void inject(JsonObject jobj) {
@@ -1235,6 +1238,12 @@ public class Data {
 				if (mult + m == 0)
 					m -= m > 0 ? 0.01 : -0.01; //Negligible difference but doesn't reset the markiplier
 				mult += m;
+			}
+
+			public byte getType(boolean def) {
+				if (def)
+					return (byte)(mult <= 100 ? -1 : mult < 400 ? 0 : mult < 600 ? 1 : 2);
+				return (byte)(mult <= 100 ? -1 : mult < 300 ? 0 : mult < 500 ? 1 : 2);
 			}
 		}
 
@@ -1608,14 +1617,15 @@ public class Data {
 			public enum TYPE {
 				CURRENT,
 				DIRECT,
-				MAX
+				MAX,
+				FIXED
 			}
 			@Order(1)
 			public int strength;
 			@Order(2)
 			public TYPE type = TYPE.CURRENT;
-			@Order(3)
-			public int slot;//Default is 0 (for attacked unit), non-zero operates like slot field for CD-Setter, and -1 is random
+			//@Order(3)
+			//public int slot;//Default is 0 (for attacked unit), non-zero operates like slot field for CD-Setter, and -1 is random
 		}
 
 		public static Proc blank() {
@@ -1751,7 +1761,7 @@ public class Data {
 		@Order(59)
 		public final LETHARGY LETHARGY = new LETHARGY();
 		@Order(60)
-		public final IMUAD IMULETHARGY = new IMUAD();
+		public final IMUAD IMULETH = new IMUAD();
 		@Order(61)
 		public final REMOTESHIELD REMOTESHIELD = new REMOTESHIELD();
 		@Order(62)
@@ -1797,13 +1807,12 @@ public class Data {
 		@Order(82)
 		public final PMC CANONCHARGE = new PMC();
 		@Order(83)
-		public final IMUATK IMUATKANY = new IMUATK();//This is just Dodge, but ignores traits. Not a toggle coz orbs
-		@Order(84)
 		public final BERSERK BERSERK = new BERSERK(); //Kills,Mult
-		@Order(85)
+		@Order(84)
 		public final PMC COMBOCOOLDOWN = new PMC(); //CD,Count
-		@Order(86)
+		@Order(85)
 		public final IMUAD IMUDELAY = new IMUAD(); //CD,Count
+		public final IMUATK IMUATKANY = new IMUATK();//This is just Dodge, but ignores traits. Not a toggle coz orbs
 
 		@Override
 		public Proc clone() {
@@ -2054,6 +2063,7 @@ public class Data {
 	public static final short AB_BAKILL = 1 << 11;
 	public static final short AB_CKILL = 1 << 12;
 	public static final int AB_SKILL = 1 << 13;
+	public static final int AB_VKILL = 1 << 14;
 
 	public static final byte ABI_ONLY = 0;
 	public static final byte ABI_METALIC = 1;
@@ -2184,10 +2194,10 @@ public class Data {
 	public static final byte P_REFUND = 80;
 	public static final byte P_HPREGEN = 81;
 	public static final byte P_CANONCHARGE = 82;
-	public static final byte P_IMUALL = 83;
-	public static final byte P_KILLSTRENGTHEN = 84;
-	public static final byte P_COMBOCOOLDOWN = 85;
-	public static final byte P_IMUDELAY = 86;
+	public static final byte P_BERSERK = 83;
+	public static final byte P_COMBOCOOLDOWN = 84;
+	public static final byte P_IMUDELAY = 85;
+	public static final byte P_IMUALL = 86;
 	public static final byte PROC_TOT = 87;
 
 	public static final int SCORE_WEAK = 0;
@@ -2285,9 +2295,9 @@ public class Data {
 			true,  //Refund
 			true,  //hp regen
 			true,  //cannon charge
-			true,  //Dodge all
 			true,  //Strengthen When Defeating (Berserk)
-			true  //ComboCooldown
+			true,  //ComboCooldown
+			true   //Dodge all
 	};
 
 	/**
@@ -2507,7 +2517,8 @@ public class Data {
 	public static final byte C_VKILL = 25;
 	public static final byte C_IMUWAVE = 26;
 	public static final byte C_DISCOUNT = 27;
-	public static final byte C_TOT = 28;
+	public static final byte C_IMUVOLC = 28;
+	public static final byte C_TOT = 29;
 
 	// Effects Anim index
 	public static final byte A_DOWN = 0;

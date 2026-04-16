@@ -2,6 +2,7 @@ package common.battle.data;
 
 import common.CommonStatic;
 import common.CommonStatic.BCAuxAssets;
+import common.io.json.JsonClass;
 import common.pack.Identifier;
 import common.system.VImg;
 import common.system.files.VFile;
@@ -15,7 +16,8 @@ import org.json.JSONObject;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-public class OrbInfo extends Data {
+@JsonClass
+public class Orb extends Data {
 	public static final byte[] orbTrait = {
 			TRAIT_RED, TRAIT_FLOAT, TRAIT_BLACK, TRAIT_METAL, TRAIT_ANGEL, TRAIT_ALIEN,
 			TRAIT_ZOMBIE, TRAIT_RELIC, TRAIT_WHITE, TRAIT_EVA, TRAIT_WITCH, TRAIT_DEMON, -1//This one is no trait anyway
@@ -102,7 +104,17 @@ public class OrbInfo extends Data {
 
 				if (u == null || u.forms.length < 3)
 					continue;
-                u.orbs = strs.length == 2 ? new OrbInfo(slots) : new OrbInfo(slots, new int[] { CommonStatic.parseIntN(strs[2]) * 60, CommonStatic.parseIntN(strs[3]) * 60 });
+				if (strs.length == 2) {
+					for (int i = 0; i < slots; i++)
+						u.orbs.add(new Orb(2, 0));
+				} else
+					for (int i = 0; i < slots; i++) {
+						int limitId = CommonStatic.parseIntN(strs[2 + i]);
+						int minForm = limitId >= 0 ? 2 : 0;
+						int minLv = limitId * 60;//>= 1 ? 60 : 0;
+						System.out.println(minLv);
+						u.orbs.add(new Orb(minForm, minLv));
+					}
 			}
 
 			String pre = "./org/page/orb/equipment_";
@@ -153,47 +165,28 @@ public class OrbInfo extends Data {
 				return true;
 		return false;
 	}
-
-	private final int slots;
-	private final int[] limit;
-
-	public OrbInfo(int slots) {
-		this.slots = slots;
-
-		if(slots == -1)
-			this.limit = null;
-		else
-			this.limit = new int[slots];
-	}
-
-	public OrbInfo(int slots, int[] limit) {
-		this.slots = slots;
-
-		if(slots != limit.length) {
-			System.out.println("W/Orb - Desynced number of slot and level limit data : " + slots + " -> " + Arrays.toString(limit));
-
-			int[] temp = new int[slots];
-
-			System.arraycopy(limit, 0, temp, 0, temp.length);
-
-			this.limit = temp;
-		} else
-			this.limit = limit;
-	}
-
-	public int getAtk(int grade, int atk) {
+	public static int getAtk(int grade, int atk) {
 		return get(ORB_ATK, (byte)grade)[0] * atk / 100;
 	}
 
-	public int getRes(int grade, int atk) {
+	public static int getRes(int grade, int atk) {
 		return (100-get(ORB_RES,(byte)grade)[0]) * atk / 100;
 	}
 
-	public int getSlots() {
-		return slots;
+	private final int minForm;
+	private final int minLv;
+
+	public Orb(int minForm, int minLv) {
+		this.minForm = minForm;
+		this.minLv = minLv;
 	}
 
-	public int[] getLimits() {
-		return limit;
+	public boolean isRestricted(int formId, int lv) {
+		return formId < minForm || lv < minLv;
+	}
+
+	@Override
+	public String toString() {
+		return "Form " + minForm + ", Lv. " + minLv;
 	}
 }

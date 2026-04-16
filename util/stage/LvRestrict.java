@@ -20,6 +20,7 @@ import common.util.unit.AbForm;
 import common.util.unit.Form;
 import common.util.unit.Level;
 
+import java.util.Map;
 import java.util.TreeMap;
 
 @IndexCont(PackData.class)
@@ -45,6 +46,14 @@ public class LvRestrict extends Data implements Indexable<PackData, LvRestrict> 
 		public GroupRestrict(int[] maxlv, int maxorb) {
 			lv = maxlv;
 			this.orb = maxorb;
+		}
+
+		private Level toLevel() {
+			int[] talents = new int[lv.length - 2];
+            System.arraycopy(lv, 2, talents, 0, talents.length);
+			int[][] orbes = new int[1][1];
+			orbes[0][0] = orb;
+			return new Level(lv[0], lv[1], talents, orbes);
 		}
 	}
 
@@ -118,7 +127,9 @@ public class LvRestrict extends Data implements Indexable<PackData, LvRestrict> 
 				nps[i] = anp[i];
 			else
 				nps[i] = Math.min(np[i], anp[i]);
-		return new Level(lv, plv, nps);
+		int[][] orbs = new int[1][1];//Orb array is just used to indicate max orb count
+		orbs[0][0] = Math.min(src.getOrbs()[0][0], dst.getOrbs()[0][0]);
+		return new Level(lv, plv, nps, orbs);
 	}
 
 	@Override
@@ -193,7 +204,7 @@ public class LvRestrict extends Data implements Indexable<PackData, LvRestrict> 
 
 	@JsonField(tag = "rares", io = JsonField.IOType.W, backCompat = JsonField.CompatType.UPST)
 	public int[][] oldRares() {
-		int[][] rr = new int[RARITY_TOT][6];
+		int[][] rr = new int[RARITY_TOT][7];
 		for (int i = 0; i < rr.length; i++)
 			rr[i] = toOldFormat(rs[i]);
 		return rr;
@@ -241,12 +252,13 @@ public class LvRestrict extends Data implements Indexable<PackData, LvRestrict> 
 				cgl.put(ch, toNewFormat(JsonDecoder.decode(job.get("val"), int[].class)));
 			}
 		}
+		if (pack.desc.FORK_VERSION < 15) {
+			for (Level r : rs)
+				r.setOrbs(new int[][]{{0}});//TODO: Null for no orbs
 
-		if (!res.isEmpty()) {
-			for (CharaGroup g : res.keySet()) {
-				int[] lv = res.get(g);
-				groups.put(g, new GroupRestrict(lv, -1));
-			}
+			TreeMap<CharaGroup, GroupRestrict> groups = new LocalDecoder(jobj.get("groups"), TreeMap.class, this).setGeneric(CharaGroup.class, GroupRestrict.class).setAlias(Identifier.class).decode();
+			for (Map.Entry<CharaGroup, GroupRestrict> group : groups.entrySet())
+				cgl.put(group.getKey(), group.getValue().toLevel());
 		}
 	}
 }

@@ -49,7 +49,7 @@ public abstract class AbEntity extends BattleObj {
 
 	public abstract float calcDamageMult(int dmg, Entity e, MaskAtk matk);
 
-	public abstract void damaged(AttackAb atk);
+	public abstract boolean damaged(AttackAb atk);
 
 	public abstract int getAbi();
 

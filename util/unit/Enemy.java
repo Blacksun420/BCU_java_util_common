@@ -112,11 +112,11 @@ public class Enemy extends Character implements AbEnemy {
 	}
 
 	@Override
-	public EEnemy getEntity(StageBasis b, Object obj, float hpMagnif, float atkMagnif, int d0, int d1, int m) {
+	public EEnemy getEntity(StageBasis b, Object obj, float hpMagnif, float atkMagnif, int d0, int d1, int m, int line) {
 		hpMagnif *= de.multi(b.b);
 		atkMagnif *= de.multi(b.b);
 		EAnimU anim = getEntryAnim();
-		return new EEnemy(b, de, anim, hpMagnif, atkMagnif, d0, d1, m);
+		return new EEnemy(b, de, anim, hpMagnif, atkMagnif, d0, d1, m, line);
 	}
 
 	public EAnimU getEntryAnim() {

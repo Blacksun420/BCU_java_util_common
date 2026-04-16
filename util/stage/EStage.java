@@ -20,6 +20,7 @@ public class EStage extends BattleObj {
 	public final float mul;
 	public final int star;
 	public final double[] rem;
+	public final int[][] lineDelay;
 
 	private StageBasis b;
 
@@ -30,6 +31,7 @@ public class EStage extends BattleObj {
 		SCDef.Line[] datas = s.data.getSimple();
 		rem = new double[datas.length];
 		num = new int[datas.length];
+		lineDelay = new int[datas.length][3];
 		for (int i = 0; i < rem.length; i++)
 			num[i] = datas[i].number;
 		lim = st.getLim(star);
@@ -79,7 +81,7 @@ public class EStage extends BattleObj {
 				float multi = (data.multiple == 0 ? 100 : data.multiple) * mul * 0.01f;
 				float mulatk = (data.multiple == 0 ? 100 : data.mult_atk) * mul * 0.01f;
 				AbEnemy e = Identifier.getOr(data.enemy, AbEnemy.class);
-				EEnemy ee = e.getEntity(b, data, multi, mulatk, data.layer_0, data.layer_1, data.boss);
+				EEnemy ee = e.getEntity(b, data, multi, mulatk, data.layer_0, data.layer_1, data.boss, i);
 
 				if (data.doorchance > 0 && (data.doorchance == 100 || b.r.nextFloat() * 100 < data.doorchance))
 					ee.door = data.doordis_0 == data.doordis_1 ? data.doordis_0 : ((data.doordis_1 - data.doordis_0) * b.r.nextFloat()) + data.doordis_0;
@@ -199,8 +201,8 @@ public class EStage extends BattleObj {
 	}
 
 	public void delay(int l, int[] delay) {
-		Line line = s.data.getSimple(l);
-		int inc = b.getDelayStrength(rem[l], Math.max(line.respawn_0, line.respawn_1), delay);
+		SCDef.Line line = s.data.getSimple(l);
+		int inc = b.getDelayStrength((int)rem[l], Math.max(line.respawn_0, line.respawn_1), delay);
 
 		rem[l] += inc;
 		if (rem[l] < 0)

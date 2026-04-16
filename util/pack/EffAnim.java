@@ -139,19 +139,6 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 		}
 	}
 
-	public enum LethEff implements EffType<LethEff> {
-		BUFF("_down"), DEBUFF("_up");
-
-		private final String path;
-
-		LethEff(String str) {
-			path = str;
-		}
-
-		@Override
-		public String path() { return path; }
-	}
-
 	public enum BarrierEff implements EffType<BarrierEff> {
 		BREAK("_breaker"), DESTR("_destruction"), NONE("");
 
@@ -241,6 +228,19 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 			return path;
 		}
 	}
+	public enum LethEff implements EffType<LethEff> {
+		BUFF("_down"), DEBUFF("_up");
+
+		private final String path;
+
+		LethEff(String str) {
+			path = str;
+		}
+
+		@Override
+		public String path() { return path; }
+	}
+
 	public enum BlastEff implements EffType<BlastEff> {
 		START("00"),
 		EXPLODE("01"),

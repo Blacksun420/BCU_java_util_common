@@ -20,11 +20,12 @@ public class ESpirit extends EUnit {
     }
 
     @Override
-    public void damaged(AttackAb atk) {
+    public boolean damaged(AttackAb atk) {
         if (status.inv[0] != -1)
-            return;
+            return false;
         status.inv[0] = Integer.MAX_VALUE;
         anim.getEff(P_IMUATK);
+        return false;
     }
 
     @Override

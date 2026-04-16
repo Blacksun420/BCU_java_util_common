@@ -8,7 +8,33 @@ import common.util.Data;
 import java.util.HashSet;
 
 @JsonClass(noTag = JsonClass.NoTag.LOAD)
-public class StageLimit extends Data implements BattleStatic {
+public class StageLimit extends Data implements BattleStatic, Cloneable {
+
+    public enum SpeedOverrideMode {
+        SET("=", ""),
+        MULTIPLY("x", "%");
+
+        final String pre;
+        final String post;
+
+        SpeedOverrideMode(String pr, String po) {
+            pre = pr;
+            post = po;
+        }
+
+        public String getPre() {
+            return pre;
+        }
+
+        public String getPost() {
+            return post;
+        }
+
+        @Override
+        public String toString() {
+            return name();
+        }
+    }
 
     public int maxMoney = 0, globalCooldown = 0, globalCost = -1, maxUnitSpawn = -1;
     @JsonField(defval = "this.defCD")
@@ -33,6 +59,8 @@ public class StageLimit extends Data implements BattleStatic {
     public int cannonMultiplier = 100; // percentage
     @JsonField(defval = "-1")
     public int unitSpeedOverride = -1, enemySpeedOverride = -1; // -1 for deactivated
+    @JsonField(defval = "SET")
+    public SpeedOverrideMode unitSpeedOverrideMode = SpeedOverrideMode.SET, enemySpeedOverrideMode = SpeedOverrideMode.SET;
 
     public boolean defCD() {
         for (int cd : cooldownMultiplier)
@@ -87,8 +115,9 @@ public class StageLimit extends Data implements BattleStatic {
         sl.cannonMultiplier = cannonMultiplier;
 
         sl.unitSpeedOverride = unitSpeedOverride;
-        //sl.unitSpeedOverrideMode = unitSpeedOverrideMode;
+        sl.unitSpeedOverrideMode = unitSpeedOverrideMode;
         sl.enemySpeedOverride = enemySpeedOverride;
+        sl.enemySpeedOverrideMode = enemySpeedOverrideMode;
         return sl;
     }
 
@@ -105,8 +134,14 @@ public class StageLimit extends Data implements BattleStatic {
             combined.cooldownMultiplier[i] = Math.max(cooldownMultiplier[i], second.cooldownMultiplier[i]);
         combined.bannedCatCombo.addAll(bannedCatCombo);
         combined.bannedCatCombo.addAll(second.bannedCatCombo);
+        combined.bannedOrb.addAll(bannedOrb);
+        combined.bannedOrb.addAll(second.bannedOrb);
         combined.unitSpeedOverride = unitSpeedOverride == 0 ? second.unitSpeedOverride : second.unitSpeedOverride == 0 ? unitSpeedOverride : Math.min(unitSpeedOverride, second.unitSpeedOverride);
+        if (combined.unitSpeedOverride > 0)
+            combined.unitSpeedOverrideMode = second.unitSpeedOverrideMode;
         combined.enemySpeedOverride = enemySpeedOverride == 0 ? second.enemySpeedOverride : second.enemySpeedOverride == 0 ? enemySpeedOverride : Math.max(enemySpeedOverride, second.enemySpeedOverride);
+        if (combined.enemySpeedOverride > 0)
+            combined.enemySpeedOverrideMode = second.enemySpeedOverrideMode;
         for (int i = 0; i < deployDuplicationTimes.length; i++)
             combined.deployDuplicationTimes[i] = Math.max(deployDuplicationTimes[i], second.deployDuplicationTimes[i]);
         for (int i = 0; i < deployDuplicationDelay.length; i++)
@@ -119,6 +154,7 @@ public class StageLimit extends Data implements BattleStatic {
 
     public boolean isBlank() {
         return !coolStart && maxMoney == 0 && globalCooldown == 0 && globalCost == -1 && maxUnitSpawn == -1 && unitSpeedOverride == -1
-                && enemySpeedOverride == -1 && cannonMultiplier == 100 && defCD() && defMoney() && defDeploy() && bannedCatCombo.isEmpty() && defDupe();
+                && enemySpeedOverride == -1 && cannonMultiplier == 100 && defCD() && defMoney() && defDeploy() && bannedCatCombo.isEmpty()
+                && bannedOrb.isEmpty() && defDupe();
     }
 }

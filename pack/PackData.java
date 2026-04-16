@@ -6,7 +6,7 @@ import com.google.gson.JsonObject;
 import common.CommonStatic;
 import common.battle.Treasure;
 import common.battle.data.CustomEntity;
-import common.battle.data.OrbInfo;
+import common.battle.data.Orb;
 import common.battle.data.PCoin;
 import common.io.assets.AssetLoader;
 import common.io.json.Dependency;
@@ -91,7 +91,7 @@ public abstract class PackData implements IndexContainer {
 			loadLimit();
 			CastleImg.loadBossSpawns();
 			progress.accept("Loading orbs");
-			OrbInfo.read();
+			Orb.read();
 			progress.accept("Loading musics");
 			loadMusic();
 			progress.accept("Processing data");

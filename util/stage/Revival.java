@@ -45,7 +45,7 @@ public class Revival extends BattleObj {
             rev.par = this;
     }
 
-    public void triggerRevival(StageBasis b, float mul, int layer, int group, float pos) {
+    public void triggerRevival(StageBasis b, float mul, int layer, int group, float pos, int line) {
         if (boss >= 1) {
             if (CommonStatic.getConfig().shake && boss == 2 && b.shakeCoolDown[1] == 0) {
                 b.shake = SHAKE_MODE_BOSS;
@@ -68,7 +68,7 @@ public class Revival extends BattleObj {
         float mulatk = (matk == 0 ? 100 : matk) * mul * 0.01f;
         AbEnemy e = Identifier.getOr(enemy, AbEnemy.class);
 
-        EEnemy ee = e.getEntity(b, this, multi, mulatk, layer, layer, boss);
+        EEnemy ee = e.getEntity(b, this, multi, mulatk, layer, layer, boss, line);
         ee.group = group;
         ee.rev = rev;
         ee.added(1, pos);

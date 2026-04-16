@@ -51,6 +51,8 @@ public class ContWaveDef extends ContWaveAb {
 						if (waves > 0)
 							((Entity)e).anim.getEff(STPWAVE);
 						if (waves == 100) {
+							if (t < 0)
+								CommonStatic.setSE(soundEffect);
 							deactivate(e);
 							return;
 						} else

@@ -139,9 +139,8 @@ public class AttackSimple extends AttackAb {
 			return;
 		}
 		for (AbEntity e : capt) {
-			boolean damaged = e.damaged(this);
 			attacked.add(e);
-			if (e instanceof Entity && damaged)
+			if (e instanceof Entity && e.damaged(this))
 				((Entity) e).lastHitBy.add(this);
 		}
 		r.clear();

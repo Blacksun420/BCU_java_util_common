@@ -54,6 +54,7 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 				aux.values[i][j] = Integer.parseInt(strs[j]);
 		}
 		aux.values[C_IMUWAVE] = new int[]{10, 30, 60, 100,-50};
+		aux.values[C_IMUVOLC] = new int[]{10, 30, 60, 100,-50};
 		aux.values[C_DISCOUNT][4] = -10;
 		qs = VFile.readLine("./org/data/NyancomboFilter.tsv");
 		aux.filter = new int[qs.size()][];
@@ -252,7 +253,7 @@ public class Combo extends Data implements IndexContainer.Indexable<IndexContain
 	@JsonDecoder.PostLoad
 	public void postLoad() {
 		PackData.UserPack pk = UserProfile.getUserPack(id.pack);
-		if (pk.desc.FORK_VERSION < 13 && type == C_IMUWAVE)
+		if (pk.desc.FORK_VERSION < 13 && type == C_IMUWAVE || type == C_IMUVOLC)
 			lv = 3;
 	}
 

@@ -96,8 +96,8 @@ public class Unit extends Data implements AbUnit {
 	@JsonField(alias = Identifier.class)
 	@Order(3)
 	public UnitLevel lv;
-	@FieldOrder.Order(4)
-	@JsonField(generic = Orb.class)
+	@Order(4)
+	@JsonField(generic = Orb.class, defval = "isEmpty")
 	public ArrayList<Orb> orbs = new ArrayList<>();
 
 	public final UnitInfo info = new UnitInfo();
@@ -105,7 +105,6 @@ public class Unit extends Data implements AbUnit {
 	@JsonClass.JCConstructor
 	public Unit() {
 		id = null;
-		orbs = new OrbInfo(-1);
 	}
 
 	public Unit(Identifier<AbUnit> identifier) {

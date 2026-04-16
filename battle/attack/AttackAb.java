@@ -10,6 +10,7 @@ import common.util.BattleObj;
 import common.util.stage.Music;
 import common.util.unit.Trait;
 import common.util.Data.Proc.SPEED;
+import common.util.Data.Proc.DELAY;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -129,7 +130,7 @@ public abstract class AttackAb extends BattleObj {
 					} else
 						proc.STOP.time = (int)(proc.STOP.time * (100 - imus.IMUSTOP.block) / 100.0);
 				}
-				if (proc.WEAK.time > 0 && Entity.checkAIImmunity(proc.WEAK.mult - 100,imus.IMUWEAK.focus, imus.IMUWEAK.block > 0)) {
+				if (proc.WEAK.time > 0 && imus.IMUWEAK.checkImu(proc.WEAK.mult - 100, imus.IMUWEAK.block > 0)) {
 					if (imus.IMUWEAK.block > 0)
 						blocked = true;
 					if (imus.IMUWEAK.block == 100) {
@@ -139,15 +140,15 @@ public abstract class AttackAb extends BattleObj {
 					} else
 						proc.WEAK.time = (int)(proc.WEAK.time * (100 - imus.IMUWEAK.block) / 100.0);
 				}
-				if (proc.LETHARGY.time > 0 && Entity.checkAIImmunity(proc.LETHARGY.mult,imus.IMULETHARGY.focus, imus.IMULETHARGY.block > 0)) {
-					if (imus.IMULETHARGY.block > 0)
+				if (proc.LETHARGY.time > 0 && imus.IMULETH.checkImu(proc.LETHARGY.mult, imus.IMULETH.block > 0)) {
+					if (imus.IMULETH.block > 0)
 						blocked = true;
-					if (imus.IMULETHARGY.block == 100) {
-						if (imus.IMULETHARGY.mult < 0)
+					if (imus.IMULETH.block == 100) {
+						if (imus.IMULETH.mult < 0)
 							e.lethargy(this, time);
 						proc.LETHARGY.clear();
 					} else
-						proc.LETHARGY.time = (int)(proc.LETHARGY.time * (100 - imus.IMULETHARGY.block) / 100.0);
+						proc.LETHARGY.time = (int)(proc.LETHARGY.time * (100 - imus.IMULETH.block) / 100.0);
 				}
 				if (proc.WARP.prob > 0 && imus.IMUWARP.block != 0) {
 					if (imus.IMUWARP.block > 0)
@@ -169,7 +170,7 @@ public abstract class AttackAb extends BattleObj {
 					} else
 						proc.CURSE.time = (int)(proc.CURSE.time * (100 - imus.IMUCURSE.block) / 100.0);
 				}
-				if (proc.POISON.damage != 0 && imus.IMUPOI.block != 0 && Entity.checkAIImmunity(proc.POISON.damage, imus.IMUPOI.focus, imus.IMUPOI.block < 0)) {
+				if (proc.POISON.damage != 0 && imus.IMUPOI.block != 0 && imus.IMUPOI.checkImu(proc.POISON.damage, imus.IMUPOI.block < 0)) {
 					if (imus.IMUPOI.block > 0)
 						blocked = true;
 					if (imus.IMUPOI.block == 100) {
@@ -209,7 +210,7 @@ public abstract class AttackAb extends BattleObj {
 					} else
 						proc.HYPNO.time = (int)(proc.HYPNO.time * (100 - imus.IMUHYPNO.block) / 100.0);
 				}
-				if (proc.ARMOR.time > 0 && imus.IMUARMOR.block != 0 && Entity.checkAIImmunity(proc.ARMOR.mult, imus.IMUARMOR.focus, imus.IMUARMOR.block < 0)) {
+				if (proc.ARMOR.time > 0 && imus.IMUARMOR.block != 0 && imus.IMUARMOR.checkImu(proc.ARMOR.mult, imus.IMUARMOR.block < 0)) {
 					if (imus.IMUARMOR.block > 0)
 						blocked = true;
 					if (imus.IMUARMOR.block == 100) {
@@ -226,7 +227,7 @@ public abstract class AttackAb extends BattleObj {
 					else
 						b = (e.data.getSpeed() > proc.SPEED.speed && imus.IMUSPEED.block > 0) || (e.data.getSpeed() < proc.SPEED.speed && imus.IMUSPEED.block < 0);
 
-					if (Entity.checkAIImmunity(proc.SPEED.speed, imus.IMUSPEED.focus, b)) {
+					if (imus.IMUSPEED.checkImu(proc.SPEED.speed, b)) {
 						if (imus.IMUSPEED.block > 0)
 							blocked = true;
 						if (imus.IMUSPEED.block == 100) {
@@ -236,6 +237,14 @@ public abstract class AttackAb extends BattleObj {
 						} else
 							proc.SPEED.time = (int)(proc.SPEED.time * (100 - imus.IMUSPEED.block) / 100.0);
 					}
+				}
+				if (proc.DELAY.prob > 0 && imus.IMUDELAY.block != 0 && imus.IMUDELAY.checkImu(proc.DELAY.strength, imus.IMUDELAY.block < 0)) {
+					if (imus.IMUDELAY.block > 0)
+						blocked = true;
+					if (imus.IMUDELAY.block == 100)
+						proc.DELAY.clear();
+					else
+						proc.DELAY.strength = (int)(proc.DELAY.strength * (100 - imus.IMUDELAY.block) / 100.0);
 				}
 				if (handleMisc(e))
 					uncapt.add(e);

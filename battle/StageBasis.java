@@ -4,7 +4,7 @@ import common.CommonStatic;
 import common.battle.attack.AttackAb;
 import common.battle.attack.ContAb;
 import common.battle.data.MaskUnit;
-import common.battle.data.OrbInfo;
+import common.battle.data.Orb;
 import common.battle.entity.*;
 import common.pack.Identifier;
 import common.util.BattleObj;
@@ -86,7 +86,7 @@ public class StageBasis extends BattleObj {
 	public Identifier<Music> mus = null;
 	private THEME themeType;
 	private boolean bgEffectInitialized = false;
-	public int baseBarrier = 0, rem_spawns;
+	public int baseBarrier = 0, rem_spawns, score;
 
 	private final int[][] dupeCount = new int[2][5];
 	private final float[][] dupeTime = new float[2][5];
@@ -543,14 +543,14 @@ public class StageBasis extends BattleObj {
 	}
 
 	public int getCost(int i, int j) {
-		if (elu.price[i][j] == -1 || elu.price[i][j] == -2 || !(b.lu.fs[i][j] instanceof Form) ||spawns.getOrDefault((Form)b.lu.fs[i][j], 0) % 2 == 0
+		if (elu.price[i][j] == -1 || elu.price[i][j] == -2 || !(b.lu.fs[i][j] instanceof Form) || spawns.getOrDefault((Form)b.lu.fs[i][j], 0) % 2 == 0
 			|| ((EForm)b.lu.efs[i][j]).getLevel().getOrbs() == null)
 			return elu.price[i][j];
 		int[][] orbes = ((EForm)b.lu.efs[i][j]).getLevel().getOrbs();
 		int mul = 100;
 		for (int[] orb : orbes)
 			if (orb.length == ORB_TOT && orb[ORB_TYPE] == ORB_LOWERCOST)
-				mul -= OrbInfo.get((byte)orb[ORB_TYPE],(byte)orb[ORB_GRADE])[0];
+				mul -= Orb.get((byte)orb[ORB_TYPE],(byte)orb[ORB_GRADE])[0];
 		return elu.price[i][j] * mul / 100;
 	}
 
@@ -561,6 +561,42 @@ public class StageBasis extends BattleObj {
 
 	public boolean isActive() {
 		return ebase.health > 0 && ubase.health > 0;
+	}
+
+	protected void processSingleProcs() {
+		Map<EEnemy, List<EUnit>> check = new HashMap<>();
+		int[][][] delay = new int[2][5][3];
+		for (Entity e : le) {
+			if (!(e instanceof EUnit))
+				continue;
+			EUnit eu = (EUnit) e;
+			if (eu.index == null)
+				continue;
+			for (AttackAb atk : eu.lastHitBy)
+				if (atk.attacker instanceof EEnemy) {
+					EEnemy ee = (EEnemy) atk.attacker;
+					if (!check.containsKey(ee))
+						check.put(ee, new ArrayList<>());
+					else if (check.get(ee).contains(eu))
+						continue;
+					if (atk.getProc().DELAY.exists()) {
+						Proc.DELAY d = atk.getProc().DELAY;
+						Proc.IMUAD imu = eu.getProc().IMUDELAY;
+						float res = eu.getResistValue(atk, true, imu.checkImu(d.strength) ? imu.mult : 0);
+						if (res > 0) {
+							int strength = (int) (d.strength * res);
+							if (strength > 0)
+								delay[eu.index[0]][eu.index[1]][d.type.ordinal()] = strength;
+						} else
+							eu.anim.getEff(INV);
+					}
+					check.get(ee).add(eu);
+				}
+		}
+		for (int i = 0; i < 2; i++)
+			for (int j = 0; j < 5; j++)
+				if (Arrays.stream(delay[i][j]).anyMatch(s -> s != 0))
+					elu.delay(i, j, delay[i][j]);
 	}
 
 	/**
@@ -575,7 +611,7 @@ public class StageBasis extends BattleObj {
 				timeFlow = 1;
 		}
 		ftime += timeFlow;
-		boolean active = ebase.health > 0 && ubase.health > 0;
+		boolean active = isActive();
 
 		if (midH != -1 && bgEffect != null && !bgEffectInitialized) {
 			bgEffect.initialize(st.len, battleHeight, midH, bg);
@@ -706,6 +742,14 @@ public class StageBasis extends BattleObj {
 		la.forEach(AttackAb::capture);
 		la.forEach(AttackAb::excuse);
 		la.removeIf(a -> a.duration <= 0);
+		if (timeFlow > 0)
+			for (int i = 0; i < 2; i++)
+				for (int j = 0; j < 5; j++)
+					if (Arrays.stream(elu.cdDelay[i][j]).anyMatch(v -> v != 0)) {
+						elu.delay(i, j, elu.cdDelay[i][j]);
+						elu.cdDelay[i][j] = new int[] { 0, 0, 0 };
+					}
+			//processSingleProcs();
 
 		if(timeFlow > 0 || (ebase.getAbi() & AB_TIMEI) != 0) {
 			ebase.postUpdate();
@@ -748,6 +792,12 @@ public class StageBasis extends BattleObj {
 		for (int i = 0; i < le.size(); i++)
 			if (timeFlow > 0 || (le.get(i).getAbi() & AB_TIMEI) != 0)
 				le.get(i).postUpdate();
+		if (timeFlow > 0)
+			for (int i = 0; i < est.lineDelay.length; i++)
+				if (Arrays.stream(est.lineDelay[i]).anyMatch(v -> v != 0)) {
+					est.delay(i, est.lineDelay[i]);
+					est.lineDelay[i] = new int[] { 0, 0, 0 };
+				}
 
 		if (shock) {
 			for (Entity entity : le)
@@ -904,6 +954,12 @@ public class StageBasis extends BattleObj {
 		return est.lim.stageLimit.bannedCatCombo.contains((int) comboId);
 	}
 
+	public boolean orbBanned(int orbId) {
+		if (est.lim.stageLimit == null)
+			return false;
+		return est.lim.stageLimit.bannedOrb.contains(orbId);
+	}
+
 	public int maxBankLimit() {
 		if (est.lim.stageLimit == null)
 			return 0;
@@ -928,10 +984,13 @@ public class StageBasis extends BattleObj {
 		return new int[]{est.lim.stageLimit.deployDuplicationTimes[rarity], est.lim.stageLimit.deployDuplicationDelay[rarity]};
 	}
 
-	public int speedLimit(boolean isEnemy) {
-		if (est.lim.stageLimit == null)
+	public int speedLimit(int spd, boolean isEnemy) {
+		StageLimit sl = est.lim.stageLimit;
+		if (sl == null)
 			return -1;
-		return isEnemy ? est.lim.stageLimit.enemySpeedOverride : est.lim.stageLimit.unitSpeedOverride;
+		return isEnemy
+				? sl.enemySpeedOverrideMode == StageLimit.SpeedOverrideMode.MULTIPLY ? spd * sl.enemySpeedOverride / 100 : sl.enemySpeedOverride
+				: sl.unitSpeedOverrideMode == StageLimit.SpeedOverrideMode.MULTIPLY ? spd * sl.unitSpeedOverride / 100 : sl.unitSpeedOverride;
 	}
 
 	public BattleList<EUnit> getAllOf(int i, int j) {
@@ -967,16 +1026,16 @@ public class StageBasis extends BattleObj {
 	}
 
 	public boolean isDojoOvertime() {
-		return st.trail && st.timeLimit != 0 && st.timeLimit * 60 * 30 - time < 0;
+		return st.trail && st.timeLimit != 0 && st.timeLimit * 30 - time < 0;
 	}
 
 	public void scoreActivated(int proc, int dire, int traits) {
 		if (!st.trail)
 			return;
 
-		/*for (Stage.ScoreBonus bonus : st.scoreBonus) {
+		for (Stage.ScoreBonus bonus : st.scoreBonus) {
 			if (bonus.proc == proc && (bonus.dire == 0 || bonus.dire == dire))
 				score += bonus.score / Math.max(1, traits);
-		}*/
+		}
 	}
 }
