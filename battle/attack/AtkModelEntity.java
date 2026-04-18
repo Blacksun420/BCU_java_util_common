@@ -16,7 +16,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 
 	public static final String[] par = { "SUMMON", "KB", "STOP", "SLOW", "WEAK", "WARP", "CURSE", "SNIPER", "SEAL", "POISON", "BOSS", "RAGE", "HYPNO", "POIATK", "DELAY",
 			"ARMOR", "SPEED", "LETHARGY", "BLESSING",//post-cursedProcs
-			"DRAIN", "ATKBASE", "CRIT", "WAVE", "BREAK", "SATK", "VOLC", "MINIVOLC", "MINIWAVE", "MOVEWAVE", "SHIELDBREAK", "WORKERLV", "CDSETTER", "METALKILL", "BLAST"};
+			"DRAIN", "ATKBASE", "CRIT", "WAVE", "BREAK", "SATK", "VOLC", "MINIVOLC", "MINIWAVE", "MOVEWAVE", "SHIELDBREAK", "WORKERLV", "METALKILL", "BLAST"};
 	/**
 	 * Gets Attack Model for enemies
 	 * @param e The entity

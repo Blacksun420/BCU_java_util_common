@@ -14,7 +14,7 @@ import common.util.unit.Form;
 
 public class ELineUp extends BattleObj {
 
-	public final int[][] price = new int[2][5], maxC = new int[2][5];
+	public final int[][] price = new int[2][5], maxC = new int[2][5], frameOffCd = new int[2][5];
 	public final double[][] cool = new double[2][5], scd = new double[2][5];
 
 	private final Proc.SPIRIT[][] spData = new Proc.SPIRIT[2][5];
@@ -106,6 +106,7 @@ public class ELineUp extends BattleObj {
 		if (inc < 0) {
 			if (cool[i][j] <= 0) {
 				cool[i][j] = 0;
+				frameOffCd[i][j] = b.time;
 				CommonStatic.setSE(SE_SPEND_REF);
 			} else
 				cdDelayVisual[i][j][3] = 10;
@@ -156,14 +157,16 @@ public class ELineUp extends BattleObj {
 	/**
 	 * count down the cooldown
 	 */
-	protected void update(float time, float flow) {
+	protected void update(int time, float flow) {
 		for (int i = 0; i < 2; i++) {
 			for (int j = 0; j < 5; j++) {
-				if (cool[i][j] > 0 && (cool[i][j] -= flow) <= 0)
+				if (cool[i][j] > 0 && (cool[i][j] -= flow) <= 0) {
 					CommonStatic.setSE(SE_SPEND_REF);
+					frameOffCd[i][j] = time;
+				}
 
 				if (validSpirit(i,j) && scount[i][j] > 0 && scd[i][j] > 0 && (scd[i][j] -= flow) <= 0)
-					sGlow[i][j] = (int)time;
+					sGlow[i][j] = time;
 				if (cdDelay[i][j][2] > 0)
 					cdDelay[i][j][2]--;
 			}

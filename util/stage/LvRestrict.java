@@ -20,6 +20,7 @@ import common.util.unit.AbForm;
 import common.util.unit.Form;
 import common.util.unit.Level;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -127,9 +128,9 @@ public class LvRestrict extends Data implements Indexable<PackData, LvRestrict> 
 				nps[i] = anp[i];
 			else
 				nps[i] = Math.min(np[i], anp[i]);
-		int[][] orbs = new int[1][1];//Orb array is just used to indicate max orb count
-		orbs[0][0] = Math.min(src.getOrbs()[0][0], dst.getOrbs()[0][0]);
-		return new Level(lv, plv, nps, orbs);
+		if (src.getOrbs() != null && dst.getOrbs() != null)
+			return new Level(lv, plv, nps, Arrays.copyOf(dst.getOrbs(), src.getOrbs()[0][0]));
+		return new Level(lv, plv, nps, dst.getOrbs());
 	}
 
 	@Override
@@ -153,6 +154,8 @@ public class LvRestrict extends Data implements Indexable<PackData, LvRestrict> 
 					for (int i = 0; i < Math.min(mt.length, ft.length); i++)
 						if (mt[i] < ft[i])
 							return false;
+					if (curLv.getOrbs() != null && maxLv.getOrbs() != null && curLv.getOrbs().length > maxLv.getOrbs()[0][0])
+						return false;
 				}
 		return true;
 	}
@@ -252,10 +255,7 @@ public class LvRestrict extends Data implements Indexable<PackData, LvRestrict> 
 				cgl.put(ch, toNewFormat(JsonDecoder.decode(job.get("val"), int[].class)));
 			}
 		}
-		if (pack.desc.FORK_VERSION < 15) {
-			for (Level r : rs)
-				r.setOrbs(new int[][]{{0}});//TODO: Null for no orbs
-
+		if (pack.desc.FORK_VERSION < 15 && jobj.has("groups")) {
 			TreeMap<CharaGroup, GroupRestrict> groups = new LocalDecoder(jobj.get("groups"), TreeMap.class, this).setGeneric(CharaGroup.class, GroupRestrict.class).setAlias(Identifier.class).decode();
 			for (Map.Entry<CharaGroup, GroupRestrict> group : groups.entrySet())
 				cgl.put(group.getKey(), group.getValue().toLevel());

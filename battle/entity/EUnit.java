@@ -88,7 +88,7 @@ public class EUnit extends Entity {
 		if(level.getOrbs() != null) {
 			int[][] levelOrbs = level.getOrbs();
 			for (int[] orb : levelOrbs)
-				if (orb.length == ORB_TOT && !basis.orbBanned(orb[ORB_TYPE]) && orb[ORB_TYPE] >= ORB_MINIDEATHSURGE) {
+				if (orb.length == ORB_TOT && !basis.orbBanned(orb[ORB_TYPE]) && orb[ORB_TYPE] >= ORB_DEATH_SURGE) {
 					int eff = Orb.get((byte)orb[ORB_TYPE],(byte)orb[ORB_GRADE])[0];
 					switch (orb[ORB_TYPE]) {
 						case ORB_RESKB:
@@ -104,7 +104,7 @@ public class EUnit extends Entity {
 							}
 							getProc().MONEYBACK.mult += eff;
 							break;
-						case ORB_MINIDEATHSURGE:
+						case ORB_DEATH_SURGE:
 							if (getProc().MINIDEATHSURGE.prob == 0) {
 								getProc().MINIDEATHSURGE.prob = 100;
 								getProc().MINIDEATHSURGE.dis_0 = 200;
@@ -247,6 +247,8 @@ public class EUnit extends Entity {
 			if (traits.contains(UserProfile.getBCData().traits.get(Data.TRAIT_SAGE)) && (e.getAbi() & AB_SKILL) > 0)
 				ans *= SUPER_SAGE_HUNTER_HP;
 			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_VILLAIN))) {
+				if ((e.getAbi() & AB_VKILL) > 0)
+					ans *= VILLAIN_KILLER_RESIST;
 				double re = basis.elu.getInc(C_VKILL,this) / 1000f;
 				ans = re == 0 ? ans : (int)(ans / re);
 			}
@@ -290,7 +292,10 @@ public class EUnit extends Entity {
 			if (res < 100) {
 				int strength = (int) (d.strength * res);
 				if (strength != 0) {
-					status.delay[d.type.ordinal()] += strength;
+					if (d.type.ordinal() == 3)
+						basis.elu.cool[index[0]][index[1]] = strength;
+					else
+						status.delay[d.type.ordinal()] += strength;
 					basis.lea.add(new EAnimCont(pos, layer, effas().A_E_DELAY.getEAnim(EffAnim.DefEff.DEF), -50f));
 				}
 				basis.scoreActivated(P_DELAY, -1, atk.trait.size());

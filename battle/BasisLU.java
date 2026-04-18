@@ -82,7 +82,19 @@ public class BasisLU extends Basis implements Copable<BasisLU>, BattleStatic {
 
 	@Override
 	public int getInc(int type) {
+		if (type < 0)
+			return 0;
 		return lu.incs.getFirst().inc[type];
+	}
+
+	public int getInc(int type, Form f) {
+		if (type < 0)
+			return 0;
+		int inc = getInc(type);
+		for (LineUp.ComboBuff bf : lu.incs)
+			if (bf.cg.fset.contains(f))
+				inc += bf.inc[type];
+		return inc;
 	}
 
 	public BasisLU randomize(int n) {
@@ -135,7 +147,7 @@ public class BasisLU extends Basis implements Copable<BasisLU>, BattleStatic {
 					Unit u = f.unit;
 					if(orbs != null && u.orbs != null && !u.orbs.isEmpty())
 						for(int j = 0; j < orbs.length; j++)
-							if(!u.orbs.get(i).isRestricted(f.fid, lv.getTotalLv()))
+							if(u.orbs.get(i).isRestricted(f.fid, lv.getTotalLv()))
 								orbs[j] = new int[0];
 				}
 			}

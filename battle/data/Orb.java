@@ -112,7 +112,6 @@ public class Orb extends Data {
 						int limitId = CommonStatic.parseIntN(strs[2 + i]);
 						int minForm = limitId >= 0 ? 2 : 0;
 						int minLv = limitId * 60;//>= 1 ? 60 : 0;
-						System.out.println(minLv);
 						u.orbs.add(new Orb(minForm, minLv));
 					}
 			}
@@ -157,7 +156,7 @@ public class Orb extends Data {
 		return EFFECT.get(type).get(grade);
 	}
 
-	private static final int[] oneOnly = { ORB_MINIDEATHSURGE, ORB_REFUND, ORB_SOLBUFF, ORB_BAKILL,
+	private static final int[] oneOnly = {ORB_DEATH_SURGE, ORB_REFUND, ORB_SOLBUFF, ORB_BAKILL,
 			ORB_CANNON_CHARGE, ORB_DODGE, ORB_ULBUFF, ORB_COUNTERSURGE, ORB_KILLSTRENGTHEN, ORB_LESSCD};
 	public static boolean onlyOne(int type) {
 		for (int one : oneOnly)
@@ -173,8 +172,8 @@ public class Orb extends Data {
 		return (100-get(ORB_RES,(byte)grade)[0]) * atk / 100;
 	}
 
-	private final int minForm;
-	private final int minLv;
+	public int minForm;
+	public int minLv;
 
 	public Orb(int minForm, int minLv) {
 		this.minForm = minForm;

@@ -244,8 +244,16 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					effs[A_SLOW] = (dire == -1 ? effas().A_SLOW : effas().A_E_SLOW).getEAnim(DefEff.DEF);
 					break;
 				} case P_LETHARGY: {
-					//effs[A_LETHARGY] = (dire == -1 ? effas().A_LETHARGY_OLD : effas().A_E_LETHARGY).getEAnim(e.status.getLethargy(e.data.getTBA()) > e.data.getTBA() ? LethargyEff.DOWN : LethargyEff.UP);
-					effs[A_LETHARGY] = effas().A_LETHARGY.getEAnim(e.status.getLethargy(e.data.getTBA()) > e.data.getTBA() ? LethEff.DEBUFF : LethEff.BUFF);
+					int[] types = new int[2];
+					for (double[] let : e.status.lethargies) {
+						if (let[2] >= 2)
+							continue;
+						types[(int)let[2]]++;
+					}
+					if (types[0] > types[1])//The stickman VVILL live
+						effs[A_LETHARGY] = (dire == -1 ? effas().A_LETHARGY_OLD : effas().A_E_LETHARGY).getEAnim(e.status.getLethargy(e.data.getTBA()) > e.data.getTBA() ? LethargyEff.DOWN : LethargyEff.UP);
+					else
+						effs[A_LETHARGY] = effas().A_LETHARGY.getEAnim(e.status.getLethargy(e.data.getTBA()) > e.data.getTBA() ? LethEff.DEBUFF : LethEff.BUFF);
 					break;
 				} case P_WEAK: {
 					if (e.status.getWeaken() == 1)
@@ -523,6 +531,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				// converge souls layer: death on the same frame = same soul height
 				// still not sure how this precisely work in BC, it seems to have exceptions
 				e.layer = 0;
+				e.basis.le.sort();
 				Soul s = Identifier.get(e.data.getDeathAnim());
 				dead = s == null ? 0 : (soul = s.getEAnim(AnimU.SOUL[0])).len();
 			}

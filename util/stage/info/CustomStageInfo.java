@@ -61,6 +61,11 @@ public class CustomStageInfo implements StageInfo {
     }
 
     @Override
+    public Stage getStage() {
+        return st;
+    }
+
+    @Override
     public boolean exConnection() {
         return false;
     }

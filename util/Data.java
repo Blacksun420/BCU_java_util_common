@@ -728,16 +728,17 @@ public class Data {
 			}
 			@Order(4)
 			public TYPE type = TYPE.FIXED;
-			@Order(5)
-			public boolean oldAnim;//Purely visual, ain't letting that li'l stickman go
 
 			@JsonDecoder.OnInjected
 			public void inject(JsonObject jobj) {
+				if (!jobj.has("type") && !jobj.has("percentage"))
+					return;
 				boolean percentage = false;
 				if (jobj.has("type") && jobj.isJsonObject())
 					percentage = jobj.getAsJsonObject("type").get("percentage").getAsBoolean();
-				if (jobj.has("percentage"))
-					type = percentage ? TYPE.PERCENTAGE : TYPE.FIXED;
+				else if (jobj.has("percentage"))
+					percentage = jobj.get("percentage").getAsBoolean();
+				type = percentage ? TYPE.PERCENTAGE : TYPE.FIXED;
 			}
 		}
 
@@ -1309,6 +1310,12 @@ public class Data {
 				killCount = Math.max(1, killCount +m.killCount);
 				max_stacks = Math.max(0, max_stacks+m.max_stacks);
 			}
+
+			@JsonDecoder.OnInjected
+			public void inject(JsonObject jobj) {
+				if (jobj.has("kill_count"))
+					killCount = jobj.get("kill_count").getAsInt();
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -1626,6 +1633,10 @@ public class Data {
 			public TYPE type = TYPE.CURRENT;
 			//@Order(3)
 			//public int slot;//Default is 0 (for attacked unit), non-zero operates like slot field for CD-Setter, and -1 is random
+
+			private void updateType(int old) {
+				type = old == 0 ? TYPE.DIRECT : old == 2 ? TYPE.FIXED : TYPE.MAX;
+			}
 		}
 
 		public static Proc blank() {
@@ -1915,6 +1926,38 @@ public class Data {
 					}
 				} catch (Exception e) {
 					CommonStatic.ctx.noticeErr(e, ErrType.DEBUG, "Couldn't generate proc " + f.getName());
+				}
+			}
+			if (obj.has("IMULETHARGY")) {
+				try {
+					IMUAD oldLeth = JsonDecoder.decode(obj.get("IMULETHARGY"), IMUAD.class);
+					for (Field f : oldLeth.getDeclaredFields()) {
+						f.setAccessible(true);
+						f.set(proc.IMULETH, f.get(oldLeth));
+					}
+				} catch (Exception e) {
+					CommonStatic.ctx.noticeErr(e, ErrType.DEBUG, "Couldn't update lethargy immunity");
+				}
+			}
+			if (obj.has("KILLSTRENGTHEN")) {
+				try {
+					BERSERK killstrengthen = JsonDecoder.decode(obj.get("KILLSTRENGTHEN"), BERSERK.class);
+					for (Field f : killstrengthen.getDeclaredFields()) {
+						f.setAccessible(true);
+						f.set(proc.BERSERK, f.get(killstrengthen));
+					}
+				} catch (Exception e) {
+					CommonStatic.ctx.noticeErr(e, ErrType.DEBUG, "Couldn't update berserk");
+				}
+			}
+			if (obj.has("CDSETTER")) {
+				try {
+					DELAY cdset = JsonDecoder.decode(obj.get("CDSETTER"), DELAY.class);
+					proc.DELAY.prob = cdset.prob;
+					proc.DELAY.strength = obj.getAsJsonObject("CDSETTER").get("amount").getAsInt();
+					proc.DELAY.updateType(obj.getAsJsonObject("CDSETTER").get("type").getAsInt());
+				} catch (Exception e) {
+					CommonStatic.ctx.noticeErr(e, ErrType.DEBUG, "Couldn't update cdsetter");
 				}
 			}
 
@@ -2297,6 +2340,7 @@ public class Data {
 			true,  //hp regen
 			true,  //cannon charge
 			true,  //Strengthen When Defeating (Berserk)
+			true,  //Delay Immunity
 			true,  //ComboCooldown
 			true   //Dodge all
 	};
@@ -2663,7 +2707,7 @@ public class Data {
 	public static final byte ORB_STRONG = 2;
 	public static final byte ORB_MASSIVE = 3;
 	public static final byte ORB_RESISTANT = 4;
-	public static final byte ORB_MINIDEATHSURGE = 5;
+	public static final byte ORB_DEATH_SURGE = 5;
 	public static final byte ORB_RESWAVE = 6;
 	public static final byte ORB_REFUND = 7;
 	public static final byte ORB_RESKB = 8;

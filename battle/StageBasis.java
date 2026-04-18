@@ -217,39 +217,6 @@ public class StageBasis extends BattleObj {
 		money = Math.min(money, maxMoney);
 	}
 
-	public void changeUnitCooldown(int amount, int slot, int type) {
-		if (b.lu.efs[0][0] == null)
-			return; //skip if player for some reason didn't bring a lineup
-		int totUni = 0;
-		while (b.lu.efs[totUni >= 5 ? 1 : 0][totUni % 5] != null && totUni < 10)
-			totUni++;
-		if (slot == -1 || b.lu.efs[Math.floorDiv(slot, 5)][slot % 5] == null)
-			slot = r.nextInt(totUni); //Pick random unit if chosen one isn't there
-
-		if (CDChange(amount, slot / 5, slot % 5, type))
-			CommonStatic.setSE(amount < 0 ? SE_P_RESEARCHUP : SE_P_RESEARCHDOWN);
-	}
-	public void changeUnitsCooldown(int amount, int type) {
-		for (byte s = 0; s < 10; s++) {
-			byte r = (byte)(s / 5), c = (byte)(s % 5);
-			if (b.lu.efs[r][c] == null)
-				break;
-			if (CDChange(amount, r, c, type))
-				CommonStatic.setSE(amount < 0 ? SE_P_RESEARCHUP : SE_P_RESEARCHDOWN);
-		}
-	}
-	private boolean CDChange(int amount, int r, int c, int type) {
-		double curC = elu.cool[r][c];
-		if (type == 0)
-			elu.cool[r][c] += amount;
-		else if (type == 1)
-			elu.cool[r][c] += elu.maxC[r][c] * (amount / 100.0);
-		else
-			elu.cool[r][c] = amount;
-		elu.cool[r][c] = Math.min(elu.maxC[r][c], elu.cool[r][c]);
-		return curC != elu.cool[r][c];
-	}
-
 	public void changeBG(Identifier<Background> id) {
 		theme = id;
 	}
@@ -434,6 +401,8 @@ public class StageBasis extends BattleObj {
 				e.cont();
 			for(double[] c : elu.cool)
 				Arrays.fill(c, 0);
+			for (int[] frames : elu.frameOffCd)
+				Arrays.fill(frames, time);
 			return true;
 		}
 		return false;
@@ -550,7 +519,7 @@ public class StageBasis extends BattleObj {
 		int mul = 100;
 		for (int[] orb : orbes)
 			if (orb.length == ORB_TOT && orb[ORB_TYPE] == ORB_LOWERCOST)
-				mul -= Orb.get((byte)orb[ORB_TYPE],(byte)orb[ORB_GRADE])[0];
+				mul -= Orb.get((byte) orb[ORB_TYPE], (byte) orb[ORB_GRADE])[0];
 		return elu.price[i][j] * mul / 100;
 	}
 
@@ -561,42 +530,6 @@ public class StageBasis extends BattleObj {
 
 	public boolean isActive() {
 		return ebase.health > 0 && ubase.health > 0 && !isDojoOvertime();
-	}
-
-	protected void processSingleProcs() {
-		Map<EEnemy, List<EUnit>> check = new HashMap<>();
-		int[][][] delay = new int[2][5][3];
-		for (Entity e : le) {
-			if (!(e instanceof EUnit))
-				continue;
-			EUnit eu = (EUnit) e;
-			if (eu.index == null)
-				continue;
-			for (AttackAb atk : eu.lastHitBy)
-				if (atk.attacker instanceof EEnemy) {
-					EEnemy ee = (EEnemy) atk.attacker;
-					if (!check.containsKey(ee))
-						check.put(ee, new ArrayList<>());
-					else if (check.get(ee).contains(eu))
-						continue;
-					if (atk.getProc().DELAY.exists()) {
-						Proc.DELAY d = atk.getProc().DELAY;
-						Proc.IMUAD imu = eu.getProc().IMUDELAY;
-						float res = eu.getResistValue(atk, true, imu.checkImu(d.strength) ? imu.mult : 0);
-						if (res > 0) {
-							int strength = (int) (d.strength * res);
-							if (strength > 0)
-								delay[eu.index[0]][eu.index[1]][d.type.ordinal()] = strength;
-						} else
-							eu.anim.getEff(INV);
-					}
-					check.get(ee).add(eu);
-				}
-		}
-		for (int i = 0; i < 2; i++)
-			for (int j = 0; j < 5; j++)
-				if (Arrays.stream(delay[i][j]).anyMatch(s -> s != 0))
-					elu.delay(i, j, delay[i][j]);
 	}
 
 	/**
@@ -637,7 +570,7 @@ public class StageBasis extends BattleObj {
 						}
 					}
 				}
-		elu.update(ftime, timeFlow);
+		elu.update(time, timeFlow);
 
 		if (buttonDelay > 0 && (buttonDelay -= timeFlow) <= 0) {
 			act_spawn(selectedUnit[0], selectedUnit[1], true);

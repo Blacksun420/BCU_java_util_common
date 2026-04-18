@@ -87,8 +87,11 @@ public class EEnemy extends Entity {
 				ans *= 2.5f;
 			if (traits.contains(BCTraits.get(TRAIT_SAGE)) && (e.getAbi() & AB_SKILL) > 0)
 				ans *= SUPER_SAGE_HUNTER_ATTACK;
-			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_VILLAIN)))
-				ans *= (float)(basis.elu.getInc(C_VKILL, (EUnit)e) / 1000);
+			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_VILLAIN))) {
+				if ((e.getAbi() & AB_VKILL) > 0)
+					ans *= VILLAIN_KILLER_ATTACK;
+				ans *= (float) (1 + basis.elu.getInc(C_VKILL, (EUnit) e) / 1000);
+			}
 		}
 		return ans;
 	}
@@ -146,8 +149,11 @@ public class EEnemy extends Entity {
 				ans *= 2.5;
 			if (traits.contains(BCTraits.get(TRAIT_SAGE)) && (atk.abi & AB_SKILL) > 0)
 				ans = (int) (ans * SUPER_SAGE_HUNTER_ATTACK);
-			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_VILLAIN)))
-				ans = (int)(ans * basis.elu.getInc(C_VKILL, (EUnit)atk.attacker) / 1000.0);
+			if (traits.contains(UserProfile.getBCData().traits.get(TRAIT_VILLAIN))) {
+				if ((atk.abi & AB_VKILL) > 0)
+					ans = (int) (ans * VILLAIN_KILLER_ATTACK);
+				ans = (int) (ans * (1 + basis.elu.getInc(C_VKILL, (EUnit) atk.attacker) / 1000.0));
+			}
 		}
 		if (atk.canon == 16)
 			if ((touchable() & TCH_UG) > 0)
@@ -201,7 +207,10 @@ public class EEnemy extends Entity {
 			if (res < 100) {
 				int strength = (int) (d.strength * res);
 				if (strength != 0) {
-					status.delay[d.type.ordinal()] += strength;
+					if (d.type.ordinal() == 3)
+						basis.est.rem[line] = strength;
+					else
+						status.delay[d.type.ordinal()] += strength;
 					basis.lea.add(new EAnimCont(pos, layer, effas().A_E_DELAY.getEAnim(EffAnim.DefEff.DEF), -50f));
 				}
 				basis.scoreActivated(P_DELAY, 1, atk.trait.size());

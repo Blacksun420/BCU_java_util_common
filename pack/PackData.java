@@ -72,7 +72,6 @@ public abstract class PackData implements IndexContainer {
 			progress.accept("Loading units");
 			loadUnits(bar);
 			progress.accept("Loading auxiliary data");
-			Combo.readFile();
 			PCoin.read();
 			progress.accept("Loading effects");
 			EffAnim.read();
@@ -88,6 +87,7 @@ public abstract class PackData implements IndexContainer {
 			Enemy.regType();
 			RandStage.read();
 			loadCharaGroup();
+			Combo.readFile();
 			loadLimit();
 			CastleImg.loadBossSpawns();
 			progress.accept("Loading orbs");

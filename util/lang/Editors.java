@@ -748,6 +748,8 @@ public class Editors {
 
 		map().put("IMUSPEED", imuad);
 
+		map().put("IMUDELAY", imuad);
+
 		map().put("BARRIER", new EditControl<>(Proc.BARRIER.class, (t) -> {
 			if (!def)
 				return;
@@ -867,15 +869,14 @@ public class Editors {
 		}, eg -> t -> setComponentVisibility(eg, !def || t.prob > 0, 1)));
 
 		map().put("DELAY", new EditControl<>(Proc.DELAY.class, (t) -> {
-			t.prob = Math.max(def ? 0 : -100, Math.min(t.prob, 100));
-			if (def && t.prob == 0) {
-				t.strength = t.slot = 0;
+			if (!def)
+				return;
+			t.prob = Math.max(-100, Math.min(t.prob, 100));
+			if (t.prob == 0) {
+				t.strength = 0;
 				t.type = DELAY.TYPE.CURRENT;
-			} else {
-				t.slot = MathUtil.clip(t.slot, -1, 11);
-				if (t.type == DELAY.TYPE.CURRENT || t.type == DELAY.TYPE.MAX)
-					t.strength = MathUtil.clip(t.strength, def ? 0 : -100, 100);
-			}
+			} else if (t.type == DELAY.TYPE.CURRENT || t.type == DELAY.TYPE.MAX)
+				t.strength = MathUtil.clip(t.strength, def ? 0 : -100, 100);
 		}, eg -> t -> setComponentVisibility(eg, !def || t.prob > 0, 1)));
 
 		map().put("WEAKAURA", new EditControl<>(Proc.AURA.class, (t) -> {

@@ -119,7 +119,7 @@ public class ContVolcano extends ContAb {
 				v.attacker.status.seal--;
 		}
 
-		String[] sealp = { "CRIT", "SNIPER", "BREAK", "SUMMON", "SATK", "SHIELDBREAK", "WORKERLV", "CDSETTER"};
+		String[] sealp = { "CRIT", "SNIPER", "BREAK", "SUMMON", "SATK", "SHIELDBREAK", "WORKERLV"};
 		if (v.attacker.status.seal > 0 && performed[3]) {
 			performed[3] = false;
 			for (String s : sealp)

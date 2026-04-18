@@ -48,14 +48,14 @@ public class ECastle extends AbEntity {
 	}
 
 	@Override
-	public void damaged(AttackAb atk) {
+	public boolean damaged(AttackAb atk) {
 		if (dire == 1 && sb.baseBarrier > 0) {
 			guard = effas().A_E_GUARD.getEAnim(GuardEff.NONE);
 			CommonStatic.setSE(SE_BARRIER_NON);
 			return false;
 		}
 		if (health <= 0)
-			return;
+			return false;
 
 		hit = 2;
 
