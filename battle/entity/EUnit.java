@@ -187,7 +187,9 @@ public class EUnit extends Entity {
 
 		int spwn = basis.spawns.get(data.getPack());
 		if (spwn % getProc().COMBOCOOLDOWN.count == 0 && getProc().COMBOCOOLDOWN.perform(basis.r))
-			basis.elu.cool[index[0]][index[1]] *= 1 - (getProc().COMBOCOOLDOWN.mult / 100);
+			basis.elu.deployAdvance(index[0], index[1], getProc().COMBOCOOLDOWN.mult);
+		else
+			basis.elu.maxM[index[0]][index[1]] = 0;
 		if (getProc().MONEYBACK.prob > 0 && spwn % getProc().MONEYBACK.count != 0)
 			getProc().MONEYBACK.clear();
 		if (getProc().CANONCHARGE.prob > 0 && spwn % getProc().CANONCHARGE.count != 0)

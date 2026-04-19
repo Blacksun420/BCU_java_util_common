@@ -727,14 +727,15 @@ public class Data {
 				SET
 			}
 			@Order(4)
+			@JsonField(defval = "null||FIXED")
 			public TYPE type = TYPE.FIXED;
 
 			@JsonDecoder.OnInjected
 			public void inject(JsonObject jobj) {
-				if (!jobj.has("type") && !jobj.has("percentage"))
+				if (!(jobj.has("type") && jobj.get("type").isJsonObject()) && !jobj.has("percentage"))
 					return;
 				boolean percentage = false;
-				if (jobj.has("type") && jobj.isJsonObject())
+				if (jobj.has("type"))
 					percentage = jobj.getAsJsonObject("type").get("percentage").getAsBoolean();
 				else if (jobj.has("percentage"))
 					percentage = jobj.get("percentage").getAsBoolean();
@@ -1630,6 +1631,7 @@ public class Data {
 			@Order(1)
 			public int strength;
 			@Order(2)
+			@JsonField(defval = "null||CURRENT")
 			public TYPE type = TYPE.CURRENT;
 			//@Order(3)
 			//public int slot;//Default is 0 (for attacked unit), non-zero operates like slot field for CD-Setter, and -1 is random
@@ -1953,9 +1955,10 @@ public class Data {
 			if (obj.has("CDSETTER")) {
 				try {
 					DELAY cdset = JsonDecoder.decode(obj.get("CDSETTER"), DELAY.class);
+					JsonObject jset = obj.getAsJsonObject("CDSETTER");
 					proc.DELAY.prob = cdset.prob;
-					proc.DELAY.strength = obj.getAsJsonObject("CDSETTER").get("amount").getAsInt();
-					proc.DELAY.updateType(obj.getAsJsonObject("CDSETTER").get("type").getAsInt());
+					proc.DELAY.strength = jset.get("amount").getAsInt();
+					proc.DELAY.updateType(jset.has("type") ? jset.get("type").getAsInt() : 0);
 				} catch (Exception e) {
 					CommonStatic.ctx.noticeErr(e, ErrType.DEBUG, "Couldn't update cdsetter");
 				}

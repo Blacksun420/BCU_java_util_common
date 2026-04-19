@@ -91,9 +91,9 @@ public class BasisLU extends Basis implements Copable<BasisLU>, BattleStatic {
 		if (type < 0)
 			return 0;
 		int inc = getInc(type);
-		for (LineUp.ComboBuff bf : lu.incs)
-			if (bf.cg.fset.contains(f))
-				inc += bf.inc[type];
+		for (int i = 1; i < lu.incs.size(); i++)
+			if (lu.incs.get(i).cg.fset.contains(f))
+				inc += lu.incs.get(i).inc[type];
 		return inc;
 	}
 

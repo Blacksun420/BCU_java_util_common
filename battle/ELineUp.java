@@ -14,7 +14,7 @@ import common.util.unit.Form;
 
 public class ELineUp extends BattleObj {
 
-	public final int[][] price = new int[2][5], maxC = new int[2][5], frameOffCd = new int[2][5];
+	public final int[][] price = new int[2][5], maxC = new int[2][5], frameOffCd = new int[2][5], maxM = new int[2][5];
 	public final double[][] cool = new double[2][5], scd = new double[2][5];
 
 	private final Proc.SPIRIT[][] spData = new Proc.SPIRIT[2][5];
@@ -74,7 +74,7 @@ public class ELineUp extends BattleObj {
 				}
 				spData[i][j] = lu.efs[i][j] instanceof EForm && ((EForm) lu.efs[i][j]).du.getProc().SPIRIT.id != null ? ((EForm)lu.efs[i][j]).du.getProc().SPIRIT : null;
 				scount[i][j] = spData[i][j] == null ? -1 : 0;
-				cdDelay[i][j] = new int[] { 0, -1, 0 };
+				cdDelay[i][j] = new int[] { 0, 0, 0 };
 			}
 	}
 
@@ -87,22 +87,26 @@ public class ELineUp extends BattleObj {
 			scd[i][j] = spData[i][j].cd0;
 			scount[i][j] = spData[i][j].amount;
 		}
-		cdDelay[i][j] = new int[] { 0, -1, 0 };
+		cdDelay[i][j] = new int[] { 0, 0, 0 };
+	}
+
+	public void deployAdvance(int i, int j, double mult) {
+		cool[i][j] *= 1 - (mult / 100);
+		maxM[i][j] = (int)(maxC[i][j] - cool[i][j]);
 	}
 
 	protected void delay(int i, int j, int[] delay) {
 		if (cool[i][j] == 0)
 			return;
 
-		int inc = b.getDelayStrength((int)cool[i][j], maxC[i][j], delay);
+		int inc = b.getDelayStrength((int)cool[i][j], getMaxCD(i,j), delay);
 		if (inc > 0) {
 			cdDelayVisual[i][j][0] = (int)Math.max(cdDelayVisual[i][j][0], cool[i][j]);
-		} else {
+		} else
 			cdDelayVisual[i][j][2] += inc;
-		}
 		cool[i][j] += inc;
-		if (cool[i][j] > maxC[i][j])
-			cool[i][j] = maxC[i][j];
+		if (cool[i][j] > getMaxCD(i,j))
+			cool[i][j] = getMaxCD(i,j);
 		if (inc < 0) {
 			if (cool[i][j] <= 0) {
 				cool[i][j] = 0;
@@ -139,7 +143,7 @@ public class ELineUp extends BattleObj {
 		sb.money -= spiritCost(i, j, sb.st.getCont().price);
 		scount[i][j]--;
 		scd[i][j] = spData[i][j].cd1;
-		cool[i][j] = Math.min(Math.max(0, cool[i][j] + spData[i][j].summonerCd), maxC[i][j]);
+		cool[i][j] = Math.min(Math.max(0, cool[i][j] + spData[i][j].summonerCd), getMaxCD(i,j));
 	}
 
 	public final boolean validSpirit(int i, int j) {
@@ -167,10 +171,16 @@ public class ELineUp extends BattleObj {
 
 				if (validSpirit(i,j) && scount[i][j] > 0 && scd[i][j] > 0 && (scd[i][j] -= flow) <= 0)
 					sGlow[i][j] = time;
-				if (cdDelay[i][j][2] > 0)
-					cdDelay[i][j][2]--;
+				if (cdDelayVisual[i][j][1] > 0 && --cdDelayVisual[i][j][1] == 0)
+					cdDelayVisual[i][j][0] = 0;
+				if (cdDelayVisual[i][j][3] > 0 && --cdDelayVisual[i][j][3] == 0)
+					cdDelayVisual[i][j][2] = 0;
 			}
 		}
+	}
+
+	public int getMaxCD(int i, int j) {
+		return maxC[i][j] - maxM[i][j];
 	}
 
 	/**

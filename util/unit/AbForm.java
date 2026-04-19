@@ -1,9 +1,11 @@
 package common.util.unit;
 
+import common.battle.data.Orb;
 import common.io.json.JsonClass;
 import common.pack.Identifier;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 
 /**
  * Placeholder class to connect RandomUnit with Form
@@ -49,5 +51,9 @@ public interface AbForm extends AbCharacter {
 
     default Level regulateLv(@Nullable Level src, Level target) {
         return target;
+    }
+
+    default ArrayList<Orb> getOrbs() {
+        return null;
     }
 }
