@@ -191,8 +191,7 @@ public class EEnemy extends Entity {
 
 	@Override
 	public boolean processProcs(AttackAb atk) {
-		boolean doCheck = super.processProcs(atk);
-		if (!doCheck)
+		if (!super.processProcs(atk))
 			return false;
 		Proc atkProc = atk.getProc();
 
