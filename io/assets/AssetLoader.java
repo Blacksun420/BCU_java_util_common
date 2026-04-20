@@ -70,7 +70,7 @@ public class AssetLoader {
 
 	}
 
-	public static final String CORE_VER = "0.7.17.1";
+	public static final String CORE_VER = "0.7.17.2";
 	public static final byte FORK_VER = 15;
 
 	private static final int LEN = 1024;

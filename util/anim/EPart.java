@@ -11,6 +11,7 @@ import common.util.ImgCore;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class EPart extends ImgCore implements Comparable<EPart> {
@@ -48,12 +49,24 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 		df.applyPattern("#.###");
 	}
 
+	private static boolean isParentValid(EPart part, List<Integer> parents) {
+		if (parents == null)
+			parents = new ArrayList<>(0);
+		if (parents.contains(part.ind))
+			return false;
+		parents.add(part.ind);
+		if (part.fa == null || part.fa.ind == 0)
+			return true;
+		else
+			return isParentValid(part.fa, parents);
+	}
+
 	private final String name;
 	public final EBase b;
 	private final int[] args;
 	private final int ind;
 	private EPart fa, para;
-	private int id, img;
+	private int par, id, img;
 	private P pos = new P(0, 0), piv = new P(0, 0), sca = new P(0, 0);
 	private int z, glow;
 	private float angle, opacity, extendX, extendY, gsca;
@@ -76,21 +89,21 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 	 * @return this component's parent, or -1 if it doesn't has any
 	 */
 	public int getPar() {
-		if (fa == null)
-			return -1;
-
-		for (int i = 0; i < b.ent.length; i++)
-			if (fa == b.ent[i])
-				return i;
-		return -1;
+		return par;
 	}
 
 	public void alter(int m, float v) {
-		if (m == 0)
-			if (v < b.ent.length && v >= 0 && v != ind)
-				fa = b.ent[(int) v];
-			else
+		if (m == 0) {
+			if (v < b.ent.length && v >= 0 && v != ind) {
+				fa = b.ent[par=(int)v];
+				if (!isParentValid(this, null))
+					fa = b.ent[par=0];
+			}
+			else {
+				par = -1;
 				fa = null;
+			}
+		}
 		else if (m == 1)
 			id = (int) v;
 		else if (m == 2) {
@@ -143,7 +156,7 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 
 	public String getVal(int m) {
 		if (m == 0)
-			return String.valueOf(getPar());
+			return String.valueOf(par);
 		else if (m == 1)
 			return String.valueOf(id);
 		else if (m == 2)
