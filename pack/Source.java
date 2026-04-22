@@ -22,10 +22,7 @@ import common.util.pack.Soul;
 import common.util.pack.bgeffect.BackgroundEffect;
 import common.util.pack.bgeffect.CustomBGEffect;
 import common.util.stage.*;
-import common.util.unit.Enemy;
-import common.util.unit.Form;
-import common.util.unit.Trait;
-import common.util.unit.Unit;
+import common.util.unit.*;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -539,12 +536,16 @@ public abstract class Source {
 				anim.id.pack = anim.id.pack.substring(6);
 		}
 
+		public File getImageFile(BasePath path, Identifier<?> id) {
+			return getFile("./" + path + "/" + Data.trio(id.id) + ".png");
+		}
+
 		public File getBGFile(Identifier<Background> id) {
-			return getFile("./" + BasePath.BG + "/" + Data.trio(id.id) + ".png");
+			return getImageFile(BasePath.BG, id);
 		}
 
 		public File getCasFile(Identifier<CastleImg> id) {
-			return getFile("./" + BasePath.CASTLE + "/" + Data.trio(id.id) + ".png");
+			return getImageFile(BasePath.CASTLE, id);
 		}
 
 		public File getMusFile(Identifier<Music> id) {
@@ -552,11 +553,15 @@ public abstract class Source {
 		}
 
 		public File getTraitIconFile(Identifier<Trait> id) {
-			return getFile("./" + BasePath.TRAIT + "/" + Data.trio(id.id) + ".png");
+			return getImageFile(BasePath.TRAIT, id);
 		}
 
-		public File getRandIconFile(String type, Identifier<?> id) { //id must be either AbEnemy or Abunit
-			return getFile("./" + BasePath.RAND + "/" + type + "/" + Data.trio(id.id) + ".png");
+		public File getEneRandFile(Identifier<AbEnemy> id) { //id must be either AbEnemy or Abunit
+			return getImageFile(BasePath.ENERAND, id);
+		}
+
+		public File getUniRandFile(Identifier<AbUnit> id) { //id must be either AbEnemy or Abunit
+			return getImageFile(BasePath.UNIRAND, id);
 		}
 
 		@Override
@@ -627,8 +632,8 @@ public abstract class Source {
 			return new FileInputStream(getFile(path));
 		}
 
-		public OutputStream writeFile(String path) throws IOException {
-			File f = getFile(path);
+		public OutputStream writeFile(BasePath path, Identifier<?> id) throws IOException {
+			File f = getFile(path.toString() + "/" + Data.trio(id.id) + ".png");
 			Context.check(f);
 			return new FileOutputStream(f);
 		}
@@ -765,8 +770,9 @@ public abstract class Source {
 		REPLAY("replays"),
 		SOUL("souls"),
 		TRAIT("traitIcons"),
-		RAND("randIcons"),
-		BGEffect("backgroundeffects");
+		BGEffect("backgroundeffects"),
+		ENERAND("enerand"),
+		UNIRAND("unirand");
 
 		private final String path;
 

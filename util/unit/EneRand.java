@@ -101,9 +101,7 @@ public class EneRand extends Data implements AbEnemy {
 
 	@Override
 	public VImg getIcon() {
-		if (icon != null)
-			return icon;
-		return CommonStatic.getBCAssets().ico[0][0];
+		return icon == null ? CommonStatic.getBCAssets().ico[0][0] : icon;
 	}
 
 	@Override
@@ -155,7 +153,7 @@ public class EneRand extends Data implements AbEnemy {
 
 	@JsonDecoder.OnInjected
 	public void onInjected() {
-		icon = UserProfile.getUserPack(id.pack).source.readImage(Source.BasePath.RAND + "/enemyDisplayIcons", id.id);
+		icon = UserProfile.getUserPack(id.pack).source.readImage(Source.BasePath.ENERAND.toString(), id.id);
 	}
 }
 

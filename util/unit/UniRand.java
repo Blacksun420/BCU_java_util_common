@@ -98,16 +98,12 @@ public class UniRand extends Data implements AbUnit, AbForm {
 
     @Override
     public VImg getIcon() {
-        if (icon != null)
-            return icon;
-        return CommonStatic.getBCAssets().ico[0][0];
+        return icon == null ? CommonStatic.getBCAssets().ico[0][0] : icon;
     }
 
     @Override
     public VImg getDeployIcon() {
-        if (deployIcon != null)
-            return deployIcon;
-        return CommonStatic.getBCAssets().slot[0];
+        return deployIcon == null ? CommonStatic.getBCAssets().slot[0] : deployIcon;
     }
 
     public boolean contains(Form f, Form origin) {
@@ -129,7 +125,7 @@ public class UniRand extends Data implements AbUnit, AbForm {
 
     @JsonDecoder.OnInjected
     public void onInjected() {
-        icon = UserProfile.getUserPack(id.pack).source.readImage(Source.BasePath.RAND + "/unitDisplayIcons", id.id);
-        deployIcon = UserProfile.getUserPack(id.pack).source.readImage(Source.BasePath.RAND + "/unitDeployIcons", id.id);
+        icon = UserProfile.getUserPack(id.pack).source.readImage(Source.BasePath.UNIRAND.toString(), id.id);
+        deployIcon = UserProfile.getUserPack(id.pack).source.readImage(Source.BasePath.UNIRAND.toString(), id.id);
     }
 }
