@@ -528,12 +528,14 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				dead = soul.len();
 				CommonStatic.setSE(SE_DEATH_SURGE);
 			} else {
-				// converge souls layer: death on the same frame = same soul height
-				// still not sure how this precisely work in BC, it seems to have exceptions
-				e.layer = 0;
-				e.basis.le.sort();
 				Soul s = Identifier.get(e.data.getDeathAnim());
 				dead = s == null ? 0 : (soul = s.getEAnim(AnimU.SOUL[0])).len();
+				// converge souls layer: death on the same frame = same soul height
+				// still not sure how this precisely work in BC, it seems to have exceptions
+				if (s != null && s.fixedLayer) {
+					e.layer = s.layer;
+					e.basis.le.sort();
+				}
 			}
 		}
 
@@ -1531,14 +1533,14 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	private final KBManager kb = new KBManager(this);
 
 	/**
-	 * layer of display, constant field
+	 * layer of display
 	 */
 	public int layer;
 
 	/**
-	 * layer when spawned in
+	 * layer when spawned in, constant field
 	 */
-	public int spawnLayer;
+	public final int spawnLayer;
 
 	/**
 	 * proc status, contains ability-specific status data
@@ -1678,7 +1680,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 * @param hpMagnif Health Buff
 	 */
 
-	protected Entity(StageBasis b, MaskEntity de, EAnimU ea, float atkMagnif, float hpMagnif) {
+	protected Entity(StageBasis b, MaskEntity de, EAnimU ea, float atkMagnif, float hpMagnif, int layer) {
 		super(Math.round(de.getHp() * hpMagnif));
 		basis = b;
 		data = de;
@@ -1688,6 +1690,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		atkm = new AtkManager(this);
 		shieldMagnification = hpMagnif;
 		auras = new AuraManager(anim, de.getTBA());
+		spawnLayer = layer;
 		ini(hpMagnif);
 	}
 
@@ -1700,7 +1703,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 * @param pc PCoin Data
 	 * @param lv Effective Entity level
 	 */
-	protected Entity(StageBasis b, MaskEntity de, EAnimU ea, float lvMagnif, PCoin pc, Level lv) {
+	protected Entity(StageBasis b, MaskEntity de, EAnimU ea, float lvMagnif, PCoin pc, Level lv, int layer) {
 		super((pc != null && lv != null && lv.getTalents().length == pc.max.length) ?
 				(int) ((1 + b.elu.getInc(Data.C_DEF,((MaskUnit)de).getPack()) * 0.01) * (int) ((int) (Math.round(de.getHp() * lvMagnif) * b.b.t().getDefMulti()) * pc.getStatMultiplication(Data.PC2_HP, lv.getTalents()))) :
 				(int) ((1 + b.elu.getInc(Data.C_DEF,((MaskUnit)de).getPack()) * 0.01) * (int) (Math.round(de.getHp() * lvMagnif) * b.b.t().getDefMulti()))
@@ -1713,6 +1716,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		atkm = new AtkManager(this);
 		shieldMagnification = lvMagnif;
 		auras = new AuraManager(anim, de.getTBA());
+		spawnLayer = layer;
 		ini(lvMagnif);
 	}
 
@@ -1720,6 +1724,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 * Initializes all non-final variables found in both constructors
 	 */
 	private void ini(double hpMagnif) {
+		layer = spawnLayer;
 		barrier.health = getProc().BARRIER.magnif ? (int) (getProc().BARRIER.health * hpMagnif) : getProc().BARRIER.health;
 		barrier.timer = getProc().BARRIER.timeout;
 		status.burs[0] = proc.BURROW.count;
@@ -3284,12 +3289,6 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 */
 	public EAnimU getAnim() {
 		return anim.anim;
-	}
-
-	public int getLayer() {
-		if (anim.deathSurge == 0 && anim.dead >= 0)
-			return 0;
-		return layer;
 	}
 
 	protected boolean notAttacking() {
