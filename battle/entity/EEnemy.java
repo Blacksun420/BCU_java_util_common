@@ -48,9 +48,9 @@ public class EEnemy extends Entity {
 			basis.money = (int) (basis.money + mul * ((MaskEnemy) data).getDrop());
 		}
 		if (rev != null) {
-			rev.triggerRevival(basis, basis.est.mul, layer, group, pos, line);
+			rev.triggerRevival(basis, basis.est.mul, spawnLayer, group, pos, line);
 			if (anim.deathSurge == 0 && rev.soul != null)
-				anim.dead = rev.soul.get().getEAnim(AnimU.SOUL[0]).len();
+				anim.dead = (anim.soul = rev.soul.get().getEAnim(AnimU.SOUL[0])).len();
 		}
 		if (mark >= 1 && basis.st.bossGuard) {
 			basis.baseBarrier--;

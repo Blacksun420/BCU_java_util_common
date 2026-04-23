@@ -186,10 +186,12 @@ public class EUnit extends Entity {
 		lastPosition = p;
 
 		int spwn = basis.spawns.get(data.getPack());
-		if (spwn % getProc().COMBOCOOLDOWN.count == 0 && getProc().COMBOCOOLDOWN.perform(basis.r))
-			basis.elu.deployAdvance(index[0], index[1], getProc().COMBOCOOLDOWN.mult);
-		else
-			basis.elu.maxM[index[0]][index[1]] = 0;
+		if (index != null && index[1] <= 4) {
+			if (spwn % getProc().COMBOCOOLDOWN.count == 0 && getProc().COMBOCOOLDOWN.perform(basis.r))
+				basis.elu.deployAdvance(index[0], index[1], getProc().COMBOCOOLDOWN.mult);
+			else
+				basis.elu.maxM[index[0]][index[1]] = 0;
+		}
 		if (getProc().MONEYBACK.prob > 0 && spwn % getProc().MONEYBACK.count != 0)
 			getProc().MONEYBACK.clear();
 		if (getProc().CANONCHARGE.prob > 0 && spwn % getProc().CANONCHARGE.count != 0)

@@ -72,7 +72,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		/**
 		 * soul anim, null means not dead yet
 		 */
-		private EAnimI soul;
+		protected EAnimI soul;
 
 		/**
 		 * smoke animation for each entity
@@ -434,7 +434,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				effs[A_B] = null;
 			if (e.status.armors.isEmpty())
 				effs[A_ARMOR] = null;
-			if (e.status.speeds.isEmpty() || e.status.adrenaline == 100)
+			if (e.status.speeds.isEmpty() && e.status.adrenaline == 100)
 				effs[A_SPEED] = null;
 			if(effs[A_HEAL] != null && effs[A_HEAL].done())
 				effs[A_HEAL] = null;
@@ -2299,7 +2299,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					curw[1] = (int) Math.min(curw[1], atk.getProc().LETHARGY.mult);
 				status.lethargies.add(curw);
 			}
-			anim.getEff(A_LETHARGY);
+			anim.getEff(P_LETHARGY);
 			//basis.scoreActivated(P_LETHARGY, dire, atk.trait.size());
 		} else
 			anim.getEff(INV);
