@@ -89,7 +89,7 @@ public class MixedBGEffect extends BackgroundEffect {
 
     @Override
     public String toString() {
-        if (id.pack.equals(Identifier.DEF)) {
+        if (fromBC()) {
             if (id.id == Data.BG_EFFECT_SNOWSTAR)
                 return CommonStatic.def.getUILang(0, "bgeff5");
 

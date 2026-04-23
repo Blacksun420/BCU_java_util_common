@@ -374,7 +374,7 @@ public class Stage extends Data
 		if(line.enemy == null)
 			return false;
 
-		return line.enemy.id == 574 && line.enemy.pack.equals(Identifier.DEF) && line.castle_0 == 0;
+		return line.enemy.id == 574 && line.enemy.fromBC() && line.castle_0 == 0;
 	}
 
 	protected void validate() {

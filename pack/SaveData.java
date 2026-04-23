@@ -90,7 +90,7 @@ public class SaveData {
         if (pack.syncPar.contains(f.getID().pack)) {
             if (!UserProfile.getUserPack(f.getID().pack).save.locked(f))
                 return false;
-        } else if (f.getID().pack.equals(Identifier.DEF))
+        } else if (f.getID().fromBC())
             for (String par : pack.syncPar)
                 if (!UserProfile.getUserPack(par).save.locked(f))
                     return false;

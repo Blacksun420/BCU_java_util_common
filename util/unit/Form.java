@@ -395,7 +395,7 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 
 	@Override
 	public ArrayList<Orb> getOrbs() {
-		if (uid.pack.equals(Identifier.DEF) && fid < 2)
+		if (unit.fromBC() && fid < 2)
 			return null;
 		return unit.orbs;
 	}

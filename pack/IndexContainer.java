@@ -27,6 +27,10 @@ public interface IndexContainer {
 
 		Identifier<T> getID();
 
+		default boolean fromBC() {
+			return getID().fromBC();
+		}
+
 	}
 
 	@Documented

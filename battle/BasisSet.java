@@ -62,7 +62,7 @@ public class BasisSet extends Basis implements Copable<BasisSet> {
 	 */
 	public static void synchronizeOrb(Unit u) {
 		//No need to change BC unit's orb status
-		if (u == null || u.id.pack.equals(Identifier.DEF))
+		if (u == null || u.fromBC())
 			return;
 
 		for(BasisSet set : list()) {

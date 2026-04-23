@@ -114,7 +114,7 @@ public class BalloonBGEffect extends BackgroundEffect {
 
         Background background;
 
-        if(!bg.id.pack.equals(Identifier.DEF) || bg.bgEffect.id != Data.BG_EFFECT_BALLOON)
+        if(!bg.fromBC() || bg.bgEffect.id != Data.BG_EFFECT_BALLOON)
             background = UserProfile.getBCData().bgs.get(81);
         else
             background = bg;

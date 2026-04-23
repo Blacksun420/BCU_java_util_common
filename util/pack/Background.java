@@ -486,7 +486,7 @@ public class Background extends AnimI<Background, Background.BGWvType> implement
 
 	@JsonField(tag = "effect", io = JsonField.IOType.W, backCompat = JsonField.CompatType.UPST)
 	public int getBGEff() {
-		if (bgEffect == null || !bgEffect.pack.equals(Identifier.DEF))
+		if (bgEffect == null || !bgEffect.fromBC())
 			return -1;
 		return bgEffect.id;
 	}

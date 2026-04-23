@@ -2986,7 +2986,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 		if (dire != e.dire) {
 			SortedPackSet<Trait> sharedTraits = traits.inCommon(matk.getATKTraits());
-			sharedTraits.addIf(traits, t -> !t.BCTrait());
+			sharedTraits.addIf(traits, t -> !t.fromBC());
 
 			if (!sharedTraits.isEmpty()) {
 				if (e.status.curse == 0 && e.getProc().DMGINC.mult != 0)

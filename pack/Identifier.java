@@ -188,6 +188,10 @@ public class Identifier<T extends IndexContainer.Indexable<?, T>> implements Com
 		return id == -1;
 	}
 
+	public boolean fromBC() {
+		return pack.equals(DEF);
+	}
+
 	@Override
 	public String toString() {
 		return pack + "/" + id;

@@ -11,6 +11,7 @@ import common.pack.Context.ErrType;
 import common.pack.Context.RunExc;
 import common.pack.Context.SupExc;
 import common.pack.Identifier;
+import common.pack.PackData.UserPack;
 import common.pack.SortedPackSet;
 import common.util.pack.Background;
 import common.util.pack.EffAnim;
@@ -1849,6 +1850,21 @@ public class Data {
 				if (getArr(i).def_exists())
 					return false;
 			return true;
+		}
+
+		public void checkPack(UserPack pack) {
+			try {
+				for (int i = 0; i < PROC_TOT; i++) {
+					ProcItem pi = getArr(i);
+					for (Field f : pi.getDeclaredFields())
+						if (f.getType() == Identifier.class) {
+							Identifier<?> id = (Identifier<?>)f.get(pi);
+							if (id != null && !id.fromBC() && !id.pack.equals(pack.getSID()) && !pack.desc.dependency.contains(id.pack))
+								f.set(pi, null);
+						}
+				}
+			} catch (Exception ignored) {
+			}
 		}
 
 		public ProcItem get(String id) {

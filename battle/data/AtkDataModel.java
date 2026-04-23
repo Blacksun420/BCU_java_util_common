@@ -57,13 +57,15 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 		ld1 = adm.ld1;
 		range = adm.range;
 		traits = new SortedPackSet<>(adm.traits);
-		traits.removeIf(t -> !(t.id.pack.equals(Identifier.DEF) || t.id.pack.equals(ce.getPack().getID().pack) || UserProfile.getUserPack(ce.getPack().getID().pack).desc.dependency.contains(t.id.pack)));
+		traits.removeIf(t -> !(t.fromBC()) || t.id.pack.equals(ce.getPack().getID().pack) || UserProfile.getUserPack(ce.getPack().getID().pack).desc.dependency.contains(t.id.pack));
 		dire = adm.dire;
 		count = adm.count;
 		targ = adm.targ;
 		alt = adm.alt;
 		move = adm.move;
 		proc = adm.proc.clone();
+		if (adm.ce.getPack().getPack() != ce.getPack().getPack())
+			proc.checkPack((PackData.UserPack)ce.getPack().getPack());
 		audios = new SortedPackSet<>(adm.audios);
 	}
 
@@ -72,6 +74,8 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 		checkAvail("copied");
 		MaskAtk am = me.getAtkModel(0, i);
 		proc = am.getProc().clone();
+		if (me != ce)
+			proc.checkPack((PackData.UserPack)ce.getPack().getPack());
 		ld0 = am.getShortPoint();
 		ld1 = am.getLongPoint();
 		pre = am.getPre();

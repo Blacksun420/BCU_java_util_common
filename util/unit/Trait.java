@@ -135,7 +135,7 @@ public class Trait extends Data implements Indexable<PackData, Trait>, Comparabl
     }
 
     public boolean isUsed() {
-        if (BCTrait())
+        if (fromBC())
             return true;
         PackData.UserPack pack = (PackData.UserPack) getCont();
         Collection<PackData.UserPack> pacs = UserProfile.getUserPacks();
@@ -179,9 +179,5 @@ public class Trait extends Data implements Indexable<PackData, Trait>, Comparabl
     @Override
     public int compareTo(@NotNull Trait t) {
         return id.compareTo(t.id);
-    }
-
-    public boolean BCTrait() {
-        return id.pack.equals(Identifier.DEF);
     }
 }

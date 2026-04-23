@@ -38,7 +38,7 @@ public class Soul extends Animable<AnimU<?>, AnimU.UType> implements Indexable<P
 		anim = animS;
 		this.id = id;
 
-		if (id.pack.equals(Identifier.DEF))
+		if (fromBC())
 			name = "soul " + id.id;
 		else
 			name = "custom soul " + id.id;

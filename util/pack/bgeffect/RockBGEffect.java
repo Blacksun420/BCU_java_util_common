@@ -186,7 +186,7 @@ public class RockBGEffect extends BackgroundEffect {
 
         Background background;
 
-        if(!bg.id.pack.equals(Identifier.DEF) || (bg.id.id != 41 && bg.id.id != 75)) {
+        if(!bg.fromBC() || (bg.id.id != 41 && bg.id.id != 75)) {
             background = UserProfile.getBCData().bgs.get(75);
         } else {
             background = bg;

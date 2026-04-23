@@ -32,7 +32,7 @@ public abstract class DataEntity extends Data implements MaskEntity {
 	public SortedPackSet<Trait> traits = new SortedPackSet<>();
 
 	public boolean defSoul() {
-		return death != null && death.id == 0 && death.pack.equals(Identifier.DEF);
+		return death != null && death.id == 0 && death.fromBC();
 	}
 	public boolean defTrait() {
 		return traits.isEmpty();
