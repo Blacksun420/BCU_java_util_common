@@ -97,11 +97,11 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 			if (v < b.ent.length && v >= 0 && v != ind) {
 				fa = b.ent[par=(int)v];
 				if (!isParentValid(this, null)) {
-					if (b.ent[par = 0] == this) {
+					if (b.ent[0] == this) {
 						par = -1;
 						fa = null;
 					} else
-						fa = b.ent[par];
+						fa = b.ent[par = 0];
 				}
 			}
 			else {
@@ -283,9 +283,8 @@ public class EPart extends ImgCore implements Comparable<EPart> {
 	}
 
 	protected void setValue(Part[] parts) {
-		if (args[0] >= b.ent.length)
-			args[0] = 0;
-		fa = args[0] <= -1 ? null : b.ent[args[0]];
+		par = args[0] >= b.ent.length ? -1 : args[0];
+		fa = par <= -1 ? null : b.ent[par];
 		id = args[1];
 		img = args[2];
 		z = args[3] * b.ent.length + ind;
