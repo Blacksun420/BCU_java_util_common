@@ -121,7 +121,7 @@ public class UpdateCheck {
 		);
 	}
 
-	public static final String REPO = "Dreamy-Cat-X/o-";
+	public static final String REPO = "U-YumeTsuki/o-";
 	public static final String UPSTREAM = "battlecatsultimate/";
 	public static final String URL_UPDATE = "https://raw.githubusercontent.com/" +UPSTREAM+ "bcu-page/master/api/updateInfo.json";
 	public static final String URL_UPDATE_R = "https://raw.githubusercontent.com/" +REPO+ "bcu-assets/master/assets/updateInfo.json";
