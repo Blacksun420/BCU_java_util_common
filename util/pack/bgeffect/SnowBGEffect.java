@@ -4,8 +4,8 @@ import common.CommonStatic;
 import common.io.json.JsonClass;
 import common.pack.Identifier;
 import common.system.P;
-import common.system.VImg;
 import common.system.fake.FakeGraphics;
+import common.system.fake.FakeTransform;
 import common.util.Data;
 import common.util.pack.Background;
 
@@ -16,11 +16,10 @@ import java.util.Random;
 
 @JsonClass.JCGeneric(Identifier.class)
 public class SnowBGEffect extends BackgroundEffect {
-    private final float maxSlope = (float) Math.tan(Math.toRadians(75));
-    private final VImg snow;
 
-    private final int sw;
-    private final int sh;
+    private static final int sw = 12;
+    private static final int sh = 12;
+    private final float maxSlope = (float) Math.tan(Math.toRadians(75));
 
     private final List<P> snowPosition = new ArrayList<>();
     private final List<P> initPos = new ArrayList<>();
@@ -30,17 +29,12 @@ public class SnowBGEffect extends BackgroundEffect {
 
     private final List<Integer> capture = new LinkedList<>();
 
-    public SnowBGEffect(Identifier<BackgroundEffect> i, VImg snow) {
+    public SnowBGEffect(Identifier<BackgroundEffect> i) {
         super(i);
-        this.snow = snow;
-
-        this.sw = (int) (snow.getImg().getWidth() * 1.8);
-        this.sh = (int) (snow.getImg().getHeight() * 1.8);
     }
 
     @Override
     public void check() {
-        snow.check();
     }
 
     @Override
@@ -51,17 +45,23 @@ public class SnowBGEffect extends BackgroundEffect {
     @Override
     public void postDraw(FakeGraphics g, P rect, float siz, float midH) {
         g.setComposite(FakeGraphics.TRANS, 127, 0);
-        for (P p : snowPosition)
-            g.drawImage(snow.getImg(), BackgroundEffect.convertP(p.x, siz) + (int) rect.x, (int) (p.y * siz - rect.y + midH * siz), sw * siz, sh * siz);
+        g.setColor(FakeGraphics.WHITE);
+        FakeTransform orig = g.getTransform();
+        for (P sp : snowPosition) {
+            float x = convertP(sp.x, siz) + (int) rect.x;
+            float y = sp.y * siz - rect.y + midH * siz;
+            float rx = sw * siz;
+            float ry = sh * siz;
+            g.translate(x, y);
+            g.fillOval(rx / -2, ry / -2, rx, ry);
+            g.setTransform(orig);
+
+        }
         g.setComposite(FakeGraphics.DEF, 255, 0);
     }
 
     @Override
     public void draw(FakeGraphics g, float y, float siz, float midH) {
-        g.setComposite(FakeGraphics.TRANS, 127, 0);
-        for (P p : snowPosition)
-            g.drawImage(snow.getImg(), BackgroundEffect.convertP(p.x, siz), (int) (p.y * siz - y + midH * siz), sw * siz, sh * siz);
-        g.setComposite(FakeGraphics.DEF, 255, 0);
     }
 
     @Override
@@ -103,7 +103,7 @@ public class SnowBGEffect extends BackgroundEffect {
         for (P p : snowPosition) P.delete(p);
         snowPosition.clear();
 
-        int number = w / 200;
+        int number = w / 150;
 
         for(int i = 0; i < number; i++) {
             float x = r.nextInt(w + sw + battleOffset);

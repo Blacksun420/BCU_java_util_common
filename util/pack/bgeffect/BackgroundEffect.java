@@ -51,7 +51,7 @@ public abstract class BackgroundEffect extends Data implements IndexContainer.In
 
         assets.bgEffects.add(new FallingSnowBGEffect(assets.getNextID(BackgroundEffect.class), new VImg("./org/img/bgEffect/bubble03_bg040.png")));
 
-        assets.bgEffects.add(new SnowBGEffect(assets.getNextID(BackgroundEffect.class), new VImg("./org/img/bgEffect/img021.png")));
+        assets.bgEffects.add(new SnowBGEffect(assets.getNextID(BackgroundEffect.class)));
 
         assets.bgEffects.add(new MixedBGEffect(assets.getNextID(BackgroundEffect.class),
                 assets.bgEffects.get(Data.BG_EFFECT_STAR), assets.bgEffects.get(Data.BG_EFFECT_SNOW)));

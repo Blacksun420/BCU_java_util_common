@@ -290,6 +290,8 @@ public abstract class CustomEntity extends DataEntity {
 			importData$1((CustomEntity) de);
 			return;
 		}
+		kbBounce = true;
+		bossBounce = true;
 
 		base = de.touchBase();
 		rep = new AtkDataModel(this);

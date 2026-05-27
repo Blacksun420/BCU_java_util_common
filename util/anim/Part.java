@@ -139,12 +139,18 @@ public class Part extends Data implements Cloneable, Comparable<Part> {
 						ti = 0;
 					else if (moves[i][2] == 1)
 						ti = Math.floor(ti * moves[i][3])/(moves[i][3]);
-					else if (moves[i][2] == 2)
-						if (moves[i][3] >= 0)
-							ti = 1 - Math.sqrt(1 - Math.pow(ti, moves[i][3]));
-						else
-							ti = Math.sqrt(1 - Math.pow(1 - ti, -moves[i][3]));
-					else if (moves[i][2] == 3) {
+					else if (moves[i][2] == 2) {
+						float easePower = moves[i][3] != 0 ? moves[i][3] : 1f;
+						double tiClamped = Math.min(1f, Math.max(0f, ti));
+						float easeFactor;
+						if (easePower >= 0) {
+							easeFactor = (float) (1.0 - Math.sqrt(1.0 - Math.pow(tiClamped, easePower)));
+						} else
+							easeFactor = (float) (Math.sqrt(1.0 - Math.pow(1.0 - tiClamped, -easePower)));
+
+						if (!Float.isNaN(easeFactor))
+							ti = easeFactor;
+					} else if (moves[i][2] == 3) {
 						vd = ease3(i, realFrame);
 						es[ints[0]].alter(ints[1], vd);
 						break;
@@ -152,9 +158,9 @@ public class Part extends Data implements Cloneable, Comparable<Part> {
 						ti = (realFrame - f0) / (f1 - f0);
 
 						if (moves[i][3] > 0)
-							ti = (float) (1 - Math.cos(ti * Math.PI / 2));
+							ti = 1 - Math.cos(ti * Math.PI / 2);
 						else if (moves[i][3] < 0)
-							ti = (float) (Math.sin(ti * Math.PI / 2));
+							ti = Math.sin(ti * Math.PI / 2);
 						else
 							ti = (1 - Math.cos(ti * Math.PI)) / 2;
 					} else if (moves[i][2] == 5) {
