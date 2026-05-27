@@ -43,7 +43,8 @@ public class PCoin extends Data {
 					if (u.getForms().length > 3)
 						new PCoin(data, u.getForms()[3].du);
 				}
-				PCOIN_MAX = Math.max(PCOIN_MAX, data[2]);
+				for (int i = 0; i < 8; i++)
+					PCOIN_MAX = Math.max(PCOIN_MAX, data[2 + i * 14]);
 			}
 		}
 	}

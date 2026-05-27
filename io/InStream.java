@@ -3,7 +3,7 @@ package common.io;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-public strictfp interface InStream {
+public interface InStream {
 
 	default byte[] nextBytesB() {
 		int len = nextByte();
@@ -37,12 +37,14 @@ public strictfp interface InStream {
 	boolean end();
 
 	int nextByte();
+	float nextFloat();
 
 	double nextDouble();
 
 	int nextInt();
 
 	int nextShort();
+	long nextLong();
 
 	OutStream translate();
 
@@ -51,7 +53,7 @@ public strictfp interface InStream {
 	}
 }
 
-strictfp class InStreamDef extends DataIO implements InStream {
+class InStreamDef extends DataIO implements InStream {
 
 	private final int[] bs;
 	private final int off, max;
@@ -78,6 +80,14 @@ strictfp class InStreamDef extends DataIO implements InStream {
 	}
 
 	@Override
+	public float nextFloat() {
+		check(4);
+		float ans = toFloat(bs, index);
+		index += 4;
+		return ans;
+	}
+
+	@Override
 	public double nextDouble() {
 		check(8);
 		double ans = toDouble(bs, index);
@@ -90,6 +100,14 @@ strictfp class InStreamDef extends DataIO implements InStream {
 		check(4);
 		int ans = toInt(bs, index);
 		index += 4;
+		return ans;
+	}
+
+	@Override
+	public long nextLong() {
+		check(8);
+		long ans = toLong(bs, index);
+		index += 8;
 		return ans;
 	}
 
@@ -136,7 +154,7 @@ strictfp class InStreamDef extends DataIO implements InStream {
 
 }
 
-strictfp class InStreamAnim extends DataIO implements InStream {
+class InStreamAnim extends DataIO implements InStream {
 
 	private final int[] bs;
 	private final int off, max;
@@ -171,10 +189,26 @@ strictfp class InStreamAnim extends DataIO implements InStream {
 	}
 
 	@Override
+	public float nextFloat() {
+		check(4);
+		float ans = toFloat(bs, index);
+		index += 4;
+		return ans;
+	}
+
+	@Override
 	public int nextInt() {
 		check(4);
 		int ans = toInt(bs, index);
 		index += 4;
+		return ans;
+	}
+
+	@Override
+	public long nextLong() {
+		check(8);
+		long ans = toLong(bs, index);
+		index += 8;
 		return ans;
 	}
 

@@ -9,10 +9,14 @@ import common.io.json.JsonField.GenType;
 import common.pack.PackData.UserPack;
 import common.pack.SortedPackSet;
 import common.util.Data;
+import common.util.unit.AbEnemy;
+import common.util.unit.Unit;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 @JsonClass(noTag = NoTag.LOAD)
 public abstract class CustomEntity extends DataEntity {
@@ -350,6 +354,8 @@ public abstract class CustomEntity extends DataEntity {
 
 	private void importData$1(CustomEntity ce) {
 		base = ce.base;
+		kbBounce = ce.kbBounce;
+		bossBounce = ce.bossBounce;
 		rep = new AtkDataModel(this, ce.rep);
 
 		for (int j = 0; j < Math.min(hits.size(), ce.hits.size()); j++) {

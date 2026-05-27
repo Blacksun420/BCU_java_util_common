@@ -4,13 +4,10 @@ import common.battle.Basis;
 import common.io.json.JsonClass;
 import common.io.json.JsonField;
 import common.pack.Identifier;
-import common.pack.PackData;
-import common.pack.SortedPackSet;
 import common.pack.UserProfile;
 import common.util.anim.AnimU;
 import common.util.unit.AbEnemy;
 import common.util.unit.Enemy;
-import common.util.unit.Trait;
 
 import java.util.Set;
 import java.util.TreeSet;
@@ -68,20 +65,6 @@ public class CustomEnemy extends CustomEntity implements MaskEnemy {
 	}
 
 	@Override
-	public Set<AbEnemy> getSummon() {
-		Set<AbEnemy> ans = new TreeSet<>();
-		if (common) {
-			if (rep.proc.SUMMON.prob > 0 && (rep.proc.SUMMON.id == null || AbEnemy.class.isAssignableFrom(rep.proc.SUMMON.id.cls)))
-				ans.add(Identifier.getOr(rep.proc.SUMMON.id, AbEnemy.class));
-		} else
-			for (AtkDataModel[] adms : hits)
-				for (AtkDataModel adm : adms)
-					if (adm.proc.SUMMON.prob > 0 && (adm.proc.SUMMON.id == null || AbEnemy.class.isAssignableFrom(adm.proc.SUMMON.id.cls)))
-						ans.add(Identifier.getOr(adm.proc.SUMMON.id, AbEnemy.class));
-		return ans;
-	}
-
-	@Override
 	public void importData(MaskEntity de) {
 		super.importData(de);
 		if (de instanceof MaskEnemy) {
@@ -109,5 +92,19 @@ public class CustomEnemy extends CustomEntity implements MaskEnemy {
 	@Override
 	public boolean defTrait() {
 		return traits.size() == 1 && traits.get(0).equals(UserProfile.getBCData().traits.get(TRAIT_RED));
+	}
+
+	@Override
+	public Set<AbEnemy> getSummon() {
+		Set<AbEnemy> ans = new TreeSet<>();
+		if (common) {
+			if (rep.proc.SUMMON.prob > 0 && (rep.proc.SUMMON.id == null || AbEnemy.class.isAssignableFrom(rep.proc.SUMMON.id.cls)))
+				ans.add(Identifier.getOr(rep.proc.SUMMON.id, AbEnemy.class));
+		} else
+			for (AtkDataModel[] adms : hits)
+				for (AtkDataModel adm : adms)
+					if (adm.proc.SUMMON.prob > 0 && (adm.proc.SUMMON.id == null || AbEnemy.class.isAssignableFrom(adm.proc.SUMMON.id.cls)))
+						ans.add(Identifier.getOr(adm.proc.SUMMON.id, AbEnemy.class));
+		return ans;
 	}
 }

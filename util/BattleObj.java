@@ -8,7 +8,6 @@ import common.pack.Context.ErrType;
 import common.util.pack.bgeffect.BackgroundEffect;
 import common.util.unit.AbEnemy;
 import common.util.unit.AbForm;
-import common.util.unit.Character;
 import common.util.unit.Trait;
 
 import java.lang.reflect.Array;

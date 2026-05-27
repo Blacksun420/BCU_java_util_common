@@ -148,14 +148,16 @@ public class Part extends Data implements Cloneable, Comparable<Part> {
 						vd = ease3(i, realFrame);
 						es[ints[0]].alter(ints[1], vd);
 						break;
-					} else if (moves[i][2] == 4)
+					} else if (moves[i][2] == 4) {
+						ti = (realFrame - f0) / (f1 - f0);
+
 						if (moves[i][3] > 0)
-							ti = 1 - Math.cos(ti * Math.PI / 2);
+							ti = (float) (1 - Math.cos(ti * Math.PI / 2));
 						else if (moves[i][3] < 0)
-							ti = Math.sin(ti * Math.PI / 2);
+							ti = (float) (Math.sin(ti * Math.PI / 2));
 						else
 							ti = (1 - Math.cos(ti * Math.PI)) / 2;
-					else if (moves[i][2] == 5) {
+					} else if (moves[i][2] == 5) {
 						double omega = (moves[i][3] == 0 ? 0.1 : Math.abs(moves[i][3]));
 						double theta = omega * ti;
 						if (moves[i][3] >= 0)
@@ -167,7 +169,7 @@ public class Part extends Data implements Cloneable, Comparable<Part> {
 					if ((ints[1] == 2 || ints[1] == 4 || ints[1] == 5) && v1 < v0)
 						vd = (int) Math.ceil((v1 - v0) * ti + v0);
 					else
-						vd = (int) ((v1 - v0) * ti + v0);
+						vd = v0 + (int) ((v1 - v0) * ti);
 
 					es[ints[0]].alter(ints[1], vd);
 					break;

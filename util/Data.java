@@ -2470,7 +2470,8 @@ public class Data {
 			{ PC_P, P_MINIVOLC }, //65 : MiniSurge
 			{ PC_AB, AB_SKILL }, //66 : super sage hunter
 			{ PC_P, P_BLAST }, //67 : Baja Blast
-			{ PC_P, P_DEMONVOLC } //68 : Counter-Surge
+			{ PC_P, P_DEMONVOLC }, //68 : Counter-Surge
+			{ PC_IMU, P_IMUBLAST } // 69: immune to blast todo: when resist blast comes, connect to that talent
 	};
 	public static final int[][] PC_CUSTOM = new int[][] { //Use negative ints to handle (it would be so awesome, it would be so cool)
 			{ -1, 0 }, // 0:

@@ -3,7 +3,7 @@ package common.io;
 import java.util.function.BiFunction;
 import common.pack.Context;
 
-public strictfp abstract class DataIO {
+public abstract class DataIO {
 
 	/**
 	 * write a number n into a byte[] start from index

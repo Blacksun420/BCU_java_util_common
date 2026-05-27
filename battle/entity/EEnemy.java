@@ -13,7 +13,6 @@ import common.util.anim.AnimU;
 import common.util.anim.EAnimU;
 import common.util.pack.EffAnim;
 import common.util.stage.Revival;
-import common.util.stage.SCDef;
 import common.util.unit.Trait;
 
 import java.util.Arrays;
@@ -63,9 +62,9 @@ public class EEnemy extends Entity {
 			}
 		}
 		if (basis.st.trail && !basis.isDojoOvertime() && basis.isActive() && !glass) {
-			SCDef.Line d = basis.st.data.getSimple(line);
+			int lineScore = line != -1 ? basis.st.data.getSimple(line).score : 0;
 			int time = basis.st.timeLimit * 1800;
-			int score = (int) (((MaskEnemy) data).getDrop() / 100f + (d.score * (2f * time - basis.time)) / time);
+			int score = (int) (((MaskEnemy) data).getDrop() / 100f + (lineScore * (2f * time - basis.time)) / time);
 			basis.score += score;
 		}
 	}
