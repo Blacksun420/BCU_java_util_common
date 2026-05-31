@@ -402,7 +402,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		}
 
 		for (int i = startOff; i < par.length; i++)
-			if (proc.get(par[i]).exists() && proc.get(par[i]).conditions() != null && proc.get(par[i]).conditions().check(true, roots))
+			if (proc.get(par[i]).exists() && proc.get(par[i]).conditions() != null && !proc.get(par[i]).conditions().check(true, roots))
 				proc.get(par[i]).clear();
 	}
 

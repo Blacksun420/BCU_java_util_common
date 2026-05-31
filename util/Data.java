@@ -1451,9 +1451,10 @@ public class Data {
 			}
 
 			public static boolean check(String def, Map<String, Object> roots) {
-				if (def.isEmpty())
+				String trimmed = def.replace(" ", "").replace("\n","");
+				if (trimmed.isEmpty())
 					return true;
-				String[] conditions = def.replace(" ", "").replace("\n","").split("\\|\\|");//Spaces are only for user-reading
+				String[] conditions = trimmed.split("\\|\\|");//Spaces are only for user-reading
 				for (String cond : conditions) {
 					if (failedCondition(cond, roots))
 						continue;
@@ -1477,22 +1478,25 @@ public class Data {
 					try {
 						if (operation.equals("B")) {
 							if (((boolean)getOperated(and.substring(inv ? 0 : 1), roots)) != inv)
-								return false;
+								return true;
 						} else {
 							int sepIndex = raw.indexOf(operation) + (and.length() - raw.length());
 							Object def = getOperated(and.substring(inv ? 0 : 1, sepIndex), roots);
 							Object second = getOperated(and.substring(sepIndex + operation.length()), roots);
-							if (operation.equals("==") || operation.equals("!=")) {
+							if (def instanceof Number && second instanceof Number) {//Removes false negatives and cast errors
+								if (doComparison(operation, ((Number) def).doubleValue(), ((Number) second).doubleValue()) != inv)
+									return true;
+							} else if (operation.equals("==") || operation.equals("!=")) {
 								if ((def.equals(second) == (operation.charAt(0) == '!')) != inv)
-									return false;
+									return true;
 							} else if (doComparison(operation, (Comparable)def, (Comparable)second) != inv)
-								return false;
+								return true;
 						}
 					} catch (Exception e) {
 						CommonStatic.ctx.printErr(ErrType.WARN, "Error in proc condition [" + condition + "]: " + e.getMessage());
 					}
 				}
-				return true;
+				return false;
 			}
 
 			private static <T extends Comparable<T>> boolean doComparison(String operation, T first, T second) {
@@ -1509,6 +1513,12 @@ public class Data {
 						break;
 					case "<=":
 						res = first.compareTo(second) <= 0;
+						break;
+					case "==":
+						res = first.equals(second);
+						break;
+					case "!=":
+						res = !first.equals(second);
 						break;
 				}
 				return res;
@@ -1527,6 +1537,10 @@ public class Data {
 					return Integer.parseInt(fields);
 				if (CommonStatic.isDouble(fields))
 					return Double.parseDouble(fields);
+				if (fields.equals("false") || fields.equals("true"))
+					return Boolean.parseBoolean(fields);
+				if (fields.startsWith("\"") && fields.endsWith("\""))
+					return fields.substring(1, fields.length()-1);
 
 				String[] fs = fields.split("\\.(?![^()]*+\\))");
 				Object current = roots.get(fs[0]);
@@ -1694,6 +1708,13 @@ public class Data {
 						SortedPackSet<Integer> l = ((ProcID)f.get(this)).l;
 						return l.isEmpty() ? 0 : l.get(l.size() - 1);
 					}
+					else if (f.getType() == Condition.class) {
+						Condition c = (Condition)f.get(this);
+						int res = c.pre.isEmpty() ? 0 : 1;
+						if (!c.post.isEmpty())
+							res += 2;
+						return res;
+					}
 					return f.getType() == int.class ? f.getInt(this) : (int)f.getDouble(this);
 				} catch (Exception e) {
 					CommonStatic.ctx.noticeErr(e, ErrType.DEBUG, "Error getting talent " + i + " for proc type " + getClass().getName());
@@ -1737,6 +1758,8 @@ public class Data {
 			public void set(int i, int v) {
 				try {
 					Field f = getDeclaredFields()[i];
+					if (f.getType() == Condition.class)
+						return;
 					if (f.getType() == boolean.class)
 						f.set(this, v != 0);
 					else if (f.getType() == ProcID.class) {

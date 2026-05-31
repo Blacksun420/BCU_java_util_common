@@ -1984,12 +1984,12 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		if (!barrierContinue)
 			return false;
 		//75.0 is guessed value compared from BC
-		if (atk.getProc().CRIT.mult > 0 && getProc().CRIT.conditions.check(false, roots)) {
+		if (atk.getProc().CRIT.mult > 0 && atk.getProc().CRIT.conditions.check(false, roots)) {
 			basis.lea.add(new EAnimCont(pos, layer, effas().A_CRIT.getEAnim(DefEff.DEF), -75f));
 			CommonStatic.setSE(SE_CRIT);
 		}
 		//75.0 is guessed value compared from BC
-		if (atk.getProc().SATK.mult > 0 && getProc().SATK.conditions.check(false, roots)) {
+		if (atk.getProc().SATK.mult > 0 && atk.getProc().SATK.conditions.check(false, roots)) {
 			basis.lea.add(new EAnimCont(pos, layer, effas().A_SATK.getEAnim(DefEff.DEF), -75f));
 			CommonStatic.setSE(SE_SATK);
 		}
@@ -2135,7 +2135,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			return false;
 		Map<String, Object> roots = CommonStatic.rootMap(1, new String[]{"atk","attacker","attacked","damage"},atk,atk.attacker,this,dmg);
 
-		if (atk.getProc().POIATK.mult > 0 && getProc().POIATK.conditions.check(false, roots)) {
+		if (atk.getProc().POIATK.mult > 0 && atk.getProc().POIATK.conditions.check(false, roots)) {
 			float rst = getResistValue(atk, false, getProc().IMUPOIATK.mult);
 			if (rst == 0f)
 				anim.getEff(INV);
@@ -2172,39 +2172,39 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		float f = getFruit(atk.trait, atk.dire, 1);
 		float time = atk.origin instanceof AttackCanon ? 1 : 1 + f * 0.2f / 3;
 		Proc atkProc = atk.getProc();
-		if ((atkProc.STOP.time != 0 || atkProc.STOP.prob > 0) && proc.STOP.conditions.check(false, roots))
+		if ((atkProc.STOP.time != 0 || atkProc.STOP.prob > 0) && atkProc.STOP.conditions.check(false, roots))
 			freeze(atk, time);
-		if ((atkProc.SLOW.time != 0 || atkProc.SLOW.prob > 0) && proc.SLOW.conditions.check(false, roots))
+		if ((atkProc.SLOW.time != 0 || atkProc.SLOW.prob > 0) && atkProc.SLOW.conditions.check(false, roots))
 			slow(atk, time);
-		if (atkProc.WEAK.time > 0 && proc.WEAK.conditions.check(false, roots))
+		if (atkProc.WEAK.time > 0 && atkProc.WEAK.conditions.check(false, roots))
 			weaken(atk, time);
-		if (atkProc.LETHARGY.time > 0 && proc.LETHARGY.conditions.check(false, roots))
+		if (atkProc.LETHARGY.time > 0 && atkProc.LETHARGY.conditions.check(false, roots))
 			lethargy(atk, time);
-		if ((atkProc.CURSE.time != 0 || atkProc.CURSE.prob > 0) && proc.CURSE.conditions.check(false, roots))
+		if ((atkProc.CURSE.time != 0 || atkProc.CURSE.prob > 0) && atkProc.CURSE.conditions.check(false, roots))
 			curse(atk, time);
-		if (atkProc.KB.dis != 0 && proc.KB.conditions.check(false, roots))
+		if (atkProc.KB.dis != 0 && atkProc.KB.conditions.check(false, roots))
 			knockback(atk, f);
 
-		if (atkProc.SNIPER.prob > 0 && proc.SNIPER.conditions.check(false, roots))
+		if (atkProc.SNIPER.prob > 0 && atkProc.SNIPER.conditions.check(false, roots))
 			interrupt(INT_ASS, KB_DIS[INT_ASS]);
-		if (atkProc.BOSS.prob > 0 && proc.BOSS.conditions.check(false, roots))
+		if (atkProc.BOSS.prob > 0 && atkProc.BOSS.conditions.check(false, roots))
 			interrupt(INT_SW, KB_DIS[INT_SW]);
 
-		if (atkProc.WARP.prob > 0 && proc.WARP.conditions.check(false, roots))
+		if (atkProc.WARP.prob > 0 && atkProc.WARP.conditions.check(false, roots))
 			warp(atk);
-		if (atkProc.SEAL.prob > 0 && proc.SEAL.conditions.check(false, roots))
+		if (atkProc.SEAL.prob > 0 && atkProc.SEAL.conditions.check(false, roots))
 			seal(atk, time);
-		if (atkProc.POISON.time > 0 && proc.POISON.conditions.check(false, roots))
+		if (atkProc.POISON.time > 0 && atkProc.POISON.conditions.check(false, roots))
 			poison(atk);
-		if (!isBase && atkProc.ARMOR.time > 0 && proc.ARMOR.conditions.check(false, roots))
+		if (!isBase && atkProc.ARMOR.time > 0 && atkProc.ARMOR.conditions.check(false, roots))
 			breakArmor(atk, time);
-		if (atkProc.SPEED.time > 0 && proc.SPEED.conditions.check(false, roots))
+		if (atkProc.SPEED.time > 0 && atkProc.SPEED.conditions.check(false, roots))
 			hasten(atk, time);
-		if (atkProc.RAGE.time > 0 && proc.RAGE.conditions.check(false, roots))
+		if (atkProc.RAGE.time > 0 && atkProc.RAGE.conditions.check(false, roots))
 			enrage(atk, time);
-		if (atkProc.HYPNO.time > 0 && proc.HYPNO.conditions.check(false, roots))
+		if (atkProc.HYPNO.time > 0 && atkProc.HYPNO.conditions.check(false, roots))
 			hypnotize(atk, time);
-		if (atkProc.BLESSING.prob > 0 && proc.BLESSING.conditions.check(false, roots)) {
+		if (atkProc.BLESSING.prob > 0 && atkProc.BLESSING.conditions.check(false, roots)) {
 			if (status.blessings.isEmpty())
 				anim.getEff(P_BLESS);
 			else if (!atkProc.BLESSING.stackable)

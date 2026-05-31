@@ -101,7 +101,7 @@ public abstract class AttackAb extends BattleObj {
 				float time = origin instanceof AttackCanon ? 1 : 1 + f * 0.2f / 3;
 				boolean blocked = false;
 
-				Map<String, Object> roots = CommonStatic.rootMap(new String[]{"attacker", "atk", "attacked","damage"},attacker,this,e,matk.getAtk());
+				Map<String, Object> roots = CommonStatic.rootMap(new String[]{"attacker", "atk", "attacked","damage"},attacker,this,e,atk);
 				if (proc.KB.dis > 0 && imus.IMUKB.block != 0 && imus.IMUKB.conditions.check(true, roots)) {
 					if (imus.IMUKB.block > 0)
 						blocked = true;
