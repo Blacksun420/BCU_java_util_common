@@ -11,6 +11,7 @@ import common.util.anim.EAnimD;
 import common.util.pack.EffAnim.VolcEff;
 
 import java.util.HashSet;
+import java.util.Map;
 
 public class ContVolcano extends ContAb {
 	public final HashSet<AbEntity> surgeSummoned = new HashSet<>();
@@ -75,10 +76,12 @@ public class ContVolcano extends ContAb {
 			CommonStatic.setSE(SE_VOLC_LOOP);
 		}
 		v.capture();
+		Map<String, Object> roots = CommonStatic.rootMap(1, new String[]{"attacker", "atk"},v.attacker,v);
 		for (AbEntity e : v.capt)
 			if (e instanceof Entity) {
+				roots.put("attacked", e);
 				float volcs = e.getProc().IMUVOLC.block;
-				if (volcs != 0) {
+				if (volcs != 0 && e.getProc().IMUVOLC.conditions.check(true, roots)) {
 					if (volcs > 0)
 						((Entity) e).anim.getEff(STPWAVE);
 					if (volcs == 100) {

@@ -567,6 +567,16 @@ public class CommonStatic {
 		return ans;
 	}
 
+	public static Map<String, Object> rootMap(String[] keys, Object... objs) {
+		return rootMap(0, keys, objs);
+	}
+	public static Map<String, Object> rootMap(int add, String[] keys, Object... objs) {
+		Map<String, Object> roots = new HashMap<>(keys.length + add);
+		for (int i = 0; i < keys.length; i++)
+			roots.put(keys[i], objs[i]);
+		return roots;
+	}
+
 	/**
 	 * play sound effect
 	 */

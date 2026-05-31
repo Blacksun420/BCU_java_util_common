@@ -47,6 +47,10 @@ public abstract class AbEntity extends BattleObj {
 		return empty;
 	}
 
+	public float hpPercent() {
+		return Math.min(100f, 100f * health / maxH);
+	}
+
 	public abstract float calcDamageMult(int dmg, Entity e, MaskAtk matk);
 
 	public abstract boolean damaged(AttackAb atk);

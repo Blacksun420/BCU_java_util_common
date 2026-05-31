@@ -149,68 +149,99 @@ public class AttackSimple extends AttackAb {
 			if (sfx != null)
 				CommonStatic.setSE(sfx);
 		}
+		Map<String, Object> roots = CommonStatic.rootMap(1, new String[]{"attacker", "atk"},attacker,this);
 		if (proc.WAVE.prob > 0 && (!capt.isEmpty() || proc.WAVE.hitless)) {
-			int dire = model.getDire();
-			int wid = dire == 1 ? W_E_WID : W_U_WID;
-			float addp = (dire == 1 ? W_E_INI : W_U_INI) + wid / 2f;
-			float p0 = model.getPos() + dire * addp;
-			int lv = proc.WAVE.sameLv() ? proc.WAVE.lv : proc.WAVE.lv + model.b.r.nextInt(proc.WAVE.maxlv-proc.WAVE.lv);
-			if (proc.WAVE.inverted)
-				p0 = model.getPos() + (dire * addp) + ((200 * (lv - 1)) * dire);
+			for (AbEntity e : capt) {
+				roots.put("attacked",e);
+				if (!proc.WAVE.conditions.check(false, roots))
+					continue;
+				int dire = model.getDire();
+				int wid = dire == 1 ? W_E_WID : W_U_WID;
+				float addp = (dire == 1 ? W_E_INI : W_U_INI) + wid / 2f;
+				float p0 = model.getPos() + dire * addp;
+				int lv = proc.WAVE.sameLv() ? proc.WAVE.lv : proc.WAVE.lv + model.b.r.nextInt(proc.WAVE.maxlv - proc.WAVE.lv);
+				if (proc.WAVE.inverted)
+					p0 = model.getPos() + (dire * addp) + ((200 * (lv - 1)) * dire);
 
-			// generate a wave when hits somebody
-			ContWaveDef wave = new ContWaveDef(new AttackWave(attacker, this, p0, wid, WT_WAVE), p0, layer, -3, lv);
-			if(attacker != null)
-				attacker.summoned.add(wave);
+				// generate a wave when hits somebody
+				ContWaveDef wave = new ContWaveDef(new AttackWave(attacker, this, p0, wid, WT_WAVE), p0, layer, -3, lv);
+				if (attacker != null)
+					attacker.summoned.add(wave);
+				break;
+			}
 		}
 		if(proc.MINIWAVE.prob > 0 && (!capt.isEmpty() || proc.MINIWAVE.hitless)) {
-			int dire = model.getDire();
-			int wid = dire == 1 ? W_E_WID : W_U_WID;
-			float addp = (dire == 1 ? W_E_INI : W_U_INI) + wid / 2f;
-			float p0 = model.getPos() + dire * addp;
-			int lv = proc.MINIWAVE.sameLv() ? proc.MINIWAVE.lv : proc.MINIWAVE.lv + model.b.r.nextInt(proc.MINIWAVE.maxlv-proc.MINIWAVE.lv);
-			if (proc.MINIWAVE.inverted)
-				p0 = model.getPos() + (dire * addp) + ((200 * (lv - 1)) * dire);
+			for (AbEntity e : capt) {
+				roots.put("attacked",e);
+				if (!proc.MINIWAVE.conditions.check(false, roots))
+					continue;
+				int dire = model.getDire();
+				int wid = dire == 1 ? W_E_WID : W_U_WID;
+				float addp = (dire == 1 ? W_E_INI : W_U_INI) + wid / 2f;
+				float p0 = model.getPos() + dire * addp;
+				int lv = proc.MINIWAVE.sameLv() ? proc.MINIWAVE.lv : proc.MINIWAVE.lv + model.b.r.nextInt(proc.MINIWAVE.maxlv - proc.MINIWAVE.lv);
+				if (proc.MINIWAVE.inverted)
+					p0 = model.getPos() + (dire * addp) + ((200 * (lv - 1)) * dire);
 
-			ContWaveDef wave = new ContWaveDef(new AttackWave(attacker, this, p0, wid, proc.MINIWAVE.multi > 100 ? WT_MEGA : WT_MINI), p0, layer, proc.MINIWAVE.multi > 100 ? -6 : 0, lv);
-			wave.atk.raw = (int)(wave.atk.raw * (proc.MINIWAVE.multi / 100.0));
-			if(attacker != null)
-				attacker.summoned.add(wave);
+				ContWaveDef wave = new ContWaveDef(new AttackWave(attacker, this, p0, wid, proc.MINIWAVE.multi > 100 ? WT_MEGA : WT_MINI), p0, layer, proc.MINIWAVE.multi > 100 ? -6 : 0, lv);
+				wave.atk.raw = (int) (wave.atk.raw * (proc.MINIWAVE.multi / 100.0));
+				if (attacker != null)
+					attacker.summoned.add(wave);
+				break;
+			}
 		}
 		if (proc.VOLC.prob > 0 && (!capt.isEmpty() || proc.VOLC.hitless)) {
-			int dire = model.getDire();
-			VOLC volc = proc.VOLC;
-			int addp = volc.dis_0 == volc.dis_1 ? volc.dis_0 : volc.dis_0 + (int) (model.b.r.nextFloat() * (volc.dis_1 - volc.dis_0));
-			float p0 = model.getPos() + dire * addp;
-			float sta = p0 + (dire == 1 ? W_VOLC_PIERCE : W_VOLC_INNER);
-			float end = p0 - (dire == 1 ? W_VOLC_INNER : W_VOLC_PIERCE);
-			int time = volc.sameTime() ? volc.time : volc.time + Math.round((float)model.b.r.nextInt(volc.maxtime - volc.time) / Data.VOLC_ITV) * Data.VOLC_ITV;
-			ContVolcano volcano = new ContVolcano(new AttackVolcano(attacker, this, sta, end, WT_VOLC, volc.pid), p0, layer, time, false);
-			if(attacker != null)
-				attacker.summoned.add(volcano);
+			for (AbEntity e : capt) {
+				roots.put("attacked",e);
+				if (!proc.VOLC.conditions.check(false, roots))
+					continue;
+				int dire = model.getDire();
+				VOLC volc = proc.VOLC;
+				int addp = volc.dis_0 == volc.dis_1 ? volc.dis_0 : volc.dis_0 + (int) (model.b.r.nextFloat() * (volc.dis_1 - volc.dis_0));
+				float p0 = model.getPos() + dire * addp;
+				float sta = p0 + (dire == 1 ? W_VOLC_PIERCE : W_VOLC_INNER);
+				float end = p0 - (dire == 1 ? W_VOLC_INNER : W_VOLC_PIERCE);
+				int time = volc.sameTime() ? volc.time : volc.time + Math.round((float) model.b.r.nextInt(volc.maxtime - volc.time) / Data.VOLC_ITV) * Data.VOLC_ITV;
+				ContVolcano volcano = new ContVolcano(new AttackVolcano(attacker, this, sta, end, WT_VOLC, volc.pid), p0, layer, time, false);
+				if (attacker != null)
+					attacker.summoned.add(volcano);
+				break;
+			}
 		}
 		if (proc.MINIVOLC.prob > 0 && (!capt.isEmpty() || proc.MINIVOLC.hitless)) {
-			int dire = model.getDire();
-			Proc.MINIVOLC volc = proc.MINIVOLC;
-			int addp = volc.dis_0 == volc.dis_1 ? volc.dis_0 : volc.dis_0 + (int) (model.b.r.nextFloat() * (volc.dis_1 - volc.dis_0));
-			float p0 = model.getPos() + dire * addp;
-			float sta = p0 + (dire == 1 ? W_VOLC_PIERCE : W_VOLC_INNER);
-			float end = p0 - (dire == 1 ? W_VOLC_INNER : W_VOLC_PIERCE);
-			int time = volc.sameTime() ? volc.time : volc.time + Math.round((float)model.b.r.nextInt(volc.maxtime - volc.time) / Data.VOLC_ITV) * Data.VOLC_ITV;
-			ContVolcano volcano = new ContVolcano(new AttackVolcano(attacker, this, sta, end, WT_MIVC, volc.pid), p0, layer, time, false);
-			volcano.v.raw = (int)(volcano.v.raw * (proc.MINIVOLC.mult / 100.0));
+			for (AbEntity e : capt) {
+				roots.put("attacked",e);
+				if (!proc.MINIVOLC.conditions.check(false, roots))
+					continue;
+				int dire = model.getDire();
+				Proc.MINIVOLC volc = proc.MINIVOLC;
+				int addp = volc.dis_0 == volc.dis_1 ? volc.dis_0 : volc.dis_0 + (int) (model.b.r.nextFloat() * (volc.dis_1 - volc.dis_0));
+				float p0 = model.getPos() + dire * addp;
+				float sta = p0 + (dire == 1 ? W_VOLC_PIERCE : W_VOLC_INNER);
+				float end = p0 - (dire == 1 ? W_VOLC_INNER : W_VOLC_PIERCE);
+				int time = volc.sameTime() ? volc.time : volc.time + Math.round((float) model.b.r.nextInt(volc.maxtime - volc.time) / Data.VOLC_ITV) * Data.VOLC_ITV;
+				ContVolcano volcano = new ContVolcano(new AttackVolcano(attacker, this, sta, end, WT_MIVC, volc.pid), p0, layer, time, false);
+				volcano.v.raw = (int) (volcano.v.raw * (proc.MINIVOLC.mult / 100.0));
 
-			if(attacker != null)
-				attacker.summoned.add(volcano);
+				if (attacker != null)
+					attacker.summoned.add(volcano);
+				break;
+			}
 		}
 		if (!capt.isEmpty() && proc.BLAST.prob > 0) {
-			int dire = model.getDire();
-			Proc.BLAST blast = proc.BLAST;
-			int addp = blast.dis_0 == blast.dis_1 ? blast.dis_0 : blast.dis_0 + (int) (model.b.r.nextFloat() * (blast.dis_1 - blast.dis_0));
-			float pos = model.getPos() + dire * addp;
-			ContBlast cblast = new ContBlast(new AttackBlast(attacker, this, pos, WT_BLST), pos, layer);
-			if (attacker != null)
-				attacker.summoned.add(cblast);
+			for (AbEntity e : capt) {
+				roots.put("attacked", e);
+				if (!proc.MINIVOLC.conditions.check(false, roots))
+					continue;
+				int dire = model.getDire();
+				Proc.BLAST blast = proc.BLAST;
+				int addp = blast.dis_0 == blast.dis_1 ? blast.dis_0 : blast.dis_0 + (int) (model.b.r.nextFloat() * (blast.dis_1 - blast.dis_0));
+				float pos = model.getPos() + dire * addp;
+				ContBlast cblast = new ContBlast(new AttackBlast(attacker, this, pos, WT_BLST), pos, layer);
+				if (attacker != null)
+					attacker.summoned.add(cblast);
+				break;
+			}
 		}
 	}
 }

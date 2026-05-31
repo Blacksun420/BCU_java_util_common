@@ -272,7 +272,7 @@ public class StageBasis extends BattleObj {
 	}
 
 	public float getEBHP() {
-		return Math.min(100f, 100f * ebase.health / ebase.maxH);
+		return ebase.hpPercent();
 	}
 
 	/**

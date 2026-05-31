@@ -10,10 +10,10 @@ import common.util.BattleObj;
 import common.util.stage.Music;
 import common.util.unit.Trait;
 import common.util.Data.Proc.SPEED;
-import common.util.Data.Proc.DELAY;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public abstract class AttackAb extends BattleObj {
@@ -100,127 +100,129 @@ public abstract class AttackAb extends BattleObj {
 				float f = e.getFruit(trait, dire, 1);
 				float time = origin instanceof AttackCanon ? 1 : 1 + f * 0.2f / 3;
 				boolean blocked = false;
-				if (proc.KB.dis > 0 && imus.IMUKB.block != 0) {
+
+				Map<String, Object> roots = CommonStatic.rootMap(new String[]{"attacker", "atk", "attacked","damage"},attacker,this,e,matk.getAtk());
+				if (proc.KB.dis > 0 && imus.IMUKB.block != 0 && imus.IMUKB.conditions.check(true, roots)) {
 					if (imus.IMUKB.block > 0)
 						blocked = true;
 					if (imus.IMUKB.block == 100) {
-						if (imus.IMUKB.mult < 0)
+						if (imus.IMUKB.mult < 0 && proc.KB.conditions.check(false, roots))
 							e.knockback(this, f);
 						proc.KB.clear();
 					} else
 						proc.KB.dis = (int)(proc.KB.dis * (100 - imus.IMUKB.block) / 100.0);
 				}
-				if (proc.SLOW.time > 0 && imus.IMUSLOW.block != 0) {
+				if (proc.SLOW.time > 0 && imus.IMUSLOW.block != 0 && imus.IMUSLOW.conditions.check(true, roots)) {
 					if (imus.IMUSLOW.block > 0)
 						blocked = true;
 					if (imus.IMUSLOW.block == 100) {
-						if (imus.IMUSLOW.mult < 0)
+						if (imus.IMUSLOW.mult < 0 && proc.SLOW.conditions.check(false, roots))
 							e.slow(this, time);
 						proc.SLOW.clear();
 					} else
 						proc.SLOW.time = (int)(proc.SLOW.time * (100 - imus.IMUSLOW.block) / 100.0);
 				}
-				if (proc.STOP.time > 0 && imus.IMUSTOP.block != 0) {
+				if (proc.STOP.time > 0 && imus.IMUSTOP.block != 0 && imus.IMUSTOP.conditions.check(true, roots)) {
 					if (imus.IMUSTOP.block > 0)
 						blocked = true;
 					if (imus.IMUSTOP.block == 100) {
-						if (imus.IMUSTOP.mult < 0)
+						if (imus.IMUSTOP.mult < 0 && proc.STOP.conditions.check(false, roots))
 							e.freeze(this, time);
 						proc.STOP.clear();
 					} else
 						proc.STOP.time = (int)(proc.STOP.time * (100 - imus.IMUSTOP.block) / 100.0);
 				}
-				if (proc.WEAK.time > 0 && imus.IMUWEAK.checkImu(proc.WEAK.mult - 100, imus.IMUWEAK.block > 0)) {
+				if (proc.WEAK.time > 0 && imus.IMUWEAK.checkImu(proc.WEAK.mult - 100, imus.IMUWEAK.block > 0) && imus.IMUWEAK.conditions.check(true, roots)) {
 					if (imus.IMUWEAK.block > 0)
 						blocked = true;
 					if (imus.IMUWEAK.block == 100) {
-						if (imus.IMUWEAK.mult < 0)
+						if (imus.IMUWEAK.mult < 0 && proc.WEAK.conditions.check(false, roots))
 							e.weaken(this, time);
 						proc.WEAK.clear();
 					} else
 						proc.WEAK.time = (int)(proc.WEAK.time * (100 - imus.IMUWEAK.block) / 100.0);
 				}
-				if (proc.LETHARGY.time > 0 && imus.IMULETH.checkImu(proc.LETHARGY.mult, imus.IMULETH.block > 0)) {
+				if (proc.LETHARGY.time > 0 && imus.IMULETH.checkImu(proc.LETHARGY.mult, imus.IMULETH.block > 0) && imus.IMULETH.conditions.check(true, roots)) {
 					if (imus.IMULETH.block > 0)
 						blocked = true;
 					if (imus.IMULETH.block == 100) {
-						if (imus.IMULETH.mult < 0)
+						if (imus.IMULETH.mult < 0 && proc.LETHARGY.conditions.check(false, roots))
 							e.lethargy(this, time);
 						proc.LETHARGY.clear();
 					} else
 						proc.LETHARGY.time = (int)(proc.LETHARGY.time * (100 - imus.IMULETH.block) / 100.0);
 				}
-				if (proc.WARP.prob > 0 && imus.IMUWARP.block != 0) {
+				if (proc.WARP.prob > 0 && imus.IMUWARP.block != 0 && imus.IMUWARP.conditions.check(true, roots)) {
 					if (imus.IMUWARP.block > 0)
 						blocked = true;
 					if (imus.IMUWARP.block == 100) {
-						if (imus.IMUWARP.mult < 0)
+						if (imus.IMUWARP.mult < 0 && proc.WARP.conditions.check(false, roots))
 							e.warp(this);
 						proc.WARP.clear();
 					} else
 						proc.WARP.time = (int)(proc.WARP.time * (100 - imus.IMUWARP.block) / 100.0);
 				}
-				if (proc.CURSE.time > 0 && imus.IMUCURSE.block != 0) {
+				if (proc.CURSE.time > 0 && imus.IMUCURSE.block != 0 && imus.IMUCURSE.conditions.check(true, roots)) {
 					if (imus.IMUCURSE.block > 0)
 						blocked = true;
 					if (imus.IMUCURSE.block == 100) {
-						if (imus.IMUCURSE.mult < 0)
+						if (imus.IMUCURSE.mult < 0 && proc.CURSE.conditions.check(false, roots))
 							e.curse(this, time);
 						proc.CURSE.clear();
 					} else
 						proc.CURSE.time = (int)(proc.CURSE.time * (100 - imus.IMUCURSE.block) / 100.0);
 				}
-				if (proc.POISON.damage != 0 && imus.IMUPOI.block != 0 && imus.IMUPOI.checkImu(proc.POISON.damage, imus.IMUPOI.block < 0)) {
+				if (proc.POISON.damage != 0 && imus.IMUPOI.block != 0 && imus.IMUPOI.checkImu(proc.POISON.damage, imus.IMUPOI.block < 0) && imus.IMUPOI.conditions.check(true, roots)) {
 					if (imus.IMUPOI.block > 0)
 						blocked = true;
 					if (imus.IMUPOI.block == 100) {
-						if (imus.IMUPOI.mult < 0)
+						if (imus.IMUPOI.mult < 0 && proc.POISON.conditions.check(false, roots))
 							e.poison(this);
 						proc.POISON.clear();
 					} else
 						proc.POISON.damage = (int)(proc.POISON.damage * (100 - imus.IMUPOI.block) / 100.0);
 				}
-				if (proc.SEAL.time > 0 && imus.IMUSEAL.block != 0) {
+				if (proc.SEAL.time > 0 && imus.IMUSEAL.block != 0 && imus.IMUSEAL.conditions.check(true, roots)) {
 					if (imus.IMUSEAL.block > 0)
 						blocked = true;
 					if (imus.IMUSEAL.block == 100) {
-						if (imus.IMUSEAL.mult < 0)
+						if (imus.IMUSEAL.mult < 0 && proc.SEAL.conditions.check(false, roots))
 							e.seal(this, time);
 						proc.SEAL.clear();
 					} else
 						proc.SEAL.time = (int)(proc.SEAL.time * (100 - imus.IMUSEAL.block) / 100.0);
 				}
-				if (proc.RAGE.time > 0 && imus.IMURAGE.block != 0) {
+				if (proc.RAGE.time > 0 && imus.IMURAGE.block != 0 && imus.IMURAGE.conditions.check(true, roots)) {
 					if (imus.IMURAGE.block > 0)
 						blocked = true;
 					if (imus.IMURAGE.block == 100) {
-						if (imus.IMURAGE.mult < 0)
+						if (imus.IMURAGE.mult < 0 && proc.RAGE.conditions.check(false, roots))
 							e.enrage(this, time);
 						proc.RAGE.clear();
 					} else
 						proc.RAGE.time = (int)(proc.RAGE.time * (100 - imus.IMURAGE.block) / 100.0);
 				}
-				if (proc.HYPNO.time > 0 && imus.IMUHYPNO.block != 0) {
+				if (proc.HYPNO.time > 0 && imus.IMUHYPNO.block != 0 && imus.IMUHYPNO.conditions.check(true, roots)) {
 					if (imus.IMUHYPNO.block > 0)
 						blocked = true;
 					if (imus.IMUHYPNO.block == 100) {
-						if (imus.IMUHYPNO.mult < 0)
+						if (imus.IMUHYPNO.mult < 0 && proc.HYPNO.conditions.check(false, roots))
 							e.hypnotize(this, time);
 						proc.HYPNO.clear();
 					} else
 						proc.HYPNO.time = (int)(proc.HYPNO.time * (100 - imus.IMUHYPNO.block) / 100.0);
 				}
-				if (proc.ARMOR.time > 0 && imus.IMUARMOR.block != 0 && imus.IMUARMOR.checkImu(proc.ARMOR.mult, imus.IMUARMOR.block < 0)) {
+				if (proc.ARMOR.time > 0 && imus.IMUARMOR.block != 0 && imus.IMUARMOR.checkImu(proc.ARMOR.mult, imus.IMUARMOR.block < 0) && imus.IMUARMOR.conditions.check(true, roots)) {
 					if (imus.IMUARMOR.block > 0)
 						blocked = true;
 					if (imus.IMUARMOR.block == 100) {
-						if (!e.isBase() && imus.IMUARMOR.mult < 0)
+						if (!e.isBase() && imus.IMUARMOR.mult < 0 && proc.ARMOR.conditions.check(false, roots))
 							e.breakArmor(this, time);
 						proc.ARMOR.clear();
 					} else
 						proc.ARMOR.time = (int)(proc.ARMOR.time * (100 - imus.IMUARMOR.block) / 100.0);
 				}
-				if (proc.SPEED.time > 0 && imus.IMUSPEED.block != 0) {
+				if (proc.SPEED.time > 0 && imus.IMUSPEED.block != 0 && imus.IMUSPEED.conditions.check(true, roots)) {
 					boolean b;
 					if (proc.SPEED.type != SPEED.TYPE.SET)
 						b = imus.IMUSPEED.block < 0;
@@ -231,14 +233,14 @@ public abstract class AttackAb extends BattleObj {
 						if (imus.IMUSPEED.block > 0)
 							blocked = true;
 						if (imus.IMUSPEED.block == 100) {
-							if (imus.IMUSPEED.mult < 0)
+							if (imus.IMUSPEED.mult < 0 && proc.SPEED.conditions.check(false, roots))
 								e.hasten(this, time);
 							proc.SPEED.clear();
 						} else
 							proc.SPEED.time = (int)(proc.SPEED.time * (100 - imus.IMUSPEED.block) / 100.0);
 					}
 				}
-				if (proc.DELAY.prob > 0 && imus.IMUDELAY.block != 0 && imus.IMUDELAY.checkImu(proc.DELAY.strength, imus.IMUDELAY.block < 0)) {
+				if (proc.DELAY.prob > 0 && imus.IMUDELAY.block != 0 && imus.IMUDELAY.checkImu(proc.DELAY.strength, imus.IMUDELAY.block < 0) && imus.IMUDELAY.conditions.check(true, roots)) {
 					if (imus.IMUDELAY.block > 0)
 						blocked = true;
 					if (imus.IMUDELAY.block == 100)
@@ -248,7 +250,7 @@ public abstract class AttackAb extends BattleObj {
 				}
 				if (handleMisc(e))
 					uncapt.add(e);
-				if (proc.POIATK.mult != 0 && imus.IMUPOIATK.block != 0) {
+				if (proc.POIATK.mult != 0 && imus.IMUPOIATK.block != 0 && imus.IMUPOIATK.conditions.check(true, roots)) {
 					if (imus.IMUPOIATK.block > 0)
 						blocked = true;
 					if (imus.IMUPOIATK.block == 100)
@@ -256,7 +258,7 @@ public abstract class AttackAb extends BattleObj {
 					else
 						proc.POIATK.mult *= (int) ((100 - imus.IMUPOIATK.block) / 100.0);
 				}
-				if (proc.SUMMON.mult > 0 && imus.IMUSUMMON.block != 0) {
+				if (proc.SUMMON.mult > 0 && imus.IMUSUMMON.block != 0 && imus.IMUSUMMON.conditions.check(true, roots)) {
 					if (imus.IMUSUMMON.block > 0)
 						blocked = true;
 					if (imus.IMUSUMMON.block == 100)
@@ -264,7 +266,7 @@ public abstract class AttackAb extends BattleObj {
 					else
 						proc.SUMMON.mult = (int)(proc.SUMMON.mult * (100 - imus.IMUSUMMON.block) / 100.0);
 				}
-				if (proc.CRIT.mult > 0 && imus.CRITI.block != 0) {
+				if (proc.CRIT.mult > 0 && imus.CRITI.block != 0 && imus.CRITI.conditions.check(true, roots)) {
 					if (imus.CRITI.block > 0)
 						blocked = true;
 					if (imus.CRITI.block == 100)

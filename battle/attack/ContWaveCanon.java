@@ -8,6 +8,7 @@ import common.system.fake.FakeGraphics;
 import common.util.pack.NyCastle.NyType;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class ContWaveCanon extends ContWaveAb {
@@ -67,10 +68,14 @@ public class ContWaveCanon extends ContWaveAb {
 		}
 		if (t >= 1 && t <= attack) {
 			atk.capture();
+			Map<String, Object> roots = CommonStatic.rootMap(1, new String[]{"attacker", "atk"},atk.attacker,atk);
+			roots.put("attacker", atk.attacker);
+			roots.put("atk", atk);
 			for (AbEntity e : atk.capt)
 				if (e instanceof Entity) {
+					roots.put("attacked", e);
 					float waves = e.getProc().IMUWAVE.block;
-					if (waves != 0) {
+					if (waves != 0 && e.getProc().IMUWAVE.conditions.check(true, roots)) {
 						if (waves > 0)
 							((Entity) e).anim.getEff(STPWAVE);
 						if (waves == 100) {

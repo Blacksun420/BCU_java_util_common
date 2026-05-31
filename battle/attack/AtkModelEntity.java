@@ -1,5 +1,6 @@
 package common.battle.attack;
 
+import common.CommonStatic;
 import common.battle.data.MaskAtk;
 import common.battle.data.MaskEntity;
 import common.battle.data.PCoin;
@@ -11,6 +12,7 @@ import common.util.unit.*;
 import org.jcodec.common.tools.MathUtil;
 
 import java.util.List;
+import java.util.Map;
 
 public abstract class AtkModelEntity extends AtkModelAb {
 
@@ -300,7 +302,8 @@ public abstract class AtkModelEntity extends AtkModelAb {
 	@Override
 	public void invokeLater(AttackAb atk, Entity e) {
 		SUMMON proc = atk.getProc().SUMMON;
-		if (proc.prob > 0 && (proc.on_hit || (proc.on_kill && e.health <= 0))) {
+		if (proc.prob > 0 && (proc.on_hit || (proc.on_kill && e.health <= 0))
+				&& proc.conditions.check(false, CommonStatic.rootMap(new String[]{"attacker","attacked","atk"},this.e,e,atk))) {
 			double rst = e.getProc().IMUSUMMON.mult;
 			summon(proc, e, atk, rst);
 		}
@@ -328,15 +331,16 @@ public abstract class AtkModelEntity extends AtkModelAb {
 			e.altAbi(matk.getAltAbi());
 
 		Proc p = getProc(matk);
-		if (p.TIME.prob != 0 && (p.TIME.prob == 100 || b.r.nextFloat() * 100 < p.TIME.prob)) {
+		Map<String, Object> roots = CommonStatic.rootMap(new String[]{"attacker", "matk", "proc"},e,matk,p);
+		if (p.TIME.prob != 0 && (p.TIME.prob == 100 || b.r.nextFloat() * 100 < p.TIME.prob) && p.TIME.conditions.check(true, roots)) {
 			b.tstop = Math.max(b.tstop, p.TIME.time);
 			b.timeFlow = (100f - p.TIME.intensity) / 100;
 		}
 		Proc.THEME t = p.THEME;
-		if (t.prob != 0 && (t.prob == 100 || b.r.nextFloat() * 100 < t.prob))
+		if (t.prob != 0 && (t.prob == 100 || b.r.nextFloat() * 100 < t.prob) && t.conditions.check(true, roots))
 			b.changeTheme(t);
 		Proc.WORKLV w = p.WORKERLV;
-		if (w.prob != 0 && (w.prob == 100 || b.r.nextFloat() * 100 < w.prob))
+		if (w.prob != 0 && (w.prob == 100 || b.r.nextFloat() * 100 < w.prob) && w.conditions.check(true, roots))
 			b.changeWorkerLv(w.mult);
 	}
 
@@ -374,13 +378,6 @@ public abstract class AtkModelEntity extends AtkModelAb {
 			if (p.get(par[i]).perform(b.r))
 				proc.get(par[i]).set(p.get(par[i]));
 		for (int b : BCShareable) proc.getArr(b).set(p.getArr(b));
-		if (p.SUMMON.perform(b.r)) {
-			SUMMON sprc = p.SUMMON;
-			if (!sprc.on_hit && !sprc.on_kill)
-				summon(sprc, e, matk, 0);
-			else
-				proc.SUMMON.set(sprc);
-		}
 
 		if (proc.CRIT.prob > 0 && proc.CRIT.mult == 0)
 			proc.CRIT.mult = 200;
@@ -394,6 +391,28 @@ public abstract class AtkModelEntity extends AtkModelAb {
 			proc.MINIWAVE.multi = 20;
 		if (proc.MINIVOLC.prob > 0 && proc.MINIVOLC.mult == 0)
 			proc.MINIVOLC.mult = 20;
+
+		Map<String, Object> roots = CommonStatic.rootMap(new String[]{"attacker", "matk", "proc"},e,matk,proc);
+		if (p.SUMMON.perform(b.r)) {
+			SUMMON sprc = p.SUMMON;
+			if (!sprc.on_hit && !sprc.on_kill && proc.STOP.conditions.check(false, roots))
+				summon(sprc, e, matk, 0);
+			else
+				proc.SUMMON.set(sprc);
+		}
+
+		for (int i = startOff; i < par.length; i++)
+			if (proc.get(par[i]).exists() && proc.get(par[i]).conditions() != null && proc.get(par[i]).conditions().check(true, roots))
+				proc.get(par[i]).clear();
+	}
+
+	protected void sealedProcs(MaskAtk matk, Proc proc) {
+		Map<String, Object> roots = CommonStatic.rootMap(new String[]{"attacker", "matk", "proc"},e,matk,proc);
+		if (matk.getProc().MOVEWAVE.perform(b.r) && matk.getProc().MOVEWAVE.conditions.check(true, roots)) //Movewave procs regardless of seal state
+			proc.MOVEWAVE.set(matk.getProc().MOVEWAVE);
+
+		if (!matk.canProc())
+			for (int j : BCShareable) proc.getArr(j).set(e.getProc().getArr(j));
 	}
 
 	public double getBlindSpot() {

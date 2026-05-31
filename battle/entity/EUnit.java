@@ -187,15 +187,18 @@ public class EUnit extends Entity {
 
 		int spwn = basis.spawns.get(data.getPack());
 		if (index != null && index[1] <= 4) {
-			if (spwn % getProc().COMBOCOOLDOWN.count == 0 && getProc().COMBOCOOLDOWN.perform(basis.r))
-				basis.elu.deployAdvance(index[0], index[1], getProc().COMBOCOOLDOWN.mult);
+			if (spwn % proc.COMBOCOOLDOWN.count == 0 && proc.COMBOCOOLDOWN.perform(basis.r))
+				basis.elu.deployAdvance(index[0], index[1], proc.COMBOCOOLDOWN.mult);
 			else
 				basis.elu.maxM[index[0]][index[1]] = 0;
 		}
-		if (getProc().MONEYBACK.prob > 0 && spwn % getProc().MONEYBACK.count != 0)
-			getProc().MONEYBACK.clear();
-		if (getProc().CANONCHARGE.prob > 0 && spwn % getProc().CANONCHARGE.count != 0)
-			getProc().CANONCHARGE.clear();
+		if (proc.MONEYBACK.prob > 0 && spwn % proc.MONEYBACK.count != 0) {
+			proc.MONEYBACK.clear();
+			rawProc.MONEYBACK.clear();
+		} if (proc.CANONCHARGE.prob > 0 && spwn % proc.CANONCHARGE.count != 0) {
+			proc.CANONCHARGE.clear();
+			rawProc.CANONCHARGE.clear();
+		}
 	}
 
 	@Override
@@ -280,12 +283,12 @@ public class EUnit extends Entity {
 	}
 
 	@Override
-	public boolean processProcs(AttackAb atk) {
-		if (!super.processProcs(atk))
+	public boolean processProcs(AttackAb atk, Map<String, Object> roots) {
+		if (!super.processProcs(atk, roots))
 			return false;
 		Proc atkProc = atk.getProc();
 
-		if (atkProc.DELAY.exists() && index != null && basis.elu.cool[index[0]][index[1]] > 0) {
+		if (atkProc.DELAY.exists() && index != null && basis.elu.cool[index[0]][index[1]] > 0 && atkProc.DELAY.conditions.check(false, roots)) {
 			Proc.DELAY d = atkProc.DELAY;
 			Proc.IMUAD imu = getProc().IMUDELAY;
 			float res;
@@ -333,6 +336,7 @@ public class EUnit extends Entity {
 	@Override
 	protected int getDamage(AttackAb atk, int ans) {
 		ans = super.getDamage(atk, ans);
+		Map<String, Object> roots = CommonStatic.rootMap(new String[]{"atk","attacker","attacked","damage"},atk,atk.attacker,this,ans);
 		if (atk.model instanceof AtkModelEnemy) {
 			SortedPackSet<Trait> sharedTraits = traits.inCommon(atk.trait);
 			if (!sharedTraits.isEmpty()) {
@@ -342,6 +346,7 @@ public class EUnit extends Entity {
 					if (type >= 0)
 						basis.scoreActivated(type == 0 ? SCORE_GOOD : type == 1 ? SCORE_RESIST : SCORE_RESISTS, -1, atk.trait.size());
 				}
+				roots.put("damage",ans);
 				if (atk.attacker.status.curse == 0 && atk.attacker.getProc().DMGINC.mult != 0) {
 					ans = (int) (ans * atk.attacker.getProc().DMGINC.mult / 100.0);
 					byte type = atk.attacker.getProc().DMGINC.getType(false);
@@ -377,7 +382,8 @@ public class EUnit extends Entity {
 
 		if(basis.canon.base > 0)
 			ans = (int) (ans * basis.b.t().getBaseMagnification(basis.canon.base, atk.trait));
-		return critCalc((getAbi() & AB_METALIC) != 0, ans, atk);
+		roots.put("damage",ans);
+		return critCalc((getAbi() & AB_METALIC) != 0, ans, atk, roots);
 	}
 
 	@Override

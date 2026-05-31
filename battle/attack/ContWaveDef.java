@@ -6,7 +6,9 @@ import common.battle.entity.Entity;
 import common.util.pack.EffAnim.DefEff;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 public class ContWaveDef extends ContWaveAb {
 
@@ -44,10 +46,12 @@ public class ContWaveDef extends ContWaveAb {
 		}
 		if (t <= attack) {
 			atk.capture();
+			Map<String, Object> roots = CommonStatic.rootMap(1, new String[]{"attacker", "atk"},atk.attacker,atk);
 			for (AbEntity e : atk.capt)
 				if (e instanceof Entity) {
+					roots.put("attacked", e);
 					float waves = e.getProc().IMUWAVE.block;
-					if (waves != 0) {
+					if (waves != 0 && e.getProc().IMUWAVE.conditions.check(true, roots)) {
 						if (waves > 0)
 							((Entity)e).anim.getEff(STPWAVE);
 						if (waves == 100) {

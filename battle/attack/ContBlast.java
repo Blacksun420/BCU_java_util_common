@@ -10,6 +10,7 @@ import common.util.anim.EAnimD;
 import common.util.pack.EffAnim.BlastEff;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class ContBlast extends ContAb {
     private final AttackBlast blast;
@@ -85,19 +86,21 @@ public class ContBlast extends ContAb {
                 }
             }
             blast.capture();
+            Map<String, Object> roots = CommonStatic.rootMap(1, new String[]{"attacker", "atk"},blast.attacker,blast);
             for (AbEntity e : blast.capt)
                 if (e instanceof Entity) {
+                    roots.put("attacked", e);
                     float blo = e.getProc().IMUBLAST.block;
-                    if (blo != 0) {
+                    if (blo != 0 && e.getProc().IMUBLAST.conditions.check(true, roots)) {
                         if (blo > 0)
-                            ((Entity)e).anim.getEff(STPWAVE);
+                            ((Entity) e).anim.getEff(STPWAVE);
                         if (blo == 100) {
                             deactivate(e);
                             return;
                         } else
                             blast.raw = (int) (blast.raw * (100 - blo) / 100);
                     }
-                }
+            }
             sb.getAttack(blast);
         }
         if (anims.get(anims.size() - 1).done())

@@ -15,6 +15,7 @@ import common.pack.IndexContainer.IndexCont;
 import common.pack.IndexContainer.Indexable;
 import common.pack.PackData;
 import common.pack.PackData.UserPack;
+import common.pack.UserProfile;
 import common.util.Data;
 import common.util.unit.AbForm;
 import common.util.unit.Form;
@@ -247,12 +248,14 @@ public class LvRestrict extends Data implements Indexable<PackData, LvRestrict> 
 			for (int i = 0; i < RARITY_TOT; i++)
 				rs[i] = toNewFormat(oldRares[i]);
 
-			JsonArray jarr = jobj.getAsJsonArray("res");
-			int n = jarr.size();
-			for (int i = 0; i < n; i++) {
-				JsonObject job = jarr.get(i).getAsJsonObject();
-				CharaGroup ch = new LocalDecoder(job.get("key"), CharaGroup.class, this).setAlias(Identifier.class).decode();
-				cgl.put(ch, toNewFormat(JsonDecoder.decode(job.get("val"), int[].class)));
+			if (UserProfile.isOlderPack(pack, "0.7.16.0")) {
+				JsonArray jarr = jobj.getAsJsonArray("res");
+				int n = jarr.size();
+				for (int i = 0; i < n; i++) {
+					JsonObject job = jarr.get(i).getAsJsonObject();
+					CharaGroup ch = new LocalDecoder(job.get("key"), CharaGroup.class, this).setAlias(Identifier.class).decode();
+					cgl.put(ch, toNewFormat(JsonDecoder.decode(job.get("val"), int[].class)));
+				}
 			}
 		}
 		if (pack.desc.FORK_VERSION < 15 && jobj.has("groups")) {

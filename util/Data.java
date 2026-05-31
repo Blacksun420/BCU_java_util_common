@@ -22,6 +22,8 @@ import common.util.unit.Unit;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.Map;
 
 @SuppressWarnings("unused")
 @StaticPermitted
@@ -35,6 +37,9 @@ public class Data {
 		public static class PROB extends ProcItem {
 			@Order(0)
 			public float prob;
+			@Order(100)
+			@JsonField(defval = "none")
+			public Condition conditions = new Condition();
 
 			@Override
 			public boolean perform(CopRand r) {
@@ -55,6 +60,11 @@ public class Data {
 			@Override
 			public boolean exists() {
 				return prob > 0;
+			}
+
+			@Override
+			public Condition conditions() {
+				return conditions;
 			}
 		}
 
@@ -170,6 +180,9 @@ public class Data {
 		public static class IMU extends MULT {
 			@Order(1)
 			public float block;
+			@Order(100)
+			@JsonField(defval = "none")
+			public Condition conditions = new Condition();
 
 			@Override
 			public int[] setTalent(int[] nps) {
@@ -183,6 +196,11 @@ public class Data {
 			@Override
 			public boolean exists() {
 				return mult != 0 || block != 0;
+			}
+
+			@Override
+			public Condition conditions() {
+				return conditions;
 			}
 		}
 
@@ -198,6 +216,14 @@ public class Data {
 			@Order(1)
 			@JsonField(defval = "isEmpty")
 			public ProcID pid = new ProcID();
+			@Order(100)
+			@JsonField(defval = "none")
+			public Condition conditions = new Condition();
+
+			@Override
+			public Condition conditions() {
+				return conditions;
+			}
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -343,6 +369,9 @@ public class Data {
 			@Order(1)
 			@BitMasked
 			public int type;
+			@Order(100)
+			@JsonField(defval = "none")
+			public Condition conditions = new Condition();
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
@@ -504,6 +533,9 @@ public class Data {
 			public int count;
 			@Order(1)
 			public int dis;
+			@Order(100)
+			@JsonField(defval = "none")
+			public Condition conditions = new Condition();
 
 			@Override
 			public int[] setTalent(int[] nps) {
@@ -516,6 +548,11 @@ public class Data {
 			@Override
 			public boolean exists() {
 				return count != 0;
+			}
+
+			@Override
+			public Condition conditions() {
+				return conditions;
 			}
 		}
 
@@ -546,6 +583,9 @@ public class Data {
 			public boolean revive_non_zombie;
 			@Order(8)
 			public boolean revive_others;
+			@Order(100)
+			@JsonField(defval = "none")
+			public Condition conditions = new Condition();
 
 			@Override
 			public int[] setTalent(int[] nps) {
@@ -578,6 +618,11 @@ public class Data {
 			@Override
 			public boolean exists() {
 				return count != 0;
+			}
+
+			@Override
+			public Condition conditions() {
+				return conditions;
 			}
 		}
 
@@ -1230,7 +1275,10 @@ public class Data {
 			public SortedPackSet<Trait> traits = new SortedPackSet<>();
 		}
 		@JsonClass(noTag = NoTag.LOAD)
-		public static class STATINC extends MULT { //It has no params, it just dictates behavior for strong v bless
+		public static class STATINC extends MULT { //It had no params, it just dictated behavior for strong v bless
+			@Order(100)
+			@JsonField(defval = "none")
+			public Condition conditions = new Condition();
 			@Override
 			public void add(ProcItem pi) {
 				double m = ((MULT)pi).mult;
@@ -1247,6 +1295,11 @@ public class Data {
 				if (def)
 					return (byte)(mult <= 100 ? -1 : mult < 400 ? 0 : mult < 600 ? 1 : 2);
 				return (byte)(mult <= 100 ? -1 : mult < 300 ? 0 : mult < 500 ? 1 : 2);
+			}
+
+			@Override
+			public Condition conditions() {
+				return conditions;
 			}
 		}
 
@@ -1371,6 +1424,175 @@ public class Data {
 			}
 		}
 
+		@JsonClass(noTag = JsonClass.NoTag.LOAD)
+		public static class Condition implements Cloneable, BattleStatic {
+
+			//Conditions separated by {}.&&s are to be automatically grouped together.
+			//ie:"attacker.status.slow < 0 && atk.proc.KB.prob > 0 || attacker.hpPercent() > 0.75 - Would make a proc that only procs if the attacker isn't slowed,procced KB OR has more than 75% HP
+			//|| nor the spaces are necessary but they help for clarity
+			public String pre = "", post = "";
+			//pre: Conditions checked before attacking. Attacked isn't a valid parameter here
+			//post: Conditions checked during attack.
+
+			public Condition() {
+			}
+
+			public Condition(Condition par) {
+				pre = par.pre;
+				post = par.post;
+			}
+
+			public boolean none() {
+				return pre.isEmpty() && post.isEmpty();
+			}
+
+			public boolean check(boolean pre, Map<String, Object> roots) {
+				return check(pre ? this.pre : post, roots);
+			}
+
+			public static boolean check(String def, Map<String, Object> roots) {
+				if (def.isEmpty())
+					return true;
+				String[] conditions = def.replace(" ", "").replace("\n","").split("\\|\\|");//Spaces are only for user-reading
+				for (String cond : conditions) {
+					if (failedCondition(cond, roots))
+						continue;
+					return true;
+				}
+				return false;
+			}
+
+			private static final String[] COMPARE_OPERATORS = {"==","!=",">=",">","<=","<"};
+
+			private static boolean failedCondition(String condition, Map<String, Object> roots) {
+				String[] ands = condition.split("&&");
+				for (String and : ands) {
+					String raw = and.replaceAll("\\(?.*?\\)", ""), operation = "B";//Boolean is the default to try
+					for (String comp : COMPARE_OPERATORS)
+						if (raw.contains(comp)) {
+							operation = comp;
+							break;
+						}
+					boolean inv = raw.charAt(0) != '!';
+					try {
+						if (operation.equals("B")) {
+							if (((boolean)getOperated(and.substring(inv ? 0 : 1), roots)) != inv)
+								return false;
+						} else {
+							int sepIndex = raw.indexOf(operation) + (and.length() - raw.length());
+							Object def = getOperated(and.substring(inv ? 0 : 1, sepIndex), roots);
+							Object second = getOperated(and.substring(sepIndex + operation.length()), roots);
+							if (operation.equals("==") || operation.equals("!=")) {
+								if ((def.equals(second) == (operation.charAt(0) == '!')) != inv)
+									return false;
+							} else if (doComparison(operation, (Comparable)def, (Comparable)second) != inv)
+								return false;
+						}
+					} catch (Exception e) {
+						CommonStatic.ctx.printErr(ErrType.WARN, "Error in proc condition [" + condition + "]: " + e.getMessage());
+					}
+				}
+				return true;
+			}
+
+			private static <T extends Comparable<T>> boolean doComparison(String operation, T first, T second) {
+				boolean res = true;
+				switch (operation) {
+					case ">":
+						res = first.compareTo(second) > 0;
+						break;
+					case ">=":
+						res = first.compareTo(second) >= 0;
+						break;
+					case "<":
+						res = first.compareTo(second) < 0;
+						break;
+					case "<=":
+						res = first.compareTo(second) <= 0;
+						break;
+				}
+				return res;
+			}
+
+			private static Object getOperated(String fields, Map<String, Object> roots) throws Exception {
+				//String[] fs = fields.split("[+*/%\\-]\\s*");
+				//TODO: Arithmetic operation support
+				return getRec(fields, roots);
+			}
+
+			private static Object getRec(String fields, Map<String, Object> roots) throws Exception {
+				if (fields.equals("null"))
+					return null;
+				if (CommonStatic.isInteger(fields))
+					return Integer.parseInt(fields);
+				if (CommonStatic.isDouble(fields))
+					return Double.parseDouble(fields);
+
+				String[] fs = fields.split("\\.(?![^()]*+\\))");
+				Object current = roots.get(fs[0]);
+				if (current == null) {
+					if (roots.containsKey(fs[0]))
+						return null;
+					throw new Exception("Root object " + fs[0] + " not found. Available root items: " + getRoots(roots));
+				}
+				for (String f : fs) {
+					if (f == fs[0])
+						continue;
+					if (f.endsWith(")")) {
+						Method m = current.getClass().getMethod(f.substring(0, f.indexOf("(")));
+						boolean acc = m.isAccessible();
+						m.setAccessible(true);
+						if (m.getParameterCount() == 0)
+							current = m.invoke(current);
+						else {
+							Object[] objs = new Object[m.getParameterCount()];
+							String[] parameters = f.substring(f.indexOf("(")+1,f.lastIndexOf(")")).split(",(?![^()]*+\\))");
+							if (parameters.length != objs.length)
+								throw new IllegalArgumentException("Function " + m + " requires " + m.getParameterCount() + " parameters, but only " + parameters.length + " were passed");
+							for (int i = 0; i < objs.length; i++) {
+								if (m.getParameterTypes()[i] == boolean.class)
+									objs[i] = check(parameters[i], roots);
+								else {
+									String raw = parameters[i].replaceAll("\\(?.*?\\)", "");
+									boolean con = true;
+									for (String comp : COMPARE_OPERATORS)
+										if (raw.contains(comp)) {
+											objs[i] = check(parameters[i], roots);
+											con = false;
+											break;
+										}
+									if (con)
+										objs[i] = getOperated(parameters[i], roots);
+								}
+							}
+							current = m.invoke(current, objs);
+						}
+						m.setAccessible(acc);
+					} else {
+						Field fld = current.getClass().getField(f);
+						boolean acc = fld.isAccessible();
+						fld.setAccessible(true);
+						current = fld.get(current);
+						fld.setAccessible(acc);
+					}
+				}
+				return current;
+			}
+
+			public static String getRoots(Map<String, Object> roots) {
+				StringBuilder b = new StringBuilder("[");
+				for (Map.Entry<String, Object> e : roots.entrySet())
+					b.append(e.getKey()).append(" (").append(e.getValue().getClass().getName()).append("),");
+				b.setCharAt(b.length()-1, ']');
+				return b.toString();
+			}
+
+            @Override
+            public Condition clone() {
+                return new Condition(Condition.this);
+            }
+        }
+
 		public static abstract class ProcItem implements Cloneable, BattleStatic {
 			@Retention(RetentionPolicy.RUNTIME)
 			public @interface BitMasked {//Nothingburger
@@ -1386,6 +1608,8 @@ public class Data {
 							f.setBoolean(this, false);
 						else if (f.getType() == Identifier.class || f.getType() == Proc.class)
 							f.set(this, null);
+						else if (f.getType() == Condition.class)
+							f.set(this, new Condition());
 						else if (f.getType() == SortedPackSet.class)
 							((SortedPackSet<?>)f.get(this)).clear();
 						else if (f.getType() == ProcID.class)
@@ -1412,6 +1636,8 @@ public class Data {
 								f.set(ans, ((Proc) f.get(this)).clone());
 								for (Field ff : Proc.getDeclaredFields())
 									ff.setAccessible(true);
+							} else if (f.getType() == Condition.class) {
+								f.set(ans, ((Condition) f.get(this)).clone());
 							} else if (f.getType() == SortedPackSet.class) {
 								f.set(ans, ((SortedPackSet<?>) f.get(this)).clone());
 							} else if (f.getType() == ProcID.class)
@@ -1492,6 +1718,10 @@ public class Data {
 				return exists();
 			}
 
+			public Condition conditions() {
+				return null;
+			}
+
 			public Field get(String name) {
 				try {
 					return this.getClass().getField(name);
@@ -1545,6 +1775,9 @@ public class Data {
 						} else if (f.getType() == Proc.class) {
 							Proc p = (Proc) f.get(pi);
 							f.set(this, p == null ? null : p.clone());
+						} else if (f.getType() == Condition.class) {
+							Condition p = (Condition) f.get(pi);
+							f.set(this, p.clone());
 						} else if (f.getType() == SortedPackSet.class) {
 							SortedPackSet<?> l = (SortedPackSet<?>)f.get(pi);
 							f.set(this, l.clone());
@@ -1579,9 +1812,12 @@ public class Data {
 							if (id != null)
 								f.set(this, id.clone());
 						} else if (f.getType() == Proc.class) {
-							Proc p = (Proc)f.get(pi);
+							Proc p = (Proc) f.get(pi);
 							if (p != null)
 								f.set(this, p.clone());
+						} else if (f.getType() == Condition.class) {
+							Condition p = (Condition)f.get(pi);
+							f.set(this, p.clone());
 						} else if (f.getType() == SortedPackSet.class) {
 							SortedPackSet<? extends Comparable<?>> l = (SortedPackSet<? extends Comparable<?>>) f.get(pi), m = (SortedPackSet<? extends Comparable<?>>) f.get(this);
 							m.addAll(l);

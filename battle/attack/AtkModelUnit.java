@@ -45,13 +45,9 @@ public class AtkModelUnit extends AtkModelEntity {
 			proc.WEAK.time = (proc.WEAK.time * (100 + elu.getInc(C_WEAK,eu))) / 100;
 			proc.getArr(P_BSTHUNT).set(e.getProc().getArr(P_BSTHUNT));
 		} else {
-			if (matk.getProc().MOVEWAVE.perform(b.r)) //Movewave procs regardless of seal state
-				proc.MOVEWAVE.set(matk.getProc().MOVEWAVE);
-
-			if (!matk.canProc()) {
+			sealedProcs(matk, proc);
+			if (!matk.canProc())
 				proc.getArr(P_BSTHUNT).set(e.getProc().getArr(P_BSTHUNT));
-				for (int j : BCShareable) proc.getArr(j).set(e.getProc().getArr(j));
-			}
 		}
 		extraAtk(matk);
 		return atk;

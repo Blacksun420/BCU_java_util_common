@@ -16,6 +16,7 @@ import common.util.stage.Revival;
 import common.util.unit.Trait;
 
 import java.util.Arrays;
+import java.util.Map;
 
 public class EEnemy extends Entity {
 
@@ -112,17 +113,18 @@ public class EEnemy extends Entity {
 	@Override
 	protected int getDamage(AttackAb atk, int ans) {
 		ans = super.getDamage(atk, ans);
+		Map<String, Object> roots = CommonStatic.rootMap(new String[]{"atk","attacker","attacked","damage"},atk,atk.attacker,this,ans);
 		if (atk.model instanceof AtkModelUnit) {
 			SortedPackSet<Trait> sharedTraits = traits.inCommon(atk.trait);
-
 			if (!sharedTraits.isEmpty()) {
-				if (atk.attacker.status.curse == 0 && atk.attacker.getProc().DMGINC.mult != 0) {
+				if (atk.attacker.status.curse == 0 && atk.attacker.getProc().DMGINC.mult != 0 && atk.attacker.getProc().DMGINC.conditions.check(false, roots)) {
 					ans *= EUnit.OrbHandler.getOrb(atk.attacker.getProc().DMGINC.mult, atk, sharedTraits, basis.b.t());
 					byte type = atk.attacker.getProc().DMGINC.getType(false);
 					if (type >= 0)
 						basis.scoreActivated(type == 0 ? SCORE_GOOD : type == 1 ? SCORE_MASSIVE : SCORE_MASSIVES, 1, atk.trait.size());
 				}
-				if (status.curse == 0 && getProc().DEFINC.mult != 0) {
+				roots.put("damage",ans);
+				if (status.curse == 0 && getProc().DEFINC.mult != 0 && atk.attacker.getProc().DMGINC.conditions.check(false, roots)) {
 					ans /= getProc().DEFINC.mult / 100.0;
 					byte type = atk.attacker.getProc().DMGINC.getType(true);
 					if (type >= 0)
@@ -158,7 +160,8 @@ public class EEnemy extends Entity {
 				ans = (int) (maxH * basis.b.t().getCannonMagnification(5, BASE_HOLY_ATK_UNDERGROUND));
 			else
 				ans = (int) (maxH * basis.b.t().getCannonMagnification(5, BASE_HOLY_ATK_SURFACE));
-		ans = critCalc((getAbi() & AB_METALIC) != 0 || traits.contains(UserProfile.getBCData().traits.get(TRAIT_METAL)), ans, atk);
+		roots.put("damage",ans);
+		ans = critCalc((getAbi() & AB_METALIC) != 0 || traits.contains(UserProfile.getBCData().traits.get(TRAIT_METAL)), ans, atk, roots);
 
 		// Perform Orb
 		ans += EUnit.OrbHandler.getOrbAtk(atk, this);
@@ -188,12 +191,12 @@ public class EEnemy extends Entity {
 	}
 
 	@Override
-	public boolean processProcs(AttackAb atk) {
-		if (!super.processProcs(atk))
+	public boolean processProcs(AttackAb atk, Map<String, Object> roots) {
+		if (!super.processProcs(atk, roots))
 			return false;
 		Proc atkProc = atk.getProc();
 
-		if (atkProc.DELAY.exists() && line != -1 && basis.est.num[line] >= 0 && basis.est.rem[line] > 0) {
+		if (atkProc.DELAY.exists() && line != -1 && basis.est.num[line] >= 0 && basis.est.rem[line] > 0 && atkProc.DELAY.conditions.check(false, roots)) {
 			Proc.DELAY d = atkProc.DELAY;
 			Proc.IMUAD imu = getProc().IMUDELAY;
 			float res;
@@ -229,7 +232,7 @@ public class EEnemy extends Entity {
 		}
 
 		if (skipSpawnBurrow && notAttacking())
-			skipSpawnBurrow = status.burs[0] == 0;
+			skipSpawnBurrow = status.burs[0] == proc.BURROW.count;
 		super.postUpdate();
 	}
 

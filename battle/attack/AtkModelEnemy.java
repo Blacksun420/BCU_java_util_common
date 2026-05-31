@@ -21,9 +21,7 @@ public class AtkModelEnemy extends AtkModelEntity {
 		if (matk.getProc() != empty)
 			setProc(matk, proc, e.status.curse > 0 ? cursedProcs : 1);
 		else {
-			if (matk.getProc().MOVEWAVE.perform(b.r)) //Movewave procs regardless of seal state
-				proc.MOVEWAVE.set(matk.getProc().MOVEWAVE);
-
+			sealedProcs(matk, proc);
 			if (!matk.canProc())
 				for (int j : BCShareable) proc.getArr(j).set(e.getProc().getArr(j));
 		}

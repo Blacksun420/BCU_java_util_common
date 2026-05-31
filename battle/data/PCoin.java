@@ -91,7 +91,7 @@ public class PCoin extends Data {
 
 				int[] corres = get_CORRES(data[0]);
 				if (corres[0] == -1) {
-					CommonStatic.ctx.printErr(ErrType.WARN, "new PCoin ability for " + du.getPack() + " not yet handled by BCU: " + data[0] + "\nData is " + Arrays.toString(data));
+					CommonStatic.ctx.printErr(ErrType.NEW, "new PCoin ability for " + du.getPack() + " not yet handled by BCU: " + data[0] + "\nData is " + Arrays.toString(data));
 					continue;
 				}
 				int[] trueArr;
