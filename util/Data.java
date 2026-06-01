@@ -2,6 +2,7 @@ package common.util;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import common.CommonStatic;
 import common.io.assets.Admin.StaticPermitted;
 import common.io.json.*;
@@ -780,7 +781,7 @@ public class Data {
 
 			@JsonDecoder.OnInjected
 			public void inject(JsonObject jobj) {
-				if (!(jobj.has("type") && (jobj.get("type").isJsonObject() || jobj.get("type").isJsonPrimitive())) && !jobj.has("percentage"))
+				if (!(jobj.has("type") && (jobj.get("type").isJsonObject() || (jobj.get("type").isJsonPrimitive() && ((JsonPrimitive)jobj.get("type")).isNumber()))) && !jobj.has("percentage"))
 					return;
 				boolean percentage = false;
 				if (jobj.has("type")) {
