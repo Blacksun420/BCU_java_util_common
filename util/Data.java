@@ -775,17 +775,25 @@ public class Data {
 			@Order(4)
 			@JsonField(defval = "null||FIXED")
 			public TYPE type = TYPE.FIXED;
+			@Order(5)
+			public boolean old = false;
 
 			@JsonDecoder.OnInjected
 			public void inject(JsonObject jobj) {
-				if (!(jobj.has("type") && jobj.get("type").isJsonObject()) && !jobj.has("percentage"))
+				if (!(jobj.has("type") && (jobj.get("type").isJsonObject() || jobj.get("type").isJsonPrimitive())) && !jobj.has("percentage"))
 					return;
 				boolean percentage = false;
-				if (jobj.has("type"))
+				if (jobj.has("type")) {
+					if (jobj.get("type").isJsonPrimitive()) {
+						type = TYPE.values()[jobj.get("type").getAsInt()];
+						return;
+					}
 					percentage = jobj.getAsJsonObject("type").get("percentage").getAsBoolean();
+				}
 				else if (jobj.has("percentage"))
 					percentage = jobj.get("percentage").getAsBoolean();
 				type = percentage ? TYPE.PERCENTAGE : TYPE.FIXED;
+				old = true;
 			}
 		}
 
@@ -2884,7 +2892,8 @@ public class Data {
 	public static final byte A_DRAIN = 35;
 	public static final byte A_BLESS = 36;
 	public static final byte A_DRENALINE = 37;
-	public static final byte A_TOT = 38;
+	public static final byte A_LETHARGY_OLD = 38;
+	public static final byte A_TOT = 39;
 
 	// atk type index used in filter page
 	public static final byte ATK_SINGLE = 0;

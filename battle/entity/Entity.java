@@ -244,16 +244,10 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					effs[A_SLOW] = (dire == -1 ? effas().A_SLOW : effas().A_E_SLOW).getEAnim(DefEff.DEF);
 					break;
 				} case P_LETHARGY: {
-					int[] types = new int[2];
-					for (double[] let : e.status.lethargies) {
-						if (let[2] >= 2)
-							continue;
-						types[(int)let[2]]++;
-					}
-					if (types[0] > types[1])//The stickman VVILL live
-						effs[A_LETHARGY] = (dire == -1 ? effas().A_LETHARGY_OLD : effas().A_E_LETHARGY).getEAnim(e.status.getLethargy(e.data.getTBA()) > e.data.getTBA() ? LethargyEff.DOWN : LethargyEff.UP);
-					else
-						effs[A_LETHARGY] = effas().A_LETHARGY.getEAnim(e.status.getLethargy(e.data.getTBA()) > e.data.getTBA() ? LethEff.DEBUFF : LethEff.BUFF);
+					if (e.status.check_Lethargy(false))
+						effs[A_LETHARGY] = effas().A_LETHARGY.getEAnim(e.status.getLethargy(e.data.getTBA(), false) > e.data.getTBA() ? LethEff.DEBUFF : LethEff.BUFF);
+					if (e.status.check_Lethargy(true))//The stickman VVILL live
+						effs[A_LETHARGY_OLD] = (dire == -1 ? effas().A_LETHARGY_OLD : effas().A_E_LETHARGY).getEAnim(e.status.getLethargy(e.data.getTBA(), true) > e.data.getTBA() ? LethargyEff.DOWN : LethargyEff.UP);
 					break;
 				} case P_WEAK: {
 					if (e.status.getWeaken() == 1)
@@ -413,8 +407,10 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				effs[A_SLOW] = null;
 			if (e.status.weaks.isEmpty())
 				effs[A_DOWN] = null;
-			if (e.status.lethargies.isEmpty())
+			if (e.status.check_Lethargy(false))
 				effs[A_LETHARGY] = null;
+			if (e.status.check_Lethargy(true))
+				effs[A_LETHARGY_OLD] = null;
 			if (e.status.curse <= 0)
 				effs[A_CURSE] = null;
 			if (e.status.inv[0] == 0 && e.status.wild <= 0)
@@ -738,7 +734,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 						preTime = pres[preID];
 					else {
 						attacksLeft--;
-						e.waitTime = Math.max(e.status.getLethargy(e.data.getTBA()), 0);
+						e.waitTime = Math.max(e.status.getLethargy(e.data.getTBA(), false), 0);
 					}
 				}
 			}
@@ -1352,14 +1348,35 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			}
 			return mov;
 		}
+		public boolean check_Lethargy(boolean old) {
+			for (double[] lethargy : lethargies)
+				if ((lethargy[2] < 0) == old)
+					return true;
+			return false;
+		}
 		public float getLethargy(int def_tba) {
 			float tba = def_tba;
 			for (double[] lethargy : lethargies) {
-				if (lethargy[2] == 2)
+				if (lethargy[2] == 3)
 					return (float)lethargy[1];
-				else if (lethargy[2] == 1)
+				else if (lethargy[2] == 2)
 					tba += (float)(e.data.getTBA() * (lethargy[1] / 100.0));
-				else if (lethargy[2] == 0)
+				else if (lethargy[2] == 1)
+					tba += (float)lethargy[1];
+			}
+			return tba;
+		}
+		public float getLethargy(int def_tba, boolean old) {
+			float tba = def_tba;
+			for (double[] lethargy : lethargies) {
+				if ((lethargy[2] < 0) != old)
+					continue;
+				double type = Math.abs(lethargy[2]);
+				if (type == 3)
+					return (float)lethargy[1];
+				else if (type == 2)
+					tba += (float)(e.data.getTBA() * (lethargy[1] / 100.0));
+				else if (type == 1)
 					tba += (float)lethargy[1];
 			}
 			return tba;
@@ -2293,9 +2310,9 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		if (rst > 0f) {
 			int val = (int)((int)(atk.getProc().LETHARGY.time * time) * rst);
 			if (status.lethargies.isEmpty() || atk.getProc().LETHARGY.stackable)
-				status.lethargies.add(new double[]{Math.abs(val), atk.getProc().LETHARGY.mult, atk.getProc().LETHARGY.type.ordinal()});
+				status.lethargies.add(new double[]{Math.abs(val), atk.getProc().LETHARGY.mult, (atk.getProc().LETHARGY.type.ordinal()+1) * (atk.getProc().LETHARGY.old ? -1 : 1)});
 			else {
-				double[] curw = new double[]{status.lethargies.get(0)[0], status.getLethargy(0), atk.getProc().LETHARGY.type.ordinal()};
+				double[] curw = new double[]{status.lethargies.get(0)[0], status.getLethargy(0), (atk.getProc().LETHARGY.type.ordinal()+1) * (atk.getProc().LETHARGY.old ? -1 : 1)};
 				status.lethargies.clear();
 				if (val < 0)
 					curw[0] = Math.max(curw[0], Math.abs(val));
@@ -2897,7 +2914,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 * @return Effective TBA
 	 */
 	private double getEffectiveTBA() {
-		double tba = waitTime + auras.getTbaAura();
+		double tba = waitTime + auras.getTbaAura() + status.getLethargy(0, true);
 		return Math.max(0, tba);
 	}
 

@@ -255,7 +255,7 @@ public class Res extends ImgCore {
 		aux.icon[1][P_TIME] = new VImg("./org/page/icons/Time.png");
 		aux.icon[1][P_BOSS] = new VImg("./org/page/icons/BossWave.png");
 		aux.icon[1][P_SNIPER] = new VImg("./org/page/icons/Snipe.png");
-		aux.icon[1][P_POISON] = new VImg(parts[329]);
+		aux.icon[1][P_POISON] = new VImg("./org/page/icons/Poison.png");
 		aux.icon[1][P_IMUPOI] = new VImg("./org/page/icons/PoisonX.png");
 		aux.icon[1][P_IMUSEAL] = new VImg("./org/page/icons/SealX.png");
 		aux.icon[1][P_SEAL] = new VImg("./org/page/icons/Seal.png");
@@ -303,7 +303,8 @@ public class Res extends ImgCore {
 		aux.icon[4][PC2_TBA] = new VImg(parts[305]);
 		aux.icon[4][PC2_RNG] = new VImg("./org/page/icons/PlusRange.png");
 		//miscellaneous
-		aux.waveShield = new VImg(parts[218]);
+		aux.miscIcons[0] = new VImg(parts[218]);
+		aux.miscIcons[1] = new VImg("./org/page/icons/LethargyOld.png");
 		aux.dmgIcons[0] = new VImg(parts[203]); //strong vs
 		aux.dmgIcons[1] = new VImg(parts[122]); //ins resist
 		aux.dmgIcons[2] = new VImg(parts[114]); //ins massive

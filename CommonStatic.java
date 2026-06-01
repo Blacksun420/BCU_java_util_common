@@ -58,7 +58,7 @@ public class CommonStatic {
 		 * Use this if trait.icon is null
 		 */
 		public VImg dummyTrait;
-		public VImg waveShield;
+		public VImg[] miscIcons = new VImg[2];
 		public VImg[] dmgIcons = new VImg[3];
 
 		// Background resources
