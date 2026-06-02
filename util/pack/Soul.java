@@ -27,10 +27,6 @@ public class Soul extends Animable<AnimU<?>, AnimU.UType> implements Indexable<P
 	public int layer_0, layer_1;
 	public CommonStatic.LayerType layertype = CommonStatic.LayerType.ORIG;
 
-	@JsonField(defval = "true")
-	public boolean fixedLayer = true;
-
-
 	@JsonClass.JCConstructor
 	public Soul() {
 		id = null;
@@ -65,6 +61,6 @@ public class Soul extends Animable<AnimU<?>, AnimU.UType> implements Indexable<P
 	public void onInjected() {
 		PackData.UserPack pack = (PackData.UserPack)getCont();
 		if (pack.desc.FORK_VERSION < 15)
-			fixedLayer = false;
+			layertype = CommonStatic.LayerType.SET;
 	}
 }
