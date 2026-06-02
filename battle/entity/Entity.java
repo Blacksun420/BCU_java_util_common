@@ -575,13 +575,11 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					e.aam.getDeathSurge(deathSurge);
 					deathSurge = 0;
 				}
-				if (!e.dead)
-					for (int i = e.spInd; i < e.data.getResurrection().length; i++) {
-						AtkDataModel adm = e.data.getResurrection()[i];
-						if (dead == 0 || (startTime - dead >= adm.pre)) {
-							e.spInd++;
-							e.basis.getAttack(e.aam.getSpAttack(RES, i));
-						}
+				AtkDataModel[] ress = e.data.getResurrection();
+				for (int i = e.spInd; i < ress.length; i++)
+					if (dead == 0 || (startTime - dead >= ress[i].pre)) {
+						e.spInd++;
+						e.basis.getAttack(e.aam.getSpAttack(RES, i));
 					}
 			}
 
