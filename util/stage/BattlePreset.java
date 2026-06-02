@@ -126,7 +126,6 @@ public class BattlePreset {
     public final Form[][] fs = new Form[2][5];
     public final Level[][] levels = new Level[2][5];
 
-    public int cannonType; // Raw ID of cannon that is parsed into BCU ID order
     public int baseHealthBoost; // Add 20k to unit base health if this is true
 
     // Copied treasure data manually
@@ -174,7 +173,7 @@ public class BattlePreset {
         b.t().fruit = fruit.clone();
         b.t().alien = alien;
         b.t().star = star;
-        b.nyc[0] = cannonType;
+        b.nyc = nyc.clone();
 
         for (byte i = 0; i < 2; i++)
             for (byte j = 0; j < 5; j++) {
