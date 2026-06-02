@@ -27,7 +27,8 @@ public class Soul extends Animable<AnimU<?>, AnimU.UType> implements Indexable<P
 	@JsonField(defval = "true")
 	public boolean fixedLayer = true;
 
-	public int layer;
+	public int layer_0;
+	public int layer_1;
 
 	@JsonClass.JCConstructor
 	public Soul() {

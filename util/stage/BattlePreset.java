@@ -1,6 +1,7 @@
 package common.util.stage;
 
 import common.battle.BasisLU;
+import common.battle.BasisSet;
 import common.battle.Treasure;
 import common.io.json.JsonClass;
 import common.io.json.JsonField;
@@ -14,6 +15,52 @@ import java.util.List;
 
 @JsonClass(noTag = JsonClass.NoTag.LOAD)
 public class BattlePreset {
+    public static boolean isCurrentLineupPreset(BattlePreset bp) {
+        BasisLU blu = BasisLU.current();
+        blu.lu.renew();
+        Treasure t = BasisSet.current().t();
+
+        if (!Arrays.equals(t.tech, bp.tech))
+            return false;
+        else if (!Arrays.equals(t.trea, bp.trea))
+            return false;
+        else if (!Arrays.equals(t.bslv, bp.bslv))
+            return false;
+        else if (!Arrays.equals(t.fruit, bp.fruit))
+            return false;
+        else if (!Arrays.equals(t.gods, bp.gods))
+            return false;
+        else if (t.alien != bp.alien || t.star != bp.star)
+            return false;
+
+        for (int i = 0; i < 3; i++)
+            if (bp.nyc[i] != -1 && bp.nyc[i] != blu.nyc[i])
+                return false;
+
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < 5; j++) {
+                Form bpform = bp.fs[i][j];
+                if (bpform != null && !(blu.lu.fs[i][j] instanceof Form))
+                    return false;
+                Form luform = (Form)blu.lu.fs[i][j];
+                if (bpform == null || luform == null) {
+                    if (bpform != null || luform != null)
+                        return false;
+                } else if (!bpform.uid.equals(luform.uid) || bpform.fid != luform.fid) {
+                    return false;
+                } else {
+                    Level bplv = bp.levels[i][j];
+                    Level lulv = blu.lu.getLv(luform);
+                    if (!lulv.equals(bplv))
+                        return false;
+                    // todo: check if orbs match
+                }
+            }
+        }
+
+        return true;
+    }
+
     public enum ActivatedTreasure {
         EOC1,  // EoC Ch. 1
         EOC2,  // EoC Ch. 2
@@ -51,6 +98,9 @@ public class BattlePreset {
             fruit = new int[7],
             gods = new int[3];
 
+    @JsonField(gen = JsonField.GenType.FILL)
+    public int[] nyc = new int[] { -1, -1, -1 }; // -1 means don't need to replace
+
     @JsonField(block = true)
     public final List<ActivatedTreasure> activatedTreasures = new ArrayList<>();
 
@@ -69,6 +119,7 @@ public class BattlePreset {
                 ", bslv=" + Arrays.toString(bslv) + "\n" +
                 ", fruit=" + Arrays.toString(fruit) + "\n" +
                 ", gods=" + Arrays.toString(gods) + "\n" +
+                ", nyc=" + Arrays.toString(nyc) + "\n" +
                 ", activatedTreasures=" + activatedTreasures + "\n" +
                 ", alien=" + alien + "\n" +
                 ", star=" + star + "\n" +

@@ -38,6 +38,10 @@ public class BasisLU extends Basis implements Copable<BasisLU>, BattleStatic {
 		return lus;
 	}
 
+	public static BasisLU current() {
+		return BasisSet.current().sele;
+	}
+
 	private final Treasure t;
 
 	@JsonField(gen = GenType.FILL)

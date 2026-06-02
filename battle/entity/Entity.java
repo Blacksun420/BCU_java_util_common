@@ -534,7 +534,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				// converge souls layer: death on the same frame = same soul height
 				// still not sure how this precisely work in BC, it seems to have exceptions
 				if (s != null && s.fixedLayer) {
-					e.layer = s.layer;
+					e.layer = s.layer_0 == s.layer_1 ? s.layer_0 : s.layer_0+(int)(s.layer_1*e.basis.r.nextFloat()-s.layer_0);
 					e.basis.le.sort();
 				}
 			}

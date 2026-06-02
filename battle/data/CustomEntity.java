@@ -9,14 +9,10 @@ import common.io.json.JsonField.GenType;
 import common.pack.PackData.UserPack;
 import common.pack.SortedPackSet;
 import common.util.Data;
-import common.util.unit.AbEnemy;
-import common.util.unit.Unit;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 @JsonClass(noTag = NoTag.LOAD)
 public abstract class CustomEntity extends DataEntity {
@@ -24,7 +20,7 @@ public abstract class CustomEntity extends DataEntity {
 	@JsonField(gen = GenType.GEN, defval = "proc isBlank")
 	public AtkDataModel rep;//TODO - Replace this with a Proc variable, given that is the only thing that gets used about it
 	@JsonField(gen = GenType.GEN)
-	public AtkDataModel cntr;
+	public AtkDataModel cntr, glas;
 	@JsonField(gen = GenType.GEN, usePool = true, backCompat = CompatType.FORK, defval = "isEmpty")
 	public AtkDataModel[] revs = new AtkDataModel[0], ress = new AtkDataModel[0], burs = new AtkDataModel[0],
 			resus = new AtkDataModel[0], revis = new AtkDataModel[0], entrs = new AtkDataModel[0];
@@ -174,8 +170,8 @@ public abstract class CustomEntity extends DataEntity {
 
 	@Override
 	public AtkDataModel[][] getSpAtks(boolean addCounter) {
-		if (addCounter && cntr != null)
-			return new AtkDataModel[][]{revs, ress, new AtkDataModel[]{cntr}, burs, resus, revis, entrs};
+		if (addCounter && (cntr != null || glas != null))
+			return new AtkDataModel[][]{revs, ress, new AtkDataModel[]{cntr, glas}, burs, resus, revis, entrs};
 		return new AtkDataModel[][]{revs, ress, burs, resus, revis, entrs};
 	}
 
@@ -414,6 +410,10 @@ public abstract class CustomEntity extends DataEntity {
 		for (int i = 0; i < entrs.length; i++) {
 			entrs[i] = new AtkDataModel(this, ce.entrs[i]);
 			entrs[i].str = "entrance" + (i > 0 ? i + 1 : "");
+		}
+		if (ce.glas != null) {
+			glas = new AtkDataModel(this, ce.glas);
+			glas.str = "sacrifice";
 		}
 	}
 
