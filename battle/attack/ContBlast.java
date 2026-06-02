@@ -6,6 +6,7 @@ import common.battle.entity.Entity;
 import common.system.P;
 import common.system.fake.FakeGraphics;
 import common.system.fake.FakeTransform;
+import common.util.Data;
 import common.util.anim.EAnimD;
 import common.util.pack.EffAnim.BlastEff;
 

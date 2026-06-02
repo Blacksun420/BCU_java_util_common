@@ -517,7 +517,7 @@ public class Data {
 		}
 
 		@JsonClass(noTag = NoTag.LOAD)
-		public static class IMUATK extends PT {
+		public static class PTC extends PT {
 			@Order(2)
 			public int cd;
 
@@ -683,6 +683,8 @@ public class Data {
 			public float prob;
 			@Order(2)
 			public int time;
+			@Order(3)
+			public int cd;
 
 			@Override
 			public int[] setTalent(int[] nps) {
@@ -2011,7 +2013,7 @@ public class Data {
 		@Order(43)
 		public final COUNTER COUNTER = new COUNTER();
 		@Order(44)
-		public final IMUATK IMUATK = new IMUATK();
+		public final PTC IMUATK = new PTC();
 		@Order(45)
 		public final DMGCUT DMGCUT = new DMGCUT();
 		@Order(46)
@@ -2094,7 +2096,7 @@ public class Data {
 		public final PMC COMBOCOOLDOWN = new PMC(); //CD,Count
 		@Order(85)
 		public final IMUAD IMUDELAY = new IMUAD(); //CD,Count
-		public final IMUATK IMUATKANY = new IMUATK();//This is just Dodge, but ignores traits. Not a toggle coz orbs
+		public final PTC IMUATKANY = new PTC();//This is just Dodge, but ignores traits. Not a toggle coz orbs
 
 		@Override
 		public Proc clone() {
@@ -2820,6 +2822,7 @@ public class Data {
 	public static final byte RANGESHIELD_SINGLE = -18;
 	public static final byte A_GUARD = -19;
 	public static final byte A_GUARD_BRK = -20;
+	public static final byte IMUATK_CD = -21;
 
 	// Combo index
 	public static final byte C_ATK = 0;

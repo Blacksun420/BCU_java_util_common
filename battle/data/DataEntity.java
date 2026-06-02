@@ -98,6 +98,7 @@ public abstract class DataEntity extends Data implements MaskEntity {
 	public SortedPackSet<Trait> getTraits(boolean raw) {
 		return traits;
 	}
+
 	@Override
 	public int getHb() {
 		return hb;

@@ -280,7 +280,7 @@ public class Res extends ImgCore {
 		aux.icon[1][P_DRAIN] = new VImg("./org/page/icons/Drain.png");
 		aux.icon[1][P_BLESS] = new VImg("./org/page/icons/Blessing.png");
 		aux.icon[1][P_SPEEDUP] = new VImg("./org/page/icons/Speed.png");
-		aux.icon[1][P_HPREGEN] = new VImg("./org/page/icons/Barrier.png");
+		aux.icon[1][P_HPREGEN] = new VImg("./org/page/icons/Regeneration.png");
 
 		langIcons();
 		//Trait icons that remain the same regardless of language

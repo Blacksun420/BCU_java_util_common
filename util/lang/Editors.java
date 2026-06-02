@@ -583,7 +583,7 @@ public class Editors {
 			setComponentVisibility(eg, !def || (t.prob > 0 && (t.areaAttack || !t.outRange)), 2, 4);
 		}));
 
-		map().put("IMUATK", new EditControl<>(Proc.IMUATK.class, (t) -> {
+		map().put("IMUATK", new EditControl<>(Proc.PTC.class, (t) -> {
 			t.prob = Math.max(def ? 0 : -100, Math.min(t.prob, 100));
 			if (!def)
 				return;
@@ -928,9 +928,11 @@ public class Editors {
 				if (!def)
 					return;
 				if (t.prob == 0)
-					t.time = 0;
-				else
+					t.time = t.cd = 0;
+				else {
 					t.time = Math.max(1, t.time);
+					t.cd = Math.max(0, t.cd);
+				}
 			} else
 				t.prob = t.time = 0;
 		}, eg -> t -> {

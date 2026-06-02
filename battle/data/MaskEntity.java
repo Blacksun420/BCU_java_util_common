@@ -8,7 +8,6 @@ import common.util.Data.Proc;
 import common.util.pack.Soul;
 import common.util.unit.Character;
 import common.util.unit.Trait;
-import common.util.unit.Unit;
 
 public interface MaskEntity extends BattleStatic {
 

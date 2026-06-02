@@ -119,7 +119,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		 * draw this entity
 		 */
 		public void draw(FakeGraphics gra, P p, float siz) {
-			if (dead > 0) {
+			if (dead > 0 && soul != null) {
 				//100 is guessed value comparing from BC
 				p.y -= 100 * siz;
 				soul.draw(gra, p, siz);
@@ -128,7 +128,9 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			FakeTransform at = gra.getTransform();
 			if (corpse != null) {
 				corpse.paraTo(back);
-				corpse.draw(gra, p, siz);
+				P corpseP = P.newP(p.x - 25f, p.y);
+				corpse.draw(gra, corpseP, siz);
+				P.delete(corpseP);
 			}
 			if (corpse == null || e.status.revs[1] < REVIVE_SHOW_TIME) {
 				if (corpse != null) {
@@ -391,7 +393,9 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					SpeedEff index;
 					index = e.status.adrenaline > 0 ? SpeedEff.UP : SpeedEff.DOWN;
 					effs[A_SPEED] = eff.getEAnim(index);
-				}
+					break;
+				} case IMUATK_CD:
+					effs[A_IMUATK] = effas().A_IMUATKCD.getEAnim(DefEff.DEF);
 			}
 		}
 
@@ -413,7 +417,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				effs[A_LETHARGY_OLD] = null;
 			if (e.status.curse <= 0)
 				effs[A_CURSE] = null;
-			if (e.status.inv[0] == 0 && e.status.wild <= 0)
+			if (e.status.inv[0] + e.status.inv[1] + e.status.inv[1] + e.status.wild[0] + e.status.wild[1] <= 0)
 				effs[A_IMUATK] = null;
 			for (int i = 0; i < A_POIS.length; i++)
 				if ((e.status.poison & (1 << i)) == 0)
@@ -510,7 +514,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		private void kill() {
 			if ((e.getAbi() & AB_GLASS) != 0) {
 				e.dead = true;
-				dead = 0;
+				dead = 4;
 				return;
 			}
 			Map<String, Object> roots = CommonStatic.rootMap(new String[]{"unit"},this);
@@ -566,17 +570,19 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			if (anim.done() && anim.type == AnimU.TYPEDEF[AnimU.ENTRY])
 				setAnim(AnimU.TYPEDEF[AnimU.IDLE], true);
 			if (dead >= 0) {
-				if (deathSurge != 0 && soul.len() - dead >= 21) {// 21 is guessed delay compared to BC
+				int startTime = soul != null ? soul.len() : 4;
+				if (soul != null && deathSurge != 0 && startTime - dead >= 21) {// 21 is guessed delay compared to BC
 					e.aam.getDeathSurge(deathSurge);
 					deathSurge = 0;
 				}
-				for (int i = e.spInd; i < e.data.getResurrection().length; i++) {
-					AtkDataModel adm = e.data.getResurrection()[i];
-					if ((soul == null && !e.dead) || (soul != null && soul.len() - dead >= adm.pre) || (soul != null && dead == 0 && !e.dead)) {
-						e.spInd++;
-						e.basis.getAttack(e.aam.getSpAttack(RES, i));
+				if (!e.dead)
+					for (int i = e.spInd; i < e.data.getResurrection().length; i++) {
+						AtkDataModel adm = e.data.getResurrection()[i];
+						if (dead == 0 || (startTime - dead >= adm.pre)) {
+							e.spInd++;
+							e.basis.getAttack(e.aam.getSpAttack(RES, i));
+						}
 					}
-				}
 			}
 
 			e.dead = dead == 0;
@@ -589,14 +595,15 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					eff.update(false, t);
 			if (back != null || dead > 0)
 				t = e.getTime();
-			if ((e.status.stop[0] == 0 || e.status.stop[1] != 0) && (e.kbTime == 0 || (e.kb.kbType != INT_SW && e.kb.kbType != INT_WARP))) {
+			boolean checkKB = e.kb.kbType != INT_SW && e.kb.kbType != INT_WARP;
+			if ((e.status.stop[0] == 0 || e.status.stop[1] != 0) && (e.kbTime == 0 || checkKB)) {
 				float rate = t;
 				if (e.status.slow == 0 && anim.type == AnimU.TYPEDEF[AnimU.WALK] || anim.type == AnimU.TYPEDEF[AnimU.RETREAT])
 					rate *= Math.abs(e.getSpeed(e.data.getSpeed(), 0) / (e.data.getSpeed() * 0.5f));
 				anim.update(false, rate);
 			} if (back != null)
 				back.update(false, t);
-			if (dead > 0)
+			if (dead > 0 && soul != null)
 				soul.update(false, t);
 			if (corpse != null)
 				corpse.update(false, t);
@@ -1262,9 +1269,10 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 		public boolean lethal;
 		public int kb, strengthen, adrenaline = 100, dcut, dcap, poison, regencount, surgecountered;
-		public double money, slow, curse, seal, wild, rage, hypno;
+		public double money, slow, curse, seal, rage, hypno;
 		public final int[] shield = new int[2], delay = new int[3];
-		public final double[] stop = new double[2], inv = new double[3];
+		public final double[] stop = new double[2], inv = new double[3], wild = new double[2];
+		public final boolean[] dcd = new boolean[2];
 		public final float[] warp = new float[3], burs = new float[2], revs = new float[2];
 		public final LinkedList<double[]> weaks = new LinkedList<>(), armors = new LinkedList<>(), speeds = new LinkedList<>(), lethargies = new LinkedList<>();
 		public final HashMap<Proc.BLESSING, Float> blessings = new HashMap<>();
@@ -1290,12 +1298,26 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				curse -= time;
 			if (seal > 0)
 				seal -= time;
-			if (inv[0] > 0)
-				inv[0] = Math.max(inv[0]-time, 0);
-			else if (inv[1] > 0)
-				inv[1] -= time;
-			if (wild > 0)
-				wild -= time;
+			if (inv[0] > 0) {
+				inv[0] = Math.max(inv[0] - time, 0);
+				if (inv[0] <= 0 && inv[1] > 0) {
+					inv[0] = 0;
+					e.anim.getEff(IMUATK_CD);
+				}
+			} else if (inv[1] > 0 || inv[2] > 0) {
+				if (inv[1] > 0)
+					inv[1] -= time;
+				if (inv[2] > 0)
+					inv[2] -= time;
+			}
+			if (wild[0] > 0) {
+				wild[0] -= time;
+				if (wild[0] <= 0 && wild[1] > 0) {
+					wild[0] = 0;
+					e.anim.getEff(IMUATK_CD);
+				}
+			} else if (wild[1] > 0)
+				wild[1]--;
 			if (rage > 0)
 				rage -= time;
 			if (hypno > 0)
@@ -1780,7 +1802,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			return false;
 		}
 		Map<String, Object> roots = CommonStatic.rootMap(1, new String[]{"atk","attacker","attacked"},atk,atk.attacker,this);
-		Proc.IMUATK imuatk = getProc().IMUATK;
+		Proc.PTC imuatk = getProc().IMUATK;
 		if (imuatk.prob > 0 && (atk.dire == -1 || receive(-1) || ctargetable(atk.trait, atk.attacker)) && imuatk.conditions.check(false, roots)) {
 			if (status.inv[0] + status.inv[1] == 0 && (imuatk.prob == 100 || basis.r.nextFloat() * 100 < imuatk.prob)) {
 				status.inv[0] = (int) (imuatk.time * (1 + 0.2 / 3 * getFruit(atk.trait, atk.dire, -1)));

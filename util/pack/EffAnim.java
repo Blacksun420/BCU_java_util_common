@@ -500,6 +500,8 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
 		public EffAnim<LethEff> A_LETHARGY;
 		@Order(99)
 		public EffAnim<DefEff> A_E_DELAY;
+		@Order(84)
+		public EffAnim<DefEff> A_IMUATKCD;
 
 		public EffAnim<?>[] values() {
 			Field[] fld = FieldOrder.getDeclaredFields(EffAnimStore.class);
@@ -847,6 +849,11 @@ public class EffAnim<T extends Enum<T> & EffAnim.EffType<T>> extends AnimD<EffAn
         ImgCut ibls = ImgCut.newIns(path + ".imgcut");
         VImg bls = new VImg(path + ".png");
         effas.A_BLESS = new EffAnim<>(path, bls, ibls, DefEff.values());
+
+		String imucd = "./org/battle/dodge_cd/dodge_cd";
+		VImg vimucd = new VImg(imucd + ".png");
+		ImgCut icimucd = ImgCut.newIns(imucd + ".imgcut");
+		effas.A_IMUATKCD = new EffAnim<>(imucd, vimucd, icimucd, DefEff.values());
 	}
 
 	private final VImg vimg;

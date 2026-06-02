@@ -268,11 +268,12 @@ public class EUnit extends Entity {
 		if (atk.trait.contains(BCTraits.get(TRAIT_BEAST))) {
 			Proc.BSTHUNT beastDodge = getProc().BSTHUNT;
 			if (beastDodge.prob > 0 && (atk.dire != getDire())) {
-				if (status.wild == 0 && (beastDodge.prob == 100 || basis.r.nextFloat() * 100 < beastDodge.prob)) {
-					status.wild = beastDodge.time;
+				if (status.wild[0] + status.wild[1] <= 0 && (beastDodge.prob == 100 || basis.r.nextFloat() * 100 < beastDodge.prob)) {
+					status.wild[0] = beastDodge.time;
+					status.wild[1] = beastDodge.cd;
 					anim.getEff(P_IMUATK);
 				}
-				if (status.wild > 0) {
+				if (status.wild[0] > 0) {
 					damageTaken += atk.atk;
 					sumDamage(atk.atk, true);
 					return false;

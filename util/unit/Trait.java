@@ -3,6 +3,7 @@ package common.util.unit;
 import com.google.gson.JsonObject;
 import common.battle.data.CustomEntity;
 import common.battle.data.AtkDataModel;
+import common.battle.data.MaskUnit;
 import common.battle.data.Orb;
 import common.io.json.JsonClass;
 import common.io.json.JsonDecoder;
@@ -34,6 +35,17 @@ public class Trait extends Data implements Indexable<PackData, Trait>, Comparabl
                 AntiTraits.add(t);
         }
     }
+
+    public static SortedPackSet<Trait> getAllTraits(MaskUnit mu) {
+        SortedPackSet<Trait> ts = new SortedPackSet<>(mu.getTraits(true));
+        boolean antiTraited = Trait.targetTraited(ts);
+        for (PackData.UserPack pk : UserProfile.getUserPacks())
+            for (Trait t : pk.traits)
+                if ((antiTraited && t.targetType) || t.targetForms.contains(mu.getPack()))
+                    ts.add(t);
+        return ts;
+    }
+
     // Convert Bitmask Type format to new format
     public static SortedPackSet<Trait> convertBitmask(int type, boolean talent) {
         SortedPackSet<Trait> traits = new SortedPackSet<>();

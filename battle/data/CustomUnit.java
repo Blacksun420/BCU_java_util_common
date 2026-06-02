@@ -2,9 +2,7 @@ package common.battle.data;
 
 import common.io.json.JsonClass;
 import common.io.json.JsonField;
-import common.pack.PackData;
 import common.pack.SortedPackSet;
-import common.pack.UserProfile;
 import common.util.Data;
 import common.util.anim.AnimU;
 import common.util.unit.Form;
@@ -79,13 +77,7 @@ public class CustomUnit extends CustomEntity implements MaskUnit, Cloneable {
 	public SortedPackSet<Trait> getTraits(boolean raw) {
 		if (raw)
 			return traits;
-		SortedPackSet<Trait> ts = new SortedPackSet<>(traits);
-		boolean antiTraited = Trait.targetTraited(ts);
-		for (PackData.UserPack pk : UserProfile.getUserPacks())
-			for (Trait t : pk.traits)
-				if ((antiTraited && t.targetType) || t.targetForms.contains(getPack()))
-					ts.add(t);
-		return ts;
+		return Trait.getAllTraits(this);
 	}
 
 	@Override
