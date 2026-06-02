@@ -11,6 +11,7 @@ import common.pack.SortedPackSet;
 import common.pack.UserProfile;
 import common.system.files.VFile;
 import common.util.Data;
+import common.util.stage.BattlePreset;
 import common.util.unit.Level;
 import common.util.unit.Trait;
 

@@ -5,6 +5,7 @@ import common.io.json.JsonField;
 import common.util.anim.AnimU;
 import common.util.anim.EAnimI;
 import common.util.stage.Music;
+import common.CommonStatic;
 import common.io.json.JsonClass;
 import common.pack.Identifier;
 import common.pack.IndexContainer.IndexCont;
@@ -23,12 +24,12 @@ public class Soul extends Animable<AnimU<?>, AnimU.UType> implements Indexable<P
 	public Identifier<Music> audio;
 
 	public String name;
+	public int layer_0, layer_1;
+	public CommonStatic.LayerType layertype = CommonStatic.LayerType.ORIG;
 
 	@JsonField(defval = "true")
 	public boolean fixedLayer = true;
 
-	public int layer_0;
-	public int layer_1;
 
 	@JsonClass.JCConstructor
 	public Soul() {

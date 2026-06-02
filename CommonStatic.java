@@ -32,10 +32,18 @@ import static java.lang.Character.isDigit;
 
 public class CommonStatic {
 
+	public enum LayerType {
+		ORIG, SET, RELATIVE;
+
+		@Override
+		public String toString() {
+			return name();
+		}
+	}
+
 	public interface BattleConst {
 
 		float ratio = 768f / 2400f;// r = p/u
-
 	}
 
 	public static class BCAuxAssets {

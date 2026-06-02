@@ -664,6 +664,10 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 								proc = SCORE_GOOD;
 								dire = -1;
 								break;
+							case 17:
+								proc = SCORE_RESIST;
+								dire = -1;
+								break;
 						}
 
 						if (proc == -1)
@@ -783,8 +787,7 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 						targetStage.preset.levels[i / 5][i % 5].setPlusLevel(levelData.plusLevel);
 						i++;
 					}
-
-					targetStage.preset.cannonType = slotData.get("cannon").getAsInt();
+					targetStage.preset.nyc[0] = slotData.get("cannon").getAsInt();
 					JsonObject abilityData = presetObject.getAsJsonObject("ability").getAsJsonObject("data");
 					for (String key : abilityData.keySet()) {
 						int abilityIndex = CommonStatic.safeParseInt(key);
@@ -1191,7 +1194,7 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 					preset.trea[T_RECH] += 100;
 					break;
 				case BASE:
-					preset.baseHealthBoost = true;
+					preset.baseHealthBoost = 20000;
 					break;
 				case ITF1:
 				case ITF2:

@@ -218,6 +218,16 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		return new AttackSimple(e, this, atk, e.traits, getAbi(), proc, ints[0], ints[1], matk, e.layer, matk.isLD() || matk.isOmni());
 	}
 
+	public final AttackAb getSacrifice() {
+		if (e.data.getGlass() == null)
+			return null;
+		Proc proc = Proc.blank();
+		MaskAtk matk = e.data.getGlass();
+		int atk = getAttack(matk, proc);
+		float[] ints = inRange(matk);
+		return new AttackSimple(e, this, atk, e.traits, getAbi(), proc, ints[0], ints[1], matk, e.layer, matk.isLD() || matk.isOmni());
+	}
+
 	/**
 	 * Generate death surge when this entity is killed and the surge procs
 	 */

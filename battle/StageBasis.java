@@ -113,8 +113,8 @@ public class StageBasis extends BattleObj {
 		EUnit eu = est.ubase(this);
 		ubase = eu != null ? eu : new ECastle(this, bas);
 		ubase.added(-1, st.len - 800);
-		if (st.preset != null && st.preset.baseHealthBoost) {
-			ubase.maxH += 20000;
+		if (st.preset != null && BattlePreset.isCurrentLineupPreset(st.preset, bas) && st.preset.baseHealthBoost != 0) {
+			ubase.maxH += st.preset.baseHealthBoost;
 			ubase.health = ubase.maxH;
 		}
 		est.assign(this);

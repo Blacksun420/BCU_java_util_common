@@ -529,12 +529,23 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				dead = soul.len();
 				CommonStatic.setSE(SE_DEATH_SURGE);
 			} else {
-				Soul s = Identifier.get(e.data.getDeathAnim());
+				boolean selfDestructed = ((e.getAbi() & AB_GLASS) != 0) && e.health > 0;
+				if (selfDestructed) {
+					AtkDataModel glas = e.data.getGlass();
+					if (glas != null)
+						e.basis.getAttack(e.aam.getSacrifice());
+				}
+
+				Soul s = selfDestructed ? null : Identifier.get(e.data.getDeathAnim());
 				dead = s == null ? 0 : (soul = s.getEAnim(AnimU.SOUL[0])).len();
 				// converge souls layer: death on the same frame = same soul height
 				// still not sure how this precisely work in BC, it seems to have exceptions
-				if (s != null && s.fixedLayer) {
-					e.layer = s.layer_0 == s.layer_1 ? s.layer_0 : s.layer_0+(int)(s.layer_1*e.basis.r.nextFloat()-s.layer_0);
+				if (s != null && s.layertype != CommonStatic.LayerType.ORIG) {
+					int slay = s.layer_0 == s.layer_1 ? s.layer_0 : s.layer_0+(int)(s.layer_1*e.basis.r.nextFloat()-s.layer_0);
+					if (s.layertype == CommonStatic.LayerType.SET)
+						e.layer = slay;
+					else if (s.layertype == CommonStatic.LayerType.RELATIVE)
+						e.layer += slay;
 					e.basis.le.sort();
 				}
 			}
@@ -569,7 +580,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 			if (anim.done() && anim.type == AnimU.TYPEDEF[AnimU.ENTRY])
 				setAnim(AnimU.TYPEDEF[AnimU.IDLE], true);
-			if (dead >= 0) {
+			boolean selfDestructed = ((e.getAbi() & AB_GLASS) != 0) && e.health > 0;
+			if (dead >= 0 && !selfDestructed) {
 				int startTime = soul != null ? soul.len() : 4;
 				if (soul != null && deathSurge != 0 && startTime - dead >= 21) {// 21 is guessed delay compared to BC
 					e.aam.getDeathSurge(deathSurge);

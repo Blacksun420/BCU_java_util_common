@@ -16,9 +16,12 @@ import java.util.List;
 @JsonClass(noTag = JsonClass.NoTag.LOAD)
 public class BattlePreset {
     public static boolean isCurrentLineupPreset(BattlePreset bp) {
-        BasisLU blu = BasisLU.current();
+        return isCurrentLineupPreset(bp, BasisLU.current());
+    }
+
+    public static boolean isCurrentLineupPreset(BattlePreset bp, BasisLU blu) {
         blu.lu.renew();
-        Treasure t = BasisSet.current().t();
+        Treasure t = blu.t();
 
         if (!Arrays.equals(t.tech, bp.tech))
             return false;
@@ -37,7 +40,7 @@ public class BattlePreset {
             if (bp.nyc[i] != -1 && bp.nyc[i] != blu.nyc[i])
                 return false;
 
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 2; i++)
             for (int j = 0; j < 5; j++) {
                 Form bpform = bp.fs[i][j];
                 if (bpform != null && !(blu.lu.fs[i][j] instanceof Form))
@@ -53,12 +56,47 @@ public class BattlePreset {
                     Level lulv = blu.lu.getLv(luform);
                     if (!lulv.equals(bplv))
                         return false;
-                    // todo: check if orbs match
                 }
+            }
+        return true;
+    }
+
+    public static void generateBasis(BattlePreset bp) {
+        BasisLU dest = BasisSet.current().sele;
+        Treasure t = BasisSet.current().t();
+
+        t.tech = bp.tech.clone();
+        t.trea = bp.trea.clone();
+        t.bslv = bp.bslv.clone();
+        t.fruit = bp.fruit.clone();
+        t.gods = bp.gods.clone();
+        t.alien = bp.alien;
+        t.star = bp.star;
+        BasisSet.current().renewTreasure();
+
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < 5; j++) {
+                Form form = bp.fs[i][j];
+                Level lv = bp.levels[i][j];
+                if (form == null) {
+                    dest.lu.fs[i][j] = null;
+                    continue;
+                }
+
+                dest.lu.fs[i][j] = form.unit.forms[form.fid]; // prevent form change affecting battle preset
+                int[] lvs = new int[10];
+                lvs[0] = lv.getLv();
+                lvs[1] = lv.getPlusLv();
+                System.arraycopy(lv.getTalents(), 0, lvs, 2, lv.getTalents().length);
+                dest.lu.setLv(form.unit, Level.lvList(form.unit, lvs, lv.getOrbs()));
             }
         }
 
-        return true;
+        for (int i = 0; i < 3; i++)
+            if (bp.nyc[i] != -1)
+                dest.nyc[i] = bp.nyc[i];
+
+        dest.lu.renew();
     }
 
     public enum ActivatedTreasure {
@@ -74,13 +112,14 @@ public class BattlePreset {
         BASE   // Base health boost
     }
 
-    public static class LevelObject {
+    public static class LevelObject { // Used in reading BC data
         public int evolution;
         public int level;
         public int plusLevel;
     }
     //TODO verify customized battle preset loading
 
+    @JsonField(block = true)
     public int level; // It seems preset can be activated per crown
 
     @JsonField(alias = AbForm.AbFormJson.class)
@@ -88,7 +127,7 @@ public class BattlePreset {
     public final Level[][] levels = new Level[2][5];
 
     public int cannonType; // Raw ID of cannon that is parsed into BCU ID order
-    public boolean baseHealthBoost; // Add 20k to unit base health if this is true
+    public int baseHealthBoost; // Add 20k to unit base health if this is true
 
     // Copied treasure data manually
     @JsonField(gen = JsonField.GenType.FILL)
@@ -102,7 +141,7 @@ public class BattlePreset {
     public int[] nyc = new int[] { -1, -1, -1 }; // -1 means don't need to replace
 
     @JsonField(block = true)
-    public final List<ActivatedTreasure> activatedTreasures = new ArrayList<>();
+    public final List<ActivatedTreasure> activatedTreasures = new ArrayList<>(); // Used for display reasons
 
     @JsonField
     public int alien, star;
@@ -111,15 +150,14 @@ public class BattlePreset {
     public String toString() {
         return "BattlePreset{\n" +
                 "level=" + level + "\n" +
-                ", fs=" + Arrays.deepToString(fs) + "\n" +
-                ", levels=" + Arrays.deepToString(levels) + "\n" +
-                ", cannonType=" + cannonType + "\n" +
+                ", fs=" + Arrays.toString(fs) + "\n" +
+                ", levels=" + Arrays.toString(levels) + "\n" +
+                ", cannonType=" + Arrays.toString(nyc) + "\n" +
                 ", tech=" + Arrays.toString(tech) + "\n" +
                 ", trea=" + Arrays.toString(trea) + "\n" +
                 ", bslv=" + Arrays.toString(bslv) + "\n" +
                 ", fruit=" + Arrays.toString(fruit) + "\n" +
                 ", gods=" + Arrays.toString(gods) + "\n" +
-                ", nyc=" + Arrays.toString(nyc) + "\n" +
                 ", activatedTreasures=" + activatedTreasures + "\n" +
                 ", alien=" + alien + "\n" +
                 ", star=" + star + "\n" +

@@ -170,8 +170,14 @@ public abstract class CustomEntity extends DataEntity {
 
 	@Override
 	public AtkDataModel[][] getSpAtks(boolean addCounter) {
-		if (addCounter && (cntr != null || glas != null))
-			return new AtkDataModel[][]{revs, ress, new AtkDataModel[]{cntr, glas}, burs, resus, revis, entrs};
+		if (addCounter) {
+			if (cntr != null && glas != null)
+				return new AtkDataModel[][]{revs, ress, new AtkDataModel[]{cntr}, burs, resus, revis, entrs, new AtkDataModel[]{glas}};
+			if (cntr != null)
+				return new AtkDataModel[][]{revs, ress, new AtkDataModel[]{cntr}, burs, resus, revis, entrs};
+			if (glas != null)
+				return new AtkDataModel[][]{revs, ress, burs, resus, revis, entrs, new AtkDataModel[]{glas}};
+		}
 		return new AtkDataModel[][]{revs, ress, burs, resus, revis, entrs};
 	}
 
@@ -248,6 +254,11 @@ public abstract class CustomEntity extends DataEntity {
 	@Override
 	public AtkDataModel[] getEntry() {
 		return entrs;
+	}
+
+	@Override
+	public AtkDataModel getGlass() {
+		return glas;
 	}
 
 	@Override

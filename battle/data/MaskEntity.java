@@ -114,6 +114,10 @@ public interface MaskEntity extends BattleStatic {
 		return new AtkDataModel[0];
 	}
 
+	default AtkDataModel getGlass() {
+		return null;
+	}
+
 	int getSpeed();
 
 	int getWill();
