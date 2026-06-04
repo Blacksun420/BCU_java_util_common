@@ -26,4 +26,10 @@ public interface IForm {
     float getPrice(int sta);
 
     int getRespawn();
+
+    int getInitialRespawn();
+
+    default float initialRespawnDiff() {
+        return 1f * getInitialRespawn() / getRespawn();
+    }
 }

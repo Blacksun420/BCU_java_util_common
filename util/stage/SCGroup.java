@@ -2,6 +2,7 @@ package common.util.stage;
 
 import common.io.json.JsonClass;
 import common.io.json.JsonField;
+import common.pack.oldFix.ISStream;
 import common.system.BasedCopable;
 import common.util.Data;
 
@@ -62,4 +63,17 @@ public class SCGroup extends Data implements BasedCopable<SCGroup, Integer> {
 		return str;
 	}
 
+	public static SCGroup readOldData(ISStream is) {
+		int ver = getVer(is.nextString());
+		if (ver == 404) {
+			int id = is.nextInt();
+			int n = is.nextInt();
+			int[] max = new int[n];
+			for (int i = 0; i < n; i++)
+				max[i] = is.nextInt();
+			is.nextInt();
+			return new SCGroup(id, max);
+		}
+		return null;
+	}
 }

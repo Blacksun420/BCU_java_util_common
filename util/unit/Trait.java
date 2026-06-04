@@ -46,6 +46,48 @@ public class Trait extends Data implements Indexable<PackData, Trait>, Comparabl
         return ts;
     }
 
+    public static int reorderTrait(int oldTrait) {
+        int newTrait = 0;
+
+        for(int i = 0; i < TRAIT_TOT; i++) {
+            if(((oldTrait >> i) & 1) > 0) {
+                switch (i) {
+                    case 0:
+                        newTrait |= TB_WHITE;
+                        break;
+                    case 1:
+                        newTrait |= TB_RED;
+                        break;
+                    case 2:
+                        newTrait |= TB_FLOAT;
+                        break;
+                    case 3:
+                        newTrait |= TB_BLACK;
+                        break;
+                    case 4:
+                        newTrait |= TB_METAL;
+                        break;
+                    case 5:
+                        newTrait |= TB_ANGEL;
+                        break;
+                    case 6:
+                        newTrait |= TB_ALIEN;
+                        break;
+                    case 7:
+                        newTrait |= TB_ZOMBIE;
+                        break;
+                    case 8:
+                        newTrait |= TB_RELIC;
+                        break;
+                    default:
+                        newTrait |= 1 << i;
+                }
+            }
+        }
+
+        return newTrait;
+    }
+
     // Convert Bitmask Type format to new format
     public static SortedPackSet<Trait> convertBitmask(int type, boolean talent) {
         SortedPackSet<Trait> traits = new SortedPackSet<>();

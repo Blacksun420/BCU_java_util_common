@@ -5,6 +5,7 @@ import common.io.json.JsonClass;
 import common.io.json.JsonField;
 import common.pack.Identifier;
 import common.pack.UserProfile;
+import common.pack.oldFix.ISStream;
 import common.util.anim.AnimU;
 import common.util.unit.AbEnemy;
 import common.util.unit.Enemy;
@@ -106,5 +107,13 @@ public class CustomEnemy extends CustomEntity implements MaskEnemy {
 					if (adm.proc.SUMMON.prob > 0 && (adm.proc.SUMMON.id == null || AbEnemy.class.isAssignableFrom(adm.proc.SUMMON.id.cls)))
 						ans.add(Identifier.getOr(adm.proc.SUMMON.id, AbEnemy.class));
 		return ans;
+	}
+
+	public void convertOldData(int ver, ISStream is) {
+		if (ver >= 400) {
+			convertOldData(is);
+			star = is.nextByte();
+			drop = is.nextInt();
+		}
 	}
 }

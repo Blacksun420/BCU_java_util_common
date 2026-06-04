@@ -66,12 +66,15 @@ public class ELineUp extends BattleObj {
 					continue;
 				}
 				price[i][j] = sb.globalPrice() > 0 ? sb.globalPrice() : (int) (lu.efs[i][j].getPrice(sb.st.getCont().price) * (100 - getInc(C_DISCOUNT, lu.fs[i][j])));
+				cool[i][j] = (sb.globalCdLimit() > 0 ? sb.b.t().getFinResGlobal((int)(sb.globalCdLimit()*lu.efs[i][j].initialRespawnDiff()), getInc(C_RESP, lu.fs[i][j])) : sb.b.t().getIniRes(lu.efs[i][j].getInitialRespawn(), getInc(C_RESP, lu.fs[i][j])));
 				maxC[i][j] = sb.globalCdLimit() > 0 ? sb.b.t().getFinResGlobal(sb.globalCdLimit(), getInc(C_RESP, lu.fs[i][j])) : sb.b.t().getFinRes(lu.efs[i][j].getRespawn(), getInc(C_RESP, lu.fs[i][j]));
 				if (lim != null && lim.stageLimit != null && lu.fs[i][j] instanceof Form) {
 					int r = ((Form)lu.fs[i][j]).unit.rarity;
 					price[i][j] = price[i][j] * lim.stageLimit.costMultiplier[r] / 100;
+					cool[i][j] = cool[i][j] * lim.stageLimit.cooldownMultiplier[r] / 100;
 					maxC[i][j] = maxC[i][j] * lim.stageLimit.cooldownMultiplier[r] / 100;
 				}
+				maxM[i][j] = (int)(maxC[i][j] - cool[i][j]);
 				spData[i][j] = lu.efs[i][j] instanceof EForm && ((EForm) lu.efs[i][j]).du.getProc().SPIRIT.id != null ? ((EForm)lu.efs[i][j]).du.getProc().SPIRIT : null;
 				scount[i][j] = spData[i][j] == null ? -1 : 0;
 				cdDelay[i][j] = new int[] { 0, 0, 0 };

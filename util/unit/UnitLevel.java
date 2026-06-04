@@ -6,6 +6,7 @@ import common.pack.Identifier;
 import common.pack.IndexContainer.IndexCont;
 import common.pack.IndexContainer.Indexable;
 import common.pack.PackData;
+import common.pack.oldFix.ISStream;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +37,30 @@ public class UnitLevel implements Indexable<PackData, UnitLevel> {
 
 	@JsonClass.JCConstructor
 	public UnitLevel() {}
+
+	public UnitLevel(Identifier<UnitLevel> ID, ISStream is) {
+		id = ID;
+		int ver = is.nextInt();
+		int[] lvs = new int[3];
+		if (ver == 1) {
+			int[] vs = is.nextIntsB();
+			lvs[0] = vs[0];
+			lvs[1] = vs[1];
+			lvs[2] = vs[2];
+		} else {
+			int[][] vs = is.nextIntsBB();
+			lvs[0] = vs[1][0];
+			lvs[1] = vs[2][0];
+			lvs[2] = vs[3][0];
+		}
+		int pre = 0, mul = 20;
+		for (int i = 0; i < 3; i++) {
+			for (int j = pre; j < lvs[i] / 10; j++)
+				this.lvs[j] = mul;
+			mul /= 2;
+			pre = lvs[i] / 10;
+		}
+	}
 
 	@Override
 	public boolean equals(Object o) {

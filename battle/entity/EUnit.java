@@ -16,6 +16,7 @@ import common.util.BattleObj;
 import common.util.Data;
 import common.util.anim.EAnimU;
 import common.util.pack.EffAnim;
+import common.util.stage.info.CustomStageInfo;
 import common.util.unit.Level;
 import common.util.unit.Trait;
 
@@ -71,7 +72,7 @@ public class EUnit extends Entity {
 		traits = new SortedPackSet<>(de.getTraits(false));
 		lvl = level.getTotalLv();
 		this.index = index;
-		this.isBase = isBase;
+		baseProperties = isBase ? ((CustomStageInfo)basis.st.info).props : -1;
 		if (isBase) {
 			maxH = health = maxH * b.b.t().getBaseHealth(b.elu.getInc(C_BASE,this)) / 1000;
 			((AtkModelUnit)aam).d2 = b.b.t().getCanonAtk(b.elu.getInc(C_C_ATK,this)) / 100.0;

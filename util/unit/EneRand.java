@@ -9,6 +9,7 @@ import common.io.json.JsonField;
 import common.pack.Identifier;
 import common.pack.Source;
 import common.pack.UserProfile;
+import common.pack.oldFix.ISStream;
 import common.system.VImg;
 import common.util.BattleObj;
 import common.util.Data;
@@ -158,6 +159,22 @@ public class EneRand extends Data implements AbEnemy {
 
 	public void reloadIcon() {
 		icon = UserProfile.getUserPack(id.pack).source.readImage(Source.BasePath.ENERAND.toString(), id.id);
+	}
+
+	public void convertOldData(ISStream is) {
+		int ver = getVer(is.nextString());
+		if (ver >= 400) {
+			name = is.nextString();
+			type = is.nextInt();
+			int n = is.nextInt();
+			for (int i = 0; i < n; i++) {
+				EREnt ere = new EREnt();
+				list.add(ere);
+				ere.ent = Identifier.parseInt(is.nextInt(), AbEnemy.class);
+				ere.multi = is.nextInt();
+				ere.share = is.nextInt();
+			}
+		}
 	}
 }
 

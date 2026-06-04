@@ -41,6 +41,8 @@ public class CustomStageInfo implements StageInfo {
     public Form ubase;
     @JsonField
     public Level lv;
+    @JsonField
+    public int props;
     @JsonField(generic = Form.class, alias = Form.AbFormJson.class, backCompat = JsonField.CompatType.FORK, defval = "isEmpty")
     public final SortedPackSet<Form> rewards = new SortedPackSet<>();
 

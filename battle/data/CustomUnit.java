@@ -3,6 +3,7 @@ package common.battle.data;
 import common.io.json.JsonClass;
 import common.io.json.JsonField;
 import common.pack.SortedPackSet;
+import common.pack.oldFix.ISStream;
 import common.util.Data;
 import common.util.anim.AnimU;
 import common.util.unit.Form;
@@ -18,7 +19,7 @@ public class CustomUnit extends CustomEntity implements MaskUnit, Cloneable {
 	@JsonField(defval = "60")
 	public int resp = 60;
 	@JsonField
-	public int back, limit;
+	public int ini_resp, back, limit;
 	@JsonField(defval = "9")
 	public int front = 9;
 	@JsonField(gen = JsonField.GenType.GEN)
@@ -63,6 +64,11 @@ public class CustomUnit extends CustomEntity implements MaskUnit, Cloneable {
 	@Override
 	public int getRespawn() {
 		return resp;
+	}
+
+	@Override
+	public int getFirstRespawn() {
+		return ini_resp;
 	}
 
 	@Override
@@ -141,5 +147,13 @@ public class CustomUnit extends CustomEntity implements MaskUnit, Cloneable {
 		ans.pack = getPack();
 		ans.getPack().anim = getPack().anim;
 		return ans;
+	}
+
+	public void convertOldData(int ver, ISStream is) {
+		if (ver >= 400) {
+			convertOldData(is);
+			price = is.nextInt();
+			resp = is.nextInt();
+		}
 	}
 }

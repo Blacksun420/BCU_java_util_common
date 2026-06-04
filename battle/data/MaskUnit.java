@@ -14,6 +14,10 @@ public interface MaskUnit extends MaskEntity {
 
 	int getRespawn();
 
+	default int getFirstRespawn() {
+		return 0;
+	}
+
 	PCoin getPCoin();
 
 	void improve(int[] type, int mod);

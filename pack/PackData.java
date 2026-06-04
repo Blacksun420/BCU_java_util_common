@@ -388,6 +388,15 @@ public abstract class PackData implements IndexContainer {
 		@JsonField(generic = String.class, backCompat = JsonField.CompatType.FORK, defval = "isEmpty")
 		public final SortedPackSet<String> syncPar = new SortedPackSet<>();
 
+		/**
+		 * for old reading method only
+		 */
+		public UserPack(PackDesc desc, Source s) {
+			this.desc = desc;
+			source = s;
+			castles = new PackCasList(this);
+		}
+
 		public UserPack(Source s, PackDesc desc, JsonElement elem) {
 			this.desc = desc;
 			this.elem = elem;

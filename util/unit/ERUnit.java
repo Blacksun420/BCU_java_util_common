@@ -118,6 +118,11 @@ public class ERUnit extends Data implements IForm {
         return unit.cooldown;
     }
 
+    @Override
+    public int getInitialRespawn() {
+        return unit.initial_cd;
+    }
+
     static class DH {
         final IForm iform;
         final int share;

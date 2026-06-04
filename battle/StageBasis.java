@@ -175,6 +175,13 @@ public class StageBasis extends BattleObj {
 		rem_spawns = est.lim.stageLimit != null && est.lim.stageLimit.maxUnitSpawn > 0 ? est.lim.stageLimit.maxUnitSpawn : -1;
 	}
 
+	public float addedPosition(Entity e) {
+		if (e instanceof EUnit)
+			return ubase.trackSpawn() ? ubase.pos + 100 : st.len - 700;
+		return ebase.trackSpawn() ? ebase.pos - (((EEnemy)e).mark >= 1 ? 0 : 100) + (((EEnemy)e).door * (ubase.pos / (st.len - 800)))
+				: (((EEnemy)e).mark >= 1 ? boss_spawn : 700f) + ((EEnemy)e).door;
+	}
+
 	/**
 	 * returns visual money.
 	 */
@@ -493,7 +500,7 @@ public class StageBasis extends BattleObj {
 			elu.smnd[i][j] = true;
 			rem_spawns--;
 			money -= getCost(i,j);
-			eu.added(-1, st.len - 700);
+			eu.added(-1, addedPosition(eu));
 
 			le.add(eu);
 			if (st.minUSpawn == st.maxUSpawn)
@@ -562,7 +569,7 @@ public class StageBasis extends BattleObj {
 					if (dupeTime[i][j] <= 0 && !cantDeploy(b.lu.fs[i][j].unit().getRarity(), b.lu.efs[i][j].getWill()) && b.lu.efs[i][j] != null) {
 						EUnit eu = b.lu.efs[i][j].getEntity(this, new int[]{i, j}, false);
 						if (eu != null) {
-							eu.added(-1, st.len - 700);
+							eu.added(-1, addedPosition(eu));
 							le.add(eu);
 
 							dupeCount[i][j]--;
@@ -607,7 +614,7 @@ public class StageBasis extends BattleObj {
 				EEnemy e = est.allow();
 
 				if (e != null) {
-					e.added(1, (e.mark >= 1 ? boss_spawn : 700f) + e.door);
+					e.added(1, addedPosition(e));
 
 					if (e.door != 0 && e.getAnim().type != AnimU.TYPEDEF[AnimU.ENTRY] && !e.getAnim().anim().getEAnim(AnimU.TYPEDEF[AnimU.WALK]).unusable())
 						doors.add(new DoorCont(this, e));

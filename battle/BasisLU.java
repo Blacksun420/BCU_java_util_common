@@ -5,6 +5,7 @@ import common.io.json.JsonClass;
 import common.io.json.JsonField;
 import common.io.json.JsonField.GenType;
 import common.pack.UserProfile;
+import common.pack.oldFix.ISStream;
 import common.system.Copable;
 import common.util.BattleStatic;
 import common.util.stage.Replay;
@@ -77,6 +78,11 @@ public class BasisLU extends Basis implements Copable<BasisLU>, BattleStatic {
 		name = str;
 		lu = line;
 		nyc = ints;
+	}
+
+	private BasisLU(int ver, ISStream is) {
+		lu = new LineUp(ver, ver >= 308 ? is.subStream() : is);
+		t = new Treasure(this, ver, is);
 	}
 
 	@Override
@@ -181,4 +187,26 @@ public class BasisLU extends Basis implements Copable<BasisLU>, BattleStatic {
 		return blu.t.equals(t) && blu.lu.equals(lu);
 	}
 
+	public static BasisLU zread(ISStream is) {
+		int ver = getVer(is.nextString());
+		if (ver >= 308)
+			return zread$000308(is);
+		return zread$000307(is);
+	}
+
+	private static BasisLU zread$000307(ISStream is) {
+		String name = is.nextString();
+		BasisLU ans = new BasisLU(307, is);
+		ans.nyc = is.nextIntsB();
+		ans.name = name;
+		return ans;
+	}
+
+	private static BasisLU zread$000308(ISStream is) {
+		String name = is.nextString();
+		BasisLU ans = new BasisLU(308, is);
+		ans.nyc = is.nextIntsB();
+		ans.name = name;
+		return ans;
+	}
 }

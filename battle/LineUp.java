@@ -9,6 +9,7 @@ import common.pack.Identifier;
 import common.pack.PackData;
 import common.pack.SortedPackSet;
 import common.pack.UserProfile;
+import common.pack.oldFix.ISStream;
 import common.util.BattleStatic;
 import common.util.Data;
 import common.util.stage.CharaGroup;
@@ -64,6 +65,14 @@ public class LineUp extends Data {
 			map.put(e.getKey(), e.getValue().clone());
 		}
 
+		renew();
+	}
+
+	/**
+	 * read a LineUp object from data
+	 */
+	protected LineUp(int ver, ISStream is) {
+		zread(ver, is);
 		renew();
 	}
 
@@ -534,5 +543,42 @@ public class LineUp extends Data {
 					return false;
 			}
 		return true;
+	}
+
+	/**
+	 * read data from file, support multiple version
+	 */
+	private void zread(int ver, ISStream is) {
+		int val = getVer(is.nextString());
+		if (val >= 400)
+			zread$000400(is);
+	}
+
+	private void zread$000400(ISStream is) {
+		int n = is.nextInt();
+		for (int i = 0; i < n; i++) {
+			int uid = is.nextInt();
+			int fid = is.nextInt();
+			setFS(Identifier.parseInt(uid, Unit.class).get().getForms()[fid], i);
+		}
+		int m = is.nextInt();
+		for (int i = 0; i < m; i++) {
+			int uid = is.nextInt();
+			int[] lv = is.nextIntsB();
+			Unit u = Identifier.getOr(Identifier.parseInt(uid, Unit.class), Unit.class);
+			int[][] orbs = null;
+			int existing = is.nextInt();
+			if (existing == 1)
+				orbs = is.nextIntsBB();
+
+            if (lv.length <= 2)
+                map.put(u.id, new Level(lv[0], lv[1], new int[0], orbs));
+			else {
+				int[] np = new int[lv.length-2];
+				System.arraycopy(lv, 2, np, 0, np.length);
+				map.put(u.id, new Level(lv[0], lv[1], np, orbs));
+			}
+        }
+		arrange();
 	}
 }

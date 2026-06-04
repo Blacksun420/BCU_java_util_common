@@ -16,6 +16,8 @@ import common.pack.IndexContainer.Indexable;
 import common.pack.PackData;
 import common.pack.PackData.UserPack;
 import common.pack.UserProfile;
+import common.pack.oldFix.ISStream;
+import common.pack.oldFix.VerFixer;
 import common.util.Data;
 import common.util.unit.AbForm;
 import common.util.unit.Form;
@@ -97,6 +99,27 @@ public class LvRestrict extends Data implements Indexable<PackData, LvRestrict> 
 	private LvRestrict(LvRestrict lvr) {
 		for (CharaGroup cg : lvr.cgl.keySet())
 			cgl.put(cg, lvr.cgl.get(cg).clone());
+	}
+
+	public LvRestrict(UserPack mc, ISStream is) throws VerFixer.VerFixerException {
+		int ver = getVer(is.nextString());
+		if (ver != 308)
+			throw new VerFixer.VerFixerException("LvRestrict requires 308, got " + ver);
+		name = is.nextString();
+		id = Identifier.parseInt(is.nextInt(), LvRestrict.class);
+		def = toNewFormat(is.nextIntsB());
+
+		int[][] tbb = is.nextIntsBB();
+		for (int i = 0; i < tbb.length; i++)
+			rs[i] = toNewFormat(tbb[i]);
+		int n = is.nextInt();
+		for (int i = 0; i < n; i++) {
+			int cg = is.nextInt();
+			Level lv = toNewFormat(is.nextIntsB());
+			CharaGroup cgs = mc.groups.get(cg);
+			if (cgs != null)
+				cgl.put(cgs, lv);
+		}
 	}
 
 	public LvRestrict combine(LvRestrict lvr) {

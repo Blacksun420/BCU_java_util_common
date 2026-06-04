@@ -90,6 +90,11 @@ public class EForm extends Data implements IForm {
 		return du.getRespawn();
 	}
 
+	@Override
+	public int getInitialRespawn() {
+		return du.getFirstRespawn();
+	}
+
 	public EAnimU getEntryAnim() {
 		EAnimU anim = f.getEAnim(AnimU.TYPEDEF[AnimU.ENTRY]);
 		if (anim.unusable())

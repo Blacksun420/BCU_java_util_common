@@ -15,6 +15,8 @@ import common.pack.PackData.PackDesc;
 import common.pack.PackData.UserPack;
 import common.pack.Source.ResourceLocation;
 import common.pack.UserProfile;
+import common.pack.oldFix.ISStream;
+import common.pack.oldFix.VerFixer;
 import common.system.BasedCopable;
 import common.system.files.VFile;
 import common.util.BattleStatic;
@@ -251,6 +253,51 @@ public class Stage extends Data
 			data = scd;
 		}
 
+		validate();
+	}
+
+	public Stage(UserPack pack, Identifier<Stage> id, ISStream is) throws VerFixer.VerFixerException {
+		this(id);
+		int ver = getVer(is.nextString());
+		if (ver < 407)
+			throw new VerFixer.VerFixerException("stage version has to be higher than 407, got " + ver);
+		names.put(is.nextString());
+		bg = Identifier.parseInt(is.nextInt(), Background.class);
+		castle = Identifier.parseInt(is.nextInt(), CastleImg.class);
+		health = is.nextInt();
+		len = is.nextInt();
+		mus0 = Identifier.parseInt(is.nextInt(), Music.class);
+		mush = is.nextInt();
+		mus1 = Identifier.parseInt(is.nextInt(), Music.class);
+		if (ver == 408) {
+			if (mus0 != null && !mus0.isNull())
+				mus0.get().loop = is.nextInt();
+			else
+				is.nextInt();
+			if (mus1 != null && !mus1.isNull())
+				mus1.get().loop = is.nextInt();
+			else
+				is.nextInt();
+		}
+		if (ver == 409) {
+			if (mus0 != null && !mus0.isNull())
+				mus0.get().loop = is.nextLong();
+			else
+				is.nextLong();
+			if (mus1 != null && !mus1.isNull())
+				mus1.get().loop = is.nextLong();
+			else
+				is.nextLong();
+		}
+		max = is.nextByte();
+		non_con = is.nextByte() == 1;
+		data = SCDef.readOldData(is.subStream());
+		lim = new Limit.PackLimit(pack, is);
+		int t = is.nextInt();
+		for (int i = 0; i < t; i++) {
+			String name = is.nextString();
+			Replay.getRecd(this, is.subStream(), name);
+		}
 		validate();
 	}
 

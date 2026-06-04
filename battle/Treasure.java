@@ -9,6 +9,7 @@ import common.io.json.JsonField.GenType;
 import common.pack.FixIndexList.FixIndexMap;
 import common.pack.SortedPackSet;
 import common.pack.UserProfile;
+import common.pack.oldFix.ISStream;
 import common.system.files.VFile;
 import common.util.Data;
 import common.util.unit.Level;
@@ -121,6 +122,14 @@ public class Treasure extends Data {
 		bslv = t.bslv.clone();
 		base = t.base.clone();
 		deco = t.deco.clone();
+	}
+
+	/**
+	 * read Treasure from data
+	 */
+	protected Treasure(Basis bas, int ver, ISStream is) {
+		b = bas;
+		zread(ver, is);
 	}
 
 	/**
@@ -266,12 +275,28 @@ public class Treasure extends Data {
 	}
 
 	/**
+	 * get reverse cat initial cool down time
+	 */
+	public int getIniRes(int res, int comboInc) {
+		float research = (tech[LV_RES] - 1) * 6 + trea[T_RES] * 0.3f;
+		float deduction = research + (float) Math.floor(research * comboInc / 100f);
+		return (int) Math.max(0, res - deduction);
+	}
+
+	/**
 	 * get reverse cat cool down time
 	 */
 	public int getRevRes(int res) {
 		float research = (tech[LV_RES] - 1) * 6 + trea[T_RES] * 0.3f;
 		return (int) Math.max(60, res + research);
+	}
 
+	/**
+	 * get reverse cat initial cool down time
+	 */
+	public int getIniRes(int res) {
+		float research = (tech[LV_RES] - 1) * 6 + trea[T_RES] * 0.3f;
+		return (int) Math.max(0, res + research);
 	}
 
 	/**
@@ -435,5 +460,60 @@ public class Treasure extends Data {
 			return false;
 		return Arrays.equals(gods, tres.gods) && Arrays.equals(fruit, tres.fruit) && Arrays.equals(bslv, tres.bslv)
 				&& Arrays.equals(tech, tres.tech) && Arrays.equals(trea, tres.trea);
+	}
+
+	/**
+	 * read date from file, support multiple versions
+	 */
+	private void zread(int val, ISStream is) {
+		zread$000000();
+
+		if (val >= 305)
+			val = getVer(is.nextString());
+
+		if (val >= 400)
+			zread$000400(is);
+		else if (val >= 305)
+			zread$000305(is);
+		else if (val >= 301)
+			zread$000301(is, val == 304 ? 6 : 5);
+		else if (val >= 203)
+			zread$000203(is);
+	}
+
+	private void zread$000203(ISStream is) {
+		for (int i = 0; i < 8; i++)
+			tech[i] = is.nextByte();
+		for (int i = 0; i < 9; i++)
+			trea[i] = is.nextShort();
+		alien = is.nextInt();
+		star = is.nextInt();
+		fruit = is.nextIntsB();
+		gods = is.nextIntsB();
+	}
+
+	private void zread$000301(ISStream is, int len) {
+		zread$000203(is);
+		for (int i = 0; i < len; i++)
+			bslv[i] = is.nextByte();
+	}
+
+	private void zread$000305(ISStream is) {
+		zread$000203(is);
+		int[] temp = is.nextIntsB();
+        System.arraycopy(temp, 0, bslv, 0, temp.length);
+	}
+
+	private void zread$000400(ISStream is) {
+		int[] lv = is.nextIntsB();
+		int[] tr = is.nextIntsB();
+        System.arraycopy(lv, 0, tech, 0, Math.min(LV_TOT, lv.length));
+        System.arraycopy(tr, 0, trea, 0, Math.min(T_TOT, tr.length));
+		alien = is.nextInt();
+		star = is.nextInt();
+		fruit = is.nextIntsB();
+		gods = is.nextIntsB();
+		int[] bs = is.nextIntsB();
+        System.arraycopy(bs, 0, bslv, 0, bs.length);
 	}
 }

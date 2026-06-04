@@ -51,6 +51,10 @@ public abstract class AbEntity extends BattleObj {
 		return Math.min(100f, 100f * health / maxH);
 	}
 
+	public boolean trackSpawn() {
+		return false;
+	}
+
 	public abstract float calcDamageMult(int dmg, Entity e, MaskAtk matk);
 
 	public abstract boolean damaged(AttackAb atk);

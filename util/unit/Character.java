@@ -100,7 +100,7 @@ public abstract class Character extends Animable<AnimU<?>, AnimU.UType> implemen
                                                     int type = jdu.get("type").getAsInt();
                                                     if (UserProfile.isOlderPack(pack, "0.5.2.0")) {
                                                         if (UserProfile.isOlderPack(pack, "0.5.1.0"))
-                                                            type = reorderTrait(type);
+                                                            type = Trait.reorderTrait(type);
                                                         //Finish 0.5.1.0 check
                                                         if (ent.tba != 0)
                                                             ent.tba += ent.getPost(false, 0) + 1;
@@ -196,48 +196,6 @@ public abstract class Character extends Animable<AnimU<?>, AnimU.UType> implemen
     }
 
     public abstract String getExplanation();
-
-    private static int reorderTrait(int oldTrait) {
-        int newTrait = 0;
-
-        for(int i = 0; i < TRAIT_TOT; i++) {
-            if(((oldTrait >> i) & 1) > 0) {
-                switch (i) {
-                    case 0:
-                        newTrait |= TB_WHITE;
-                        break;
-                    case 1:
-                        newTrait |= TB_RED;
-                        break;
-                    case 2:
-                        newTrait |= TB_FLOAT;
-                        break;
-                    case 3:
-                        newTrait |= TB_BLACK;
-                        break;
-                    case 4:
-                        newTrait |= TB_METAL;
-                        break;
-                    case 5:
-                        newTrait |= TB_ANGEL;
-                        break;
-                    case 6:
-                        newTrait |= TB_ALIEN;
-                        break;
-                    case 7:
-                        newTrait |= TB_ZOMBIE;
-                        break;
-                    case 8:
-                        newTrait |= TB_RELIC;
-                        break;
-                    default:
-                        newTrait |= 1 << i;
-                }
-            }
-        }
-
-        return newTrait;
-    }
 
     private static int reorderAbi(int ab, int ver) {
         int newAbi = 0, abiAdd = 0;

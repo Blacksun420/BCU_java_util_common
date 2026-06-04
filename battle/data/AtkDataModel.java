@@ -10,6 +10,8 @@ import common.pack.Identifier;
 import common.pack.PackData;
 import common.pack.SortedPackSet;
 import common.pack.UserProfile;
+import common.pack.oldFix.ISStream;
+import common.pack.oldFix.VerFixer;
 import common.system.BasedCopable;
 import common.util.Data;
 import common.util.stage.Music;
@@ -86,6 +88,27 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 		targ = am.getTarget();
 		alt = am.getAltAbi();
 		move = am.getMove();
+	}
+
+	protected AtkDataModel(CustomEntity ent, ISStream is) {
+		ce = ent;
+		proc = Proc.blank();
+		int ver = getVer(is.nextString());
+		if (ver >= 404) {
+			str = is.nextString();
+			atk = is.nextInt();
+			pre = is.nextInt();
+			ld0 = is.nextInt();
+			ld1 = is.nextInt();
+			targ = is.nextInt();
+			count = is.nextInt();
+			dire = is.nextInt();
+			alt = is.nextInt();
+			move = is.nextInt();
+			int bm = is.nextInt();
+			range = (bm & 1) > 0;
+			proc = VerFixer.fixProc(is.nextIntsBB());
+		}
 	}
 
 	@Override

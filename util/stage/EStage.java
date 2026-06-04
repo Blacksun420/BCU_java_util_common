@@ -127,7 +127,7 @@ public class EStage extends BattleObj {
 		if (ind < 0)
 			return null;
 		SCDef.Line data = s.data.getSimple(ind);
-		if (data.castle_0 == 0) {
+		if (data.castle_0 <= 0) {
 			num[ind] = -1;
 			float multi = data.multiple * mul * 0.01f;
 			if(sb.st.trail)
@@ -141,7 +141,7 @@ public class EStage extends BattleObj {
 				enemy = data.enemy;
 
 			AbEnemy e = Identifier.getOr(enemy, AbEnemy.class);
-			return e.getEntity(sb, this, multi, mulatk, data.layer_0, data.layer_1, data.boss >= 1 ? -2 : -1, 0);
+			return e.getEntity(sb, this, multi, mulatk, data.layer_0, data.layer_1, data.boss >= 1 ? -2 : -1, data.castle_0);
 		}
 		return null;
 	}

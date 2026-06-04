@@ -3086,6 +3086,11 @@ public class Data {
 	public static final float VILLAIN_KILLER_ATTACK = 2.5f;
 	public static final float VILLAIN_KILLER_RESIST = 0.4f;
 
+	//Base parameter
+	public static final byte BP_TRACK = 1;
+	public static final byte BP_HB = 2;
+	public static final byte BP_STATIC = 4;
+
 	public static final char[] SUFX = new char[] { 'f', 'c', 's', 'u' };
 
 	public static EffAnim.EffAnimStore effas() {

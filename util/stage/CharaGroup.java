@@ -14,6 +14,8 @@ import common.pack.IndexContainer.Indexable;
 import common.pack.PackData;
 import common.pack.PackData.UserPack;
 import common.pack.SortedPackSet;
+import common.pack.oldFix.ISStream;
+import common.pack.oldFix.VerFixer;
 import common.util.Data;
 import common.util.unit.AbForm;
 import common.util.unit.AbUnit;
@@ -63,6 +65,21 @@ public class CharaGroup extends Data implements Indexable<PackData, CharaGroup>,
 				fset.addAll(Arrays.asList(u.getForms()));
 		}
 		id = Identifier.parseInt(ID, CharaGroup.class);
+	}
+
+	public CharaGroup(UserPack mc, ISStream is) throws VerFixer.VerFixerException {
+		int ver = getVer(is.nextString());
+		if (ver != 308)
+			throw new VerFixer.VerFixerException("CharaGroup storage expected version 308, got " + ver + " instead");
+		name = is.nextString();
+		id = mc.getID(CharaGroup.class, is.nextInt());
+		type = is.nextInt();
+		int m = is.nextInt();
+		for (int j = 0; j < m; j++) {
+			Unit u = (Unit) Identifier.parseInt(is.nextInt(), Unit.class).get();
+			if (u != null)
+				fset.addAll(Arrays.asList(u.forms));
+		}
 	}
 
 	public boolean allow(Form f) {

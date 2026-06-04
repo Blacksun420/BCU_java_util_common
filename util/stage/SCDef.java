@@ -7,11 +7,14 @@ import common.io.json.JsonField;
 import common.io.json.JsonField.GenType;
 import common.pack.FixIndexList;
 import common.pack.Identifier;
+import common.pack.oldFix.ISStream;
 import common.system.Copable;
+import common.util.Data;
 import common.util.unit.AbEnemy;
 import common.util.unit.EneRand;
 import common.util.unit.Enemy;
 
+import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
@@ -223,5 +226,38 @@ public class SCDef implements Copable<SCDef> {
 
 	public boolean empty() {
 		return datas.length + sdef == 0 && smap.isEmpty() && sub.isEmpty();
+	}
+
+	public static SCDef readOldData(ISStream is) {
+		int t = is.nextInt();
+		int ver = Data.getVer(is.nextString());
+		if (t == 0 && ver >= 402) {
+			int n = is.nextInt();
+			int m = is.nextInt();
+			SCDef scd = new SCDef(n);
+			int[] tmp = new int[SIZE];
+			for (int i = 0; i < n; i++) {
+				Arrays.fill(tmp, 0);
+				for (int j = 0; j < m; j++)
+					tmp[j] = is.nextInt();
+				if (m < 14)
+					tmp[M1] = tmp[M];
+				if (tmp[C0] == 0)
+					tmp[C0] = Data.BP_STATIC;
+				scd.datas[i] = new Line(tmp);
+			}
+			scd.sdef = is.nextInt();
+			n = is.nextInt();
+			for (int i = 0; i < n; i++)
+				scd.smap.put(Identifier.parseInt(is.nextInt(), AbEnemy.class), is.nextInt());
+			n = is.nextInt();
+			for (int i = 0; i < n; i++) {
+				SCGroup scg = SCGroup.readOldData(is);
+				if (scg != null)
+					scd.sub.set(scg.id, scg);
+			}
+			return scd;
+		}
+		return null;
 	}
 }

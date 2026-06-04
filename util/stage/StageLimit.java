@@ -129,9 +129,11 @@ public class StageLimit extends Data implements BattleStatic, Cloneable {
         combined.coolStart = coolStart || second.coolStart;
         combined.maxUnitSpawn = maxUnitSpawn == 0 ? second.maxUnitSpawn : second.maxUnitSpawn == 0 ? maxUnitSpawn : Math.min(maxUnitSpawn, second.maxUnitSpawn);
         for (int i = 0; i < costMultiplier.length; i++)
-            combined.costMultiplier[i] = Math.max(costMultiplier[i], second.costMultiplier[i]);
+            combined.costMultiplier[i] = costMultiplier[i] == 100 ? second.costMultiplier[i] : second.costMultiplier[i] == 100 ?
+                costMultiplier[i] : Math.max(costMultiplier[i], second.costMultiplier[i]);
         for (int i = 0; i < cooldownMultiplier.length; i++)
-            combined.cooldownMultiplier[i] = Math.max(cooldownMultiplier[i], second.cooldownMultiplier[i]);
+            combined.cooldownMultiplier[i] = cooldownMultiplier[i] == 100 ? second.cooldownMultiplier[i] : second.cooldownMultiplier[i] == 100 ?
+                cooldownMultiplier[i] : Math.max(cooldownMultiplier[i], second.cooldownMultiplier[i]);
         combined.bannedCatCombo.addAll(bannedCatCombo);
         combined.bannedCatCombo.addAll(second.bannedCatCombo);
         combined.bannedOrb.addAll(bannedOrb);

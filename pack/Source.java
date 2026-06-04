@@ -638,7 +638,7 @@ public abstract class Source {
 			return new FileOutputStream(f);
 		}
 
-		protected void save(UserPack up, boolean auto) throws IOException {
+		public void save(UserPack up, boolean auto) throws IOException {
 			File f = auto ? CommonStatic.ctx.getWorkspaceFile("./_autosave/pack_" + id + ".json") : getFile("pack.json");
 			Context.check(f);
 			OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(f), StandardCharsets.UTF_8);

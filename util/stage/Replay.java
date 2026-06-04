@@ -14,13 +14,11 @@ import common.io.json.JsonDecoder;
 import common.io.json.JsonEncoder;
 import common.io.json.JsonField;
 import common.io.json.JsonField.IOType;
-import common.pack.Context;
+import common.pack.*;
 import common.pack.Context.ErrType;
-import common.pack.Identifier;
-import common.pack.Source;
 import common.pack.Source.ResourceLocation;
 import common.pack.Source.Workspace;
-import common.pack.UserProfile;
+import common.pack.oldFix.ISStream;
 import common.util.Data;
 
 import java.io.*;
@@ -217,5 +215,74 @@ public class Replay extends Data {
 			sniperCoords = new HashMap<>();
 		if (jobj.has("conf"))
 			cfg = jobj.getAsJsonArray("conf").get(0).getAsByte();
+	}
+
+	public static void getRecd(Stage stage, ISStream is, String str) {
+		String sid = stage.getCont().getCont().getSID();
+		ResourceLocation rl = new ResourceLocation(".temp_" + sid, str);
+		stage.recd.add(getRecd(is, rl, stage));
+	}
+
+	private static Replay getRecd(ISStream is, ResourceLocation name, Stage st) {
+		int val = getVer(is.nextString());
+		if (val < 401)
+			return null;
+		long seed = is.nextLong();
+		int[] conf = is.nextIntsB();
+		int star = is.nextInt();
+		BasisLU lu = BasisLU.zread(is.subStream());
+		ISStream action = is.subStream();
+		int pid = is.nextInt();
+		if (st == null)
+			if (pid == 0) {
+				int id = is.nextInt();
+				StageMap sm = MapColc.DefMapColc.getMap(id / 1000);
+				st = sm.list.get(id % 1000);
+				if (st == null) {
+					return null;
+				}
+			} else {
+				st = zreads$000401(is, pid);
+			}
+		else {
+			is.nextString();
+			is.nextString();
+			is.nextString();
+		}
+		Replay ans = new Replay(lu, st.id, star, conf[0], seed, false, (byte)0);
+		int[] act = new int[action.nextInt()];
+		for (int i = 0; i < act.length; i++)
+			act[i] = action.nextInt();
+		ans.action = act;
+		ans.rl = name;
+		ans.write();
+		return ans;
+	}
+
+	private static Stage zreads$000401(ISStream is, int pid) {
+		String mcn = is.nextString();
+		String smid = is.nextString();
+		String stid = is.nextString();
+		PackData pack = UserProfile.getPack(Data.hex(pid));
+		if (pid != 0 && pack == null) {
+			return null;
+		}
+		MapColc mc = null;
+		if (pid == 0)
+			mc = MapColc.DefMapColc.getMap(mcn);
+		else
+			mc = ((PackData.UserPack) pack).mc;
+		StageMap sm = null;
+		for (StageMap map : mc.maps)
+			if (map.names.toString().equals(smid))
+				sm = map;
+		if (sm == null) {
+			return null;
+		}
+		Stage st = null;
+		for (Stage s : sm.list)
+			if (s.names.toString().equals(stid))
+				st = s;
+		return st;
 	}
 }

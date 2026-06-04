@@ -6,9 +6,13 @@ import common.io.json.JsonDecoder;
 import common.io.json.JsonField;
 import common.io.json.JsonField.CompatType;
 import common.io.json.JsonField.GenType;
+import common.pack.Identifier;
 import common.pack.PackData.UserPack;
 import common.pack.SortedPackSet;
+import common.pack.oldFix.ISStream;
 import common.util.Data;
+import common.util.pack.Soul;
+import common.util.unit.Trait;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -451,6 +455,43 @@ public abstract class CustomEntity extends DataEntity {
 				traits.remove(i);
 				i--;
 			}
+	}
+
+	protected void convertOldData(ISStream is) {
+		int ver = getVer(is.nextString());
+		if (ver >= 404) {
+			hp = is.nextInt();
+			hb = is.nextInt();
+			speed = is.nextInt();
+			range = is.nextInt();
+			abi = is.nextInt();
+			int type = is.nextInt();
+			traits = Trait.convertBitmask(Trait.reorderTrait(type), false);
+			width = is.nextInt();
+			getProc().BARRIER.health = is.nextInt();
+			tba = is.nextInt();
+			base = is.nextInt();
+			touch = is.nextInt();
+			loop = is.nextInt();
+			death = Identifier.parseInt(is.nextInt(), Soul.class);
+			common = is.nextInt() > 0;
+			rep = new AtkDataModel(this, is);
+			int m = is.nextInt();
+			AtkDataModel[] set = new AtkDataModel[m];
+			for (int i = 0; i < m; i++)
+				set[i] = new AtkDataModel(this, is);
+			int n = is.nextInt();
+			AtkDataModel[] atks = new AtkDataModel[n];
+			for (int i = 0; i < n; i++)
+				atks[i] = set[is.nextInt()];
+			hits.clear();
+			hits.add(atks);
+			int adi = is.nextInt();
+			if ((adi & 1) > 0)
+				revs = new AtkDataModel[]{new AtkDataModel(this, is)};
+			if ((adi & 2) > 0)
+				ress = new AtkDataModel[]{new AtkDataModel(this, is)};
+		}
 	}
 
 	@JsonField(tag = "atks", io = JsonField.IOType.W, gen = GenType.GEN, usePool = true, backCompat = CompatType.UPST)

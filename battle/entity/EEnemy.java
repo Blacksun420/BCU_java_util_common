@@ -32,8 +32,8 @@ public class EEnemy extends Entity {
 		mult = magnif;
 		mula = atkMagnif;
 		mark = m;
-		line = l;
-		isBase = mark <= -1;
+		baseProperties = mark >= 0 ? -1 : Math.abs(l);
+		line = isBase() ? 0 : l;
 		traits = new SortedPackSet<>(de.getTraits(false));
 
 		skipSpawnBurrow = mark >= 1;
@@ -103,7 +103,7 @@ public class EEnemy extends Entity {
 
 	@Override
 	public boolean damaged(AttackAb atk) {
-		if (isBase && dire == 1 && basis.baseBarrier > 0) {
+		if (isBase() && dire == 1 && basis.baseBarrier > 0) {
 			anim.getEff(A_GUARD);
 			return false;
 		}

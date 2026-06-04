@@ -29,6 +29,8 @@ public class UniRand extends Data implements AbUnit, AbForm {
     public int price = 50;
     @JsonField(defval = "60")
     public int cooldown = 60;
+    @JsonField
+    public int initial_cd = 60;
 
     public static final byte T_NL = 0, T_LL = 1;
 

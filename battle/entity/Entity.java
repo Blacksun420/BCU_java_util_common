@@ -149,7 +149,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			} else
 				anim.paraTo(back, e.data.getPack().rev != f);
 			f |= (negSpeed && anim.type == AnimU.TYPEDEF[AnimU.WALK]);
-			if (e.kbTime == 0 || e.kb.kbType != INT_WARP)
+			if (e.anim.dead == -1 && (e.kbTime == 0 || e.kb.kbType != INT_WARP))
 				anim.draw(gra, p, siz, e.data.getPack().rev != f);
 			anim.paraTo(null);
 			gra.setTransform(at);
@@ -850,7 +850,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		private void updateKB() {
 			e.kbTime = Math.max(0, e.kbTime - e.getTime());
 			if (e.kbTime == 0) {
-				if(e.isBase) {
+				if(e.isBase() && e.health <= 0) {
 					e.anim.setAnim(AnimU.TYPEDEF[AnimU.HB], false);
 					return;
 				}
@@ -895,7 +895,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 							}
 					}
 				} else if (kbType == INT_KB) {
-					if (e.isBase && e.health <= 0)
+					if (e.isBase() && e.health <= 0)
 						return;
 
 					if (time == 1)
@@ -1617,7 +1617,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	/**
 	 * const field
 	 */
-	protected boolean isBase;
+	protected int baseProperties = -1;
 
 	/**
 	 * KB/burrow state: <br>
@@ -1789,6 +1789,11 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		status.regencount = getProc().HPREGEN.scaleWithBuff ? (int)(getProc().HPREGEN.amount * hpMagnif) : getProc().HPREGEN.amount;
 		if (data.getRealTBA() < 0)
 			waitTime = Math.max(data.getTBA(), 0);
+	}
+
+	@Override
+	public boolean trackSpawn() {
+		return isBase() && (baseProperties & BP_TRACK) > 0;
 	}
 
 	/**
@@ -2060,7 +2065,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		}
 
 		tokens.add(atk);
-		atk.playSound(isBase);
+		atk.playSound(isBase());
 		hit = 2;
 		damage += dmg;
 		zx.damaged(atk);
@@ -2130,7 +2135,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					if (status.strengthen != 0)
 						reflectAtk += reflectAtk * status.strengthen / 100;
 					reflectAtk *= auras.getAtkAura();
-					if (!isBase)
+					if (!isBase())
 						if (atk.getProc().ARMOR.prob > 0 && getProc().IMUARMOR.checkImu(atk.getProc().ARMOR.mult) && getProc().IMUARMOR.mult < 100)
 							reflectAtk *= (100 + atk.getProc().ARMOR.mult) / 100.0;
 						else if (!status.armors.isEmpty())
@@ -2147,7 +2152,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			}
 
 			int d = FDmg;
-			if (!isBase)
+			if (!isBase())
 				if (atk.getProc().ARMOR.prob > 0 && getProc().IMUARMOR.checkImu(atk.getProc().ARMOR.mult) && getProc().IMUARMOR.mult < 100)
 					d *= (100 + atk.getProc().ARMOR.mult) / 100.0;
 				else if (!status.armors.isEmpty())
@@ -2245,7 +2250,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			seal(atk, time);
 		if (atkProc.POISON.time > 0 && atkProc.POISON.conditions.check(false, roots))
 			poison(atk);
-		if (!isBase && atkProc.ARMOR.time > 0 && atkProc.ARMOR.conditions.check(false, roots))
+		if (!isBase() && atkProc.ARMOR.time > 0 && atkProc.ARMOR.conditions.check(false, roots))
 			breakArmor(atk, time);
 		if (atkProc.SPEED.time > 0 && atkProc.SPEED.conditions.check(false, roots))
 			hasten(atk, time);
@@ -2531,7 +2536,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 * Interrupt the current animation and set up KB/Warp/BossWave.
 	 */
 	public void interrupt(int t, float d) {
-		if(isBase && health <= 0)
+		if(isBase() && health <= 0)
 			return;
 
 		kb.interrupt(t, d);
@@ -2539,7 +2544,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 	@Override
 	public boolean isBase() {
-		return isBase;
+		return baseProperties != -1;
 	}
 
 	/**
@@ -2594,7 +2599,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			damage = (long) (damage * (100 + status.getArmor()) / 100.0);
 
 		damage = (long)(damage * auras.getDefAura());
-		if (!isBase && damage > 0 && kbTime <= 0 && kbTime != -1 && (ext <= damage * hb || health < damage))
+		boolean canHB = kbTime <= 0 && kbTime != -1 && (!isBase() || (baseProperties & BP_HB) > 0);
+		if (canHB && damage > 0 && (ext <= damage * hb || health < damage))
 			interrupt(INT_HB, KB_DIS[INT_HB]);
 		health -= damage;
 		if (health > maxH)
@@ -2621,7 +2627,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			token.model.invokeLater(token, this);
 		tokens.clear();
 
-		if(isBase && health <= 0)
+		if(isBase() && health <= 0)
 			kbTime = 1;
 
 		kb.doInterrupt();
@@ -2632,7 +2638,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		// update ZKill
 		zx.postUpdate();
 
-		if (isBase && health < 0) {
+		if (isBase() && health < 0) {
 			health = 0;
 			atkm.stopAtk();
 			anim.setAnim(AnimU.TYPEDEF[AnimU.HB], true);
@@ -2727,7 +2733,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 * @param ent The unit's trait list
 	 */
 	public boolean targetable(Entity ent) {
-		if (isBase) return true;
+		if (isBase()) return true;
 		for (int j = 0; j < traits.size(); j++)
 			if (ent.traits.contains(traits.get(j)))
 				return true;
@@ -2913,13 +2919,13 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 
 		if (tba > 0)
 			waitTime = waitTime - getTime();
-		boolean canAttack = canAct && (!isBase || !(data.getSpeed() == 0 && data.getRange() == 0 && data.allAtk(0) == 0));
+		boolean canAttack = canAct && (!isBase() || !(data.getSpeed() == 0 && data.getRange() == 0 && data.allAtk(0) == 0));
 		// update wait and attack state
 		if (canAttack) {
 			// if it can attack, setup attack state
-			if (touchEnemy && atkm.attacksLeft != 0 && nstop && tba + atkm.atkTime == 0 && !(isBase && health <= 0))
+			if (touchEnemy && atkm.attacksLeft != 0 && nstop && tba + atkm.atkTime == 0 && !(isBase() && health <= 0))
 				atkm.setUp();
-			else if ((tba >= 0 || !touchEnemy) && touch && atkm.atkTime == 0 && !(isBase && health <= 0)) { // update waiting state
+			else if ((tba >= 0 || !touchEnemy) && touch && atkm.atkTime == 0 && !(isBase() && health <= 0)) { // update waiting state
 				double mov = getProc().AI.retreatDist > 0 ? getMov(0) : 0;
 				if (anim.negSpeed) {
 					pos += (float)(mov * getDire());
@@ -2994,7 +3000,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 * determine the amount of damage received from this attack
 	 */
 	protected int getDamage(AttackAb atk, int ans) {
-		if (isBase)
+		if (isBase())
 			ans *= 1 + atk.getProc().ATKBASE.mult / 100.0;
 		return ans;
 	}
@@ -3043,7 +3049,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			else
 				ans *= (100 - (1f * remote.reduction / remote.prob)) * (100 - (1f * remote.block / remote.prob)) / 100f;
 		}
-		if (isBase)
+		if (isBase())
 			ans *= 1 + matk.getProc().ATKBASE.mult / 100.0;
 		if (barrier.health != 0) {
 			if (matk.getProc().BREAK.prob > 0) {
@@ -3137,6 +3143,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 * @return Effective Speed
 	 */
 	public float getSpeed(int spd, float extmov) {
+		if (isBase() && (baseProperties & BP_STATIC) > 0)
+			return 0;
 		float mov = status.slow > 0 ? 0.25f : spd * 0.5f;
 		if (!status.speeds.isEmpty() && status.slow == 0)
 			mov = status.getSpeed(mov);

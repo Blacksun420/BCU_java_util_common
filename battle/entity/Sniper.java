@@ -117,7 +117,7 @@ public class Sniper extends AtkModelAb {
 		if(preTime == 0) {
 			pos = -1;
 			for (Entity e : b.le)
-				if (e.dire == 1 && e.pos > pos && !e.isBase && (e.touchable() & TCH_N) > 0) {
+				if (e.dire == 1 && e.pos > pos && !e.isBase() && (e.touchable() & TCH_N) > 0) {
 					target = e;
 					pos = e.pos;
 					layer = e.layer;

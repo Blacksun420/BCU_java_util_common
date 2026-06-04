@@ -14,6 +14,7 @@ import common.pack.PackData.PackDesc;
 import common.pack.PackData.UserPack;
 import common.pack.Source.Workspace;
 import common.pack.Source.ZipSource;
+import common.pack.oldFix.VerFixer;
 import common.util.Data;
 
 import java.io.File;
@@ -142,6 +143,8 @@ public class UserProfile {
 			return profile.pending.get(str);
 		if (profile.packmap.containsKey(str))
 			return profile.packmap.get(str);
+		if (profile.fixpending != null && profile.fixpending.containsKey(str.replace(".temp_","")))
+			return profile.fixpending.get(str.replace(".temp_","")).data;
 		return profile.skipped.get(str);
 	}
 
@@ -157,6 +160,12 @@ public class UserProfile {
 		if (profile.pending == null)
 			profile.pending = new HashMap<>();
 
+		File oldPacks = CommonStatic.ctx.getAuxFile("./pack");
+		if (oldPacks.exists()) {
+			if (profile.fixpending == null)
+				profile.fixpending = new HashMap<>();
+			CommonStatic.ctx.noticeErr(() -> VerFixer.fix(profile.fixpending), ErrType.ERROR, "failed to convert old format");
+		}
 		File packs = CommonStatic.ctx.getAuxFile("./packs");
 		File workspace = CommonStatic.ctx.getWorkspaceFile(".");
 		if (packs.exists()) {
@@ -422,6 +431,7 @@ public class UserProfile {
 
 	public Map<String, UserPack> pending = new HashMap<>();
 	public Map<String, UserPack> skipped = new HashMap<>();
+	private Map<String, VerFixer> fixpending = new HashMap<>();
 	public int df = 0;
 
 	private UserProfile() {
