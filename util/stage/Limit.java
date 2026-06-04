@@ -72,7 +72,7 @@ public class Limit extends Data implements BattleStatic {
 
 			name = is.nextString();
 			sid = is.nextInt();
-			star = is.nextInt();
+			setStar(is.nextInt());
 			rare = is.nextInt();
 			num = is.nextByte();
 			line = is.nextByte();

@@ -197,7 +197,7 @@ public abstract class Character extends Animable<AnimU<?>, AnimU.UType> implemen
 
     public abstract String getExplanation();
 
-    private static int reorderAbi(int ab, int ver) {
+    public static int reorderAbi(int ab, int ver) {
         int newAbi = 0, abiAdd = 0;
         switch (ver) {
             case 0: //Reformat moving attack, seal, and poison (not toxic) immunity

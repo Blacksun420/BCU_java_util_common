@@ -40,7 +40,7 @@ import java.util.Set;
 import static common.pack.Source.SourceAnimLoader.*;
 
 @SuppressWarnings("deprecation")
-public abstract class VerFixer extends Source {//TODO: Use VER FIXER to fix even older bcupack files
+public abstract class VerFixer extends Source {
 
     private static final String ID_FIXER = "id_fixer";
 
@@ -137,24 +137,48 @@ public abstract class VerFixer extends Source {//TODO: Use VER FIXER to fix even
     private static class PackFixer extends VerFixer {
 
         private final ImgReader r;
+        private final int ver;
 
-        public PackFixer(String id, ImgReader r) {
+        public PackFixer(String id, int ver, ImgReader r) {
             super(id);
+            this.ver = ver;
             this.r = r;
         }
 
-        @Deprecated
         @Override
         protected void load() throws Exception {
             data.desc.names.put(is.nextString());
-            loadEnemies(is.subStream());
-            loadUnits(is.subStream());
-            loadCastles(is.subStream());
-            loadBackgrounds(is.subStream());
-            loadMusics(is.subStream());
+            if (ver >= 401) {
+                loadEnemies(is.subStream());
+                loadUnits(is.subStream());
+                loadCastles(is.subStream());
+                loadBackgrounds(is.subStream());
+                if (ver == 402)
+                    loadMusics(is.subStream());
+            } else {
+                load$000303(is, r);
+                if (ver >= 306) {
+                    loadCastles(is.subStream());
+                    loadBackgrounds(is.subStream());
+                }
+            }
             data.mc = new PackMapColc(data, is);
             is.close();
             is = null;
+        }
+
+        private void load$000303(ISStream is, ImgReader r) {
+            /*int n = is.nextInt();
+            for (int i = 0; i < n; i++) {
+                int hash = is.nextInt();
+                String str = is.nextString();
+                CustomEnemy ce = new CustomEnemy();
+                ce.convertOldData(ver, is);
+                AnimCI ac = new AnimCI(is.subStream(), r);
+                Enemy e = new Enemy(new Identifier<>(id, Enemy.class, hash % 1000), ac, ce);
+                e.names.put(str);
+                data.enemies.set(hash % 1000, e);
+            }*/
         }
 
         private void loadBackgrounds(ISStream is) throws Exception {
@@ -206,6 +230,7 @@ public abstract class VerFixer extends Source {//TODO: Use VER FIXER to fix even
                 AnimCE ac = decodeAnim(".temp_" + id, is.subStream(), r);
                 Enemy e = new Enemy(new Identifier<>(id, Enemy.class, hash % 1000), ac, ce);
                 e.names.put(str);
+                ce.limit = CommonStatic.customEnemyMinPos(ac.loader.getMM());
                 data.enemies.set(hash % 1000, e);
             }
             n = is.nextInt();
@@ -259,6 +284,7 @@ public abstract class VerFixer extends Source {//TODO: Use VER FIXER to fix even
                     CustomUnit cu = new CustomUnit();
                     cu.convertOldData(Data.getVer(is.nextString()), is);
                     u.forms[j] = new Form(u, j, name, ac, cu);
+                    cu.limit = CommonStatic.customFormMinPos(ac.loader.getMM());
                 }
                 data.units.set(ind, u);
             }
@@ -289,25 +315,36 @@ public abstract class VerFixer extends Source {//TODO: Use VER FIXER to fix even
             Context.delete(CommonStatic.ctx.getAuxFile("./pack"));
     }
 
-    private static VerFixer fix_bcupack(ISStream is, ImgReader r) throws Exception {
+    private static VerFixer fix_bcupack(ISStream is, ImgReader r) {
         int ver = Data.getVer(is.nextString());
-        if (ver != 402)
+        if (ver != 402) {
             throw new VerFixerException("unexpected bcupack data version: " + ver + ", requires 402");
-        InStream head = is.subStream();
-        PackDesc desc = new PackDesc(Data.hex(head.nextInt()));
-        int n = head.nextByte();
-        for (int i = 0; i < n; i++)
-            desc.dependency.add(Data.hex(head.nextInt()));
-        desc.BCU_VERSION = Data.revVer(head.nextInt());
-        if (!desc.BCU_VERSION.startsWith("4-11"))
-            System.out.println("unexpected pack BCU version: " + desc.BCU_VERSION + ", requires 4.11.x");//throw new VerFixerException("unexpected pack BCU version: " + desc.BCU_VERSION + ", requires 4.11.x");
-        desc.exportDate = head.nextString();
-        desc.version = head.nextInt();
-        desc.author = head.nextString();
-        PackFixer fix = new PackFixer(desc.id, r);
-        fix.data = new UserPack(desc, fix);
-        fix.is = is;
-        return fix;
+            /*PackDesc desc = new PackDesc();
+            desc.id = Data.hex(is.nextInt());
+            int n = is.nextByte();
+            for (int i = 0; i < n; i++)
+                desc.dependency.add(Data.hex(is.nextInt()));
+            PackFixer fix = new PackFixer(desc.id, ver, r);
+            fix.data = new UserPack(desc, fix);
+            fix.is = is;
+            return fix;*/
+        } else {
+            InStream head = is.subStream();
+            PackDesc desc = new PackDesc(Data.hex(head.nextInt()));
+            int n = head.nextByte();
+            for (int i = 0; i < n; i++)
+                desc.dependency.add(Data.hex(head.nextInt()));
+            desc.BCU_VERSION = Data.getVer(head.nextInt());
+            if (!desc.BCU_VERSION.startsWith("4.11"))
+                System.out.println("unexpected pack BCU version: " + desc.BCU_VERSION + ", requires 4.11.x");//throw new VerFixerException("unexpected pack BCU version: " + desc.BCU_VERSION + ", requires 4.11.x");
+            desc.exportDate = head.nextString();
+            desc.version = head.nextInt();
+            desc.author = head.nextString();
+            PackFixer fix = new PackFixer(desc.id, ver, r);
+            fix.data = new UserPack(desc, fix);
+            fix.is = is;
+            return fix;
+        }
     }
 
     private static void move(String a, String b) {

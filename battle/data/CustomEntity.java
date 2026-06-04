@@ -12,11 +12,14 @@ import common.pack.SortedPackSet;
 import common.pack.oldFix.ISStream;
 import common.util.Data;
 import common.util.pack.Soul;
+import common.util.unit.AbEnemy;
 import common.util.unit.Trait;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static common.util.unit.Character.reorderAbi;
 
 @JsonClass(noTag = NoTag.LOAD)
 public abstract class CustomEntity extends DataEntity {
@@ -491,6 +494,58 @@ public abstract class CustomEntity extends DataEntity {
 				revs = new AtkDataModel[]{new AtkDataModel(this, is)};
 			if ((adi & 2) > 0)
 				ress = new AtkDataModel[]{new AtkDataModel(this, is)};
+
+			if (tba != 0)
+				tba += getPost(false, 0) + 1;
+
+			if ((abi & (1 << 18)) != 0) //Seal Immunity
+				getProc().IMUSEAL.mult = 100;
+			if ((abi & (1 << 7)) != 0) //Moving atk Immunity
+				getProc().IMUMOVING.mult = 100;
+			if ((abi & (1 << 12)) != 0) //Poison Immunity
+				getProc().IMUPOI.mult = 100;
+			abi = reorderAbi(abi, 0);
+
+			boolean bounty = (abi & 16) > 0;
+			boolean atkbase = (abi & 32) > 0;
+			for (AtkDataModel atk : getAllAtkModels()) {
+				if (atk.getProc().POISON.prob > 0)
+					atk.getProc().POISON.ignoreMetal = true;
+				if (atk.getProc().SUMMON.prob > 0)
+					if (atk.getProc().SUMMON.id != null && !AbEnemy.class.isAssignableFrom(atk.getProc().SUMMON.id.cls))
+						atk.getProc().SUMMON.fix_buff = true;
+
+				if (bounty) //2x money
+					atk.getProc().BOUNTY.mult = 100;
+				if (atkbase) //base destroyer
+					atk.getProc().ATKBASE.mult = 300;
+			}
+			abi = reorderAbi(abi, 1);
+
+			if ((abi & 32) > 0)
+				getProc().IMUWAVE.block = 100;
+			abi = reorderAbi(abi, 2);
+
+			getProc().DMGINC.mult = 100;
+			getProc().DEFINC.mult = 100;
+			if ((abi & 1) != 0) {
+				getProc().DMGINC.mult *= 1.5;
+				getProc().DEFINC.mult *= 2;
+			}
+			if ((abi & 2) != 0)//res
+				getProc().DEFINC.mult *= 4;
+			if ((abi & 4) != 0)//mas dmg
+				getProc().DMGINC.mult *= 3;
+			if ((abi & 16384) != 0)//ins res
+				getProc().DEFINC.mult *= 6;
+			if ((abi & 32768) != 0)//ins dmg
+				getProc().DMGINC.mult *= 5;
+
+			abi = reorderAbi(abi, 3);
+			if (getProc().DMGINC.mult == 100)
+				getProc().DMGINC.mult = 0;
+			if (getProc().DEFINC.mult == 100)
+				getProc().DEFINC.mult = 0;
 		}
 	}
 

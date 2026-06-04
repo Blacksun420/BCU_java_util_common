@@ -3127,6 +3127,9 @@ public class Data {
 		}
 		return ans;
 	}
+	public static String getVer(int ver) {
+		return ver / 1000000 % 100 + "." + ver / 10000 % 100 + "." + ver / 100 % 100 + "." + ver % 100;
+	}
 
 	public static String hex(int id) {
 		return trio(id / 1000) + trio(id % 1000);

@@ -17,6 +17,8 @@ import common.util.Data;
 import common.util.stage.Music;
 import common.util.unit.Trait;
 
+import static common.util.unit.Character.reorderAbi;
+
 @JsonClass(read = RType.FILL, noTag = NoTag.LOAD)
 public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataModel, CustomEntity> {
 
@@ -104,11 +106,15 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 			count = is.nextInt();
 			dire = is.nextInt();
 			alt = is.nextInt();
+			for (int i = 0; i <= 3; i++)
+				alt = reorderAbi(alt, i);
 			move = is.nextInt();
 			int bm = is.nextInt();
 			range = (bm & 1) > 0;
 			proc = VerFixer.fixProc(is.nextIntsBB());
 		}
+		if (pre == 0 && str.toLowerCase().startsWith("combo"))
+			str = "NC- " + str;
 	}
 
 	@Override
