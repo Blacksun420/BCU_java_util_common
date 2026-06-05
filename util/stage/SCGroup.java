@@ -63,9 +63,10 @@ public class SCGroup extends Data implements BasedCopable<SCGroup, Integer> {
 		return str;
 	}
 
-	public static SCGroup readOldData(ISStream is) {
-		int ver = getVer(is.nextString());
-		if (ver == 404) {
+	public static SCGroup readOldData(ISStream is, int ver) {
+		if (ver >= 402)
+			ver = getVer(is.nextString());
+		if (ver >= 404) {
 			int id = is.nextInt();
 			int n = is.nextInt();
 			int[] max = new int[n];
@@ -73,7 +74,8 @@ public class SCGroup extends Data implements BasedCopable<SCGroup, Integer> {
 				max[i] = is.nextInt();
 			is.nextInt();
 			return new SCGroup(id, max);
-		}
+		} else if (ver >= 401)
+			return new SCGroup(is.nextInt(), is.nextInt());
 		return null;
 	}
 }

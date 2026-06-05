@@ -17,7 +17,6 @@ import common.pack.PackData;
 import common.pack.PackData.UserPack;
 import common.pack.UserProfile;
 import common.pack.oldFix.ISStream;
-import common.pack.oldFix.VerFixer;
 import common.util.Data;
 import common.util.unit.AbForm;
 import common.util.unit.Form;
@@ -101,21 +100,26 @@ public class LvRestrict extends Data implements Indexable<PackData, LvRestrict> 
 			cgl.put(cg, lvr.cgl.get(cg).clone());
 	}
 
-	public LvRestrict(UserPack mc, ISStream is) throws VerFixer.VerFixerException {
+	public LvRestrict(UserPack mc, ISStream is) {
 		int ver = getVer(is.nextString());
-		if (ver != 308)
-			throw new VerFixer.VerFixerException("LvRestrict requires 308, got " + ver);
-		name = is.nextString();
+		if (ver >= 308)
+			name = is.nextString();
 		id = Identifier.parseInt(is.nextInt(), LvRestrict.class);
-		def = toNewFormat(is.nextIntsB());
+		int[] all = is.nextIntsB();
+		if (all.length >= 2)
+			def = toNewFormat(all);
 
 		int[][] tbb = is.nextIntsBB();
 		for (int i = 0; i < tbb.length; i++)
-			rs[i] = toNewFormat(tbb[i]);
+			if (tbb[i].length >= 2)
+				rs[i] = toNewFormat(tbb[i]);
 		int n = is.nextInt();
 		for (int i = 0; i < n; i++) {
 			int cg = is.nextInt();
-			Level lv = toNewFormat(is.nextIntsB());
+			int[] res = is.nextIntsB();
+			if (res.length < 2)
+				continue;
+			Level lv = toNewFormat(res);
 			CharaGroup cgs = mc.groups.get(cg);
 			if (cgs != null)
 				cgl.put(cgs, lv);
@@ -265,7 +269,7 @@ public class LvRestrict extends Data implements Indexable<PackData, LvRestrict> 
 		if (!(getCont() instanceof UserPack))
 			return;
 		UserPack pack = (UserPack)getCont();
-		if (pack.desc.FORK_VERSION < 10) {
+		if (pack.desc.FORK_VERSION < 10 && jobj.has("all")) {
 			def = toNewFormat(JsonDecoder.decode(jobj.get("all"), int[].class));
 			int[][] oldRares = JsonDecoder.decode(jobj.get("rares"), int[][].class);
 			for (int i = 0; i < RARITY_TOT; i++)

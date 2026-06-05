@@ -128,7 +128,7 @@ public class ISStream extends InputStream implements InStream {
 		ind += size;
 		if (ind > len) {
 			System.out.println(Arrays.deepToString(Thread.currentThread().getStackTrace()));
-			System.out.println("error: overread");
+			System.out.println("error: overread (" + ind + "/" + len + ")");
 		}
 	}
 

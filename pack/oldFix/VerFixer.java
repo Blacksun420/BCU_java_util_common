@@ -2,16 +2,16 @@ package common.pack.oldFix;
 
 import com.google.common.io.Files;
 import common.CommonStatic;
+import common.battle.data.AtkDataModel;
 import common.battle.data.CustomEnemy;
+import common.battle.data.CustomEntity;
 import common.battle.data.CustomUnit;
-import common.io.InStream;
 import common.pack.Context;
 import common.pack.Context.ErrType;
 import common.pack.Identifier;
 import common.pack.PackData.PackDesc;
 import common.pack.PackData.UserPack;
 import common.pack.Source;
-import common.pack.UserProfile;
 import common.system.VImg;
 import common.system.fake.FakeImage;
 import common.system.fake.ImageBuilder;
@@ -24,43 +24,24 @@ import common.util.Data.Proc.SPEED;
 import common.util.anim.AnimCE;
 import common.util.anim.AnimCI;
 import common.util.pack.Background;
+import common.util.pack.Soul;
 import common.util.stage.CastleImg;
 import common.util.stage.MapColc.PackMapColc;
 import common.util.stage.Music;
 import common.util.unit.*;
+import common.util.unit.rand.EREnt;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static common.pack.Source.SourceAnimLoader.*;
+import static common.util.unit.Character.reorderAbi;
 
 @SuppressWarnings("deprecation")
 public abstract class VerFixer extends Source {
 
-    private static final String ID_FIXER = "id_fixer";
-
-    public static class IdFixer {
-
-        private final Class<?> ent;
-
-        public IdFixer(Class<?> cls) {
-            ent = cls == null ? AbEnemy.class : cls;
-        }
-
-        public Class<?> parse(int val, Class<?> cls) {
-            if (cls == Data.Proc.THEME.class)
-                return Background.class;
-            else if (ent == Unit.class)
-                return ent;
-            else
-                return val % 1000 < 500 ? Enemy.class : EneRand.class;
-        }
-    }
+    private static Class<?> idFix = null;
 
     public interface ImgReader {
 
@@ -86,6 +67,9 @@ public abstract class VerFixer extends Source {
 
         VImg readImgOptional(String str);
     }
+    public static ImgReader getReader(File f) {
+        return null;
+    }
 
     private static class MusicReader implements ImgReader {
 
@@ -100,8 +84,8 @@ public abstract class VerFixer extends Source {
         @Deprecated
         public File readFile(ISStream is) {
             byte[] bs = is.subStream().nextBytesI();
-            String path = "./pack/music/" + Data.hex(pid) + "/" + Data.trio(mid) + ".ogg";
-            File f = CommonStatic.ctx.getAuxFile(path);
+            String path = "./.temp_" + Data.hex(pid) + "/musics/" + Data.trio(mid) + ".ogg";
+            File f = CommonStatic.ctx.getWorkspaceFile(path);
             Data.err(() -> Context.check(f));
             try {
                 Files.write(bs, f);
@@ -120,7 +104,6 @@ public abstract class VerFixer extends Source {
         public VImg readImgOptional(String str) {
             return null;
         }
-
     }
 
     public static class VerFixerException extends Exception {
@@ -130,10 +113,8 @@ public abstract class VerFixer extends Source {
         public VerFixerException(String str) {
             super(str);
         }
-
     }
 
-    @Deprecated
     private static class PackFixer extends VerFixer {
 
         private final ImgReader r;
@@ -155,8 +136,8 @@ public abstract class VerFixer extends Source {
                 loadBackgrounds(is.subStream());
                 if (ver == 402)
                     loadMusics(is.subStream());
-            } else {
-                load$000303(is, r);
+            } else if (ver >= 303) {
+                loadEnemies$303(is, r);
                 if (ver >= 306) {
                     loadCastles(is.subStream());
                     loadBackgrounds(is.subStream());
@@ -167,24 +148,12 @@ public abstract class VerFixer extends Source {
             is = null;
         }
 
-        private void load$000303(ISStream is, ImgReader r) {
-            /*int n = is.nextInt();
-            for (int i = 0; i < n; i++) {
-                int hash = is.nextInt();
-                String str = is.nextString();
-                CustomEnemy ce = new CustomEnemy();
-                ce.convertOldData(ver, is);
-                AnimCI ac = new AnimCI(is.subStream(), r);
-                Enemy e = new Enemy(new Identifier<>(id, Enemy.class, hash % 1000), ac, ce);
-                e.names.put(str);
-                data.enemies.set(hash % 1000, e);
-            }*/
-        }
-
         private void loadBackgrounds(ISStream is) throws Exception {
-            int ver = Data.getVer(is.nextString());
-            if (ver != 400)
-                throw new VerFixerException("expect bg store version to be 400, got " + ver);
+            int version = ver >= 309 ? Data.getVer(is.nextString()) : ver;
+            if (version < 400) {
+                is.nextInt();
+                return;
+            }
             int n = is.nextInt();
             for (int i = 0; i < n; i++) {
                 int ind = is.nextInt();
@@ -203,9 +172,9 @@ public abstract class VerFixer extends Source {
         }
 
         private void loadCastles(ISStream is) throws Exception {
-            int ver = Data.getVer(is.nextString());
-            if (ver != 307)
-                throw new VerFixerException("expect castle store version to be 307, got " + ver);
+            int version = ver >= 307 ? Data.getVer(is.nextString()) : ver;
+            if (version < 306)
+                return;//Useless as checked above, solely kept to extract the is.nextString() effect
             int n = is.nextInt();
             for (int i = 0; i < n; i++) {
                 int val = is.nextInt();
@@ -216,51 +185,68 @@ public abstract class VerFixer extends Source {
             }
         }
 
-        private void loadEnemies(ISStream is) throws VerFixerException {
+        private void loadEnemies(ISStream is) {
+            idFix = AbEnemy.class;
             int ver = Data.getVer(is.nextString());
-            if (ver != 402)
-                throw new VerFixerException("expect enemy store version to be 402, got " + ver);
-            UserProfile.setStatic(ID_FIXER, new IdFixer(AbEnemy.class));
             int n = is.nextInt();
             for (int i = 0; i < n; i++) {
                 int hash = is.nextInt();
                 String str = is.nextString();
                 CustomEnemy ce = new CustomEnemy();
-                ce.convertOldData(Data.getVer(is.nextString()), is);
+                convertOldEnemyData(ce, ver, is);
                 AnimCE ac = decodeAnim(".temp_" + id, is.subStream(), r);
                 Enemy e = new Enemy(new Identifier<>(id, Enemy.class, hash % 1000), ac, ce);
                 e.names.put(str);
-                ce.limit = CommonStatic.customEnemyMinPos(ac.loader.getMM());
+                //ce.limit = CommonStatic.customEnemyMinPos(ac.loader.getMM());
+                if (ce.tba != 0)
+                    ce.tba += ce.getPost(false, 0) + 1;
                 data.enemies.set(hash % 1000, e);
             }
+            if (ver != 402)
+                return;
             n = is.nextInt();
             for (int i = 0; i < n; i++) {
                 int hash = is.nextInt();
                 EneRand e = new EneRand(new Identifier<>(id, EneRand.class, hash % 1000));
-                e.convertOldData(is.subStream());
+                convertOldRandomEnemyData(e, is.subStream());
                 data.randEnemies.set(hash % 1000, e);
             }
         }
 
-        private void loadMusics(ISStream is) throws VerFixerException {
+        private void loadEnemies$303(ISStream is, ImgReader r) {
+            idFix = AbEnemy.class;
+            int n = is.nextInt();
+            for (int i = 0; i < n; i++) {
+                int hash = is.nextInt();
+                String str = is.nextString();
+                CustomEnemy ce = new CustomEnemy();
+                convertOldEnemyData(ce, ver, is);
+                AnimCE ac = decodeAnim(".temp_" + id, is.subStream(), r);
+                Enemy e = new Enemy(new Identifier<>(id, Enemy.class, hash % 1000), ac, ce);
+                e.names.put(str);
+                data.enemies.set(hash % 1000, e);
+            }
+        }
+
+        private void loadMusics(ISStream is) {
             int ver = Data.getVer(is.nextString());
             if (ver != 307)
-                throw new VerFixerException("expect music store version to be 307, got " + ver);
+                return;
             int n = is.nextInt();
             for (int i = 0; i < n; i++) {
                 int val = is.nextInt();
                 File f = ImgReader.loadMusicFile(is, r, Integer.parseInt(id), val);
-                File fx = CommonStatic.ctx.getWorkspaceFile("./.temp_" + id + "/musics/" + Data.trio(val) + ".ogg");
-                Context.renameTo(f, fx);
-                data.musics.set(val, new Music(new Identifier<>(id, Music.class, val), new FDFile(fx)));
+                //File fx = CommonStatic.ctx.getWorkspaceFile("./.temp_" + id + "/musics/" + Data.trio(val) + ".ogg");
+                //Context.renameTo(f, fx);
+                data.musics.set(val, new Music(new Identifier<>(id, Music.class, val), new FDFile(f)));
             }
         }
 
-        private void loadUnits(ISStream is) throws VerFixerException {
+        private void loadUnits(ISStream is) {
             int ver = Data.getVer(is.nextString());
-            if (ver != 401)
-                throw new VerFixerException("expect unit store version to be 401, got " + ver);
-            UserProfile.setStatic(ID_FIXER, new IdFixer(Unit.class));
+            if (ver < 401)
+                return;
+            idFix = Unit.class;
             int n = is.nextInt();
             for (int i = 0; i < n; i++) {
                 int ind = is.nextInt();
@@ -282,13 +268,14 @@ public abstract class VerFixer extends Source {
                     String name = is.nextString();
                     AnimCE ac = decodeAnim(".temp_" + id, is.subStream(), r);
                     CustomUnit cu = new CustomUnit();
-                    cu.convertOldData(Data.getVer(is.nextString()), is);
+                    convertOldUnitData(cu, Data.getVer(is.nextString()), is);
                     u.forms[j] = new Form(u, j, name, ac, cu);
-                    cu.limit = CommonStatic.customFormMinPos(ac.loader.getMM());
+                    if (cu.tba != 0)
+                        cu.tba += cu.getPost(false, 0) + 1;
+                    //cu.limit = CommonStatic.customFormMinPos(ac.loader.getMM());
                 }
                 data.units.set(ind, u);
             }
-            UserProfile.setStatic(ID_FIXER, null);
         }
 
         private void writeImgs(VImg img, String type, String name) throws IOException {
@@ -307,44 +294,57 @@ public abstract class VerFixer extends Source {
         boolean clear = readPacks(map);
 
         //Close all ISStream before deleting
-        for(VerFixer fix : map.values()) {
+        for(VerFixer fix : map.values())
             if(fix.is != null)
                 fix.is.close();
-        }
         if (clear)
             Context.delete(CommonStatic.ctx.getAuxFile("./pack"));
     }
 
     private static VerFixer fix_bcupack(ISStream is, ImgReader r) {
         int ver = Data.getVer(is.nextString());
-        if (ver != 402) {
-            throw new VerFixerException("unexpected bcupack data version: " + ver + ", requires 402");
-            /*PackDesc desc = new PackDesc();
-            desc.id = Data.hex(is.nextInt());
-            int n = is.nextByte();
-            for (int i = 0; i < n; i++)
-                desc.dependency.add(Data.hex(is.nextInt()));
-            PackFixer fix = new PackFixer(desc.id, ver, r);
-            fix.data = new UserPack(desc, fix);
-            fix.is = is;
-            return fix;*/
-        } else {
-            InStream head = is.subStream();
+        if (ver >= 400) {
+            ISStream head = is.subStream();
             PackDesc desc = new PackDesc(Data.hex(head.nextInt()));
+            if (ver != 402)
+                System.out.println(desc.id + " ver is " + ver);
             int n = head.nextByte();
             for (int i = 0; i < n; i++)
                 desc.dependency.add(Data.hex(head.nextInt()));
-            desc.BCU_VERSION = Data.getVer(head.nextInt());
+
+            int bcuver = head.nextInt();
+            // mistake handling
+            if (bcuver == 406010)
+                bcuver = 40610;
+            desc.BCU_VERSION = Data.getVer(bcuver);
             if (!desc.BCU_VERSION.startsWith("4.11"))
                 System.out.println("unexpected pack BCU version: " + desc.BCU_VERSION + ", requires 4.11.x");//throw new VerFixerException("unexpected pack BCU version: " + desc.BCU_VERSION + ", requires 4.11.x");
-            desc.exportDate = head.nextString();
+            desc.FORK_VERSION = 0;
+            String time = head.nextString();
+            if (ver >= 402)
+                desc.exportDate = time;
+            else if (time.length() == 14)
+                desc.exportDate = time.substring(4, 6) + " " + time.substring(6, 8) + " " + time.substring(0, 4) + " " + time.substring(8, 10) + ":" + time.substring(10, 12) + ":" + time.substring(12);
             desc.version = head.nextInt();
-            desc.author = head.nextString();
+            if (ver >= 401)
+                desc.author = head.nextString();
             PackFixer fix = new PackFixer(desc.id, ver, r);
             fix.data = new UserPack(desc, fix);
             fix.is = is;
             return fix;
         }
+        PackDesc desc = new PackDesc();
+        desc.id = Data.hex(is.nextInt());
+        desc.BCU_VERSION = Data.getVer(ver * 100);
+        desc.FORK_VERSION = 0;
+        System.out.println(desc.id + " ver is old " + ver + "(" + desc.BCU_VERSION + ")");
+        int n = is.nextByte();
+        for (int i = 0; i < n; i++)
+            desc.dependency.add(Data.hex(is.nextInt()));
+        PackFixer fix = new PackFixer(desc.id, ver, r);
+        fix.data = new UserPack(desc, fix);
+        fix.is = is;
+        return fix;
     }
 
     private static void move(String a, String b) {
@@ -482,7 +482,6 @@ public abstract class VerFixer extends Source {
         return null;
     }
 
-    @Deprecated
     protected AnimCE decodeAnim(String target, ISStream is, ImgReader r) {
         Source.SourceAnimLoader al = r == null ? new PCAL(target, is) : new PCAL(target, is, r);
         ResourceLocation id = al.getName();
@@ -496,24 +495,231 @@ public abstract class VerFixer extends Source {
 
     protected abstract void load() throws Exception;
 
+    //----------------------------------------------------------------------------------|-ENTITY DATA-|----------------------------------------------------------------------------------//
+    private static void convertOldEntityDef(CustomEntity ce, int ver, ISStream is) {
+        ce.hp = is.nextInt();
+        ce.hb = is.nextInt();
+        ce.speed = ver >= 308 ? is.nextInt() : is.nextByte();
+        ce.range = ver >= 308 ? is.nextInt() : is.nextShort();
+        ce.abi = is.nextInt();
+        if ((ce.abi & 32768) > 0)
+            ce.loop = 1;
+        int type = is.nextInt();
+        ce.traits = Trait.convertBitmask(Trait.reorderTrait(type), false);
+        ce.width = ver >= 308 ? is.nextInt() : is.nextShort();
+        ce.getProc().BARRIER.health = is.nextInt();
+    }
+
+    private static void convertOldEntityData(CustomEntity ce, int ver, ISStream is) {
+        if (ver >= 400)
+            ver = Data.getVer(is.nextString());
+        convertOldEntityDef(ce,ver,is);
+        if (ver >= 400) {
+            ce.tba = is.nextInt();
+            ce.base = is.nextInt();
+            ce.touch = is.nextInt();
+            boolean isrange = false;
+            if (ver >= 403) {
+                ce.loop = is.nextInt();
+                if (ver >= 404)
+                    ce.death = Identifier.parseInt(is.nextInt(), Soul.class);
+            } else
+                isrange = is.nextInt() > 0;
+            ce.common = is.nextInt() > 0;
+            ce.rep = new AtkDataModel(ce, is, ver);
+            int m = is.nextInt();
+            AtkDataModel[] set = new AtkDataModel[m];
+            for (int i = 0; i < m; i++) {
+                set[i] = new AtkDataModel(ce, is, ver);
+                if (ver == 400)
+                    set[i].range = isrange;
+            }
+
+            int n = is.nextInt();
+            AtkDataModel[] atks = new AtkDataModel[n];
+            for (int i = 0; i < n; i++)
+                atks[i] = set[is.nextInt()];
+            ce.hits.clear();
+            ce.hits.add(atks);
+            if (ver >= 401) {
+                int adi = is.nextInt();
+                if ((adi & 1) > 0)
+                    ce.revs = new AtkDataModel[]{new AtkDataModel(ce, is, ver)};
+                if ((adi & 2) > 0)
+                    ce.ress = new AtkDataModel[]{new AtkDataModel(ce, is, ver)};
+            }
+        } else {//Proven before that ver >= 308 here
+            boolean isrange = is.nextByte() > 0;
+            ce.tba = is.nextInt();
+            ce.base = is.nextInt();
+            ce.common = is.nextByte() > 0;
+            ce.rep = new AtkDataModel(ce, is, ver);
+            int m = is.nextInt();
+            AtkDataModel[] set = new AtkDataModel[m];
+            for (int i = 0; i < m; i++) {
+                set[i] = new AtkDataModel(ce, is, ver);
+                set[i].range = isrange;
+            }
+            int n = is.nextInt();
+            AtkDataModel[] atks = new AtkDataModel[n];
+            for (int i = 0; i < n; i++)
+                atks[i] = set[is.nextInt()];
+            ce.hits.clear();
+            ce.hits.add(atks);
+        }
+    }
+
+    private static void injectOld(CustomEntity ce) {
+        if ((ce.abi & (1 << 18)) != 0) //Seal Immunity
+            ce.getProc().IMUSEAL.mult = 100;
+        if ((ce.abi & (1 << 7)) != 0) //Moving atk Immunity
+            ce.getProc().IMUMOVING.mult = 100;
+        if ((ce.abi & (1 << 12)) != 0) //Poison Immunity
+            ce.getProc().IMUPOI.mult = 100;
+        ce.abi = reorderAbi(ce.abi, 0);
+
+        boolean bounty = (ce.abi & 16) > 0;
+        boolean atkbase = (ce.abi & 32) > 0;
+        for (AtkDataModel atk : ce.getAllAtkModels()) {
+            if (atk.getProc().POISON.prob > 0)
+                atk.getProc().POISON.ignoreMetal = true;
+            if (atk.getProc().SUMMON.prob > 0)
+                if (atk.getProc().SUMMON.id != null && !AbEnemy.class.isAssignableFrom(atk.getProc().SUMMON.id.cls))
+                    atk.getProc().SUMMON.fix_buff = true;
+
+            if (bounty) //2x money
+                atk.getProc().BOUNTY.mult = 100;
+            if (atkbase) //base destroyer
+                atk.getProc().ATKBASE.mult = 300;
+        }
+        ce.abi = reorderAbi(ce.abi, 1);
+
+        if ((ce.abi & 32) > 0)
+            ce.getProc().IMUWAVE.block = 100;
+        ce.abi = reorderAbi(ce.abi, 2);
+
+        ce.getProc().DMGINC.mult = 100;
+        ce.getProc().DEFINC.mult = 100;
+        if ((ce.abi & 1) != 0) {
+            ce.getProc().DMGINC.mult *= 1.5;
+            ce.getProc().DEFINC.mult *= 2;
+        }
+        if ((ce.abi & 2) != 0)//res
+            ce.getProc().DEFINC.mult *= 4;
+        if ((ce.abi & 4) != 0)//mas dmg
+            ce.getProc().DMGINC.mult *= 3;
+        if ((ce.abi & 16384) != 0)//ins res
+            ce.getProc().DEFINC.mult *= 6;
+        if ((ce.abi & 32768) != 0)//ins dmg
+            ce.getProc().DMGINC.mult *= 5;
+
+        ce.abi = reorderAbi(ce.abi, 3);
+        if (ce.getProc().DMGINC.mult == 100)
+            ce.getProc().DMGINC.mult = 0;
+        if (ce.getProc().DEFINC.mult == 100)
+            ce.getProc().DEFINC.mult = 0;
+    }
+
+    private static void removeOldEAbi(CustomEntity ce) {
+        if ((ce.abi & 128) > 0)
+            ce.getProc().IMUWAVE.mult = 100;
+        if ((ce.abi & 512) > 0)
+            ce.getProc().IMUKB.mult = 100;
+        if ((ce.abi & 1024) > 0)
+            ce.getProc().IMUSTOP.mult = 100;
+        if ((ce.abi & 2048) > 0)
+            ce.getProc().IMUSLOW.mult = 100;
+        if ((ce.abi & 4096) > 0)
+            ce.getProc().IMUWEAK.mult = 100;
+        if ((ce.abi & 65536) > 0)
+            ce.getProc().IMUWARP.mult = 100;
+        if ((ce.abi & 262144) > 0)
+            ce.getProc().IMUCURSE.mult = 100;
+        ce.abi &= 0x7ae17f;
+    }
+    //----------------------------------------------------------------------------------|-ENEMY DATA-|----------------------------------------------------------------------------------//
+    private static void convertOldEnemyData(CustomEnemy ce, int ver, ISStream is) {
+        if (ver >= 307)
+            ver = Data.getVer(is.nextString());
+        if (ver >= 308) {
+            convertOldEntityData(ce, ver, is);
+            ce.star = is.nextByte();
+            ce.drop = is.nextInt();
+        } else if (ver >= 301)
+            convertAncientEnemy(ce, is, ver);
+        //injectOld(ce);
+    }
+    //I was born in 200-
+    private static void convertAncientEnemy(CustomEnemy ce, ISStream is, int ver) {
+        convertOldEntityDef(ce,ver,is);
+        boolean isrange = is.nextByte() == 1;
+        ce.tba = is.nextInt();
+        ce.base = is.nextShort();
+        ce.star = is.nextByte();
+        ce.drop = is.nextInt();
+        ce.common = ver >= 305 && is.nextByte() == 1;
+        ce.rep = new AtkDataModel(ce, is, ver);
+        int m = is.nextByte();
+        AtkDataModel[] set = new AtkDataModel[m];
+        for (int i = 0; i < m; i++) {
+            set[i] = new AtkDataModel(ce, is, ver);
+            set[i].range = isrange;
+        }
+        int n = is.nextByte();
+        AtkDataModel[] atks = new AtkDataModel[n];
+        for (int i = 0; i < n; i++)
+            atks[i] = set[is.nextByte()];
+        ce.hits.clear();
+        ce.hits.add(atks);
+
+        // eliminate old stuff
+        if (ver < 307)
+            removeOldEAbi(ce);
+    }
+    //----------------------------------------------------------------------------------|-RANDOM ENEMY DATA-|----------------------------------------------------------------------------------//
+    public void convertOldRandomEnemyData(EneRand er, ISStream is) {
+        int ver = Data.getVer(is.nextString());
+        if (ver < 400)
+            return;
+        er.name = is.nextString();
+        er.type = is.nextInt();
+        int n = is.nextInt();
+        for (int i = 0; i < n; i++) {
+            EREnt ere = new EREnt();
+            er.list.add(ere);
+            ere.ent = Identifier.parseInt(is.nextInt(), AbEnemy.class);
+            ere.multi = is.nextInt();
+            ere.share = is.nextInt();
+        }
+    }
+    //----------------------------------------------------------------------------------|-UNIT DATA-|----------------------------------------------------------------------------------//
+    public void convertOldUnitData(CustomUnit cu, int ver, ISStream is) {
+        if (ver >= 400) {
+            convertOldEntityData(cu, ver, is);
+            cu.price = is.nextInt();
+            cu.resp = is.nextInt();
+        }
+        //injectOld(cu);
+    }
+    //----------------------------------------------------------------------------------|-PROC DATA-|----------------------------------------------------------------------------------//
     public static Data.Proc fixProc(int[][] data) {
         Data.Proc ans = new Data.Proc();
         try {
-            ans.KB.prob = data[Data.P_KB][0];
-            ans.KB.time = data[Data.P_KB][0];
-            ans.KB.dis = data[Data.P_KB][0];
+            ans.KB.prob = data[0][0];
+            ans.KB.time = data[0][0];
+            ans.KB.dis = data[0][0];
 
-            ans.STOP.prob = data[Data.P_STOP][0];
-            ans.STOP.time = data[Data.P_STOP][1];
+            ans.STOP.prob = data[1][0];
+            ans.STOP.time = data[1][1];
 
-            ans.SLOW.prob = data[Data.P_SLOW][0];
-            ans.SLOW.time = data[Data.P_SLOW][1];
+            ans.SLOW.prob = data[2][0];
+            ans.SLOW.time = data[2][1];
 
-            ans.CRIT.prob = data[Data.P_CRIT][0];
-            ans.CRIT.mult = data[Data.P_CRIT][1];
+            ans.CRIT.prob = data[3][0];
+            ans.CRIT.mult = data[3][1];
 
-            ans.WAVE.prob = data[Data.P_WAVE][0];
-            ans.WAVE.lv = data[Data.P_WAVE][1];
+            ans.WAVE.prob = data[4][0];
+            ans.WAVE.lv = data[4][1];
 
             ans.WEAK.prob = data[5][0];
             ans.WEAK.time = data[5][1];
@@ -563,7 +769,7 @@ public abstract class VerFixer extends Source {
             ans.SEAL.time = data[22][1];
 
             ans.SUMMON.prob = data[23][0];
-            ans.SUMMON.id = Identifier.parseIntRaw(data[23][1], ans.SUMMON.getClass());
+            ans.SUMMON.id = Identifier.parseIntRaw(data[23][1], idFix);
             ans.SUMMON.dis = ans.SUMMON.max_dis = data[23][2];
             ans.SUMMON.mult = data[23][3];
             intType = data[23][4];
@@ -586,7 +792,7 @@ public abstract class VerFixer extends Source {
 
             ans.THEME.prob = data[25][0];
             ans.THEME.time = data[25][1];
-            ans.THEME.id = Identifier.parseIntRaw(data[25][2], Background.class);
+            ans.THEME.id = Identifier.parseInt(data[25][2], Background.class);
             intType = data[25][3];
             ans.THEME.kill = (intType & 1) == 1;
 
@@ -636,9 +842,5 @@ public abstract class VerFixer extends Source {
         } catch (Exception ignored) {
         }
         return ans;
-    }
-
-    public static ImgReader getReader(File f) {
-        return null;
     }
 }

@@ -8,12 +8,12 @@ import common.io.json.JsonClass.RType;
 import common.io.json.JsonDecoder;
 import common.io.json.JsonField;
 import common.pack.FixIndexList.FixIndexMap;
+import common.pack.Identifier;
 import common.pack.IndexContainer;
 import common.pack.PackData.UserPack;
 import common.pack.SaveData;
 import common.pack.UserProfile;
 import common.pack.oldFix.ISStream;
-import common.pack.oldFix.VerFixer;
 import common.system.files.VFile;
 import common.util.Data;
 import common.util.lang.MultiLangCont;
@@ -1242,39 +1242,54 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 			UserProfile.getRegister(REG_MAPCOLC).put(pack.getSID(), this);
 		}
 
-		public PackMapColc(UserPack pack, ISStream is) throws VerFixer.VerFixerException {
+		@Deprecated
+		public PackMapColc(UserPack pack, ISStream is) {
 			this.pack = pack;
 			UserProfile.getRegister(REG_MAPCOLC, MapColc.class).put(pack.getSID(), this);
-			int val = getVer(is.nextString());
-			if (val != 308)
-				throw new VerFixer.VerFixerException("MapColc requires 308, got " + val);
-			is.nextString();
+			int ver = getVer(is.nextString());
+			if (ver < 301)
+				return;
+			is.nextString();//Old discarded name variable
 
 			int n = is.nextInt();
-			for (int i = 0; i < n; i++) {
-				CharaGroup cg = new CharaGroup(pack, is);
-				pack.groups.set(cg.id.id, cg);
+			if (ver >= 308) {
+				for (int i = 0; i < n; i++) {
+					CharaGroup cg = new CharaGroup(pack, is);
+					pack.groups.set(cg.id.id, cg);
+				}
+				n = is.nextInt();
+				for (int i = 0; i < n; i++) {
+					LvRestrict lr = new LvRestrict(pack, is);
+					pack.lvrs.set(lr.id.id, lr);
+				}
+				n = is.nextInt();
+			} else if (ver == 307) {
+				for (int i = 0; i < n; i++) {
+					int ind = is.nextInt();
+					int m = is.nextInt();
+					CharaGroup cg = new CharaGroup(pack.getID(CharaGroup.class, ind));
+					for (int j = 0; j < m; j++) {
+						Unit u = (Unit) Identifier.parseInt(is.nextInt(), Unit.class).get();
+						if (u != null)
+							cg.fset.addAll(Arrays.asList(u.forms));
+					}
+					pack.groups.set(ind, cg);
+				}
+				is.nextInt();
+				n = is.nextInt();
 			}
-
-			n = is.nextInt();
-			for (int i = 0; i < n; i++) {
-				LvRestrict lr = new LvRestrict(pack, is);
-				pack.lvrs.set(lr.id.id, lr);
-			}
-
-			n = is.nextInt();
 			for (int i = 0; i < n; i++) {
 				StageMap sm = add(i, StageMap::new);
 				sm.names.put(is.nextString());
 				sm.stars = is.nextIntsB();
 				int m = is.nextInt();
-				for (int j = 0; j < m; j++) {
-					ISStream sub = is.subStream();
-					sm.add(id -> Data.err(() -> new Stage(pack, id, sub)));
-				}
+				for (int j = 0; j < m; j++)
+					sm.add(id -> Data.err(() -> new Stage(pack, id, is.subStream())));
+				if (ver < 307)
+					continue;
 				m = is.nextInt();
 				for (int j = 0; j < m; j++)
-					sm.lim.add(new Limit.PackLimit(pack, is));
+					sm.lim.add(new Limit.PackLimit(pack, is, ver));
 			}
 		}
 

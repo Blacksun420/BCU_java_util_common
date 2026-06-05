@@ -15,7 +15,6 @@ import common.pack.PackData;
 import common.pack.PackData.UserPack;
 import common.pack.SortedPackSet;
 import common.pack.oldFix.ISStream;
-import common.pack.oldFix.VerFixer;
 import common.util.Data;
 import common.util.unit.AbForm;
 import common.util.unit.AbUnit;
@@ -67,11 +66,10 @@ public class CharaGroup extends Data implements Indexable<PackData, CharaGroup>,
 		id = Identifier.parseInt(ID, CharaGroup.class);
 	}
 
-	public CharaGroup(UserPack mc, ISStream is) throws VerFixer.VerFixerException {
-		int ver = getVer(is.nextString());
-		if (ver != 308)
-			throw new VerFixer.VerFixerException("CharaGroup storage expected version 308, got " + ver + " instead");
-		name = is.nextString();
+	public CharaGroup(UserPack mc, ISStream is) {
+		int version = getVer(is.nextString());
+		if (version >= 308)
+			name = is.nextString();
 		id = mc.getID(CharaGroup.class, is.nextInt());
 		type = is.nextInt();
 		int m = is.nextInt();
@@ -136,7 +134,7 @@ public class CharaGroup extends Data implements Indexable<PackData, CharaGroup>,
 	@JsonDecoder.OnInjected
 	public void onInjected(JsonObject jobj) {
 		UserPack pack = (UserPack) getCont();
-		if (pack.desc.FORK_VERSION < 1) {
+		if (pack.desc.FORK_VERSION < 1 && jobj.has("set")) {
 			JsonArray jarr = jobj.get("set").getAsJsonArray();
 			for (int i = 0; i < jarr.size(); i++) {
 				String pacc = jarr.get(i).getAsJsonObject().get("pack").getAsString();

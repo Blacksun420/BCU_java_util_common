@@ -228,10 +228,16 @@ public class SCDef implements Copable<SCDef> {
 		return datas.length + sdef == 0 && smap.isEmpty() && sub.isEmpty();
 	}
 
-	public static SCDef readOldData(ISStream is) {
-		int t = is.nextInt();
-		int ver = Data.getVer(is.nextString());
-		if (t == 0 && ver >= 402) {
+	public static SCDef readOldData(ISStream is, int ver) {
+		if (ver >= 400) {
+			int t = is.nextInt();
+			ver = Data.getVer(is.nextString());
+			if (t != 0) {
+				System.out.println("SCDEF t != 0: Equals " + t);
+				return null;
+			}
+		}
+		if (ver >= 400) {
 			int n = is.nextInt();
 			int m = is.nextInt();
 			SCDef scd = new SCDef(n);
@@ -246,18 +252,36 @@ public class SCDef implements Copable<SCDef> {
 					tmp[C0] = Data.BP_STATIC;
 				scd.datas[i] = new Line(tmp);
 			}
-			scd.sdef = is.nextInt();
-			n = is.nextInt();
-			for (int i = 0; i < n; i++)
-				scd.smap.put(Identifier.parseInt(is.nextInt(), AbEnemy.class), is.nextInt());
-			n = is.nextInt();
+			if (ver >= 401) {
+				scd.sdef = is.nextInt();
+				n = is.nextInt();
+				for (int i = 0; i < n; i++)
+					scd.smap.put(Identifier.parseInt(is.nextInt(), AbEnemy.class), is.nextInt());
+				n = is.nextInt();
+				for (int i = 0; i < n; i++) {
+					SCGroup scg = SCGroup.readOldData(is, ver);
+					if (scg != null)
+						scd.sub.set(scg.id, scg);
+				}
+			}
+			return scd;
+		} else if (ver >= 203) {
+			int n = is.nextByte();
+			SCDef scd = new SCDef(n);
+			int[] tmp = new int[SIZE];
 			for (int i = 0; i < n; i++) {
-				SCGroup scg = SCGroup.readOldData(is);
-				if (scg != null)
-					scd.sub.set(scg.id, scg);
+				Arrays.fill(tmp, 0);
+				for (int j = 0; j < 10; j++)
+					tmp[j] = is.nextInt();
+				tmp[M1] = tmp[M];
+				if (tmp[C0] == 0)
+					tmp[C0] = Data.BP_STATIC;
+				if (ver < 305 && tmp[C0] < 100 && tmp[C0] > 0)
+					tmp[S0] *= -1;
+				scd.datas[i] = new Line(tmp);
 			}
 			return scd;
 		}
-		return null;
+		return new SCDef();
 	}
 }

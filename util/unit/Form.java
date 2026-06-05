@@ -279,7 +279,8 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 			}
 		if (!UserProfile.isOlderPack(pack, "0.6.4.0"))
 			return;
-		names.put(jobj.get("name").getAsString());
+		if (jobj.has("name"))
+			names.put(jobj.get("name").getAsString());
 		if (jobj.has("explanation"))
 			description.put(jobj.get("explanation").getAsString().replace("<br>", "\n"));
 		if (UserProfile.isOlderPack(pack, "0.6.0.0"))

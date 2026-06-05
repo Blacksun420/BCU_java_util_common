@@ -66,7 +66,7 @@ public abstract class Character extends Animable<AnimU<?>, AnimU.UType> implemen
                     if (pack.desc.FORK_VERSION < 6) {
                         if (pack.desc.FORK_VERSION < 4) {
                             if (pack.desc.FORK_VERSION < 3) {
-                                if (pack.desc.FORK_VERSION < 2) {
+                                if (pack.desc.FORK_VERSION < 2 && jdu.has("atks")) {
                                     AtkDataModel[] oldAtks = new LocalDecoder(jdu.getAsJsonObject("atks"), AtkDataModel[].class, ent).setGen(true).setPool(true).decode();
                                     ent.hits.set(0, oldAtks);
                                 } //Finish FORK_VERSION 2 checks
@@ -97,16 +97,18 @@ public abstract class Character extends Animable<AnimU<?>, AnimU.UType> implemen
                                         if (UserProfile.isOlderPack(pack, "0.6.5.0")) {
                                             if (UserProfile.isOlderPack(pack, "0.6.1.0")) {
                                                 if (UserProfile.isOlderPack(pack, "0.6.0.0")) {
-                                                    int type = jdu.get("type").getAsInt();
-                                                    if (UserProfile.isOlderPack(pack, "0.5.2.0")) {
-                                                        if (UserProfile.isOlderPack(pack, "0.5.1.0"))
-                                                            type = Trait.reorderTrait(type);
-                                                        //Finish 0.5.1.0 check
-                                                        if (ent.tba != 0)
-                                                            ent.tba += ent.getPost(false, 0) + 1;
-                                                    } //Finish 0.5.2.0 check
-                                                    proc.BARRIER.health = jdu.get("shield").getAsInt();
-                                                    ent.traits = Trait.convertBitmask(type, false);
+                                                    if (jdu.has("type")) {
+                                                        int type = jdu.get("type").getAsInt();
+                                                        if (UserProfile.isOlderPack(pack, "0.5.2.0")) {
+                                                            if (UserProfile.isOlderPack(pack, "0.5.1.0"))
+                                                                type = Trait.reorderTrait(type);
+                                                            //Finish 0.5.1.0 check
+                                                            if (ent.tba != 0)
+                                                                ent.tba += ent.getPost(false, 0) + 1;
+                                                        } //Finish 0.5.2.0 check
+                                                        proc.BARRIER.health = jdu.get("shield").getAsInt();
+                                                        ent.traits = Trait.convertBitmask(type, false);
+                                                    }
                                                     if ((ent.abi & (1 << 18)) != 0) //Seal Immunity
                                                         proc.IMUSEAL.mult = 100;
                                                     if ((ent.abi & (1 << 7)) != 0) //Moving atk Immunity

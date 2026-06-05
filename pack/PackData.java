@@ -347,6 +347,8 @@ public abstract class PackData implements IndexContainer {
 			desc.author = author;
 			desc.names.put(names.toString());
 			desc.info.put(info.toString());
+			desc.BCU_VERSION = BCU_VERSION;
+			desc.FORK_VERSION = FORK_VERSION;
 			desc.allowAnim = allowAnim;
 			desc.parentPassword = parentPassword == null ? null : parentPassword.clone();
 

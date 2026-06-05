@@ -9,7 +9,6 @@ import common.pack.PackData;
 import common.pack.SortedPackSet;
 import common.pack.UserProfile;
 import common.pack.oldFix.ISStream;
-import common.pack.oldFix.VerFixer;
 import common.util.BattleStatic;
 import common.util.Data;
 import common.util.stage.MapColc.DefMapColc;
@@ -65,19 +64,22 @@ public class Limit extends Data implements BattleStatic {
 			stageLimit = l.stageLimit != null ? l.stageLimit.clone() : null;
 		}
 
-		public PackLimit(PackData.UserPack mc, ISStream is) throws VerFixer.VerFixerException {
-			int ver = Data.getVer(is.nextString());
-			if (ver != 308)
-				throw new VerFixer.VerFixerException("Limit requires ver 308, got " + ver);
+		public PackLimit(PackData.UserPack mc, ISStream is, int ver) {
+			if (ver >= 307)
+				ver = getVer(is.nextString());
 
-			name = is.nextString();
-			sid = is.nextInt();
-			setStar(is.nextInt());
+			if (ver >= 308) {
+				name = is.nextString();
+				sid = is.nextInt();
+				star = is.nextInt();
+			}
 			rare = is.nextInt();
 			num = is.nextByte();
 			line = is.nextByte();
 			min = is.nextInt();
 			max = is.nextInt();
+			if (ver < 307)
+				return;
 			int g = is.nextInt();
 			if (g >= 0)
 				group = mc.groups.get(g);

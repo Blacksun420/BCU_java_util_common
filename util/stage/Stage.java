@@ -16,7 +16,6 @@ import common.pack.PackData.UserPack;
 import common.pack.Source.ResourceLocation;
 import common.pack.UserProfile;
 import common.pack.oldFix.ISStream;
-import common.pack.oldFix.VerFixer;
 import common.system.BasedCopable;
 import common.system.files.VFile;
 import common.util.BattleStatic;
@@ -256,47 +255,44 @@ public class Stage extends Data
 		validate();
 	}
 
-	public Stage(UserPack pack, Identifier<Stage> id, ISStream is) throws VerFixer.VerFixerException {
+	public Stage(UserPack pack, Identifier<Stage> id, ISStream is) {
 		this(id);
 		int ver = getVer(is.nextString());
-		if (ver < 407)
-			throw new VerFixer.VerFixerException("stage version has to be higher than 407, got " + ver);
 		names.put(is.nextString());
 		bg = Identifier.parseInt(is.nextInt(), Background.class);
 		castle = Identifier.parseInt(is.nextInt(), CastleImg.class);
 		health = is.nextInt();
 		len = is.nextInt();
-		mus0 = Identifier.parseInt(is.nextInt(), Music.class);
-		mush = is.nextInt();
-		mus1 = Identifier.parseInt(is.nextInt(), Music.class);
-		if (ver == 408) {
-			if (mus0 != null && !mus0.isNull())
-				mus0.get().loop = is.nextInt();
-			else
-				is.nextInt();
-			if (mus1 != null && !mus1.isNull())
-				mus1.get().loop = is.nextInt();
-			else
-				is.nextInt();
-		}
-		if (ver == 409) {
-			if (mus0 != null && !mus0.isNull())
-				mus0.get().loop = is.nextLong();
-			else
-				is.nextLong();
-			if (mus1 != null && !mus1.isNull())
-				mus1.get().loop = is.nextLong();
-			else
-				is.nextLong();
+		if (ver >= 308) {
+			mus0 = Identifier.parseInt(is.nextInt(), Music.class);
+			mush = is.nextInt();
+			mus1 = Identifier.parseInt(is.nextInt(), Music.class);
+			if (ver == 408) {
+				int loop0 = is.nextInt(), loop1 = is.nextInt();
+
+				if (mus0 != null && !mus0.isNull())
+					mus0.get().loop = loop0;
+				if (mus1 != null && !mus1.isNull())
+					mus1.get().loop = loop1;
+			} else if (ver == 409) {
+				long loop0 = is.nextLong(), loop1 = is.nextLong();
+
+				if (mus0 != null && !mus0.isNull())
+					mus0.get().loop = loop0;
+				if (mus1 != null && !mus1.isNull())
+					mus1.get().loop = loop1;
+			}
 		}
 		max = is.nextByte();
 		non_con = is.nextByte() == 1;
-		data = SCDef.readOldData(is.subStream());
-		lim = new Limit.PackLimit(pack, is);
-		int t = is.nextInt();
-		for (int i = 0; i < t; i++) {
-			String name = is.nextString();
-			Replay.getRecd(this, is.subStream(), name);
+		data = SCDef.readOldData(ver >= 400 ? is.subStream() : is, ver);
+		lim = new Limit.PackLimit(pack, is, ver);
+		if (ver >= 407) {
+			int t = is.nextInt();
+			for (int i = 0; i < t; i++) {
+				String name = is.nextString();
+				Replay.getRecd(this, is.subStream(), name);
+			}
 		}
 		validate();
 	}

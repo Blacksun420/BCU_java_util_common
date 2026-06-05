@@ -92,29 +92,45 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 		move = am.getMove();
 	}
 
-	protected AtkDataModel(CustomEntity ent, ISStream is) {
+	public AtkDataModel(CustomEntity ent, ISStream is, int ver) {
 		ce = ent;
 		proc = Proc.blank();
-		int ver = getVer(is.nextString());
-		if (ver >= 404) {
-			str = is.nextString();
-			atk = is.nextInt();
-			pre = is.nextInt();
+		if (ver >= 307)
+			ver = getVer(is.nextString());
+		if (ver < 301)
+			return;
+
+		str = is.nextString();
+		atk = is.nextInt();
+		pre = is.nextInt();
+		if (ver >= 400) {
 			ld0 = is.nextInt();
 			ld1 = is.nextInt();
 			targ = is.nextInt();
+		} else {
+			ld0 = is.nextShort();
+			ld1 = is.nextShort();
+		}
+		if (ver >= 402)
 			count = is.nextInt();
+		if (ver >= 403) {
 			dire = is.nextInt();
-			alt = is.nextInt();
-			for (int i = 0; i <= 3; i++)
-				alt = reorderAbi(alt, i);
-			move = is.nextInt();
+			if (ver >= 404) {
+				alt = is.nextInt();
+				//for (int i = 0; i <= 3; i++)
+				//	alt = reorderAbi(alt, i);
+				move = is.nextInt();
+			}
 			int bm = is.nextInt();
 			range = (bm & 1) > 0;
-			proc = VerFixer.fixProc(is.nextIntsBB());
+		} else if (ver >= 400) {
+			int bm = is.nextInt();
+			dire = (bm & 1) > 0 ? -1 : 1;
+			range = (bm & 2) > 0;
 		}
-		if (pre == 0 && str.toLowerCase().startsWith("combo"))
-			str = "NC- " + str;
+		proc = VerFixer.fixProc(is.nextIntsBB());
+		//if (pre == 0 && str.toLowerCase().startsWith("combo"))
+		//	str = "NC- " + str;
 	}
 
 	@Override

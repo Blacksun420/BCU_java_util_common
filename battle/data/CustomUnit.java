@@ -3,7 +3,6 @@ package common.battle.data;
 import common.io.json.JsonClass;
 import common.io.json.JsonField;
 import common.pack.SortedPackSet;
-import common.pack.oldFix.ISStream;
 import common.util.Data;
 import common.util.anim.AnimU;
 import common.util.unit.Form;
@@ -147,13 +146,5 @@ public class CustomUnit extends CustomEntity implements MaskUnit, Cloneable {
 		ans.pack = getPack();
 		ans.getPack().anim = getPack().anim;
 		return ans;
-	}
-
-	public void convertOldData(int ver, ISStream is) {
-		if (ver >= 400) {
-			convertOldData(is);
-			price = is.nextInt();
-			resp = is.nextInt();
-		}
 	}
 }
