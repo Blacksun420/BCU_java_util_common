@@ -151,10 +151,15 @@ public class AttackSimple extends AttackAb {
 		}
 		Map<String, Object> roots = CommonStatic.rootMap(1, new String[]{"attacker", "atk"},attacker,this);
 		if (proc.WAVE.prob > 0 && (!capt.isEmpty() || proc.WAVE.hitless)) {
+			boolean success = proc.WAVE.hitless;
 			for (AbEntity e : capt) {
-				roots.put("attacked",e);
-				if (!proc.WAVE.conditions.check(false, roots))
-					continue;
+				roots.put("attacked", e);
+				if (!proc.WAVE.conditions.check(false, roots)) {
+					success = !success;
+					break;
+				}
+			}
+			if (success) {
 				int dire = model.getDire();
 				int wid = dire == 1 ? W_E_WID : W_U_WID;
 				float addp = (dire == 1 ? W_E_INI : W_U_INI) + wid / 2f;
@@ -167,14 +172,18 @@ public class AttackSimple extends AttackAb {
 				ContWaveDef wave = new ContWaveDef(new AttackWave(attacker, this, p0, wid, WT_WAVE), p0, layer, -3, lv);
 				if (attacker != null)
 					attacker.summoned.add(wave);
-				break;
 			}
 		}
 		if(proc.MINIWAVE.prob > 0 && (!capt.isEmpty() || proc.MINIWAVE.hitless)) {
+			boolean success = proc.MINIWAVE.hitless;
 			for (AbEntity e : capt) {
-				roots.put("attacked",e);
-				if (!proc.MINIWAVE.conditions.check(false, roots))
-					continue;
+				roots.put("attacked", e);
+				if (!proc.MINIWAVE.conditions.check(false, roots)) {
+					success = !success;
+					break;
+				}
+			}
+			if (success) {
 				int dire = model.getDire();
 				int wid = dire == 1 ? W_E_WID : W_U_WID;
 				float addp = (dire == 1 ? W_E_INI : W_U_INI) + wid / 2f;
@@ -187,14 +196,18 @@ public class AttackSimple extends AttackAb {
 				wave.atk.raw = (int) (wave.atk.raw * (proc.MINIWAVE.multi / 100.0));
 				if (attacker != null)
 					attacker.summoned.add(wave);
-				break;
 			}
 		}
 		if (proc.VOLC.prob > 0 && (!capt.isEmpty() || proc.VOLC.hitless)) {
+			boolean success = proc.VOLC.hitless;
 			for (AbEntity e : capt) {
-				roots.put("attacked",e);
-				if (!proc.VOLC.conditions.check(false, roots))
-					continue;
+				roots.put("attacked", e);
+				if (!proc.VOLC.conditions.check(false, roots)) {
+					success = !success;
+					break;
+				}
+			}
+			if (success) {
 				int dire = model.getDire();
 				VOLC volc = proc.VOLC;
 				int addp = volc.dis_0 == volc.dis_1 ? volc.dis_0 : volc.dis_0 + (int) (model.b.r.nextFloat() * (volc.dis_1 - volc.dis_0));
@@ -205,14 +218,18 @@ public class AttackSimple extends AttackAb {
 				ContVolcano volcano = new ContVolcano(new AttackVolcano(attacker, this, sta, end, WT_VOLC, volc.pid), p0, layer, time, false);
 				if (attacker != null)
 					attacker.summoned.add(volcano);
-				break;
 			}
 		}
 		if (proc.MINIVOLC.prob > 0 && (!capt.isEmpty() || proc.MINIVOLC.hitless)) {
+			boolean success = proc.MINIVOLC.hitless;
 			for (AbEntity e : capt) {
 				roots.put("attacked",e);
-				if (!proc.MINIVOLC.conditions.check(false, roots))
-					continue;
+				if (!proc.MINIVOLC.conditions.check(false, roots)) {
+					success = !success;
+					break;
+				}
+			}
+			if (success) {
 				int dire = model.getDire();
 				Proc.MINIVOLC volc = proc.MINIVOLC;
 				int addp = volc.dis_0 == volc.dis_1 ? volc.dis_0 : volc.dis_0 + (int) (model.b.r.nextFloat() * (volc.dis_1 - volc.dis_0));
@@ -225,13 +242,12 @@ public class AttackSimple extends AttackAb {
 
 				if (attacker != null)
 					attacker.summoned.add(volcano);
-				break;
 			}
 		}
 		if (!capt.isEmpty() && proc.BLAST.prob > 0) {
 			for (AbEntity e : capt) {
 				roots.put("attacked", e);
-				if (!proc.MINIVOLC.conditions.check(false, roots))
+				if (!proc.BLAST.conditions.check(false, roots))
 					continue;
 				int dire = model.getDire();
 				Proc.BLAST blast = proc.BLAST;

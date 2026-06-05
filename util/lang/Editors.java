@@ -639,7 +639,7 @@ public class Editors {
 			}
 		}, eg -> t -> {
 			setComponentVisibility(eg, !def || t.prob > 0, 1);
-			setComponentVisibility(eg, false, 7);//count field which is only used for deathsurge
+			setComponentVisibility(eg, false, 7,8);//count field which is only used for deathsurge
 		}));
 
 		map().put("MINIVOLC", new EditControl<>(Proc.MINIVOLC.class, (t) -> {
@@ -660,7 +660,7 @@ public class Editors {
 			}
 		}, eg -> t -> {
 			setComponentVisibility(eg, !def || t.prob > 0, 1);
-			setComponentVisibility(eg, false, 8);//count field which is only used for deathsurge
+			setComponentVisibility(eg, false, 8,9);//count field which is only used for deathsurge
 		}));
 
 		map().put("ARMOR", new EditControl<>(Proc.PTMS.class, (t) -> {
