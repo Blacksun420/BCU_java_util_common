@@ -150,11 +150,11 @@ public class AttackSimple extends AttackAb {
 				CommonStatic.setSE(sfx);
 		}
 		Map<String, Object> roots = CommonStatic.rootMap(1, new String[]{"attacker", "atk"},attacker,this);
-		if (proc.WAVE.prob > 0 && (!capt.isEmpty() || proc.WAVE.hitless)) {
+		if (proc.WAVE.prob > 0) {
 			boolean success = proc.WAVE.hitless;
 			for (AbEntity e : capt) {
 				roots.put("attacked", e);
-				if (!proc.WAVE.conditions.check(false, roots)) {
+				if (proc.WAVE.conditions.check(false, roots)) {
 					success = !success;
 					break;
 				}
@@ -174,11 +174,11 @@ public class AttackSimple extends AttackAb {
 					attacker.summoned.add(wave);
 			}
 		}
-		if(proc.MINIWAVE.prob > 0 && (!capt.isEmpty() || proc.MINIWAVE.hitless)) {
+		if(proc.MINIWAVE.prob > 0) {
 			boolean success = proc.MINIWAVE.hitless;
 			for (AbEntity e : capt) {
 				roots.put("attacked", e);
-				if (!proc.MINIWAVE.conditions.check(false, roots)) {
+				if (proc.MINIWAVE.conditions.check(false, roots)) {
 					success = !success;
 					break;
 				}
@@ -198,11 +198,11 @@ public class AttackSimple extends AttackAb {
 					attacker.summoned.add(wave);
 			}
 		}
-		if (proc.VOLC.prob > 0 && (!capt.isEmpty() || proc.VOLC.hitless)) {
+		if (proc.VOLC.prob > 0) {
 			boolean success = proc.VOLC.hitless;
 			for (AbEntity e : capt) {
 				roots.put("attacked", e);
-				if (!proc.VOLC.conditions.check(false, roots)) {
+				if (proc.VOLC.conditions.check(false, roots)) {
 					success = !success;
 					break;
 				}
@@ -220,11 +220,11 @@ public class AttackSimple extends AttackAb {
 					attacker.summoned.add(volcano);
 			}
 		}
-		if (proc.MINIVOLC.prob > 0 && (!capt.isEmpty() || proc.MINIVOLC.hitless)) {
+		if (proc.MINIVOLC.prob > 0) {
 			boolean success = proc.MINIVOLC.hitless;
 			for (AbEntity e : capt) {
 				roots.put("attacked",e);
-				if (!proc.MINIVOLC.conditions.check(false, roots)) {
+				if (proc.MINIVOLC.conditions.check(false, roots)) {
 					success = !success;
 					break;
 				}
