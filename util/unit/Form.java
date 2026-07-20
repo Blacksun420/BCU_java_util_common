@@ -155,21 +155,12 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 			for (Form f : u.forms) {
 				if (f == this)
 					continue;
-				if (uid.equals(f.du.getProc().SUMMON.id) && fid == f.du.getProc().SUMMON.form - 1)
-					return false;
-				if (uid.equals(f.du.getProc().SPIRIT.id) && fid == f.du.getProc().SPIRIT.form - 1)
-					return false;
-				if (recursiveBlessUsed(f.du.getProc().BLESSING))
+				if (recursiveProcUsed(f.du.getProc()))
 					return false;
 			}
-		for (Enemy e : pack.enemies) {//Just in case since enemies can summon units
-			if (uid.equals(e.de.getProc().SUMMON.id) && fid == e.de.getProc().SUMMON.form - 1)
+		for (Enemy e : pack.enemies)//Just in case since enemies can summon units
+			if (recursiveProcUsed(e.de.getProc()))
 				return false;
-			if (uid.equals(e.de.getProc().SPIRIT.id) && fid == e.de.getProc().SPIRIT.form - 1)
-				return false;
-			if (recursiveBlessUsed(e.de.getProc().BLESSING))
-				return false;
-		}
 		for (UniRand ru : pack.randUnits)
 			for (Form f : ru.getForms())
 				if (f == this)
@@ -177,14 +168,14 @@ public class Form extends Character implements BasedCopable<AbForm, AbUnit>, AbF
 		return true;
 	}
 
-	private boolean recursiveBlessUsed(Proc.BLESSING bless) {
-		if (bless.procs == null)
-			return false;
-		if (uid.equals(bless.procs.SUMMON.id) && fid == bless.procs.SUMMON.form - 1)
+	private boolean recursiveProcUsed(Proc proc) {
+		if (uid.equals(proc.SUMMON.id) && fid == proc.SUMMON.form - 1)
 			return true;
-		if (uid.equals(bless.procs.SPIRIT.id) && fid == bless.procs.SPIRIT.form - 1)
+		if (uid.equals(proc.SPIRIT.id) && fid == proc.SPIRIT.form - 1)
 			return true;
-		return recursiveBlessUsed(bless.procs.BLESSING);
+		if (proc.BLESSING.procs != null)
+			return recursiveProcUsed(proc.BLESSING.procs);
+		return false;
 	}
 
 	@OnInjected

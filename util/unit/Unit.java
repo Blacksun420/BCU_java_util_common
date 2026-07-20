@@ -11,6 +11,7 @@ import common.io.json.JsonClass.JCIdentifier;
 import common.io.json.JsonField;
 import common.io.json.JsonField.GenType;
 import common.pack.Identifier;
+import common.pack.PackData;
 import common.pack.Source;
 import common.pack.Source.ResourceLocation;
 import common.pack.Source.Workspace;
@@ -21,7 +22,6 @@ import common.util.Data;
 import common.util.anim.AnimCE;
 import common.util.anim.AnimU;
 import common.util.lang.MultiLangCont;
-import common.util.stage.CharaGroup;
 
 import java.util.*;
 
@@ -267,10 +267,40 @@ public class Unit extends Data implements AbUnit {
 	}
 
 	public boolean unused() {
-		for (Form f : forms)
-			if (!f.unused())
+		PackData.UserPack pack = (PackData.UserPack) getCont();
+		for (Combo c : pack.combos)
+			for (Form f : c.forms) {
+				if (f == null)
+					break;
+				if (f.unit == this)
+					return false;
+			}
+		for (Unit u : pack.units) {
+			if (u == this)
+				continue;
+			for (Form f : u.forms)
+				if (recursiveProcUsed(f.du.getProc()))
+					return false;
+		}
+		for (Enemy e : pack.enemies) {//Just in case since enemies can summon units
+			if (recursiveProcUsed(e.de.getProc()))
 				return false;
+		}
+		for (UniRand ru : pack.randUnits)
+			for (Form f : ru.getForms())
+				if (f.unit == this)
+					return false;
 		return true;
+	}
+
+	private boolean recursiveProcUsed(Proc proc) {
+		if (id.equals(proc.SUMMON.id))
+			return true;
+		if (id.equals(proc.SPIRIT.id))
+			return true;
+		if (proc.BLESSING.procs != null)
+			return recursiveProcUsed(proc.BLESSING.procs);
+		return false;
 	}
 
 	@Override
@@ -282,32 +312,5 @@ public class Unit extends Data implements AbUnit {
 		if (!name.isEmpty())
 			return Data.trio(id.id) + " " + name;
 		return Data.trio(id.id);
-	}
-
-	public Set<Combo> findCombo(PackData pac) {
-		Set<Combo> combos = new HashSet<>();
-		for (Combo c : pac.combos)
-			for (Form f : c.forms)
-				if (f.unit.id.equals(id))
-					combos.add(c);
-		return combos;
-	}
-
-	public Set<Combo> findCombo(PackData pac, int fid) {
-		Set<Combo> combos = new HashSet<>();
-		for (Combo c : pac.combos)
-			for (Form f : c.forms)
-				if (f.unit.id.equals(id) && f.fid == fid)
-					combos.add(c);
-		return combos;
-	}
-
-	public Set<CharaGroup> findCharaGroup(PackData pac) {
-		Set<CharaGroup> groups = new HashSet<>();
-		for (CharaGroup cg : pac.groups)
-			for (Unit u : cg.set)
-				if (u.id.equals(id))
-					groups.add(cg);
-		return groups;
 	}
 }
