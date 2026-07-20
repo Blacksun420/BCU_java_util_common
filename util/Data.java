@@ -24,6 +24,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings("unused")
@@ -1465,19 +1466,19 @@ public class Data {
 			}
 
 			public static boolean check(String def, Map<String, Object> roots) {
-				String trimmed = def.replace(" ", "").replace("\n","");
+				String trimmed = def.trim().replace("\n","");
 				if (trimmed.isEmpty())
 					return true;
 				String[] conditions = trimmed.split("\\|\\|");//Spaces are only for user-reading
 				for (String cond : conditions) {
-					if (failedCondition(cond, roots))
+					if (failedCondition(cond.trim(), roots))
 						continue;
 					return true;
 				}
 				return false;
 			}
 
-			private static final String[] COMPARE_OPERATORS = {"==","!=",">=",">","<=","<"};
+			private static final String[] COMPARE_OPERATORS = {"==","!=",">=",">","<=","<", "instanceof"};
 
 			private static boolean failedCondition(String condition, Map<String, Object> roots) {
 				String[] ands = condition.split("&&");
@@ -1491,13 +1492,32 @@ public class Data {
 					boolean inv = raw.charAt(0) != '!';
 					try {
 						if (operation.equals("B")) {
-							if (((boolean)getOperated(and.substring(inv ? 0 : 1), roots)) != inv)
+							boolean matchAny = raw.charAt(inv ? 2 : 1) == '?';
+							Object obj = getOperated(and.substring((inv ? 0 : 1) + (matchAny ? 1 : 0)), roots);
+							if (obj.getClass().isArray()) {
+								if (matchAny) {
+									boolean failed = true;
+									for (Object o : ((Object[]) obj))
+										if ((boolean) o != inv) {
+											failed = false;
+											break;
+										}
+									if (failed)
+										return true;
+								} else
+									for (Object o : ((Object[]) obj))
+										if ((boolean) o != inv)
+											return true;
+							} else if ((boolean) obj != inv)
 								return true;
 						} else {
 							int sepIndex = raw.indexOf(operation) + (and.length() - raw.length());
 							Object def = getOperated(and.substring(inv ? 0 : 1, sepIndex), roots);
 							Object second = getOperated(and.substring(sepIndex + operation.length()), roots);
-							if (def instanceof Number && second instanceof Number) {//Removes false negatives and cast errors
+							if (operation.equals(COMPARE_OPERATORS[6])) {
+								if ((def != null && Class.forName(second.toString()).isAssignableFrom(def.getClass())) != inv)
+									return true;
+							} else if (def instanceof Number && second instanceof Number) {//Removes false negatives and cast errors
 								if (doComparison(operation, ((Number) def).doubleValue(), ((Number) second).doubleValue()) != inv)
 									return true;
 							} else if (operation.equals("==") || operation.equals("!=")) {
@@ -1563,9 +1583,8 @@ public class Data {
 						return null;
 					throw new Exception("Root object " + fs[0] + " not found. Available root items: " + getRoots(roots));
 				}
-				for (String f : fs) {
-					if (f == fs[0])
-						continue;
+				for (int j = 1; j < fs.length; j++) {
+					String f = fs[j];
 					if (f.endsWith(")")) {
 						Method m = current.getClass().getMethod(f.substring(0, f.indexOf("(")));
 						boolean acc = m.isAccessible();
@@ -1574,7 +1593,7 @@ public class Data {
 							current = m.invoke(current);
 						else {
 							Object[] objs = new Object[m.getParameterCount()];
-							String[] parameters = f.substring(f.indexOf("(")+1,f.lastIndexOf(")")).split(",(?![^()]*+\\))");
+							String[] parameters = f.substring(f.indexOf("(") + 1, f.lastIndexOf(")")).split(",(?![^()]*+\\))");
 							if (parameters.length != objs.length)
 								throw new IllegalArgumentException("Function " + m + " requires " + m.getParameterCount() + " parameters, but only " + parameters.length + " were passed");
 							for (int i = 0; i < objs.length; i++) {
@@ -1596,6 +1615,27 @@ public class Data {
 							current = m.invoke(current, objs);
 						}
 						m.setAccessible(acc);
+					} else if (f.endsWith("]")) {
+						String getter = f.substring(f.indexOf("[") + 1, f.lastIndexOf("]"));
+						if (current.getClass().isArray()) {
+							Object[] arr = (Object[])current;
+							int[] ints = CommonStatic.parseIntsN(getter);
+							if (ints.length == 1) {
+								current = arr[ints[0]];
+							} else {
+								StringBuilder rems = new StringBuilder("obj");
+								for (int i = j + 1; i < fs.length; i++)
+									rems.append(".").append(fs[i]);
+								String str = rems.toString();
+								Object[] finals = new Object[ints.length];
+								Map<String, Object> aroot = new HashMap<>();
+								for (int i = 0; i < ints.length; i++) {
+									aroot.put("obj", arr[ints[i]]);
+									finals[i] = getRec(str, aroot);
+								}
+								current = finals;
+							}
+						}
 					} else {
 						Field fld = current.getClass().getField(f);
 						boolean acc = fld.isAccessible();
