@@ -1,6 +1,7 @@
 package common.battle.data;
 
 import com.google.gson.JsonObject;
+import common.CommonStatic;
 import common.io.json.JsonClass;
 import common.io.json.JsonClass.NoTag;
 import common.io.json.JsonClass.RType;
@@ -16,8 +17,6 @@ import common.system.BasedCopable;
 import common.util.Data;
 import common.util.stage.Music;
 import common.util.unit.Trait;
-
-import static common.util.unit.Character.reorderAbi;
 
 @JsonClass(read = RType.FILL, noTag = NoTag.LOAD)
 public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataModel, CustomEntity> {
