@@ -618,6 +618,26 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 										slim.enemySpeedOverride = parameter.get(3).getAsInt();
 								}
 								break;
+							case 11:
+								if (!parameter.isEmpty()) {
+									if (parameter.size() < 3)
+										System.out.printf(
+												"W/MapColc::read - Unexpected parameter size for map %d : Size = %d, Limit ID = 11\n",
+												mapID,
+												parameter.size());
+									StageLimit.CostIncreaseMode increaseMode = parameter.get(0).getAsInt() == 0 ? StageLimit.CostIncreaseMode.ADD : StageLimit.CostIncreaseMode.MULTIPLY;
+									int increaseValue = parameter.get(1).getAsInt();
+									int increaseMax = parameter.get(2).getAsInt();
+
+									if (map.lim.isEmpty() || map.lim.get(map.lim.size() - 1).stageLimit == null)
+										map.lim.add(new Limit(new StageLimit()));
+									StageLimit slim = map.lim.get(map.lim.size() - 1).stageLimit;
+									slim.costIncreaseMode = increaseMode;
+									slim.costIncreaseValue = increaseValue;
+									slim.costMaxIncreaseValue = increaseMax;
+								}
+                            default:
+                                System.out.println("W/MapColc::init - Unknown rule ID " + ruleID + " found");
 						}
 					}
 				}

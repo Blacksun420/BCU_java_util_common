@@ -44,6 +44,14 @@ public class StageLimit extends Data implements BattleStatic, Cloneable {
     @JsonField(defval = "this.defDeploy")
     public int[] rarityDeployLimit = { -1, -1, -1, -1, -1, -1 }; // -1 for none
 
+    public enum CostIncreaseMode {
+        ADD,
+        MULTIPLY
+    }
+    public CostIncreaseMode costIncreaseMode;
+    public int costIncreaseValue;
+    public int costMaxIncreaseValue;
+
     @JsonField(defval = "this.defDupe")
     public int[] deployDuplicationTimes = { 0, 0, 0, 0, 0, 0 }; // 0 for deactivated
     @JsonField(defval = "this.defDupe")
