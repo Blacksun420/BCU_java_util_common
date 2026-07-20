@@ -6,6 +6,7 @@ import com.google.gson.JsonParser;
 import common.CommonStatic;
 import common.CommonStatic.Lang.Locale;
 import common.io.assets.Admin.StaticPermitted;
+import common.util.Data;
 import common.util.anim.AnimI;
 import common.util.anim.AnimU;
 import common.util.pack.Background;
@@ -62,6 +63,7 @@ public class AnimTypeLocale {
 			String val = obj.get(type.toString().toUpperCase()).getAsString();
 			MultiLangCont.getStatic().ANIMNAME.put(loc, type, val);
 		}
+		Data.err(f::close);
 	}
 
 }

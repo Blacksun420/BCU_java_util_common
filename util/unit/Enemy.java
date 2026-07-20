@@ -104,6 +104,10 @@ public class Enemy extends Character implements AbEnemy {
 						else
 							ans.put((MapColc.DefMapColc)mc, 1);
 					}
+//=======
+//			if (mc.containsEnemy(this))
+//				ans.add(mc);
+//>>>>>>> upstream/slow_kotlin
 		}
 		return ans;
 	}

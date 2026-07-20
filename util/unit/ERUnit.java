@@ -33,11 +33,11 @@ public class ERUnit extends Data implements IForm {
     }
 
     @Override
-    public EUnit invokeEntity(StageBasis b, int lvl, int minlayer, int maxlayer) {
+    public EUnit invokeEntity(StageBasis b, int lvl, int layer) {
         IForm unit = getSelection(b, false);
         if (unit == null)
             return null;
-        return unit.invokeEntity(b, lvl, minlayer, maxlayer);
+        return unit.invokeEntity(b, lvl, layer);
     }
 
     private IForm getSelection(StageBasis sb, boolean deploy) {

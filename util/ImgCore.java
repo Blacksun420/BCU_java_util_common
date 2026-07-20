@@ -109,9 +109,9 @@ public class ImgCore extends Data {
 		int x = (int) -piv.x;
 		int y = (int) -piv.y;
 		if (sc.x < 0)
-			x += sc.x;
+            x = (int) (x + sc.x);
 		if (sc.y < 0)
-			y += sc.y;
+            y = (int) (y + sc.y);
 		int sx = (int) Math.abs(sc.x);
 		int sy = (int) Math.abs(sc.y);
 		g.drawRect(x, y, sx, sy);

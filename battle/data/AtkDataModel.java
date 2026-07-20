@@ -290,18 +290,25 @@ public class AtkDataModel extends Data implements MaskAtk, BasedCopable<AtkDataM
 
 	@JsonDecoder.PostLoad
 	public void postLoad(JsonObject jobj) {
+		PackData.UserPack p = (PackData.UserPack)ce.getPack().getPack();
 		if (jobj.has("specialTrait")) {
 			boolean spTrait = jobj.get("specialTrait").getAsBoolean();
 			if (ce instanceof CustomEnemy && (spTrait && dire == -1)) {
 				traits.addAll(UserProfile.getBCData().traits.getList().subList(TRAIT_RED, TRAIT_BARON));
-				PackData.UserPack p = (PackData.UserPack)ce.getPack().getPack();
 				traits.addAll(p.traits.getList());
 				for (String dep : p.desc.dependency)
 					traits.addAll(UserProfile.getUserPack(dep).traits.getList());
 			}
 		}
-		if (proc.WARP.prob > 0 && UserProfile.isOlderPack((PackData.UserPack)ce.getPack().getPack(), "0.7.4.2"))
+
+		if (proc.WARP.prob > 0 && UserProfile.isOlderPack(p, "0.7.4.1"))
 			proc.WARP.dis_1 = proc.WARP.dis;
+		if ((UserProfile.isOlderPack(p, "0.7.19.1") || proc.SUMMON.layer_type == null) && proc.SUMMON.prob > 0) {
+			if (proc.SUMMON.min_layer == -1 && proc.SUMMON.max_layer == -1)
+				proc.SUMMON.layer_type = CommonStatic.LayerType.ORIG;
+			else
+				proc.SUMMON.layer_type = CommonStatic.LayerType.SET;
+		}
 	}
 
 	@JsonField(tag = "str", io = JsonField.IOType.W, backCompat = JsonField.CompatType.UPST)

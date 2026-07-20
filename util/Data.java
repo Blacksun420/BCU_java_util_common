@@ -349,7 +349,7 @@ public class Data {
 
 			@Override
 			public boolean def_exists() {
-				return prob != 0 || lv != 0 || !sameLv() || hitless || !pid.isEmpty();
+				return prob != 0 || lv != 0 || maxlv != 0 || hitless || !pid.isEmpty();
 			}
 		}
 
@@ -942,21 +942,24 @@ public class Data {
 			@JsonField(defval = "9")
 			public int max_layer = 9;
 			@Order(12)
-			public boolean ignore_limit;
+			@JsonField(defval = "null||SET")
+			public CommonStatic.LayerType layer_type = CommonStatic.LayerType.SET;
 			@Order(13)
-			public boolean fix_buff;
+			public boolean ignore_limit;
 			@Order(14)
-			public boolean same_health;
+			public boolean fix_buff;
 			@Order(15)
-			public boolean bond_hp;
+			public boolean same_health;
 			@Order(16)
-			public boolean on_hit;
+			public boolean bond_hp;
 			@Order(17)
-			public boolean on_kill;
+			public boolean on_hit;
 			@Order(18)
+			public boolean on_kill;
+			@Order(19)
 			@BitMasked
 			public int pass_proc;
-			@Order(19)
+			@Order(20)
 			@JsonField(defval = "null||NONE")
 			public SUMMON_ANIM anim_type = SUMMON_ANIM.NONE;
 

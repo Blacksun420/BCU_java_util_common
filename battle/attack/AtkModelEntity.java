@@ -242,7 +242,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 				atk = (int)(atk * ((Proc.MINIVOLC) ds).mult / 100.0);
 			AttackSimple as = new AttackSimple(e, this, atk, e.traits, getAbi(), p, 0, 0, data.getAtkModel(data.firstAtk(), 0), 0, false);
 
-			int addp = ds.dis_0 == ds.dis_1 ? ds.dis_0 : ds.dis_0 + (int) (b.r.nextFloat() * (ds.dis_1 - ds.dis_0));
+			int addp = b.getValueBetween(ds.dis_0, ds.dis_1);
 			float p0 = getPos() + getDire() * addp;
 			float sta = p0 + (getDire() == 1 ? W_VOLC_PIERCE : W_VOLC_INNER);
 			float end = p0 - (getDire() == 1 ? W_VOLC_INNER : W_VOLC_PIERCE);
@@ -266,7 +266,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		}
 
 		AttackSimple as = new AttackSimple(e, this, atk, e.traits, getAbi(), p, 0, 0, data.getAtkModel(data.firstAtk(), 0), 0, false);
-		int addp = itm.dis_0 == itm.dis_1 ? itm.dis_0 : itm.dis_0 + (int) (b.r.nextFloat() * (itm.dis_1 - itm.dis_0));
+		int addp = b.getValueBetween(itm.dis_0, itm.dis_1);
 		float p0 = pos + getDire() * addp;
 		float sta = p0 + (getDire() == 1 ? W_VOLC_PIERCE : W_VOLC_INNER);
 		float end = p0 - (getDire() == 1 ? W_VOLC_INNER : W_VOLC_PIERCE);
@@ -443,9 +443,12 @@ public abstract class AtkModelEntity extends AtkModelAb {
 			if (proc.same_health && ent.health <= 0)
 				return;
 			int time = proc.time;
-			int minlayer = proc.min_layer, maxlayer = proc.max_layer;
-			if (proc.min_layer == proc.max_layer && proc.min_layer == -1)
-				minlayer = maxlayer = e.spawnLayer;
+
+			int layer = e.spawnLayer;
+			if (proc.layer_type == CommonStatic.LayerType.SET)
+				layer = b.getValueBetween(proc.min_layer, proc.max_layer);
+			else if (proc.layer_type == CommonStatic.LayerType.RELATIVE)
+				layer += b.getValueBetween(proc.min_layer, proc.max_layer);
 
 			if ((proc.id == null && e instanceof EUnit) || (proc.id != null && AbUnit.class.isAssignableFrom(proc.id.cls))) {
 				AbUnit u = Identifier.getOr(proc.id, AbUnit.class);
@@ -457,11 +460,11 @@ public abstract class AtkModelEntity extends AtkModelAb {
 					lvl = MathUtil.clip(lvl, 1, u.getCap());
 
 					for (int i = 0; i < proc.amount; i++) {
-						int dis = proc.dis == proc.max_dis ? proc.dis : (int) (proc.dis + b.r.nextFloat() * (proc.max_dis - proc.dis + 1));
+						int dis = b.getValueBetween(proc.dis, proc.max_dis);
 						double up = ent.pos + getDire() * dis;
 						Form f = u.getForms()[Math.max(proc.form - 1, 0)];
 						IForm ef = IForm.newIns(u instanceof Unit ? f : (AbForm)u, lvl);
-						EUnit eu = ef.invokeEntity(b, lvl, minlayer, maxlayer);
+						EUnit eu = ef.invokeEntity(b, lvl, layer);
 						eu.added(-1, (int) up);
 						eu.setSummon(proc, e);
 						if (proc.anim_type == Proc.SUMMON_ANIM.EVERYWHERE_DOOR)
@@ -492,9 +495,9 @@ public abstract class AtkModelEntity extends AtkModelAb {
 					mula = (float) (mula * (100f - resist) / 100);
 					mult = (float) (mult * (100f - resist) / 100);
 					for (int i = 0; i < proc.amount; i++) {
-						int dis = proc.dis == proc.max_dis ? proc.dis : (int) (proc.dis + b.r.nextFloat() * (proc.max_dis - proc.dis + 1));
+						int dis = b.getValueBetween(proc.dis, proc.max_dis);
 						float up = ent.pos + getDire() * dis;
-						EEnemy ee = ene.getEntity(b, acs, mult, mula, minlayer, maxlayer, 0, -1);
+						EEnemy ee = ene.getEntity(b, acs, mult, mula, layer, layer, 0, -1);
 
 						ee.group = allow;
 						if (up < ee.data.getWidth())

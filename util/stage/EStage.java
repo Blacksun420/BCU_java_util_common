@@ -63,10 +63,9 @@ public class EStage extends BattleObj {
 						num[i] = -1;
 				}
 
-				if(num[i] == -1 || data.respawn_0 >= data.respawn_1)
-					rem[i] = data.respawn_0;
-				else
-					rem[i] = data.respawn_0 + (int) (b.r.nextFloat() * (data.respawn_1 - data.respawn_0));
+
+				if(num[i] != -1)
+					rem[i] = b.getValueBetween(data.respawn_0, data.respawn_1);
 				rem[i]++;
 
 				if (data.boss >= 1 && !b.shock)
@@ -84,7 +83,7 @@ public class EStage extends BattleObj {
 				EEnemy ee = e.getEntity(b, data, multi, mulatk, data.layer_0, data.layer_1, data.boss, i);
 
 				if (data.doorchance > 0 && (data.doorchance == 100 || b.r.nextFloat() * 100 < data.doorchance))
-					ee.door = data.doordis_0 == data.doordis_1 ? data.doordis_0 : ((data.doordis_1 - data.doordis_0) * b.r.nextFloat()) + data.doordis_0;
+					ee.door = b.getValueBetween(data.doordis_0, data.doordis_1);
 				b.shockP += ee.door;
 				ee.group = data.group;
 				ee.rev = data.rev;

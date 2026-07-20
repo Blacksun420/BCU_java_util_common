@@ -133,17 +133,21 @@ public class BasisSet extends Basis implements Copable<BasisSet> {
 			}
 
 		File f = CommonStatic.ctx.getUserFile("./basis.json");
-		if (f.exists())
-			try (Reader r = new InputStreamReader(new FileInputStream(f), StandardCharsets.UTF_8)) {
+		if (f.exists()) {
+            try (Reader r = new InputStreamReader(Files.newInputStream(f.toPath()), StandardCharsets.UTF_8)) {
 				JsonElement je = JsonParser.parseReader(r);
+
 				r.close();
+
 				JsonElement jel = je.getAsJsonObject().get("list");
 				JsonDecoder.decode(jel, BasisSet[].class);
+
 				int cur = je.getAsJsonObject().get("current").getAsInt();
 				setCurrent(list().get(cur));
-			} catch (Exception e) {
-				CommonStatic.ctx.noticeErr(e, ErrType.WARN, "failed to read basis data");
-			}
+            } catch (Exception e) {
+			CommonStatic.ctx.noticeErr(e, ErrType.WARN, "failed to read basis data");
+            }
+		}
 	}
 
 	public static void setCurrent(BasisSet cur) {

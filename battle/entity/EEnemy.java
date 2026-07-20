@@ -28,7 +28,7 @@ public class EEnemy extends Entity {
 	public float door;
 
 	public EEnemy(StageBasis b, MaskEnemy de, EAnimU ea, float magnif, float atkMagnif, int d0, int d1, int m, int l) {
-		super(b, de, ea, atkMagnif, magnif, d0 == d1 ? d0 : d0 + (int) (b.r.nextFloat() * (d1 - d0 + 1)));
+		super(b, de, ea, atkMagnif, magnif, b.getValueBetween(d0, d1));
 		mult = magnif;
 		mula = atkMagnif;
 		mark = m;

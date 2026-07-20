@@ -19,7 +19,7 @@ public interface IForm {
 
     EUnit getEntity(StageBasis b, int[] index, boolean isBase);
 
-    EUnit invokeEntity(StageBasis b, int lvl, int minlayer, int maxlayer);
+    EUnit invokeEntity(StageBasis b, int lvl, int layer);
 
     int getWill();
 

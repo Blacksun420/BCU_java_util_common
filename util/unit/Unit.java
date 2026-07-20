@@ -21,6 +21,7 @@ import common.util.Data;
 import common.util.anim.AnimCE;
 import common.util.anim.AnimU;
 import common.util.lang.MultiLangCont;
+import common.util.stage.CharaGroup;
 
 import java.util.*;
 
@@ -281,5 +282,32 @@ public class Unit extends Data implements AbUnit {
 		if (!name.isEmpty())
 			return Data.trio(id.id) + " " + name;
 		return Data.trio(id.id);
+	}
+
+	public Set<Combo> findCombo(PackData pac) {
+		Set<Combo> combos = new HashSet<>();
+		for (Combo c : pac.combos)
+			for (Form f : c.forms)
+				if (f.unit.id.equals(id))
+					combos.add(c);
+		return combos;
+	}
+
+	public Set<Combo> findCombo(PackData pac, int fid) {
+		Set<Combo> combos = new HashSet<>();
+		for (Combo c : pac.combos)
+			for (Form f : c.forms)
+				if (f.unit.id.equals(id) && f.fid == fid)
+					combos.add(c);
+		return combos;
+	}
+
+	public Set<CharaGroup> findCharaGroup(PackData pac) {
+		Set<CharaGroup> groups = new HashSet<>();
+		for (CharaGroup cg : pac.groups)
+			for (Unit u : cg.set)
+				if (u.id.equals(id))
+					groups.add(cg);
+		return groups;
 	}
 }

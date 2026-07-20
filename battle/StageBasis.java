@@ -148,10 +148,8 @@ public class StageBasis extends BattleObj {
 
 		if(st.minSpawn <= 0 || st.maxSpawn <= 0)
 			respawnTime = 1;
-		else if(st.minSpawn == st.maxSpawn)
-			respawnTime = st.minSpawn;
 		else
-			respawnTime = st.minSpawn + (int) ((st.maxSpawn - st.minSpawn) * r.nextFloat());
+			respawnTime = getValueBetween(st.minSpawn, st.maxSpawn);
 
 		respawnTime--;
 		if ((conf & 1) > 0)
@@ -503,10 +501,7 @@ public class StageBasis extends BattleObj {
 			eu.added(-1, addedPosition(eu));
 
 			le.add(eu);
-			if (st.minUSpawn == st.maxUSpawn)
-				unitRespawnTime = st.minUSpawn;
-			else
-				unitRespawnTime = st.minUSpawn + (int) ((st.maxUSpawn - st.minUSpawn) * r.nextFloat());
+			unitRespawnTime = getValueBetween(st.minUSpawn, st.maxUSpawn);
 
 			int[] dupe = duplicateDeployData(b.lu.fs[i][j].unit().getRarity());
 			if (dupe[0] != 0) {
@@ -621,12 +616,10 @@ public class StageBasis extends BattleObj {
 					else
 						le.add(e);
 
-					if(st.minSpawn <= 0 || st.maxSpawn <= 0)
+					if (st.minSpawn <= 0 || st.maxSpawn <= 0)
 						respawnTime = 1;
-					else if(st.minSpawn == st.maxSpawn)
-						respawnTime = st.minSpawn;
 					else
-						respawnTime = st.minSpawn + (int) ((st.maxSpawn - st.minSpawn) * r.nextFloat());
+						respawnTime = getValueBetween(st.minSpawn, st.maxSpawn);
 				}
 			}
 			if(cannon == maxCannon -1)
@@ -979,5 +972,14 @@ public class StageBasis extends BattleObj {
 			if (bonus.proc == proc && (bonus.dire == 0 || bonus.dire == dire))
 				score += bonus.score / Math.max(1, traits);
 		}
+	}
+
+	public int getValueBetween(int v0, int v1) {
+		if (v0 == v1)
+			return v0;
+		else if (v0 < v1)
+			return v0 + (int) (r.nextFloat() * (v1 - v0 + 1));
+		else
+			return v1 + (int) (r.nextFloat() * (v0 - v1 + 1));
 	}
 }

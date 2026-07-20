@@ -79,10 +79,17 @@ public class Formatter {
 			String tim = dispTime(time);
 			if (fruitMag > 1) {
 				if (useSecond)
-					return tim + " [" + toSecond((int)(time * fruitMag)) + "s]";
-				return tim + " [" + (int)(time * fruitMag) + "f]";
+					return tim + " [" + toSecond((int) (time * fruitMag)) + "s]";
+				return tim + " [" + (int) (time * fruitMag) + "f]";
 			}
 			return tim;
+		}
+
+		public String dispTimeAbs(int time) {
+			time = Math.abs(time);
+			if (useSecond)
+				return toSecond(time) + "s";
+			return time + "f";
 		}
 
 		public String entity(Identifier<?> id, int form) {
@@ -461,7 +468,7 @@ public class Formatter {
 			if (n instanceof Double)
 				return (int) (neg * (Double) new RefObj(pre, ind).eval());
 			if (n instanceof Enum)
-				return neg * ((Enum<?>)new RefObj(pre, ind).eval()).ordinal();
+				return neg * ((Enum<?>) obj).ordinal();
 			return (int) (neg * (Float) new RefObj(pre, ind).eval());
 		}
 

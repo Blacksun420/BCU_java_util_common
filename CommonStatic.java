@@ -112,6 +112,9 @@ public class CommonStatic {
 
 		@JsonField(generic = { Integer.class, String.class })
 		public HashMap<Integer, String> localMusicMap = new HashMap<>();
+
+		@JsonField(generic = String.class)
+		public ArrayList<String> receivedAnnouncements = new ArrayList<>();
 	}
 
 	@JsonClass(noTag = NoTag.LOAD)

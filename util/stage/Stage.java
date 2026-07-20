@@ -486,10 +486,26 @@ public class Stage extends Data
 				if (lim.stageLimit.globalCost == 0)
 					lim.stageLimit.globalCost = -1;
 			}
+			if (UserProfile.isOlderPack(mc.pack, "0.7.15.1")) {
+				if (Arrays.stream(lim.stageLimit.rarityDeployLimit).allMatch(v -> v == 0))
+					lim.stageLimit.rarityDeployLimit = new int[] { -1, -1, -1, -1, -1, -1 };
+			}
+			if (UserProfile.isOlderPack(mc.pack, "0.7.16.0")) {
+				if (lim.stageLimit.enemySpeedOverrideMode == StageLimit.SpeedOverrideMode.MULTIPLY)
+					lim.stageLimit.enemySpeedOverride *= 100;
+				if (lim.stageLimit.unitSpeedOverrideMode == StageLimit.SpeedOverrideMode.MULTIPLY)
+					lim.stageLimit.unitSpeedOverride *= 100;
+			}
 		}
-		if (UserProfile.isOlderPack(mc.pack, "0.7.17.0"))
-			if (trail || (lim.stageLimit != null && lim.stageLimit.maxMoney > 0))
+		if (UserProfile.isOlderPack(mc.pack, "0.7.17.0")) {
+			boolean lm = lim.stageLimit != null;
+			if (trail || (lm && lim.stageLimit.maxMoney > 0))
 				drop = false;
+			if (lm && lim.stageLimit.unitSpeedOverride > -1 && lim.stageLimit.unitSpeedOverrideMode == null)
+				lim.stageLimit.unitSpeedOverrideMode = StageLimit.SpeedOverrideMode.SET;
+			if (lm && lim.stageLimit.enemySpeedOverride > -1 && lim.stageLimit.enemySpeedOverrideMode == null)
+				lim.stageLimit.enemySpeedOverrideMode = StageLimit.SpeedOverrideMode.SET;
+		}
 	}
 
 	@JsonField(tag = "timeLimit", io = JsonField.IOType.W, backCompat = JsonField.CompatType.UPST)

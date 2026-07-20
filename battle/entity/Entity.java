@@ -541,7 +541,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				// converge souls layer: death on the same frame = same soul height
 				// still not sure how this precisely work in BC, it seems to have exceptions
 				if (s != null && s.layertype != CommonStatic.LayerType.ORIG) {
-					int slay = s.layer_0 == s.layer_1 ? s.layer_0 : s.layer_0+(int)(s.layer_1*e.basis.r.nextFloat()-s.layer_0);
+					int slay = e.basis.getValueBetween(s.layer_0, s.layer_1);
 					if (s.layertype == CommonStatic.LayerType.SET)
 						e.layer = slay;
 					else if (s.layertype == CommonStatic.LayerType.RELATIVE)
@@ -2395,7 +2395,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		float rst = getResistValue(atk, true, getProc().IMUWARP.mult + (getProc().IMUWARP.block == 100 ? 100 : 0));
 		if (rst > 0f) {
 			Data.Proc.WARP warp = atk.getProc().WARP;
-			interrupt(INT_WARP, warp.dis == warp.dis_1 ? warp.dis : warp.dis + (int) (basis.r.nextFloat() * (warp.dis_1 - warp.dis)));
+			interrupt(INT_WARP, basis.getValueBetween(warp.dis, warp.dis_1));
 			EffAnim<WarpEff> e = effas().A_W;
 			int len = e.len(WarpEff.ENTER) + e.len(WarpEff.EXIT);
 			int val = (int)(atk.getProc().WARP.time * rst);
@@ -2775,7 +2775,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	public int touchable() {
 		int n = (getAbi() & AB_GHOST) > 0 ? TCH_EX : TCH_N;
 		int ex = getProc().REVIVE.revive_others ? TCH_ZOMBX : 0;
-		if (kbTime == -1)
+		if (kbTime == -1 && anim.soul != null)
 			return TCH_SOUL | ex;
 		if (status.revs[1] >= REVIVE_SHOW_TIME && anim.corpse != null && anim.corpse.type != ZombieEff.BACK)
 			return TCH_CORPSE | ex;

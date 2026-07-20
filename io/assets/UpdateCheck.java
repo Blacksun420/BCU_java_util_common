@@ -85,6 +85,15 @@ public class UpdateCheck {
 			public String type;
 		}
 
+		@JsonClass(noTag = NoTag.LOAD)
+		public static class AnnouncementJson {
+			public String id;
+			public String title;
+			public String[] text;
+			public int min_ver;
+			public int max_ver;
+		}
+
 		public AssetJson[] assets;
 		public String[] pc_libs;
 		public int music;

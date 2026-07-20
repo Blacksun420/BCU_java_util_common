@@ -164,7 +164,7 @@ public class AttackSimple extends AttackAb {
 				int wid = dire == 1 ? W_E_WID : W_U_WID;
 				float addp = (dire == 1 ? W_E_INI : W_U_INI) + wid / 2f;
 				float p0 = model.getPos() + dire * addp;
-				int lv = proc.WAVE.sameLv() ? proc.WAVE.lv : proc.WAVE.lv + model.b.r.nextInt(proc.WAVE.maxlv - proc.WAVE.lv);
+				int lv = model.b.getValueBetween(proc.WAVE.lv, proc.WAVE.maxlv);
 				if (proc.WAVE.inverted)
 					p0 = model.getPos() + (dire * addp) + ((200 * (lv - 1)) * dire);
 
@@ -188,7 +188,7 @@ public class AttackSimple extends AttackAb {
 				int wid = dire == 1 ? W_E_WID : W_U_WID;
 				float addp = (dire == 1 ? W_E_INI : W_U_INI) + wid / 2f;
 				float p0 = model.getPos() + dire * addp;
-				int lv = proc.MINIWAVE.sameLv() ? proc.MINIWAVE.lv : proc.MINIWAVE.lv + model.b.r.nextInt(proc.MINIWAVE.maxlv - proc.MINIWAVE.lv);
+				int lv = model.b.getValueBetween(proc.MINIWAVE.lv, proc.MINIWAVE.maxlv);
 				if (proc.MINIWAVE.inverted)
 					p0 = model.getPos() + (dire * addp) + ((200 * (lv - 1)) * dire);
 
@@ -210,7 +210,7 @@ public class AttackSimple extends AttackAb {
 			if (success) {
 				int dire = model.getDire();
 				VOLC volc = proc.VOLC;
-				int addp = volc.dis_0 == volc.dis_1 ? volc.dis_0 : volc.dis_0 + (int) (model.b.r.nextFloat() * (volc.dis_1 - volc.dis_0));
+				int addp = model.b.getValueBetween(volc.dis_0, volc.dis_1);
 				float p0 = model.getPos() + dire * addp;
 				float sta = p0 + (dire == 1 ? W_VOLC_PIERCE : W_VOLC_INNER);
 				float end = p0 - (dire == 1 ? W_VOLC_INNER : W_VOLC_PIERCE);
@@ -232,7 +232,7 @@ public class AttackSimple extends AttackAb {
 			if (success) {
 				int dire = model.getDire();
 				Proc.MINIVOLC volc = proc.MINIVOLC;
-				int addp = volc.dis_0 == volc.dis_1 ? volc.dis_0 : volc.dis_0 + (int) (model.b.r.nextFloat() * (volc.dis_1 - volc.dis_0));
+				int addp = model.b.getValueBetween(volc.dis_0, volc.dis_1);
 				float p0 = model.getPos() + dire * addp;
 				float sta = p0 + (dire == 1 ? W_VOLC_PIERCE : W_VOLC_INNER);
 				float end = p0 - (dire == 1 ? W_VOLC_INNER : W_VOLC_PIERCE);
@@ -251,7 +251,7 @@ public class AttackSimple extends AttackAb {
 					continue;
 				int dire = model.getDire();
 				Proc.BLAST blast = proc.BLAST;
-				int addp = blast.dis_0 == blast.dis_1 ? blast.dis_0 : blast.dis_0 + (int) (model.b.r.nextFloat() * (blast.dis_1 - blast.dis_0));
+				int addp = model.b.getValueBetween(blast.dis_0, blast.dis_1);
 				float pos = model.getPos() + dire * addp;
 				ContBlast cblast = new ContBlast(new AttackBlast(attacker, this, pos, WT_BLST), pos, layer);
 				if (attacker != null)

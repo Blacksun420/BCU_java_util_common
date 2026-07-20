@@ -69,10 +69,10 @@ public class EForm extends Data implements IForm {
 	}
 
 	@Override
-	public EUnit invokeEntity(StageBasis b, int Lvl, int minLayer, int maxLayer) {
+	public EUnit invokeEntity(StageBasis b, int Lvl, int layer) {
 		float d = f.unit.lv.getMult(Lvl);
 		EAnimU anim = getEntryAnim();
-		return new EUnit(b, du, anim, d, minLayer, maxLayer, level, f.du.getPCoin(), null, false);
+		return new EUnit(b, du, anim, d, layer, layer, level, f.du.getPCoin(), null, false);
 	}
 
 	@Override

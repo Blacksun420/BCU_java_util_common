@@ -1,6 +1,7 @@
 package common.util.unit;
 
 import com.google.gson.JsonObject;
+import common.CommonStatic;
 import common.battle.data.AtkDataModel;
 import common.battle.data.CustomEntity;
 import common.battle.data.MaskEntity;
@@ -59,6 +60,12 @@ public abstract class Character extends Animable<AnimU<?>, AnimU.UType> implemen
      * @param ent The customEntity
      */
     protected void inject(UserPack pack, JsonObject jdu, CustomEntity ent) {
+        if ((UserProfile.isOlderPack(pack, "0.7.19.1") || getMask().getProc().SUMMON.layer_type == null) && getMask().getProc().SUMMON.prob > 0) {
+            if (getMask().getProc().SUMMON.min_layer == getMask().getProc().SUMMON.max_layer && getMask().getProc().SUMMON.min_layer == -1)
+                getMask().getProc().SUMMON.layer_type = CommonStatic.LayerType.ORIG;
+            else
+                getMask().getProc().SUMMON.layer_type = CommonStatic.LayerType.SET;
+        }
         if (pack.desc.FORK_VERSION < 12) {
             if (pack.desc.FORK_VERSION < 11) {
                 if (pack.desc.FORK_VERSION < 9) {

@@ -14,6 +14,7 @@ import common.util.Data;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -300,5 +301,34 @@ public class FixIndexList<T> extends Data {
 				data.add(ent);
 			}
 		return data;
+	}
+
+	public T findByID(int id) {
+		try {
+			List<T> ts = getList();
+
+			for(int i = 0; i < ts.size(); i++) {
+				T t = ts.get(i);
+
+				Class<?> cl = t.getClass();
+
+				Field[] fields = cl.getFields();
+
+				for(int j = 0; j < fields.length; j++) {
+					if(fields[j].getAnnotation(JsonClass.JCIdentifier.class) != null && fields[j].getName().equals("id")) {
+						Identifier<?> identifier = (Identifier<?>) fields[j].get(t);
+
+						if(identifier != null && identifier.id == id)
+							return t;
+					}
+				}
+			}
+
+			return null;
+		} catch (Exception e) {
+			e.printStackTrace();
+
+			return null;
+		}
 	}
 }

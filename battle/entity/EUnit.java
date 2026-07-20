@@ -67,8 +67,7 @@ public class EUnit extends Entity {
 	}
 
 	public EUnit(StageBasis b, MaskUnit de, EAnimU ea, float d0, int layer0, int layer1, Level level, PCoin pc, int[] index, boolean isBase) {
-		super(b, de, ea, getD(b.st.getMC().getSID(), d0, level), pc, level, layer0 == layer1 ? layer0
-				: layer0 + (int) (b.r.nextFloat() * (layer1 - layer0 + 1)));
+		super(b, de, ea, getD(b.st.getMC().getSID(), d0, level), pc, level, b.getValueBetween(layer0, layer1));
 		traits = new SortedPackSet<>(de.getTraits(false));
 		lvl = level.getTotalLv();
 		this.index = index;
@@ -171,8 +170,7 @@ public class EUnit extends Entity {
 	}
 
 	public EUnit(StageBasis b, MaskUnit de, EAnimU ea, float d0) {
-		super(b, de, ea, d0, null, null,de.getFront() == de.getBack() ? de.getBack()
-				: de.getFront() + (int) (b.r.nextFloat() * (de.getBack() - de.getFront() + 1)));
+		super(b, de, ea, d0, null, null, b.getValueBetween(de.getFront(), de.getBack()));
 		traits = new SortedPackSet<>(de.getTraits(false));
 		this.index = null;
 

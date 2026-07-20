@@ -19,6 +19,7 @@ import common.util.Data;
 import common.util.lang.MultiLangCont;
 import common.util.stage.info.CustomStageInfo;
 import common.util.stage.info.DefStageInfo;
+import common.util.unit.Enemy;
 import common.util.unit.Level;
 import common.util.unit.Unit;
 import org.jetbrains.annotations.NotNull;
@@ -1442,5 +1443,13 @@ public abstract class MapColc extends Data implements IndexContainer.SingleIC<St
 		for (StageMap smaps : maps)
 			stageTot += smaps.list.size();
 		return stageTot;
+	}
+
+	public boolean containsEnemy(Enemy e) {
+		for (StageMap sm : maps)
+			for (Stage st : sm.list)
+				if (st.contains(e))
+					return true;
+		return false;
 	}
 }
