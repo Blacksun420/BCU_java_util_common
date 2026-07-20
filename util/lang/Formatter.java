@@ -467,8 +467,13 @@ public class Formatter {
 				return neg * (Integer) new RefObj(pre, ind).eval();
 			if (n instanceof Double)
 				return (int) (neg * (Double) new RefObj(pre, ind).eval());
-			if (n instanceof Enum)
-				return neg * ((Enum<?>) obj).ordinal();
+			if (n instanceof Enum) {
+				try {
+					return neg * ((Enum<?>) obj).ordinal();
+				} catch (Exception ignored) {
+					return neg * ((Enum<?>) new RefObj(pre, ind).eval()).ordinal();
+				}
+			}
 			return (int) (neg * (Float) new RefObj(pre, ind).eval());
 		}
 
