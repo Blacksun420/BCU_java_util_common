@@ -1492,7 +1492,7 @@ public class Data {
 					boolean inv = raw.charAt(0) != '!';
 					try {
 						if (operation.equals("B")) {
-							boolean matchAny = raw.charAt(inv ? 2 : 1) == '?';
+							boolean matchAny = raw.charAt(inv ? 2 : 1) == '^';
 							Object obj = getOperated(and.substring((inv ? 0 : 1) + (matchAny ? 1 : 0)), roots);
 							if (obj.getClass().isArray()) {
 								if (matchAny) {
@@ -1512,18 +1512,38 @@ public class Data {
 								return true;
 						} else {
 							int sepIndex = raw.indexOf(operation) + (and.length() - raw.length());
-							Object def = getOperated(and.substring(inv ? 0 : 1, sepIndex), roots);
+							boolean matchAny = raw.charAt(inv ? 2 : 1) == '^';
+							Object def = getOperated(and.substring((inv ? 0 : 1) + (matchAny ? 1 : 0), sepIndex), roots);
 							Object second = getOperated(and.substring(sepIndex + operation.length()), roots);
-							if (operation.equals(COMPARE_OPERATORS[6])) {
-								if ((def != null && Class.forName(second.toString()).isAssignableFrom(def.getClass())) != inv)
-									return true;
-							} else if (def instanceof Number && second instanceof Number) {//Removes false negatives and cast errors
-								if (doComparison(operation, ((Number) def).doubleValue(), ((Number) second).doubleValue()) != inv)
-									return true;
-							} else if (operation.equals("==") || operation.equals("!=")) {
-								if ((def.equals(second) == (operation.charAt(0) == '!')) != inv)
-									return true;
-							} else if (doComparison(operation, (Comparable)def, (Comparable)second) != inv)
+							if (def != null && def.getClass().isArray() && second != null && !second.getClass().isArray()) {
+								if (matchAny) {
+									boolean failed = true;
+									for (Object o : ((Object[]) def))
+										if (checkObjs(o, second, operation) != inv) {
+											failed = false;
+											break;
+										}
+									if (failed)
+										return true;
+								} else
+									for (Object o : ((Object[]) def))
+										if (checkObjs(o, second, operation) != inv)
+											return true;
+							} else if (second != null && second.getClass().isArray() && def != null && !def.getClass().isArray()) {
+								if (matchAny) {
+									boolean failed = true;
+									for (Object o : ((Object[]) second))
+										if (checkObjs(o, def, operation) != inv) {
+											failed = false;
+											break;
+										}
+									if (failed)
+										return true;
+								} else
+									for (Object o : ((Object[]) second))
+										if (checkObjs(o, def, operation) != inv)
+											return true;
+							} else if (checkObjs(def, second, operation) != inv)
 								return true;
 						}
 					} catch (Exception e) {
@@ -1532,6 +1552,17 @@ public class Data {
 				}
 				return false;
 			}
+
+			private static boolean checkObjs(Object def, Object second, String operation) throws Exception {
+				if (operation.equals(COMPARE_OPERATORS[6])) {
+                    return def != null && Class.forName(second.toString()).isAssignableFrom(def.getClass());
+				} else if (def instanceof Number && second instanceof Number) {//Removes false negatives and cast errors
+                    return doComparison(operation, ((Number) def).doubleValue(), ((Number) second).doubleValue());
+				} else if (operation.equals("==") || operation.equals("!=")) {
+                    return def.equals(second) == (operation.charAt(0) == '!');
+				} else
+					return doComparison(operation, (Comparable) def, (Comparable) second);
+            }
 
 			private static <T extends Comparable<T>> boolean doComparison(String operation, T first, T second) {
 				boolean res = true;

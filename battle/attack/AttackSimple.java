@@ -152,13 +152,14 @@ public class AttackSimple extends AttackAb {
 		Map<String, Object> roots = CommonStatic.rootMap(1, new String[]{"attacker", "atk"},attacker,this);
 		if (proc.WAVE.prob > 0) {
 			boolean success = proc.WAVE.hitless;
-			for (AbEntity e : capt) {
-				roots.put("attacked", e);
-				if (proc.WAVE.conditions.check(false, roots)) {
-					success = !success;
-					break;
+			if (!success || !proc.WAVE.conditions.post.isEmpty())
+				for (AbEntity e : capt) {
+					roots.put("attacked", e);
+					if (proc.WAVE.conditions.check(false, roots)) {
+						success = !success;
+						break;
+					}
 				}
-			}
 			if (success) {
 				int dire = model.getDire();
 				int wid = dire == 1 ? W_E_WID : W_U_WID;
@@ -176,13 +177,14 @@ public class AttackSimple extends AttackAb {
 		}
 		if(proc.MINIWAVE.prob > 0) {
 			boolean success = proc.MINIWAVE.hitless;
-			for (AbEntity e : capt) {
-				roots.put("attacked", e);
-				if (proc.MINIWAVE.conditions.check(false, roots)) {
-					success = !success;
-					break;
+			if (!success || !proc.MINIWAVE.conditions.post.isEmpty())
+				for (AbEntity e : capt) {
+					roots.put("attacked", e);
+					if (proc.MINIWAVE.conditions.check(false, roots)) {
+						success = !success;
+						break;
+					}
 				}
-			}
 			if (success) {
 				int dire = model.getDire();
 				int wid = dire == 1 ? W_E_WID : W_U_WID;
@@ -200,13 +202,14 @@ public class AttackSimple extends AttackAb {
 		}
 		if (proc.VOLC.prob > 0) {
 			boolean success = proc.VOLC.hitless;
-			for (AbEntity e : capt) {
-				roots.put("attacked", e);
-				if (proc.VOLC.conditions.check(false, roots)) {
-					success = !success;
-					break;
+			if (!success || !proc.VOLC.conditions.post.isEmpty())
+				for (AbEntity e : capt) {
+					roots.put("attacked", e);
+					if (proc.VOLC.conditions.check(false, roots)) {
+						success = !success;
+						break;
+					}
 				}
-			}
 			if (success) {
 				int dire = model.getDire();
 				VOLC volc = proc.VOLC;
@@ -222,13 +225,14 @@ public class AttackSimple extends AttackAb {
 		}
 		if (proc.MINIVOLC.prob > 0) {
 			boolean success = proc.MINIVOLC.hitless;
-			for (AbEntity e : capt) {
-				roots.put("attacked",e);
-				if (proc.MINIVOLC.conditions.check(false, roots)) {
-					success = !success;
-					break;
+			if (!success || !proc.MINIVOLC.conditions.post.isEmpty())
+				for (AbEntity e : capt) {
+					roots.put("attacked",e);
+					if (proc.MINIVOLC.conditions.check(false, roots)) {
+						success = !success;
+						break;
+					}
 				}
-			}
 			if (success) {
 				int dire = model.getDire();
 				Proc.MINIVOLC volc = proc.MINIVOLC;
