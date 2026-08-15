@@ -390,8 +390,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 					break;
 				} case P_SPEEDUP: {
 					EffAnim<SpeedEff> eff = dire == -1 ? effas().A_SPEED : effas().A_E_SPEED;
-					SpeedEff index;
-					index = e.status.adrenaline > 0 ? SpeedEff.UP : SpeedEff.DOWN;
+					SpeedEff index = e.status.adrenaline > 0 ? SpeedEff.UP : SpeedEff.DOWN;
 					effs[A_SPEED] = eff.getEAnim(index);
 					break;
 				} case IMUATK_CD:
@@ -434,7 +433,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				effs[A_B] = null;
 			if (e.status.armors.isEmpty())
 				effs[A_ARMOR] = null;
-			if (e.status.speeds.isEmpty() && e.status.adrenaline == 100)
+			if (e.status.speeds.isEmpty() && e.status.adrenaline == 0)
 				effs[A_SPEED] = null;
 			if(effs[A_HEAL] != null && effs[A_HEAL].done())
 				effs[A_HEAL] = null;
@@ -1278,7 +1277,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	public static class ProcManager extends BattleObj {
 
 		public boolean lethal;
-		public int kb, strengthen, adrenaline = 100, dcut, dcap, poison, regencount, surgecountered;
+		public int kb, strengthen, adrenaline, dcut, dcap, poison, regencount, surgecountered;
 		public double money, slow, curse, seal, rage, hypno;
 		public final int[] shield = new int[2], delay = new int[3];
 		public final double[] stop = new double[2], inv = new double[3], wild = new double[2];
@@ -2185,6 +2184,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 * @param dmg Effective damage
 	 */
 	protected boolean processProcs0(AttackAb atk, int dmg) {
+		drain(atk, dmg);
 		if (!btargetable(atk))
 			return false;
 		Map<String, Object> roots = CommonStatic.rootMap(1, new String[]{"atk","attacker","attacked","damage"},atk,atk.attacker,this,dmg);
@@ -2208,11 +2208,6 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 				}
 				//basis.scoreActivated(P_POIATK, dire, atk.trait.size());
 			}
-		}
-		if (atk.getProc().DRAIN.mult > 0 && atk.attacker != null && atk.attacker.health > 0 && getProc().DRAIN.conditions.check(false, roots)) {
-			atk.attacker.health = Math.min(atk.attacker.health + (long) (dmg * atk.getProc().DRAIN.mult / 100), atk.attacker.maxH);
-			atk.attacker.anim.getEff(P_DRAIN);
-			//basis.scoreActivated(P_DRAIN, dire, atk.trait.size());
 		}
 		return processProcs(atk, roots);
 	}
@@ -2274,6 +2269,17 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			//basis.scoreActivated(P_BLESS, dire, atk.trait.size());
 		}
 		return true;
+	}
+
+	public void drain(AttackAb atk, int dmg) {
+		Proc.DRAIN drain = atk.getProc().DRAIN;
+		if (drain.mult == 0 || atk.attacker == null || atk.attacker.health <= 0
+				|| !drain.conditions.check(false, CommonStatic.rootMap(1, new String[]{"atk","attacker","attacked","damage"},atk,atk.attacker,this,dmg))
+				|| (drain.traits.isEmpty() && !btargetable(atk)) || !(drain.traits.isEmpty() || ctargetable(drain.traits, atk.attacker)))
+			return;
+		atk.attacker.health = Math.min(atk.attacker.health + (long) (dmg * drain.mult / 100), atk.attacker.maxH);
+		atk.attacker.anim.getEff(P_DRAIN);
+		//basis.scoreActivated(P_DRAIN, dire, atk.trait.size());
 	}
 	public void freeze(AttackAb atk, float time) {
 		float rst = getResistValue(atk, true, getProc().IMUSTOP.mult + (getProc().IMUSTOP.block == 100 ? 100 : 0));
@@ -2667,6 +2673,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			status.strengthen = (int)(getProc().STRONG.mult * (maxH - health) / (maxH * (100 - strong) / 100.0));
 		} else if (health * 100 <= maxH * strong)
 			status.strengthen = getProc().STRONG.mult;
+		else
+			status.strengthen = 0;
 
 		if (wz && status.strengthen != 0)
 			anim.getEff(P_STRONG);
@@ -2680,6 +2688,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			status.adrenaline = (int)(getProc().SPEEDUP.mult * (maxH - health) / (maxH * (100 - threshold) / 100.0));
 		} else if (health * 100 <= maxH * threshold)
 			status.adrenaline = getProc().SPEEDUP.mult;
+		else
+			status.adrenaline = 0;
 
 		if (wz && status.adrenaline != 0)
 			anim.getEff(P_SPEEDUP);
@@ -3149,7 +3159,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		if (!status.speeds.isEmpty() && status.slow == 0)
 			mov = status.getSpeed(mov);
 
-		if (status.adrenaline != 100) {
+		if (status.adrenaline != 0) {
 			mov *= 1 + (status.adrenaline / 100f);
 			mov = (float) Math.round(mov * 4f) / 4f;
 		}

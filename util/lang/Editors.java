@@ -262,15 +262,20 @@ public class Editors {
 	public static boolean def = true;//True means normal editing, false means blessing editing
 
 	static {
-		EditControl<Proc.PROB> prob = new EditControl<>(Proc.PROB.class, t -> t.prob = Math.max(def ? 0 : -100, Math.min(t.prob, 100)));
+		EditControl<Proc.PROB> prob = new EditControl<>(Proc.PROB.class, t -> {
+			t.prob = Math.max(def ? 0 : -100, Math.min(t.prob, 100));
+			if (t.prob == 0)
+				t.conditions.clear();
+		});
 
 		EditControl<Proc.PT> pt = new EditControl<>(Proc.PT.class, t -> {
 			t.prob = Math.max(def ? 0 : -100, Math.min(t.prob, 100));
 			if (!def)
 				return;
-			if (t.prob == 0)
+			if (t.prob == 0) {
 				t.time = 0;
-			else if (t.time == 0)
+				t.conditions.clear();
+			} else if (t.time == 0)
 				t.time = 1;
 		}, eg -> t -> setComponentVisibility(eg, !def || t.prob > 0, 1));
 
@@ -280,6 +285,8 @@ public class Editors {
 				t.mult = Math.min(0, t.mult);
 			else
 				t.mult = Math.min(t.mult, 100);
+			if (def && t.mult == 0 && t.block == 0)
+				t.conditions.clear();
 		});
 
 		EditControl<Proc.IMUI> imui = new EditControl<>(Proc.IMUI.class, t -> {
@@ -288,8 +295,10 @@ public class Editors {
 				t.mult = Math.min(0, t.mult);
 			else
 				t.mult = Math.min(t.mult, 100);
-			if (def && !t.exists())
+			if (def && !t.exists()) {
 				t.pid.clear();
+				t.conditions.clear();
+			}
 		}, eg -> t -> setComponentVisibility(eg, !def || t.mult != 0 || t.block != 0, 2));
 
 		EditControl<Proc.IMUAD> imuad = new EditControl<>(Proc.IMUAD.class, t -> {
@@ -297,8 +306,10 @@ public class Editors {
 			if (t.block == 100)
 				t.mult = Math.min(0, t.mult);
 			t.mult = Math.min(t.mult, 100);
-			if (t.mult == 0 && t.block == 0)
+			if (def && t.mult == 0 && t.block == 0) {
+				t.conditions.clear();
 				t.focus = Proc.IMUAD.FOCUS.ALL;
+			}
 		}, eg -> t -> setComponentVisibility(eg, !def || t.mult != 0 || t.block != 0, 2));
 
         map().put("KB", new EditControl<>(Proc.PTD.class, (t) -> {
@@ -307,6 +318,7 @@ public class Editors {
 				return;
 			if (t.prob == 0) {
 				t.dis = t.time = 0;
+				t.conditions.clear();
 			} else {
 				if (t.dis == 0)
 					t.dis = Data.KB_DIS[Data.INT_KB];
@@ -319,9 +331,10 @@ public class Editors {
 			t.prob = Math.max(def ? 0 : -100, Math.min(t.prob, 100));
 			if (!def)
 				return;
-			if (t.prob == 0)
+			if (t.prob == 0) {
 				t.mult = t.time = 0;
-			else {
+				t.conditions.clear();
+			} else {
 				if (t.mult >= 100)
 					t.mult = 0;
 				if (t.time == 0)
@@ -343,6 +356,8 @@ public class Editors {
 				t.mult = 0;
 			else if (t.mult == 0)
 				t.mult = 200;
+			if (t.prob == 0)
+				t.conditions.clear();
 		}, eg -> t -> setComponentVisibility(eg, !def || t.prob > 0, 1)));
 
 		map().put("WAVE", new EditControl<>(Proc.WAVE.class, (t) -> {
@@ -352,6 +367,7 @@ public class Editors {
 				t.lv = t.maxlv = 0;
 				t.hitless = false;
 				t.pid.clear();
+				t.conditions.clear();
 			}
 			t.maxlv = Math.max(t.lv, t.maxlv);
 		}, eg -> t -> setComponentVisibility(eg, !def || t.prob > 0, 1)));
@@ -363,6 +379,7 @@ public class Editors {
 			if (t.prob == 0) {
 				t.mult = t.time = 0;
 				t.stackable = false;
+				t.conditions.clear();
 			} else
 				t.time = Math.max(t.time, 1);
 		}, eg -> t -> setComponentVisibility(eg, !def || t.prob > 0, 1)));
@@ -375,6 +392,7 @@ public class Editors {
 				t.mult = t.time = 0;
 				t.stackable = false;
 				t.type = LETHARGY.TYPE.FIXED;
+				t.conditions.clear();
 			} else {
 				if (t.type == LETHARGY.TYPE.FIXED)
 					t.mult = Math.max(t.mult, -100);
@@ -388,6 +406,7 @@ public class Editors {
 			t.prob = Math.max(def ? 0 : -100, Math.min(t.prob, 100));
 			if (def && t.prob == 0) {
 				t.dis = t.dis_1 = t.time = 0;
+				t.conditions.clear();
 			} else {
 				int oDis = t.dis;
 				t.dis = Math.min(t.dis, t.dis_1);
@@ -419,9 +438,10 @@ public class Editors {
 			t.count = Math.max(t.count, -1);
 			if (!def)
 				return;
-			if (t.count == 0)
+			if (t.count == 0) {
 				t.dis = 0;
-			else
+				t.conditions.clear();
+			} else
 				t.dis = Math.max(t.dis, 1);
 		}, eg -> t -> setComponentVisibility(eg, !def || t.count != 0, 1)));
 
@@ -437,6 +457,7 @@ public class Editors {
 				t.dis_0 = t.dis_1 = 0;
 				t.range_type = REVIVE.RANGE.ACTIVE;
 				t.revive_non_zombie = false;
+				t.conditions.clear();
 			} else {
 				t.health = Math.max(t.health, 1);
 				t.time = Math.max(t.time, 1);
@@ -463,6 +484,7 @@ public class Editors {
 			} else {
 				t.time = 0;
 				t.intensity = 100;
+				t.conditions.clear();
 			}
 		}, eg -> t -> setComponentVisibility(eg, t.prob > 0, 1)));
 
@@ -482,6 +504,7 @@ public class Editors {
 				t.max_layer = 9;
 				t.same_health = false;
 				t.layer_type = CommonStatic.LayerType.SET;
+				t.conditions.clear();
 			} else {
 				if (def) {
 					t.time = Math.max(0, t.time);
@@ -526,6 +549,7 @@ public class Editors {
 			if (t.prob == 0) {
 				t.dis = t.itv = t.speed = t.time = t.width = 0;
 				t.pid.clear();
+				t.conditions.clear();
 			} else {
 				t.width = Math.max(0, t.width);
 				t.time = Math.max(1, t.time);
@@ -540,6 +564,7 @@ public class Editors {
 				t.id = null;
 				t.mus = null;
 				t.kill = false;
+				t.conditions.clear();
 			} else
 				t.time = Math.max(-1, t.time);
 		}, eg -> t -> setComponentVisibility(eg, t.prob > 0, 1)));
@@ -552,6 +577,7 @@ public class Editors {
 				t.damage = t.itv = t.time = 0;
 				t.damage_type = POISON.TYPE.BURN;
 				t.unstackable = t.ignoreMetal = t.modifAffected = false;
+				t.conditions.clear();
 			} else {
 				t.time = Math.max(1, t.time);
 				t.itv = Math.max(1, t.itv);
@@ -564,8 +590,10 @@ public class Editors {
 
 		map().put("SATK", new EditControl<>(Proc.PM.class, (t) -> {
 			t.prob = Math.max(0, Math.min(t.prob, 100));
-			if (def && t.prob == 0)
+			if (def && t.prob == 0) {
 				t.mult = 0;
+				t.conditions.clear();
+			}
 		}, eg -> t -> setComponentVisibility(eg, !def || t.prob > 0, 1)));
 
 		map().put("COUNTER", new EditControl<>(COUNTER.class, (t) -> {
@@ -580,6 +608,7 @@ public class Editors {
 				t.damage = t.minRange = t.maxRange = t.maxDamage = t.procType = 0;
 				t.counterWave = COUNTER.CWAVE.NONE;
 				t.useOwnDamage = t.outRange = t.areaAttack = false;
+				t.conditions.clear();
 			}
 		}, eg -> t -> {
 			setComponentVisibility(eg, !def || t.prob > 0, 1);
@@ -590,9 +619,10 @@ public class Editors {
 			t.prob = Math.max(def ? 0 : -100, Math.min(t.prob, 100));
 			if (!def)
 				return;
-			if (t.prob == 0)
+			if (t.prob == 0) {
 				t.time = t.cd = 0;
-			else {
+				t.conditions.clear();
+			} else {
 				t.time = Math.max(t.time, 1);
 				t.cd = Math.max(t.cd, 0);
 			}
@@ -606,6 +636,7 @@ public class Editors {
 				t.dmg = 0;
 				t.reduction = 0;
 				t.traitIgnore = t.procs = t.magnif = false;
+				t.conditions.clear();
 			} else
 				t.dmg = Math.max(t.dmg,0);
 		}, eg -> t -> setComponentVisibility(eg, !def || t.prob > 0, 1)));
@@ -617,14 +648,17 @@ public class Editors {
 			if (t.prob == 0) {
 				t.dmg = 0;
 				t.traitIgnore = t.nullify = t.procs = t.magnif = false;
+				t.conditions.clear();
 			} else
 				t.dmg = Math.max(t.dmg,0);
 		}, eg -> t -> setComponentVisibility(eg, !def || t.prob > 0, 1)));
 
 		map().put("POIATK", new EditControl<>(Proc.PM.class, (t) -> {
 			t.prob = Math.max(def ? 0 : -100, Math.min(t.prob, 100));
-			if (def && t.prob == 0)
+			if (def && t.prob == 0) {
 				t.mult = 0;
+				t.conditions.clear();
+			}
 		}, eg -> t -> setComponentVisibility(eg, !def || t.prob > 0, 1)));
 
 		map().put("VOLC", new EditControl<>(Proc.VOLC.class, (t) -> {
@@ -636,6 +670,7 @@ public class Editors {
 				t.dis_0 = t.dis_1 = t.time = t.maxtime = 0;
 				t.hitless = false;
 				t.pid.clear();
+				t.conditions.clear();
 			} else {
 				t.time = Math.max(1, t.time / Data.VOLC_ITV) * Data.VOLC_ITV;
 				t.maxtime = Math.max(t.time / Data.VOLC_ITV, t.maxtime / Data.VOLC_ITV) * Data.VOLC_ITV;
@@ -655,6 +690,7 @@ public class Editors {
 				t.mult = 20;
 				t.hitless = false;
 				t.pid.clear();
+				t.conditions.clear();
 			} else {
 				t.time = Math.max(1, t.time / Data.VOLC_ITV) * Data.VOLC_ITV;
 				t.maxtime = Math.max(t.time / Data.VOLC_ITV, t.maxtime / Data.VOLC_ITV) * Data.VOLC_ITV;
@@ -673,6 +709,7 @@ public class Editors {
 			if (t.prob == 0) {
 				t.mult = t.time = 0;
 				t.stackable = false;
+				t.conditions.clear();
 			} else
 				t.time = Math.max(1, t.time);
 		}, eg -> t -> setComponentVisibility(eg, !def || t.prob > 0, 1)));
@@ -684,6 +721,7 @@ public class Editors {
 			if (t.prob == 0) {
 				t.speed = t.time = 0;
 				t.type = SPEED.TYPE.FIXED;
+				t.conditions.clear();
 			} else
 				t.time = Math.max(1, t.time);
 		}, eg -> t -> setComponentVisibility(eg, !def || t.prob > 0, 1)));
@@ -695,6 +733,7 @@ public class Editors {
 				t.multi = 20;
 				t.hitless = false;
 				t.pid.clear();
+				t.conditions.clear();
 			} else {
 				t.lv = MathUtil.clip(t.lv, def ? 1 : -125, 125);
 				t.maxlv = Math.max(t.lv, t.maxlv);
@@ -729,8 +768,10 @@ public class Editors {
 
 		map().put("IMUMOVING", new EditControl<>(Proc.MOVEI.class, (t) -> {
 			t.mult = Math.min(t.mult, 100);
-			if (def && t.mult == 0)
+			if (def && t.mult == 0) {
 				t.pid.clear();
+				t.conditions.clear();
+			}
 		}, eg -> t -> setComponentVisibility(eg, !def || t.mult > 0, 1)));
 
 		map().put("IMURAGE", imu);
@@ -741,8 +782,10 @@ public class Editors {
 			t.mult = Math.min(t.mult, 100);
 			if (t.mult != 0)
 				t.type = MathUtil.clip(t.type, 1, 127);
-			else
+			else {
 				t.type = 0;
+				t.conditions.clear();
+			}
 		}, eg -> t -> setComponentVisibility(eg, !def || t.mult > 0, 1)));
 
 		map().put("IMUPOI", imuad);
@@ -788,6 +831,7 @@ public class Editors {
 				t.dis_0 = t.dis_1 = t.time = t.maxtime = 0;
 				t.spawns = 1;
 				t.pid.clear();
+				t.conditions.clear();
 			} else {
 				t.time = Math.max(1, t.time / Data.VOLC_ITV) * Data.VOLC_ITV;
 				t.maxtime = Math.max(t.time / Data.VOLC_ITV, t.maxtime / Data.VOLC_ITV) * Data.VOLC_ITV;
@@ -809,6 +853,7 @@ public class Editors {
 				t.spawns = 1;
 				t.mult = 20;
 				t.pid.clear();
+				t.conditions.clear();
 			} else {
 				t.time = Math.max(1, t.time / Data.VOLC_ITV) * Data.VOLC_ITV;
 				t.maxtime = Math.max(t.time / Data.VOLC_ITV, t.maxtime / Data.VOLC_ITV) * Data.VOLC_ITV;
@@ -829,6 +874,7 @@ public class Editors {
 			if (t.prob == 0) {
 				t.mult = 0;
 				t.count = 1;
+				t.conditions.clear();
 			} else if (t.mult == 0) {
 				t.count = 2;
 				t.mult = 50;
@@ -846,6 +892,7 @@ public class Editors {
 			if (t.prob == 0) {
 				t.mult = 0;
 				t.count = 1;
+				t.conditions.clear();
 			} else if (t.mult == 0) {
 				t.count = 2;
 				t.mult = 3;
@@ -863,9 +910,10 @@ public class Editors {
 			t.prob = Math.max(def ? 0 : -100, Math.min(t.prob, 100));
 			if (!def)
 				return;
-			if (t.prob == 0)
+			if (t.prob == 0) {
 				t.mult = 0;
-			else if (t.mult == 0)
+				t.conditions.clear();
+			} else if (t.mult == 0)
 				t.mult = 1;
 			else
 				t.mult = MathUtil.clip(t.mult, -7, 7);
@@ -878,6 +926,7 @@ public class Editors {
 			if (t.prob == 0) {
 				t.strength = 0;
 				t.type = DELAY.TYPE.CURRENT;
+				t.conditions.clear();
 			} else if (t.type == DELAY.TYPE.CURRENT || t.type == DELAY.TYPE.MAX)
 				t.strength = MathUtil.clip(t.strength, def ? 0 : -100, 100);
 		}, eg -> t -> setComponentVisibility(eg, !def || t.prob > 0, 1)));
@@ -918,6 +967,7 @@ public class Editors {
 			if (def && t.prob == 0) {
 				t.minrange = t.maxrange = t.reduction = t.block = 0;
 				t.traitCon = t.procs = t.waves = false;
+				t.conditions.clear();
 			} else {
 				int min = t.minrange;
 				t.minrange = Math.min(min, t.maxrange);
@@ -959,6 +1009,7 @@ public class Editors {
 			if (t.prob == 0) {
 				t.mult = t.max_times = 0;
 				t.count = 1;
+				t.conditions.clear();
 			} else if (t.mult == 0) {
 				t.mult = 100;
 				t.count = Math.max(t.count, 1);
@@ -969,11 +1020,15 @@ public class Editors {
 		map().put("DMGINC", new EditControl<>(Proc.STATINC.class, (t) -> {
 			if (def && t.mult == 100)
 				t.mult = 0;
+			if (t.mult == 0)
+				t.conditions.clear();
 		}));
 
 		map().put("DEFINC", new EditControl<>(Proc.STATINC.class, (t) -> {
 			if (def && t.mult == 100)
 				t.mult = 0;
+			if (t.mult == 0)
+				t.conditions.clear();
 		}));
 
 		map().put("RANGESHIELD", new EditControl<>(Proc.RANGESHIELD.class, (t) -> {
@@ -983,6 +1038,7 @@ public class Editors {
 			if (t.prob == 0) {
 				t.mult = 0;
 				t.range = false;
+				t.conditions.clear();
 			} else if (t.mult == 0)
 				t.mult = 1;
 		}, eg -> t -> setComponentVisibility(eg, !def || t.prob > 0, 1)));
@@ -1041,6 +1097,7 @@ public class Editors {
 				t.dis_0 = t.dis_1 = 0;
 				t.lv = 3;
 				t.reduction = 30;
+				t.conditions.clear();
 			}
 		}, eg -> t -> {
 			setComponentVisibility(eg, !def || t.prob > 0, 1);
@@ -1054,6 +1111,7 @@ public class Editors {
 			if (def && t.prob == 0) {
 				t.mult = 0;
 				t.traits.clear();
+				t.conditions.clear();
 			}
 		}, eg -> t -> setComponentVisibility(eg, !def || t.prob > 0, 1)));
 
@@ -1064,6 +1122,7 @@ public class Editors {
 				t.stackable = false;
 				t.procs = null;
 				t.traits.clear();
+				t.conditions.clear();
 			}
 		}, eg -> t -> setComponentVisibility(eg, t.prob > 0, 1)));
 
@@ -1106,6 +1165,7 @@ public class Editors {
 			if (t.prob == 0) {
 				t.mult = 0;
 				t.count = 1;
+				t.conditions.clear();
 			} else if (t.mult == 0) {
 				t.count = 2;
 				t.mult = 2;

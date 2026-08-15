@@ -1461,6 +1461,10 @@ public class Data {
 				return pre.isEmpty() && post.isEmpty();
 			}
 
+			public void clear() {
+				pre = post = "";
+			}
+
 			public boolean check(boolean pre, Map<String, Object> roots) {
 				return check(pre ? this.pre : post, roots);
 			}
