@@ -405,7 +405,7 @@ public abstract class AtkModelEntity extends AtkModelAb {
 		Map<String, Object> roots = CommonStatic.rootMap(new String[]{"attacker", "matk", "proc"},e,matk,proc);
 		if (p.SUMMON.perform(b.r)) {
 			SUMMON sprc = p.SUMMON;
-			if (!sprc.on_hit && !sprc.on_kill && proc.STOP.conditions.check(false, roots))
+			if (!sprc.on_hit && !sprc.on_kill)
 				summon(sprc, e, matk, 0);
 			else
 				proc.SUMMON.set(sprc);

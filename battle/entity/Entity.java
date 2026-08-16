@@ -1262,10 +1262,12 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	private static class SummonManager extends BattleObj {
 		public LinkedList<Entity> children = new LinkedList<>();
 
-		public void damaged(AttackAb atk, int dmg, boolean proc) {
+		public void damaged(AttackAb atk, int dmg, boolean proc, Map<String, Object> roots) {
 			for (Entity child : children) {
-				if (proc)
-					child.processProcs0(atk, dmg);
+				if (proc) {
+					roots.put("attacked",child);
+					child.processProcs0(atk, dmg, roots);
+				}
 				child.damage += dmg;
 			}
 		}
@@ -2081,7 +2083,8 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		anim.smokeLayer = (int) (layer + 3 - basis.r.irFloat() * -6);
 		anim.smokeX = (int) (pos + 25 - basis.r.irFloat() * -50);
 
-		bondTree.damaged(atk, dmg, proc);
+		bondTree.damaged(atk, dmg, proc, roots);
+		roots.put("attacked",this);
 		final int FDmg = dmg;
 		atk.notifyEntity(e -> {
 			COUNTER counter = getProc().COUNTER;
@@ -2167,7 +2170,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 			status.hypno = dh > 0 ? status.hypno * (100-dh) / 100 : Math.max(0, status.hypno + dh);
 		}
 		if (proc)
-			processProcs0(atk, FDmg);
+			processProcs0(atk, FDmg, roots);
 		return true;
 	}
 
@@ -2183,11 +2186,10 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 	 * @param atk Attack Data
 	 * @param dmg Effective damage
 	 */
-	protected boolean processProcs0(AttackAb atk, int dmg) {
+	protected boolean processProcs0(AttackAb atk, int dmg, Map<String, Object> roots) {
 		drain(atk, dmg);
 		if (!btargetable(atk))
 			return false;
-		Map<String, Object> roots = CommonStatic.rootMap(1, new String[]{"atk","attacker","attacked","damage"},atk,atk.attacker,this,dmg);
 
 		if (atk.getProc().POIATK.mult > 0 && atk.getProc().POIATK.conditions.check(false, roots)) {
 			float rst = getResistValue(atk, false, getProc().IMUPOIATK.mult);
@@ -2232,7 +2234,7 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		if ((atkProc.CURSE.time != 0 || atkProc.CURSE.prob > 0) && atkProc.CURSE.conditions.check(false, roots))
 			curse(atk, time);
 		if (atkProc.KB.dis != 0 && atkProc.KB.conditions.check(false, roots))
-			knockback(atk, f);
+			knockback(atk, f, roots);
 
 		if (atkProc.SNIPER.prob > 0 && atkProc.SNIPER.conditions.check(false, roots))
 			interrupt(INT_ASS, KB_DIS[INT_ASS]);
@@ -2388,8 +2390,9 @@ public abstract class Entity extends AbEntity implements Comparable<Entity> {
 		} else
 			anim.getEff(INV);
 	}
-	public void knockback(AttackAb atk, float f) {
-		float rst = getResistValue(atk, true, getProc().IMUKB.mult + (getProc().IMUKB.block == 100 ? 100 : 0));
+	public void knockback(AttackAb atk, float f, Map<String, Object> roots) {
+		float rst = getResistValue(atk, true,
+				(getProc().IMUKB.conditions.check(false, roots) ? getProc().IMUKB.mult : 0) + (getProc().IMUKB.block == 100 ? 100 : 0));
 		if (rst > 0f) {
 			status.kb = atk.getProc().KB.time;
 			interrupt(atk.getProc().KB.time == KB_TIME[INT_HB] ? INT_HB : P_KB, atk.getProc().KB.dis * (1 + f * 0.1f) * rst);

@@ -123,6 +123,23 @@ public class Formatter {
 			return "" + (int) (hp * magnification[0]);
 		}
 
+		public String conditions(Proc.Condition cond) {
+			if (cond.pre.isEmpty() && cond.post.isEmpty())
+				return "";
+			if (!cond.disp.isEmpty())
+				return " " + cond.disp;
+			StringBuilder b = new StringBuilder(" if (");
+			if (!cond.pre.isEmpty())
+				b.append("pre:[").append(cond.pre);
+			if (!cond.post.isEmpty()) {
+				if (!cond.pre.isEmpty())
+					b.append("] and ");
+				b.append("post:[").append(cond.post);
+			}
+			b.append("])");
+			return b.toString();
+		}
+
 		public String waveRange(int lv) {
 			return df.format((isEnemy ? 467.25 : 332.5) + 200 * (lv - 1));
 		}

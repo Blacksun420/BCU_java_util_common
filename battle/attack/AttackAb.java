@@ -107,7 +107,7 @@ public abstract class AttackAb extends BattleObj {
 						blocked = true;
 					if (imus.IMUKB.block == 100) {
 						if (imus.IMUKB.mult < 0 && proc.KB.conditions.check(false, roots))
-							e.knockback(this, f);
+							e.knockback(this, f, roots);
 						proc.KB.clear();
 					} else
 						proc.KB.dis = (int)(proc.KB.dis * (100 - imus.IMUKB.block) / 100.0);

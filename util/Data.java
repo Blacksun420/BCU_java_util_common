@@ -1288,6 +1288,8 @@ public class Data {
 			@Order(5)
 			@JsonField(generic = Trait.class, alias = Identifier.class, defval = "isEmpty")
 			public SortedPackSet<Trait> traits = new SortedPackSet<>();
+			@Order(6)
+			public boolean debuff;//Used to determine if the blessing is meant to be a debuff, in such case it will be affected by curse resistance
 		}
 		@JsonClass(noTag = NoTag.LOAD)
 		public static class STATINC extends MULT { //It had no params, it just dictated behavior for strong v bless
@@ -1358,12 +1360,7 @@ public class Data {
 			@JsonField(defval = "1")
 			public int max_stacks = 1;//0 for infinite
 
-			@Override
-			public boolean exists() {
-				return mult > 0;
-			}
-
-			@Override
+            @Override
 			public int[] setTalent(int[] nps) {
 				nps[4] = Math.max(1- killCount, nps[4]);
 				nps[5] = Math.max(nps[4], nps[5]);
@@ -1442,12 +1439,13 @@ public class Data {
 		@JsonClass(noTag = JsonClass.NoTag.LOAD)
 		public static class Condition implements Cloneable, BattleStatic {
 
-			//Conditions separated by {}.&&s are to be automatically grouped together.
-			//ie:"attacker.status.slow < 0 && atk.proc.KB.prob > 0 || attacker.hpPercent() > 0.75 - Would make a proc that only procs if the attacker isn't slowed,procced KB OR has more than 75% HP
-			//|| nor the spaces are necessary but they help for clarity
-			public String pre = "", post = "";
+			/** Conditions separated by {}.&&s are to be automatically grouped together.
+			 *ie:"attacker.status.slow < 0 && atk.proc.KB.prob > 0 || attacker.hpPercent() > 0.75 - Would make a proc that only procs if the attacker isn't slowed,procced KB OR has more than 75% HP
+			 *|| nor the spaces are necessary but they help for clarity */
+			public String pre = "", post = "", disp = "";
 			//pre: Conditions checked before attacking. Attacked isn't a valid parameter here
 			//post: Conditions checked during attack.
+			//disp is just flavor text
 
 			public Condition() {
 			}
@@ -1455,6 +1453,7 @@ public class Data {
 			public Condition(Condition par) {
 				pre = par.pre;
 				post = par.post;
+				disp = par.disp;
 			}
 
 			public boolean none() {
@@ -1462,7 +1461,7 @@ public class Data {
 			}
 
 			public void clear() {
-				pre = post = "";
+				pre = post = disp = "";
 			}
 
 			public boolean check(boolean pre, Map<String, Object> roots) {
@@ -1672,7 +1671,7 @@ public class Data {
 							}
 						}
 					} else {
-						Field fld = current.getClass().getField(f);
+						Field fld = getDefField(current.getClass(),f);
 						boolean acc = fld.isAccessible();
 						fld.setAccessible(true);
 						current = fld.get(current);
@@ -1680,6 +1679,16 @@ public class Data {
 					}
 				}
 				return current;
+			}
+
+			public static Field getDefField(Class<?> cls, String f) throws NoSuchFieldException {
+				try {
+					return cls.getDeclaredField(f);
+				} catch (NoSuchFieldException e) {
+					if (cls.getSuperclass() == null)
+						throw e;
+					return getDefField(cls.getSuperclass(), f);
+				}
 			}
 
 			public static String getRoots(Map<String, Object> roots) {
